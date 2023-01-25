@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../screens/a_screen.dart';
 import '../screens/b_screen.dart';
 
 class PersonNavigator extends StatelessWidget {
@@ -8,12 +7,9 @@ class PersonNavigator extends StatelessWidget {
   final int tabIndex;
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      "/": (context) => ScreenA(
-        tabIndex: tabIndex,
-      ),
       "/ScreenB": (context) => ScreenB(
-        tabIndex: tabIndex,
-      ),
+            tabIndex: tabIndex,
+          ),
     };
   }
 
