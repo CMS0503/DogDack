@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "952094143803",
+    "project_id": "dogdack-4bcfe",
+    "storage_bucket": "dogdack-4bcfe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:952094143803:android:1c34d00f94ceeb3c5cf31e",
+        "android_client_info": {
+          "package_name": "com.common.pjt.dogdack"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "952094143803-q5jf42jts30bfhhjq9tvr5sljughbr16.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPe-rXbQbfMtzXZDP9nJHmeHf3zx9pBxs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "952094143803-q5jf42jts30bfhhjq9tvr5sljughbr16.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
