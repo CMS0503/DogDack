@@ -28,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<UserCredential> googleAuthSignIn() async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn()?.signIn();
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     final GoogleSignInAuthentication? googleAuth =
         await googleUser?.authentication;
 
@@ -48,20 +48,23 @@ class _LoginPageState extends State<LoginPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Container(
+                SizedBox(
                   height: 100,
                   width: 100,
                   child: Image.asset('assets/dogs.png'),
                 ),
-                Text(
+                const Text(
                   'DOG DACK',
+                  style: TextStyle(
+                    fontFamily: 'bmjua',
+                  ),
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 50,
             ),
-            Container(
+            SizedBox(
               height: 50,
               width: 300,
               child: ElevatedButton(
