@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 //screen
-import 'package:dogdack/screens/walk_screen.dart';
+import 'package:dogdack/screens/walk/walk_screen.dart';
 
 class WalkNavigator extends StatelessWidget {
   const WalkNavigator({super.key, required this.tabIndex});

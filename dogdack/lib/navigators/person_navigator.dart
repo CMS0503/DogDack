@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../screens/a_screen.dart';
-import '../screens/b_screen.dart';
+import '../screens/home/a_screen.dart';
+import '../screens/home/b_screen.dart';
 
 class PersonNavigator extends StatelessWidget {
   const PersonNavigator({super.key, required this.tabIndex});

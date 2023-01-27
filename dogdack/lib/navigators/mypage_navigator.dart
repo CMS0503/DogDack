@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 //screen
-import '../screens/mypage_screen.dart';
+import '../screens/my/mypage_screen.dart';
 
 class MyPageNavigator extends StatelessWidget {
   const MyPageNavigator({super.key, required this.tabIndex});

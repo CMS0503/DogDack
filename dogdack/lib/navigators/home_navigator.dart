@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:dogdack/screens/home_screen.dart';
+import 'package:dogdack/screens/home/home_screen_test.dart';
 
 //screen
-import '../screens/b_screen.dart';
+import '../screens/home/b_screen.dart';
 
 class HomeNavigator extends StatelessWidget {
   const HomeNavigator({super.key, required this.tabIndex});
