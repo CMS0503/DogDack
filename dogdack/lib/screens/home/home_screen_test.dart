@@ -1,13 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:dogdack/commons/logo_widget.dart';
+import '../../models/user_data.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
-import '../models/user_data.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key, required this.tabIndex});
   final int tabIndex;
   final inputController = TextEditingController();
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
   void fbstoreWrite() {
     FirebaseFirestore.instance
         .collection(FirebaseAuth.instance.currentUser!.email.toString())
@@ -22,13 +27,21 @@ class HomePage extends StatelessWidget {
         .catchError((error) => print("Fail to add doc ${error}"));
   }
 
+
   @override
   Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
+    double width = screenSize.width;
+    double height = screenSize.height;
+
     return Scaffold(
-        appBar: AppBar(title: Text("Home Page")),
-        body: SafeArea(
-          child: Column(children: [
-            NewWidget(),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(height * 0.12),
+          child: LogoWidget(),
+        )
+        ,body: SafeArea(
+          child:    Column(children: [
+            Text("안녕하세요! ${FirebaseAuth.instance.currentUser!.email} 님!"),
             Text("from tab: ${tabIndex.toString()}"),
             TextButton(
               child: Text("Go to ScreenB"),
@@ -37,7 +50,10 @@ class HomePage extends StatelessWidget {
               },
             ),
             TextButton(
-                onPressed: () => FirebaseAuth.instance.signOut(),
+                onPressed: () =>
+                {FirebaseAuth.instance.signOut(),
+                  _googleSignIn.signOut(),
+                },
                 child: Text("로그아웃")),
             TextField(
               controller: inputController,
@@ -48,7 +64,10 @@ class HomePage extends StatelessWidget {
                 onPressed: () => fbstoreWrite(), child: Text("Text Upload")),
             FirestoreRead(),
           ]),
-        ));
+
+        )
+
+        );
   }
 }
 

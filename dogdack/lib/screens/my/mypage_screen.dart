@@ -13,7 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
-import '../models/user_data.dart';
+import '../../models/user_data.dart';
 
 class MyPage extends StatelessWidget {
   MyPage({super.key, required this.tabIndex});

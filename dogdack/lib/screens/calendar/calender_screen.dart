@@ -1,3 +1,4 @@
+import 'package:dogdack/commons/logo_widget.dart';
 import 'package:flutter/material.dart';
 
 class CalenderPage extends StatelessWidget {
@@ -8,15 +9,14 @@ class CalenderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Calender page")),
-        body: SafeArea(
-          child: Column(
+      appBar: LogoWidget(),
+        body: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('Calender page'),
+              Text('Calender detail page'),
             ],
           )
-        ));
+        );
   }
 }

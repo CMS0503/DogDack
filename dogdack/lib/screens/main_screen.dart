@@ -48,12 +48,30 @@ class _MainPageState extends State<MainPage> {
       ]),
       bottomNavigationBar: BottomNavigationBar(
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined,), label: "홈",),
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_month_outlined,), label: "캘린더",),
-          BottomNavigationBarItem(icon: Icon(Icons.directions_walk,), label: "산책",),
-          BottomNavigationBarItem(icon: Icon(Icons.person,), label: "마이",),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: '홈',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: '캘린더',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.pets_outlined),
+            label: '산책',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: '마이',
+          ),
         ],
-        selectedItemColor: Colors.deepPurpleAccent,
+
+        selectedItemColor: Color.fromARGB(255, 100, 92, 170),
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
+        unselectedLabelStyle: TextStyle(fontFamily: 'bmjua'),
+        selectedLabelStyle: TextStyle(fontFamily: 'bmjua'),
+        elevation: 0,
         unselectedItemColor: Colors.grey,
         currentIndex: _currentTabIndex,
         onTap: (value) => _tabSelect(value),
