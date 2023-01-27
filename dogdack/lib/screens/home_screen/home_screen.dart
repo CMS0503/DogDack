@@ -28,7 +28,7 @@ class HomePage extends StatelessWidget {
         appBar: AppBar(title: Text("Home Page")),
         body: SafeArea(
           child: Column(children: [
-            Text("안녕하세요! ${FirebaseAuth.instance.currentUser!.email} 님!"),
+            NewWidget(),
             Text("from tab: ${tabIndex.toString()}"),
             TextButton(
               child: Text("Go to ScreenB"),
@@ -49,6 +49,17 @@ class HomePage extends StatelessWidget {
             FirestoreRead(),
           ]),
         ));
+  }
+}
+
+class NewWidget extends StatelessWidget {
+  const NewWidget({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text("안녕하세요! ${FirebaseAuth.instance.currentUser!.email} 님!", style: Theme.of(context).textTheme.bodyText1,);
   }
 }
 
