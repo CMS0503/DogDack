@@ -1,7 +1,8 @@
+import 'package:dogdack/screens/login/login_after_screen.dart';
 import 'package:flutter/material.dart';
 
 //screen
-import 'package:dogdack/screens/login_screen.dart';
+import 'package:dogdack/screens/login/login_screen.dart';
 import 'package:dogdack/screens/main_screen.dart';
 
 //firebase
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return const MainPage();
+            return LoginAfterPage();
           } else {
             return const LoginPage();
           }

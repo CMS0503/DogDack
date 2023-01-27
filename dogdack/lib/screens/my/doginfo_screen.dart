@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-import '../models/user_data.dart';
+import '../../models/user_data.dart';
 
 class DogInfoPage extends StatelessWidget {
   DogInfoPage({super.key, required this.tabIndex});
