@@ -10,7 +10,6 @@ class Map extends StatefulWidget {
 }
 
 class _MapState extends State<Map> {
-  // 애플리케이션에서 지도를 이동하기 위한 컨트롤러
   late GoogleMapController _controller;
 
   // 이 값은 지도가 시작될 때 첫 번째 위치입니다.
@@ -53,11 +52,12 @@ class _MapState extends State<Map> {
         ),
 
         // floatingActionButton 클릭시 줌 아웃
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _controller.animateCamera(CameraUpdate.zoomOut());
-          },
-          child: Icon(Icons.zoom_out),
-        ));
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () {
+        //     _controller.animateCamera(CameraUpdate.zoomOut());
+        //   },
+        //   child: Icon(Icons.zoom_out),
+        // ),
+    );
   }
 }
