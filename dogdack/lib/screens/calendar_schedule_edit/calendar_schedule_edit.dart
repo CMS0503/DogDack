@@ -35,6 +35,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
           userPlace: controller.place,
           userTime: int.parse(controller.time),
           userDistance: int.parse(controller.distance),
+          userDiary: controller.diary,
           createdAt: Timestamp.now(),
         ))
         .then((value) => print("document added"))
@@ -43,6 +44,9 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
 
   @override
   Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
+    double width = screenSize.width;
+    double height = screenSize.height;
     return GestureDetector(
       onTap: () {
         // 암기, 아무데나 눌러도 키보드 닫히게
@@ -62,9 +66,25 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
               const ScheduleEditBollean(),
               const ScheduleEditImage(),
               const ScheduleDiaryText(),
-              ElevatedButton(
+              SizedBox(
+                width: width * 0.8,
+                child: ElevatedButton(
                   onPressed: () => fbstoreWrite(),
-                  child: const Text("Text Upload")),
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    backgroundColor: const Color.fromARGB(255, 100, 92, 170),
+                  ),
+                  child: const Text(
+                    "완료",
+                    style: TextStyle(
+                      fontFamily: 'bmjua',
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+              ),
               //   ElevatedButton(
               //       onPressed: () => fbstoreWrite(), child: Text("Text Upload")),
             ],

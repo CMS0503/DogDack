@@ -15,7 +15,7 @@ class ScheduleEditText extends StatefulWidget {
 }
 
 class _ScheduleEditTextState extends State<ScheduleEditText> {
-  String place = "";
+  // String place = "";
 
   final controller = Get.put(InputController());
   final inputController = TextEditingController();

@@ -1,26 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../models/user_data.dart';
+// import '../models/user_data.dart';
 
 class ScreenA extends StatelessWidget {
   ScreenA({super.key, required this.tabIndex});
   final int tabIndex;
   final inputController = TextEditingController();
-  void fbstoreWrite() {
-    FirebaseFirestore.instance
-        .collection(FirebaseAuth.instance.currentUser!.email.toString())
-        .withConverter(
-          fromFirestore: (snapshot, options) =>
-              UserData.fromJson(snapshot.data()!),
-          toFirestore: (value, options) => value.toJson(),
-        )
-        .add(UserData(
-            userText: inputController.text, createdAt: Timestamp.now()))
-        .then((value) => print("document added"))
-        .catchError((error) => print("Fail to add doc $error"));
-  }
 
   @override
   Widget build(BuildContext context) {

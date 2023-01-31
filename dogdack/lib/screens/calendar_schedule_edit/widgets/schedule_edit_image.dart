@@ -144,103 +144,118 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
               builder: (context,
                   AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  return Column(
-                    // mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: ListView.separated(
-                          separatorBuilder: ((context, index) => const SizedBox(
-                                width: 20,
-                              )),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: snapshot.data?.length ?? 0,
-                          itemBuilder: (context, index) {
-                            final Map<String, dynamic> image =
-                                snapshot.data![index];
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  alignment: Alignment.center,
-                                  width: width * 0.8,
-                                  height: height * 0.3,
-                                  // decoration: const BoxDecoration(
-                                  //   boxShadow: [
-                                  //     BoxShadow(
-                                  //       color: Colors.grey,
-                                  //       blurRadius: 1,
-                                  //       offset: Offset(4, 8),
+                  // print(snapshot.data);
+                  if (snapshot.data!.isNotEmpty) {
+                    print(snapshot.hasData);
+                    print(snapshot.data!.length);
+                    return Column(
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: ListView.separated(
+                            separatorBuilder: ((context, index) =>
+                                const SizedBox(
+                                  width: 20,
+                                )),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: snapshot.data?.length ?? 0,
+                            itemBuilder: (context, index) {
+                              final Map<String, dynamic> image =
+                                  snapshot.data![index];
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.center,
+                                    width: width * 0.8,
+                                    height: height * 0.3,
+                                    // decoration: const BoxDecoration(
+                                    //   boxShadow: [
+                                    //     BoxShadow(
+                                    //       color: Colors.grey,
+                                    //       blurRadius: 1,
+                                    //       offset: Offset(4, 8),
+                                    //     ),
+                                    //   ],
+                                    // ),
+                                    // decoration: BoxDecoration(
+                                    // border: Border.all(
+                                    // width: 3,
+                                    // ),
+                                    // borderRadius: BorderRadius.circular(8.0),
+                                    // ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(
+                                        20,
+                                      ),
+                                      child: Image.network(
+                                        image['url'],
+                                        fit: BoxFit.cover,
+                                        // width: width,
+                                      ),
+                                    ),
+                                  ),
+                                  // Card(
+                                  //   margin: const EdgeInsets.symmetric(vertical: 10),
+                                  //   child: ListTile(
+                                  //     dense: false,
+                                  //     leading: Image.network(image['url']),
+                                  //     title: Text(image['uploaded_by']),
+                                  //     subtitle: Text(image['description']),
+                                  //     trailing: IconButton(
+                                  //       onPressed: () => _delete(image['path']),
+                                  //       icon: const Icon(
+                                  //         Icons.delete,
+                                  //         color: Colors.red,
+                                  //       ),
                                   //     ),
-                                  //   ],
+                                  //   ),
                                   // ),
-                                  // decoration: BoxDecoration(
-                                  // border: Border.all(
-                                  // width: 3,
-                                  // ),
-                                  // borderRadius: BorderRadius.circular(8.0),
-                                  // ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                      20,
-                                    ),
-                                    child: Image.network(
-                                      image['url'],
-                                      fit: BoxFit.cover,
-                                      // width: width,
-                                    ),
-                                  ),
-                                ),
-                                // Card(
-                                //   margin: const EdgeInsets.symmetric(vertical: 10),
-                                //   child: ListTile(
-                                //     dense: false,
-                                //     leading: Image.network(image['url']),
-                                //     title: Text(image['uploaded_by']),
-                                //     subtitle: Text(image['description']),
-                                //     trailing: IconButton(
-                                //       onPressed: () => _delete(image['path']),
-                                //       icon: const Icon(
-                                //         Icons.delete,
-                                //         color: Colors.red,
-                                //       ),
-                                //     ),
-                                //   ),
-                                // ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: SizedBox(
-                                    height: 30,
-                                    child: TextButton(
-                                      style: TextButton.styleFrom(
-                                        backgroundColor: const Color.fromARGB(
-                                            255, 228, 31, 31),
-                                      ),
-                                      child: Row(
-                                        children: const [
-                                          Text(
-                                            '사진 삭제',
-                                            style: TextStyle(
-                                              fontFamily: 'bmjua',
-                                              color: Colors.white,
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: SizedBox(
+                                      height: 30,
+                                      child: TextButton(
+                                        style: TextButton.styleFrom(
+                                          backgroundColor: const Color.fromARGB(
+                                              255, 228, 31, 31),
+                                        ),
+                                        child: Row(
+                                          children: const [
+                                            Text(
+                                              '사진 삭제',
+                                              style: TextStyle(
+                                                fontFamily: 'bmjua',
+                                                color: Colors.white,
+                                              ),
                                             ),
-                                          ),
-                                          // Icon(
-                                          //   Icons.delete_outlined,
-                                          //   color: Colors.white,
-                                          // ),
-                                        ],
+                                            // Icon(
+                                            //   Icons.delete_outlined,
+                                            //   color: Colors.white,
+                                            // ),
+                                          ],
+                                        ),
+                                        onPressed: () => _delete(image['path']),
                                       ),
-                                      onPressed: () => _delete(image['path']),
                                     ),
                                   ),
-                                ),
-                              ],
-                            );
-                          },
+                                ],
+                              );
+                            },
+                          ),
                         ),
+                      ],
+                    );
+                  } else {
+                    print(snapshot.hasData);
+                    return Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
                       ),
-                    ],
-                  );
+                      height: 3,
+                      child: const Text('hi'),
+                    );
+                  }
                 }
                 return const Center(
                   child: CircularProgressIndicator(),

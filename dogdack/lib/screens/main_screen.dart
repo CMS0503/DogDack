@@ -31,27 +31,47 @@ class _MainPageState extends State<MainPage> {
       body: Stack(children: [
         Offstage(
           offstage: _currentTabIndex != 0,
-          child: HomeNavigator(tabIndex: 0),
+          child: const HomeNavigator(tabIndex: 0),
         ),
         Offstage(
           offstage: _currentTabIndex != 1,
-          child: CalenderNavigator(tabIndex: 1),
+          child: const CalenderNavigator(tabIndex: 1),
         ),
         Offstage(
           offstage: _currentTabIndex != 2,
-          child: WalkNavigator(tabIndex: 2),
+          child: const WalkNavigator(tabIndex: 2),
         ),
         Offstage(
           offstage: _currentTabIndex != 3,
-          child: MyPageNavigator(tabIndex: 3),
+          child: const MyPageNavigator(tabIndex: 3),
         ),
       ]),
       bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined,), label: "홈",),
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_month_outlined,), label: "캘린더",),
-          BottomNavigationBarItem(icon: Icon(Icons.directions_walk,), label: "산책",),
-          BottomNavigationBarItem(icon: Icon(Icons.person,), label: "마이",),
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.home_outlined,
+            ),
+            label: "홈",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.calendar_month_outlined,
+            ),
+            label: "캘린더",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.directions_walk,
+            ),
+            label: "산책",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.person,
+            ),
+            label: "마이",
+          ),
         ],
         selectedItemColor: Colors.deepPurpleAccent,
         unselectedItemColor: Colors.grey,

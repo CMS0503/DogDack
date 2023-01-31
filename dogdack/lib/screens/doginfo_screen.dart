@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
-import '../models/user_data.dart';
+// import '../models/user_data.dart';
 
 class DogInfoPage extends StatelessWidget {
   DogInfoPage({super.key, required this.tabIndex});
@@ -11,45 +10,46 @@ class DogInfoPage extends StatelessWidget {
   final int tabIndex;
   final inputController = TextEditingController();
 
-  void fbstoreWrite() {
-    FirebaseFirestore.instance
-        .collection(FirebaseAuth.instance.currentUser!.email.toString())
-        .withConverter(
-          fromFirestore: (snapshot, options) =>
-              UserData.fromJson(snapshot.data()!),
-          toFirestore: (value, options) => value.toJson(),
-        )
-        .add(UserData(
-            userText: inputController.text, createdAt: Timestamp.now()))
-        .then((value) => print("document added"))
-        .catchError((error) => print("Fail to add doc ${error}"));
-  }
+  // void fbstoreWrite() {
+  //   FirebaseFirestore.instance
+  //       .collection(FirebaseAuth.instance.currentUser!.email.toString())
+  //       .withConverter(
+  //         fromFirestore: (snapshot, options) =>
+  //             UserData.fromJson(snapshot.data()!),
+  //         toFirestore: (value, options) => value.toJson(),
+  //       )
+  //       .add(UserData(
+  //           userText: inputController.text, createdAt: Timestamp.now()))
+  //       .then((value) => print("document added"))
+  //       .catchError((error) => print("Fail to add doc ${error}"));
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("ScreenA")),
+        appBar: AppBar(title: const Text("ScreenA")),
         body: SafeArea(
           child: Column(children: [
             Text("안녕! ${FirebaseAuth.instance.currentUser!.email}"),
             Text("from tab: ${tabIndex.toString()}"),
             TextButton(
-              child: Text("Go to ScreenB"),
+              child: const Text("Go to ScreenB"),
               onPressed: () {
                 Navigator.pushNamed(context, '/ScreenB');
               },
             ),
             TextButton(
                 onPressed: () => FirebaseAuth.instance.signOut(),
-                child: Text("로그아웃")),
+                child: const Text("로그아웃")),
             TextField(
               controller: inputController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   border: OutlineInputBorder(), label: Text("텍스트를 입력하세요.")),
             ),
-            ElevatedButton(
-                onPressed: () => fbstoreWrite(), child: Text("Text Upload")),
-            FirestoreRead(),
+            // ElevatedButton(
+            //     onPressed: () => fbstoreWrite(),
+            //     child: const Text("Text Upload")),
+            const FirestoreRead(),
           ]),
         ));
   }
@@ -63,11 +63,11 @@ class FirestoreRead extends StatefulWidget {
 }
 
 class _FirestoreReadState extends State<FirestoreRead> {
-  final userTextColRef = FirebaseFirestore.instance
-      .collection(FirebaseAuth.instance.currentUser!.email.toString())
-      .withConverter(
-          fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
-          toFirestore: (movie, _) => movie.toJson());
+  // final userTextColRef = FirebaseFirestore.instance
+  //     .collection(FirebaseAuth.instance.currentUser!.email.toString())
+  //     .withConverter(
+  //         fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
+  //         toFirestore: (movie, _) => movie.toJson());
 
   final CollectionReference _products =
       FirebaseFirestore.instance.collection('products');
@@ -107,20 +107,21 @@ class _FirestoreReadState extends State<FirestoreRead> {
                     height: 20,
                   ),
                   ElevatedButton(
-                      child: const Text('Update'),
-                      onPressed: () async {
-                        final String userText = _inputController.text;
-                        //final String createAtText = _createAtController.text;
+                    child: const Text('Update'),
+                    onPressed: () async {
+                      final String userText = _inputController.text;
+                      //final String createAtText = _createAtController.text;
 
-                        final String name = _nameController.text;
-                        final double? price =
-                            double.tryParse(_priceController.text);
+                      final String name = _nameController.text;
+                      final double? price =
+                          double.tryParse(_priceController.text);
 
-                        await userTextColRef
-                            .doc(documentSnapshot!.id)
-                            .update({"userText": userText});
-                        _inputController.text = '';
-                      }),
+                      //   await userTextColRef
+                      //       .doc(documentSnapshot!.id)
+                      //       .update({"userText": userText});
+                      //   _inputController.text = '';
+                    },
+                  ),
                 ]),
           );
         });
@@ -240,13 +241,13 @@ class _FirestoreReadState extends State<FirestoreRead> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: userTextColRef.orderBy('createdAt').snapshots(),
+      // stream: userTextColRef.orderBy('createdAt').snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
         if (!streamSnapshot.hasData) {
-          return Text("There is no data!");
+          return const Text("There is no data!");
         }
         if (streamSnapshot.hasError) {
-          return Text("Failed to read the snapshot");
+          return const Text("Failed to read the snapshot");
         }
 
         return ListView.builder(
@@ -261,7 +262,7 @@ class _FirestoreReadState extends State<FirestoreRead> {
                 //snapshot을 map으로 돌려버림!
                 children: streamSnapshot.data!.docs.map((document) {
                   return Column(children: [
-                    Divider(
+                    const Divider(
                       thickness: 2,
                     ),
                     ListTile(
@@ -274,11 +275,11 @@ class _FirestoreReadState extends State<FirestoreRead> {
                               onPressed: () {
                                 _update(documentSnapshot);
                               },
-                              icon: Icon(Icons.edit),
+                              icon: const Icon(Icons.edit),
                             ),
                             IconButton(
                               onPressed: () {},
-                              icon: Icon(Icons.delete),
+                              icon: const Icon(Icons.delete),
                             ),
                           ],
                         ),
