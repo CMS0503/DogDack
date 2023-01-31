@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 //screen
 import 'package:dogdack/screens/login_screen.dart';
+import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:dogdack/screens/main_screen.dart';
 
@@ -19,7 +20,7 @@ void main() async {
 
   initializeDateFormatting();
 
-  runApp(const MaterialApp(
+  runApp(const GetMaterialApp(
     title: 'Navigation',
     home: MyApp(),
   ));

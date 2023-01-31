@@ -12,42 +12,45 @@ class HomePage extends StatelessWidget {
     FirebaseFirestore.instance
         .collection(FirebaseAuth.instance.currentUser!.email.toString())
         .withConverter(
-      fromFirestore: (snapshot, options) =>
-          UserData.fromJson(snapshot.data()!),
-      toFirestore: (value, options) => value.toJson(),
-    )
+          fromFirestore: (snapshot, options) =>
+              UserData.fromJson(snapshot.data()!),
+          toFirestore: (value, options) => value.toJson(),
+        )
         .add(UserData(
-        userText: inputController.text, createdAt: Timestamp.now()))
+            userText: inputController.text, createdAt: Timestamp.now()))
         .then((value) => print("document added"))
-        .catchError((error) => print("Fail to add doc ${error}"));
+        .catchError((error) => print("Fail to add doc $error"));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Home Page")),
+        appBar: AppBar(title: const Text("Home Page")),
         body: SafeArea(
-          child: Column(children: [
-            Text("안녕하세요! ${FirebaseAuth.instance.currentUser!.email} 님!"),
-            Text("from tab: ${tabIndex.toString()}"),
-            TextButton(
-              child: Text("Go to ScreenB"),
-              onPressed: () {
-                Navigator.pushNamed(context, '/ScreenB');
-              },
-            ),
-            TextButton(
-                onPressed: () => FirebaseAuth.instance.signOut(),
-                child: Text("로그아웃")),
-            TextField(
-              controller: inputController,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(), label: Text("텍스트를 입력하세요.")),
-            ),
-            ElevatedButton(
-                onPressed: () => fbstoreWrite(), child: Text("Text Upload")),
-            FirestoreRead(),
-          ]),
+          child: SizedBox(
+            child: Column(children: [
+              Text("안녕하세요! ${FirebaseAuth.instance.currentUser!.email} 님!"),
+              Text("from tab: ${tabIndex.toString()}"),
+              TextButton(
+                child: const Text("Go to ScreenB"),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/ScreenB');
+                },
+              ),
+              TextButton(
+                  onPressed: () => FirebaseAuth.instance.signOut(),
+                  child: const Text("로그아웃")),
+              TextField(
+                controller: inputController,
+                decoration: const InputDecoration(
+                    border: OutlineInputBorder(), label: Text("텍스트를 입력하세요.")),
+              ),
+              ElevatedButton(
+                  onPressed: () => fbstoreWrite(),
+                  child: const Text("Text Upload")),
+              const FirestoreRead(),
+            ]),
+          ),
         ));
   }
 }
@@ -63,8 +66,8 @@ class _FirestoreReadState extends State<FirestoreRead> {
   final userTextColRef = FirebaseFirestore.instance
       .collection(FirebaseAuth.instance.currentUser!.email.toString())
       .withConverter(
-      fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
-      toFirestore: (movie, _) => movie.toJson());
+          fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
+          toFirestore: (movie, _) => movie.toJson());
 
   @override
   Widget build(BuildContext context) {
@@ -72,10 +75,10 @@ class _FirestoreReadState extends State<FirestoreRead> {
       stream: userTextColRef.orderBy('createdAt').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Text("There is no data!");
+          return const Text("There is no data!");
         }
         if (snapshot.hasError) {
-          return Text("Failed to read the snapshot");
+          return const Text("Failed to read the snapshot");
         }
 
         return Expanded(
@@ -85,7 +88,7 @@ class _FirestoreReadState extends State<FirestoreRead> {
             //snapshot을 map으로 돌려버림!
             children: snapshot.data!.docs.map((document) {
               return Column(children: [
-                Divider(
+                const Divider(
                   thickness: 2,
                 ),
                 ListTile(title: Text(document.data().userText!))

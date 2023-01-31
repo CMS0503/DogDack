@@ -8,9 +8,9 @@ class UserData {
 
   UserData.fromJson(Map<String, Object?> json)
       : this(
-    userText: json['userText']! as String,
-    createdAt: json['createdAt']! as Timestamp,
-  );
+          userText: json['userText']! as String,
+          createdAt: json['createdAt']! as Timestamp,
+        );
   Map<String, Object?> toJson() {
     return {
       'userText': userText,
