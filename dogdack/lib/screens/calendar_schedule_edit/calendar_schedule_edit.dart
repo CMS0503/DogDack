@@ -10,9 +10,11 @@ import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_edit_wal
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class CalendarScheduleEdit extends StatefulWidget {
-  const CalendarScheduleEdit({super.key});
+  final DateTime day;
+  const CalendarScheduleEdit({super.key, required this.day});
 
   @override
   State<CalendarScheduleEdit> createState() => _CalendarScheduleEditState();
@@ -23,29 +25,44 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
   final controller = Get.put(InputController());
 
   void fbstoreWrite() {
-    // print(controller.place);
-    // print(controller.place);
     FirebaseFirestore.instance
-        .collection(FirebaseAuth.instance.currentUser!.email.toString())
+        .collection(
+          'Users',
+        )
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Calendar')
+        .doc(DateFormat('yyMMdd').format(controller.date))
         .withConverter(
           fromFirestore: (snapshot, options) =>
               CalenderData.fromJson(snapshot.data()!),
           toFirestore: (value, options) => value.toJson(),
         )
-        .add(CalenderData(
+        .set(CalenderData(
           diary: controller.diary,
+          bath: controller.bath,
+          beauty: controller.beauty,
         ))
         .then((value) => print("document added"))
         .catchError((error) => print("Fail to add doc $error"));
 
     FirebaseFirestore.instance
-        .collection(FirebaseAuth.instance.currentUser!.email.toString())
+        .collection(
+          'Users',
+        )
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Walk')
+        .doc(DateFormat('yyMMdd').format(controller.date))
+        .withConverter(
+          fromFirestore: (snapshot, options) =>
+              CalenderData.fromJson(snapshot.data()!),
+          toFirestore: (value, options) => value.toJson(),
+        )
         .withConverter(
           fromFirestore: (snapshot, options) =>
               WalkData.fromJson(snapshot.data()!),
           toFirestore: (value, options) => value.toJson(),
         )
-        .add(WalkData(
+        .set(WalkData(
           place: controller.place,
           time: int.parse(controller.time),
           distance: int.parse(controller.distance),
@@ -58,7 +75,6 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
-    double height = screenSize.height;
     return GestureDetector(
       onTap: () {
         // 암기, 아무데나 눌러도 키보드 닫히게
@@ -102,8 +118,6 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                   ),
                 ),
               ),
-              //   ElevatedButton(
-              //       onPressed: () => fbstoreWrite(), child: Text("Text Upload")),
             ],
           ),
         ),

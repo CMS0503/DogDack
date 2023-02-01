@@ -1,11 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Calendar extends StatelessWidget {
   // 선택한 날짜
   final DateTime? selectedDay;
   // 보여줄 달 화면 날짜
   final DateTime focusedDay;
+
+  CollectionReference<Map<String, dynamic>> collectionReference =
+      FirebaseFirestore.instance
+          .collection(
+            'Users',
+          )
+          .doc('${FirebaseAuth.instance.currentUser!.email}')
+          .collection('Walk');
+
+  getData() async {
+    var result = await collectionReference.get();
+    print(result);
+    print('다녀감');
+  }
+
   // 테스트용 이벤트 데이터
   Map<DateTime, List<Event>> events = {
     DateTime.utc(2023, 1, 25): [
@@ -27,8 +44,8 @@ class Calendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    getData();
     Size screenSize = MediaQuery.of(context).size;
-    double width = screenSize.width;
     double height = screenSize.height;
     // 날짜별 박스 데코
 

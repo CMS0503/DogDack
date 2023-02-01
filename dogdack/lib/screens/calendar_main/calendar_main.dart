@@ -26,10 +26,6 @@ class _CalendarPageState extends State<CalendarMain> {
 
   @override
   Widget build(BuildContext context) {
-    Size screenSize = MediaQuery.of(context).size;
-    double width = screenSize.width;
-    double height = screenSize.height;
-
     return Scaffold(
       appBar: AppBar(title: const Text("Calender page")),
       floatingActionButton: renderFloatingActionButton(),
@@ -62,7 +58,8 @@ class _CalendarPageState extends State<CalendarMain> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const CalendarScheduleEdit()),
+                builder: (context) =>
+                    CalendarScheduleEdit(day: DateTime.now())),
           );
         },
         // focusColor: Colors.black,

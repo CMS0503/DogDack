@@ -1,4 +1,6 @@
+import 'package:dogdack/screens/calendar_schedule_edit/controller/input_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class DatePicker extends StatefulWidget {
@@ -10,14 +12,11 @@ class DatePicker extends StatefulWidget {
 
 class _DatePickerState extends State<DatePicker> {
   // 오늘 날짜를 기본으로 저장
+  final controller = Get.put(InputController());
   DateTime date = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
-    Size screenSize = MediaQuery.of(context).size;
-    double width = screenSize.width;
-    double height = screenSize.height;
-
     return Column(
       children: [
         // appbar로 교체해야함
@@ -77,6 +76,7 @@ class _DatePickerState extends State<DatePicker> {
                               );
                               if (newDate == null) return;
                               setState(() => date = newDate);
+                              controller.date = date;
                             },
                           ),
                           Row(

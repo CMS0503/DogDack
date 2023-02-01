@@ -9,14 +9,13 @@ class CalenderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: LogoWidget(),
+        appBar: const LogoWidget(),
         body: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text('Calender detail page'),
-            ],
-          )
-        );
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: const [
+            Text('Calender detail page'),
+          ],
+        ));
   }
 }
