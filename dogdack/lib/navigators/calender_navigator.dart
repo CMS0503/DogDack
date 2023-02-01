@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:dogdack/screens/calender_screen.dart';
+import 'package:dogdack/screens/calendar/calender_screen.dart';
 
 //screen
-import '../screens/b_screen.dart';
+import '../screens/home/b_screen.dart';
 
 class CalenderNavigator extends StatelessWidget {
   const CalenderNavigator({super.key, required this.tabIndex});
