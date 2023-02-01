@@ -95,29 +95,13 @@ class Calendar extends StatelessWidget {
         // 오늘 날짜 표시 X
         isTodayHighlighted: false,
 
-        // defaultDecoration: defaultBoxDeco,
-        // tablePadding: EdgeInsets.all(20),
-
         // 마커
         // 마커가 칸 안넘어가게
         canMarkersOverflow: false,
-        // markerSize: 3,
-        // markerSizeScale: 30,
-        // markersAutoAligned: true,
-        // 마커 기준점 조정
-        // markersAnchor: 0.5,
-        // 마커 위치 조정
-        // markersAlignment: Alignment.center,
-        // 한줄에 보여지는 마커 갯수
-        // markersMaxCount: 3,
         markerDecoration: BoxDecoration(
           color: Colors.red,
           shape: BoxShape.circle,
         ),
-        // markersOffset: PositionedOffset(
-        //   top: 50,
-        //   start: 50,
-        // ),
         // 테이블 경계선 넣기
         tableBorder: TableBorder(
           verticalInside: BorderSide(
@@ -145,22 +129,7 @@ class Calendar extends StatelessWidget {
         ),
       ),
       eventLoader: _getEventForDay,
-      // calendarBuilders: CalendarBuilders(
-      //   defaultBuilder: (context, dateTime, _) {
-      //     return CalendarCellBuilder(context, dateTime, _, 0);
-      //   },
-      // ),
       calendarBuilders: CalendarBuilders(
-          // singleMarkerBuilder: (context, date, event) {
-          //   return Container(
-          //     decoration: const BoxDecoration(
-          //       shape: BoxShape.circle,
-          //       color: Colors.red,
-          //     ),
-          //     width: 20,
-          //     height: 20,
-          //   );
-          // },
 
           // 마커 디자인
           markerBuilder: (context, day, events) {
@@ -168,7 +137,6 @@ class Calendar extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(top: 30),
           child: ListView.builder(
-            // shrinkWrap: true,
             scrollDirection: Axis.vertical,
             itemCount: events.length,
             itemBuilder: (context, index) {
@@ -190,14 +158,6 @@ class Calendar extends StatelessWidget {
             },
           ),
         );
-        //  Container(
-        //     width: 24,
-        //     height: 24,
-        //     alignment: Alignment.center,
-        //     decoration: const BoxDecoration(
-        //       color: Colors.red,
-        //     ),
-        //   )
       }),
     );
   }
@@ -208,33 +168,3 @@ class Event {
 
   Event(this.title);
 }
-
-// Widget CalendarCellBuilder(
-//     BuildContext context, DateTime dateTime, _, int type) {
-//   return Container(
-//     padding: const EdgeInsets.all(3),
-//     child: Container(
-//       padding: const EdgeInsets.only(top: 3, bottom: 3),
-//       width: MediaQuery.of(context).size.width,
-//       decoration: BoxDecoration(
-//         border: Border.all(color: Colors.red, width: 3),
-//         borderRadius: const BorderRadius.all(Radius.circular(7)),
-//         color: Colors.blue,
-//       ),
-//       child: Column(
-//         children: [
-//           Text(
-//             date,
-//             style: const TextStyle(fontSize: 17),
-//           ),
-//           const Expanded(child: Text("")),
-//           Text(
-//             moneyString,
-//             textAlign: TextAlign.center,
-//             style: TextStyle(fontSize: 12, color: nowIndexColor[900]),
-//           ),
-//         ],
-//       ),
-//     ),
-//   );
-// }

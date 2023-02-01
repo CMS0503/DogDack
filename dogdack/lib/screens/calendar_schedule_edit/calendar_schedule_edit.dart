@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dogdack/models/calender_data.dart';
 import 'package:dogdack/models/walk_data.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/controller/input_controller.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_date_picker.dart';
@@ -28,15 +29,26 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
         .collection(FirebaseAuth.instance.currentUser!.email.toString())
         .withConverter(
           fromFirestore: (snapshot, options) =>
+              CalenderData.fromJson(snapshot.data()!),
+          toFirestore: (value, options) => value.toJson(),
+        )
+        .add(CalenderData(
+          diary: controller.diary,
+        ))
+        .then((value) => print("document added"))
+        .catchError((error) => print("Fail to add doc $error"));
+
+    FirebaseFirestore.instance
+        .collection(FirebaseAuth.instance.currentUser!.email.toString())
+        .withConverter(
+          fromFirestore: (snapshot, options) =>
               WalkData.fromJson(snapshot.data()!),
           toFirestore: (value, options) => value.toJson(),
         )
         .add(WalkData(
-          userPlace: controller.place,
-          userTime: int.parse(controller.time),
-          userDistance: int.parse(controller.distance),
-          userDiary: controller.diary,
-          createdAt: Timestamp.now(),
+          place: controller.place,
+          time: int.parse(controller.time),
+          distance: int.parse(controller.distance),
         ))
         .then((value) => print("document added"))
         .catchError((error) => print("Fail to add doc $error"));
@@ -69,7 +81,12 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
               SizedBox(
                 width: width * 0.8,
                 child: ElevatedButton(
-                  onPressed: () => fbstoreWrite(),
+                  onPressed: () {
+                    fbstoreWrite();
+                    Navigator.pop(context);
+                    controller.bath = true;
+                    controller.beauty = true;
+                  },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

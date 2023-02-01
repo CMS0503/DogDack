@@ -5,6 +5,8 @@ class InputController extends GetxController {
   String time = '';
   String distance = '';
   String diary = '';
+  bool bath = true;
+  bool beauty = true;
   // void input() {
   //   update();
   // }

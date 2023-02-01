@@ -1,4 +1,5 @@
 import 'package:dogdack/screens/calendar_main/widgets/calendar.dart';
+import 'package:dogdack/screens/calendar_main/widgets/calendar_mark.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/calendar_schedule_edit.dart';
 import 'package:flutter/material.dart';
 
@@ -38,6 +39,7 @@ class _CalendarPageState extends State<CalendarMain> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Calendar(focusedDay: focusedDay),
+            const CalendarMark(),
           ],
         ),
       ),

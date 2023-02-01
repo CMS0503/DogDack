@@ -50,11 +50,6 @@ class ScheduleDiaryText extends StatelessWidget {
                     color: Colors.grey,
                   ),
                 ),
-                // border: OutlineInputBorder(
-                //   borderRadius: BorderRadius.circular(
-                //     20.0,
-                //   ),
-                // ),
                 labelStyle: const TextStyle(
                   // color: Colors.red,
                   fontSize: 22,

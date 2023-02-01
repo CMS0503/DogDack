@@ -1,35 +1,39 @@
-import "package:cloud_firestore/cloud_firestore.dart";
-
 class WalkData {
   WalkData({
-    this.userPlace,
-    this.userTime,
-    this.userDistance,
-    this.userDiary,
-    this.createdAt,
+    this.name,
+    // this.startTime,
+    // this.endTime,
+    this.time,
+    this.place,
+    this.distance,
   });
 
-  final String? userPlace;
-  final int? userTime;
-  final int? userDistance;
-  final String? userDiary;
-  final Timestamp? createdAt;
+  final String? name; // 반려견 이름
+  //좌표 리스트
+  // final Timestamp? startTime; // 산책 시작 시간
+  // final Timestamp? endTime; // 산책 종료 시간
+  final int? time;
+  final String? place; // 대표 산책 장소
+  final int? distance; // 이동 거리
 
-  WalkData.fromJson(Map<String, Object?> json)
+  WalkData.fromJson(Map<String, dynamic> json)
       : this(
-          userPlace: json['userPlace']! as String,
-          userDiary: json['userDiary']! as String,
-          userTime: json['userTime']! as int,
-          userDistance: json['userDistance']! as int,
-          createdAt: json['createdAt']! as Timestamp,
+          name: json['name']! as String,
+          // startTime: json['startTime']! as Timestamp,
+          // endTime: json['endTime']! as Timestamp,
+          time: json['time'] as int,
+          place: json['place']! as String,
+          distance: json['distance']! as int,
         );
-  Map<String, Object?> toJson() {
+
+  Map<String, dynamic> toJson() {
     return {
-      'userPlace': userPlace,
-      'userTime': userTime,
-      'userDistance': userDistance,
-      'userDiary': userDiary,
-      'createdAt': createdAt,
+      'name': name,
+      // 'startTime': startTime,
+      // 'endTime': endTime,
+      'time': time,
+      'place': place,
+      'distance': distance,
     };
   }
 }
