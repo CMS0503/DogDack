@@ -2,8 +2,10 @@ import 'package:dogdack/screens/login/login_after_screen.dart';
 import 'package:flutter/material.dart';
 
 //screen
+
 import 'package:dogdack/screens/login/login_screen.dart';
-import 'package:dogdack/screens/main_screen.dart';
+import 'package:get/get.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 //firebase
 import 'firebase_options.dart';
@@ -17,7 +19,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(MaterialApp(
+  initializeDateFormatting();
+
+  runApp(const GetMaterialApp(
     title: 'Navigation',
     home: MyApp(),
   ));

@@ -31,23 +31,23 @@ class _MainPageState extends State<MainPage> {
       body: Stack(children: [
         Offstage(
           offstage: _currentTabIndex != 0,
-          child: HomeNavigator(tabIndex: 0),
+          child: const HomeNavigator(tabIndex: 0),
         ),
         Offstage(
           offstage: _currentTabIndex != 1,
-          child: CalenderNavigator(tabIndex: 1),
+          child: const CalenderNavigator(tabIndex: 1),
         ),
         Offstage(
           offstage: _currentTabIndex != 2,
-          child: WalkNavigator(tabIndex: 2),
+          child: const WalkNavigator(tabIndex: 2),
         ),
         Offstage(
           offstage: _currentTabIndex != 3,
-          child: MyPageNavigator(tabIndex: 3),
+          child: const MyPageNavigator(tabIndex: 3),
         ),
       ]),
       bottomNavigationBar: BottomNavigationBar(
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: '홈',
@@ -65,12 +65,11 @@ class _MainPageState extends State<MainPage> {
             label: '마이',
           ),
         ],
-
-        selectedItemColor: Color.fromARGB(255, 100, 92, 170),
+        selectedItemColor: const Color.fromARGB(255, 100, 92, 170),
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
-        unselectedLabelStyle: TextStyle(fontFamily: 'bmjua'),
-        selectedLabelStyle: TextStyle(fontFamily: 'bmjua'),
+        unselectedLabelStyle: const TextStyle(fontFamily: 'bmjua'),
+        selectedLabelStyle: const TextStyle(fontFamily: 'bmjua'),
         elevation: 0,
         unselectedItemColor: Colors.grey,
         currentIndex: _currentTabIndex,

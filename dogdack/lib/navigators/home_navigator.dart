@@ -10,11 +10,11 @@ class HomeNavigator extends StatelessWidget {
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
       "/": (context) => HomePage(
-        tabIndex: tabIndex,
-      ),
+            tabIndex: tabIndex,
+          ),
       "/ScreenB": (context) => ScreenB(
-        tabIndex: tabIndex,
-      ),
+            tabIndex: tabIndex,
+          ),
     };
   }
 
