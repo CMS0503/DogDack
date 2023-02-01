@@ -24,42 +24,44 @@ class WalkPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
-
           children: [
             SizedBox(height: 10),
             Status(),
             SizedBox(height: 10),
             Container(
-              height: screenHeight * 0.5,
+              height: screenHeight * 0.65,
               width: screenWidth,
-              child: ClipRRect(
+              child:
+              ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Map(),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Column(
-                  children: [
-                    Text(
-                      '00:00:00',
-                      style: Theme.of(context).textTheme.bodyText1,
-                    )
-                  ],
-                ),
-                Text('play'),
-                Column(),
-              ],
-            ),
-            SizedBox(height: 10,),
-            TextButton(
-              child: Text("Select Bluetooth"),
-              onPressed: () {
-                Navigator.pushNamed(context, '/Ble');
-              },
-            ),
+
+
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   crossAxisAlignment: CrossAxisAlignment.center,
+            //   children: [
+            //     Column(
+            //       children: [
+            //         Text(
+            //           '00:00:00',
+            //           style: Theme.of(context).textTheme.bodyText1,
+            //         )
+            //       ],
+            //     ),
+            //     Text('play'),
+            //     Column(),
+            //   ],
+            // ),
+            // SizedBox(height: 10,),
+            // TextButton(
+            //   child: Text("Select Bluetooth"),
+            //   onPressed: () {
+            //     Navigator.pushNamed(context, '/Ble');
+            //   },
+            // ),
           ],
         ),
       ),
