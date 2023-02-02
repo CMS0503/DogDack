@@ -71,6 +71,8 @@ class _MapState extends State<Map> {
           onTap: (cordinate) {
             _controller.animateCamera(CameraUpdate.newLatLng(cordinate));
             addMarker(cordinate);
+
+
             FirebaseFirestore.instance.collection('${FirebaseAuth.instance.currentUser!.email}_position')
                 .withConverter(fromFirestore: (snapshot, options) => PosData.fromJson(snapshot.data()!), toFirestore: (value, options) => value.toJson(),)
                 .add(PosData(
@@ -153,7 +155,8 @@ class _MapState extends State<Map> {
                       ),
                     ),
                   ],
-                )),
+                )
+            ),
           ),
         )
       ]),
@@ -164,6 +167,7 @@ class _MapState extends State<Map> {
             alignment: Alignment(
                 Alignment.topLeft.x + 0.13, Alignment.topLeft.y + 0.1),
             child: FloatingActionButton(
+              heroTag: "1",
               onPressed: () {
                 markers.clear();
                 latlng.clear();
@@ -188,6 +192,7 @@ class _MapState extends State<Map> {
                 Alignment.topLeft.x + 0.13, Alignment.topLeft.y + 0.4
             ),
             child: FloatingActionButton(
+              heroTag: "2",
               onPressed: () async {
                 total = 0;
                 await for (var snapshot in FirebaseFirestore.instance.collection('${FirebaseAuth.instance.currentUser!.email}_position_test').orderBy('Timestamp', descending: true).snapshots()) {
@@ -227,6 +232,7 @@ class _MapState extends State<Map> {
                 Alignment.topLeft.x + 0.13, Alignment.topLeft.y + 0.7
             ),
             child: FloatingActionButton(
+              heroTag: "3",
               onPressed: () => setState(() {
                 FirebaseFirestore.instance.collection('${FirebaseAuth.instance.currentUser!.email}_walk')
                     .withConverter(fromFirestore: (snapshot, options) => WalkData.fromJson(snapshot.data()!), toFirestore: (value, options) => value.toJson(),)
