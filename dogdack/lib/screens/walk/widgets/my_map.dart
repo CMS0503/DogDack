@@ -230,7 +230,7 @@ class _MapState extends State<Map> {
                 FirebaseFirestore.instance.collection('${FirebaseAuth.instance.currentUser!.email}_walk')
                     .withConverter(fromFirestore: (snapshot, options) => WalkData.fromJson(snapshot.data()!), toFirestore: (value, options) => value.toJson(),)
                     .add(WalkData(
-                      distance: total.toString(),
+                      distance: total?.toInt(),
                       time: (_timeCount ~/ 100).toString(),
                     ));
               }),
