@@ -6,14 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controller/walk_controller.dart';
 
-class Ble extends StatefulWidget {
-  const Ble({Key? key}) : super(key: key);
+class BleList extends StatefulWidget {
+  const BleList({Key? key}) : super(key: key);
 
   @override
-  State<Ble> createState() => _BleState();
+  State<BleList> createState() => _BleState();
 }
 
-class _BleState extends State<Ble> {
+class _BleState extends State<BleList> {
   FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
   List<ScanResult> scanResultList = [];
   int scanMode = 2;
@@ -134,7 +134,7 @@ class _BleState extends State<Ble> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('BLE'),
+        title: Text('BleList'),
       ),
       body: Center(
         /* 장치 리스트 출력 */

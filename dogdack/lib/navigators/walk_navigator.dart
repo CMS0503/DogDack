@@ -1,20 +1,25 @@
+import 'package:dogdack/screens/walk/widgets/data.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 //screen
 import 'package:dogdack/screens/walk/walk_screen.dart';
-import 'package:dogdack/screens/walk/widgets/ble_screen.dart';
+import 'package:dogdack/screens/walk/widgets/ble_list.dart';
+import '../screens/walk/controller/walk_controller.dart';
 
 class WalkNavigator extends StatelessWidget {
-  const WalkNavigator({super.key, required this.tabIndex});
+  WalkNavigator({super.key, required this.tabIndex});
 
   final int tabIndex;
+  final walkController = Get.put(WalkController());
 
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
       "/": (context) => WalkPage(
             tabIndex: tabIndex,
           ),
-      "/Ble": (context) => Ble(),
+      "/Ble": (context) => BleList(),
+      "/Data": (context) => DeviceScreen(device: walkController.device!)
     };
   }
 
