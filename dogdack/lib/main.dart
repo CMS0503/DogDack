@@ -18,7 +18,22 @@ void main() async {
   );
 
   runApp(MaterialApp(
-    title: 'Navigation',
+    title: 'dogdack',
+    theme: ThemeData(
+      primaryColor: Color.fromARGB(255, 100, 92, 170),
+      fontFamily: 'bmjua',
+      //textButtonTheme:,
+      textTheme: const TextTheme(
+        bodyText1: TextStyle(
+          fontSize: 16,
+          color: Color.fromARGB(255, 100, 92, 170),
+        ),
+        bodyText2: TextStyle(
+          fontSize: 16,
+          color: Colors.black,
+        )
+      ),
+    ),
     home: MyApp(),
   ));
 }

@@ -71,6 +71,17 @@ class HomePage extends StatelessWidget {
   }
 }
 
+class NewWidget extends StatelessWidget {
+  const NewWidget({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text("안녕하세요! ${FirebaseAuth.instance.currentUser!.email} 님!", style: Theme.of(context).textTheme.bodyText1,);
+  }
+}
+
 class FirestoreRead extends StatefulWidget {
   const FirestoreRead({super.key});
 

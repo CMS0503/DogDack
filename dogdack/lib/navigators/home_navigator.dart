@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dogdack/screens/home/home_screen_test.dart';
+import 'package:dogdack/screens/home/home_screen.dart';
 
 //screen
 import '../screens/home/b_screen.dart';
