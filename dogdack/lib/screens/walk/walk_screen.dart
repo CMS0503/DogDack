@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import './widgets/my_map.dart';
 import './widgets/status.dart';
-import './widgets/ble_screen.dart';
+import 'package:get/get.dart';
+import './controller/walk_controller.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 class WalkPage extends StatelessWidget {
   WalkPage({super.key, required this.tabIndex});
 
+  final walkController = Get.put(WalkController());
   final int tabIndex;
 
   // This widget is the root of your application.
@@ -24,44 +27,60 @@ class WalkPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(height: 10),
             Status(),
             SizedBox(height: 10),
             Container(
-              height: screenHeight * 0.65,
+              height: screenHeight * 0.5,
               width: screenWidth,
-              child:
-              ClipRRect(
+              child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Map(),
               ),
             ),
-
-
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   crossAxisAlignment: CrossAxisAlignment.center,
-            //   children: [
-            //     Column(
-            //       children: [
-            //         Text(
-            //           '00:00:00',
-            //           style: Theme.of(context).textTheme.bodyText1,
-            //         )
-            //       ],
-            //     ),
-            //     Text('play'),
-            //     Column(),
-            //   ],
-            // ),
-            // SizedBox(height: 10,),
-            // TextButton(
-            //   child: Text("Select Bluetooth"),
-            //   onPressed: () {
-            //     Navigator.pushNamed(context, '/Ble');
-            //   },
-            // ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Column(
+                  children: [
+                    Text(
+                      '00:00:00',
+                      style: Theme.of(context).textTheme.bodyText1,
+                    )
+                  ],
+                ),
+                Text('play'),
+                Column(),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                TextButton(
+                  child: Text("Select Bluetooth"),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/Ble');
+                  },
+                ),
+                TextButton(
+                  onPressed: () {
+                    walkController.device?.disconnect();
+                  },
+                  child: Text('Disconnect'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/Data');
+                  },
+                  child: Text('Data'),
+                ),
+              ],
+            ),
           ],
         ),
       ),

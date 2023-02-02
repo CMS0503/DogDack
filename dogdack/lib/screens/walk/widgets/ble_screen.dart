@@ -1,5 +1,10 @@
+import 'dart:io';
+
+import 'package:dogdack/screens/walk/widgets/data.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../controller/walk_controller.dart';
 
 class Ble extends StatefulWidget {
   const Ble({Key? key}) : super(key: key);
@@ -11,19 +16,27 @@ class Ble extends StatefulWidget {
 class _BleState extends State<Ble> {
   FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
   List<ScanResult> scanResultList = [];
-
   int scanMode = 2;
-  bool isScanning = false;
+  bool _isScanning = false;
+
+  final walkController = Get.put(WalkController());
 
   @override
   void initState() {
     super.initState();
   }
 
-  void toggleState() {
-    isScanning = !isScanning;
+  void initBle() {
+    flutterBlue.isScanning.listen((isScanning) {
+      _isScanning = isScanning;
+      setState(() {});
+    });
+  }
 
-    if (isScanning) {
+  void toggleState() {
+    _isScanning = !_isScanning;
+
+    if (_isScanning) {
       flutterBlue.startScan(
           scanMode: ScanMode(scanMode), allowDuplicates: true);
       scan();
@@ -36,7 +49,7 @@ class _BleState extends State<Ble> {
   }
 
   void scan() async {
-    if (isScanning) {
+    if (_isScanning) {
       flutterBlue.scanResults.listen((results) {
         scanResultList = results;
         if (mounted) {
@@ -84,20 +97,37 @@ class _BleState extends State<Ble> {
   }
 
   /* 장치 아이템을 탭 했을때 호출 되는 함수 */
-  void onTap(ScanResult r) {
+  void onTap(ScanResult r) async {
     // 단순히 이름만 출력
     print('This device is ${r.device.name}');
+
+    flutterBlue.stopScan();
+    try {
+      // await r.device.connect();
+      // List<BluetoothService> services = await r.device.discoverServices();
+      walkController.connectBle(r.device);
+
+      Navigator.pop(context);
+    } catch (e) {
+      print('Can\'t not connect ${r.device.name}. error: $e');
+      throw (e);
+    }
+    // r.device.di
   }
 
   /* 장치 아이템 위젯 */
   Widget listItem(ScanResult r) {
-    return ListTile(
-      onTap: () => onTap(r),
-      leading: leading(r),
-      title: deviceName(r),
-      subtitle: deviceMacAddress(r),
-      trailing: deviceSignal(r),
-    );
+    if (r.device.name != 'N/A') {
+      return ListTile(
+        onTap: () => onTap(r),
+        leading: leading(r),
+        title: deviceName(r),
+        subtitle: deviceMacAddress(r),
+        trailing: deviceSignal(r),
+      );
+    } else {
+      return Container();
+    }
   }
 
   @override
@@ -122,7 +152,7 @@ class _BleState extends State<Ble> {
       floatingActionButton: FloatingActionButton(
         onPressed: toggleState,
         // 스캔 중이라면 stop 아이콘을, 정지상태라면 search 아이콘으로 표시
-        child: Icon(isScanning ? Icons.stop : Icons.search),
+        child: Icon(_isScanning ? Icons.stop : Icons.search),
       ),
     );
   }
