@@ -24,41 +24,42 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  final walkRef = FirebaseFirestore.instance
-      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
+  final calendarRef = FirebaseFirestore.instance
+      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Calendar')
       .withConverter(
           fromFirestore: (snapshot, _) => WalkData.fromJson(snapshot.data()!),
-          toFirestore: (walkData, _) => walkData.toJson());
+          toFirestore: (calendarData, _) => calendarData.toJson());
 
+  Future<Map<String, List<Object>>> getData() async {
+    var result = await calendarRef.get();
+
+    for (int i = 0; i < result.docs.length; i++) {
+      events[result.docs[i].reference.id] = [
+        result.docs[i]['diary'],
+        result.docs[i]['bath'],
+        result.docs[i]['beauty'],
+      ];
+    }
+    return events;
+  }
+
+  final Map<String, List<Object>> events = {'': []};
   @override
   Widget build(BuildContext context) {
-    final Map<String, List<Object>> events = {'': []};
-    Future<Map<String, List<Object>>> getData() async {
-      var result = await walkRef.get();
-
-      for (int i = 0; i < result.docs.length; i++) {
-        events[result.docs[i].reference.id] = [
-          result.docs[i]['place'],
-          result.docs[i]['distance'],
-          result.docs[i]['time'],
-        ];
-      }
-      print('asd $events');
-
-      return events;
-    }
-
-    // Future<Map<String, List<Object>>> event = {'': []};
     getData();
-    print('123 $events');
+
     Size screenSize = MediaQuery.of(context).size;
     double height = screenSize.height;
-
+    print(events);
     List<dynamic> _getEventForDay(DateTime day) {
-      // print(events);
-      // print(events[DateFormat('yyMMdd').format(day)]);
       return events[DateFormat('yyMMdd').format(day)] ?? [];
     }
+
+    var colors = [
+      const Color.fromARGB(255, 100, 92, 170),
+      const Color.fromARGB(255, 191, 172, 224),
+      const Color.fromARGB(255, 235, 199, 232),
+    ];
     // 날짜별 박스 데코
 
     return TableCalendar(
@@ -164,29 +165,76 @@ class _CalendarState extends State<Calendar> {
           markerBuilder: (context, day, events) {
         if (events.isEmpty) return const SizedBox();
         return Padding(
-          padding: const EdgeInsets.only(top: 30),
-          child: ListView.builder(
-            scrollDirection: Axis.vertical,
-            itemCount: events.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(
-                  left: 3.0,
-                  right: 3.0,
-                  bottom: 3.0,
+          padding: const EdgeInsets.only(top: 20),
+          child: ListView(children: <Widget>[
+            SizedBox(
+              height: 20,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
                 ),
-                child: Container(
-                  height: 15,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    color: const Color.fromARGB(255, 100, 92, 170),
-                    borderRadius: BorderRadius.circular(3),
-                  ),
+                elevation: 0,
+                child: ListTile(
+                  tileColor: events[0] == true
+                      ? colors[0]
+                      : const Color.fromARGB(255, 255, 255, 255),
                 ),
-              );
-            },
-          ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                elevation: 0,
+                child: ListTile(
+                  tileColor: events[1] == true
+                      ? colors[1]
+                      : const Color.fromARGB(255, 255, 255, 255),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                elevation: 0,
+                child: ListTile(
+                  tileColor: events[2] == true
+                      ? colors[2]
+                      : const Color.fromARGB(255, 255, 255, 255),
+                ),
+              ),
+            ),
+          ]),
         );
+        // return Padding(
+        //   padding: const EdgeInsets.only(top: 30),
+        //   child: ListView.builder(
+        //     scrollDirection: Axis.vertical,
+        //     itemCount: events.length,
+        //     itemBuilder: (context, index) {
+        //       return Padding(
+        //         padding: const EdgeInsets.only(
+        //           left: 3.0,
+        //           right: 3.0,
+        //           bottom: 3.0,
+        //         ),
+        //         child: Container(
+        //           height: 15,
+        //           decoration: BoxDecoration(
+        //             shape: BoxShape.rectangle,
+        //             color: colors[index],
+        //             borderRadius: BorderRadius.circular(3),
+        //           ),
+        //         ),
+        //       );
+        //     },
+        //   ),
+        // );
       }),
     );
   }
