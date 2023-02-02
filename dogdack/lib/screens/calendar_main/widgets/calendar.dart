@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dogdack/models/walk_data.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,38 +10,59 @@ class Calendar extends StatelessWidget {
   // 보여줄 달 화면 날짜
   final DateTime focusedDay;
 
-  CollectionReference<Map<String, dynamic>> collectionReference =
-      FirebaseFirestore.instance
-          .collection(
-            'Users',
-          )
-          .doc('${FirebaseAuth.instance.currentUser!.email}')
-          .collection('Walk');
+  final walkRef = FirebaseFirestore.instance
+      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
+      .withConverter(
+          fromFirestore: (snapshot, _) => WalkData.fromJson(snapshot.data()!),
+          toFirestore: (walkData, _) => walkData.toJson());
+
+  final Map<String, List<dynamic>> events = {'': []};
 
   getData() async {
-    var result = await collectionReference.get();
-    print(result);
-    print('다녀감');
+    var result = await walkRef.get();
+
+    for (int i = 0; i < result.docs.length; i++) {
+      events[result.docs[i].reference.id] = [
+        result.docs[i]['place'],
+        result.docs[i]['distance'],
+        result.docs[i]['time'],
+      ];
+    }
   }
 
+  // List<dynamic> _getEventForDay(DateTime day) {
+  //   return events[day] ?? [];
+  // }
+  // Map<DateTime, List<Event>> mapEvents(QuerySnapshot result) {
+
+  // }
+
   // 테스트용 이벤트 데이터
-  Map<DateTime, List<Event>> events = {
-    DateTime.utc(2023, 1, 25): [
-      Event('title'),
-      Event('title2'),
-      Event('title3')
-    ],
-  };
+  // Map<DateTime, List<Event>> mapEvents(QuerySnapshot result) {
+  //   Map<DateTime, List<Event>> ret = result.docs;
+
+  //   var ret = result.docs;
+
+  //   return ret;
+  // }
+
+  // Map<DateTime, List<Event>> mapEvents(QuerySnapshot result) {
+  //   var events = result.docs
+  //       .map((document) => Event.fromSnapshot(document))
+  //       .toList;
+  //   return events.groupBy((event) => event.date.toLocal().startOfDay());
+  // }
 
   Calendar({
     super.key,
     this.selectedDay,
+    // this.events,
     required this.focusedDay,
   });
 
-  List<Event> _getEventForDay(DateTime day) {
-    return events[day] ?? [];
-  }
+  // List<Event> _getEventForDay(DateTime day) {
+  //   return mapEvents[day] ?? [];
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +167,7 @@ class Calendar extends StatelessWidget {
           fontWeight: FontWeight.w400,
         ),
       ),
-      eventLoader: _getEventForDay,
+      // eventLoader: events[],
       calendarBuilders: CalendarBuilders(
 
           // 마커 디자인
@@ -181,7 +203,6 @@ class Calendar extends StatelessWidget {
 }
 
 class Event {
-  String title;
-
-  Event(this.title);
+  bool events;
+  Event(this.events);
 }

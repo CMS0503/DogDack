@@ -90,7 +90,6 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
     double height = screenSize.height;
 
     return Column(
-      // mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Padding(
           padding: const EdgeInsets.all(5.0),
@@ -144,12 +143,10 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
               builder: (context,
                   AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  // print(snapshot.data);
                   if (snapshot.data!.isNotEmpty) {
                     print(snapshot.hasData);
                     print(snapshot.data!.length);
                     return Column(
-                      // mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
                           child: ListView.separated(

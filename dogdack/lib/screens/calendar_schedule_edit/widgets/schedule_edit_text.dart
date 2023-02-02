@@ -60,7 +60,6 @@ class _ScheduleEditTextState extends State<ScheduleEditText> {
             width: width * 0.65,
             child: TextField(
               onChanged: (value) {
-                // controller.input();
                 if (widget.name == '장소') {
                   controller.place = value;
                 } else if (widget.name == '시간') {
@@ -70,7 +69,6 @@ class _ScheduleEditTextState extends State<ScheduleEditText> {
                 }
               },
               controller: inputController,
-              // keyboardType: TextInputType.multiline,
               cursorColor: Colors.grey,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
