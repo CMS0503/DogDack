@@ -21,7 +21,7 @@ class _MapState extends State<Map> {
   late GoogleMapController _controller;
 
   // 이 값은 지도가 시작될 때 첫 번째 위치입니다.
-  final CameraPosition _initialPosition = CameraPosition(
+  final CameraPosition _initialPosition = const CameraPosition(
     target: LatLng(37.5012428, 127.0395859),
     zoom: 17,
   );
@@ -136,7 +136,8 @@ class _MapState extends State<Map> {
                         Alignment.center.y,
                       ),
                       child: Text(
-                        (_timeCount ~/ 100).toString() + ' 초',
+                        '${_timeCount ~/ 360000} : ${_timeCount ~/ 6000} : ${(_timeCount % 6000) ~/ 100}',
+                        // (_timeCount ~/ 100).toString() + ' 초',
                         style: TextStyle(fontSize: 30),
                       ),
                     ),
@@ -244,12 +245,12 @@ class _MapState extends State<Map> {
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _timer.cancel();
     super.dispose();
   }
 
   void _start() {
-    _timer = Timer.periodic(Duration(milliseconds: 10), (timer) {
+    _timer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
       setState(() {
         _timeCount++;
       });
@@ -257,7 +258,7 @@ class _MapState extends State<Map> {
   }
 
   void _pause() {
-    _timer?.cancel();
+    _timer.cancel();
   }
 
   void _clickPlayButton() {
@@ -275,10 +276,10 @@ class OutlineCircleButton extends StatelessWidget {
   OutlineCircleButton({
     Key? key,
     this.onTap,
-    this.borderSize: 0.5,
-    this.radius: 20.0,
-    this.borderColor: Colors.purple,
-    this.foregroundColor: Colors.white,
+    this.borderSize = 0.5,
+    this.radius = 20.0,
+    this.borderColor = Colors.purple,
+    this.foregroundColor = Colors.white,
     this.child,
   }) : super(key: key);
 
