@@ -1,81 +1,71 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/models/walk_data.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class Calendar extends StatelessWidget {
+class Calendar extends StatefulWidget {
+  static late Map<String, List> events;
   // 선택한 날짜
   final DateTime? selectedDay;
   // 보여줄 달 화면 날짜
   final DateTime focusedDay;
 
-  final walkRef = FirebaseFirestore.instance
-      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
-      .withConverter(
-          fromFirestore: (snapshot, _) => WalkData.fromJson(snapshot.data()!),
-          toFirestore: (walkData, _) => walkData.toJson());
-
-  final Map<String, List<dynamic>> events = {'': []};
-
-  getData() async {
-    var result = await walkRef.get();
-
-    for (int i = 0; i < result.docs.length; i++) {
-      events[result.docs[i].reference.id] = [
-        result.docs[i]['place'],
-        result.docs[i]['distance'],
-        result.docs[i]['time'],
-      ];
-    }
-  }
-
-  // List<dynamic> _getEventForDay(DateTime day) {
-  //   return events[day] ?? [];
-  // }
-  // Map<DateTime, List<Event>> mapEvents(QuerySnapshot result) {
-
-  // }
-
-  // 테스트용 이벤트 데이터
-  // Map<DateTime, List<Event>> mapEvents(QuerySnapshot result) {
-  //   Map<DateTime, List<Event>> ret = result.docs;
-
-  //   var ret = result.docs;
-
-  //   return ret;
-  // }
-
-  // Map<DateTime, List<Event>> mapEvents(QuerySnapshot result) {
-  //   var events = result.docs
-  //       .map((document) => Event.fromSnapshot(document))
-  //       .toList;
-  //   return events.groupBy((event) => event.date.toLocal().startOfDay());
-  // }
-
-  Calendar({
+  const Calendar({
     super.key,
     this.selectedDay,
     // this.events,
     required this.focusedDay,
   });
 
-  // List<Event> _getEventForDay(DateTime day) {
-  //   return mapEvents[day] ?? [];
-  // }
+  @override
+  State<Calendar> createState() => _CalendarState();
+}
+
+class _CalendarState extends State<Calendar> {
+  final walkRef = FirebaseFirestore.instance
+      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
+      .withConverter(
+          fromFirestore: (snapshot, _) => WalkData.fromJson(snapshot.data()!),
+          toFirestore: (walkData, _) => walkData.toJson());
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, List<Object>> events = {'': []};
+    Future<Map<String, List<Object>>> getData() async {
+      var result = await walkRef.get();
+
+      for (int i = 0; i < result.docs.length; i++) {
+        events[result.docs[i].reference.id] = [
+          result.docs[i]['place'],
+          result.docs[i]['distance'],
+          result.docs[i]['time'],
+        ];
+      }
+      print('asd $events');
+
+      return events;
+    }
+
+    // Future<Map<String, List<Object>>> event = {'': []};
     getData();
+    print('123 $events');
     Size screenSize = MediaQuery.of(context).size;
     double height = screenSize.height;
+
+    List<dynamic> _getEventForDay(DateTime day) {
+      // print(events);
+      // print(events[DateFormat('yyMMdd').format(day)]);
+      return events[DateFormat('yyMMdd').format(day)] ?? [];
+    }
     // 날짜별 박스 데코
 
     return TableCalendar(
       // 날짜 언어 설정
       locale: 'ko_KR',
       // 보여줄 날짜
-      focusedDay: focusedDay,
+      focusedDay: widget.focusedDay,
       // 달력 처음 날짜
       firstDay: DateTime(2000),
       // 달력 마지막 날짜
@@ -167,7 +157,7 @@ class Calendar extends StatelessWidget {
           fontWeight: FontWeight.w400,
         ),
       ),
-      // eventLoader: events[],
+      eventLoader: _getEventForDay,
       calendarBuilders: CalendarBuilders(
 
           // 마커 디자인
@@ -202,7 +192,7 @@ class Calendar extends StatelessWidget {
   }
 }
 
-class Event {
-  bool events;
-  Event(this.events);
-}
+// class Event {
+//   Object events;
+//   Event(this.events);
+// }

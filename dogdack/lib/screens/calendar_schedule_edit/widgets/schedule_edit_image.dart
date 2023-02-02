@@ -144,8 +144,6 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
                   AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   if (snapshot.data!.isNotEmpty) {
-                    print(snapshot.hasData);
-                    print(snapshot.data!.length);
                     return Column(
                       children: [
                         Expanded(
