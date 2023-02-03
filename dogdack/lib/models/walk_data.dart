@@ -31,8 +31,8 @@ class WalkData {
   Map<String, dynamic> toJson() {
     return {
       'name': name,
-      // 'startTime': startTime,
-      // 'endTime': endTime,
+      'startTime': startTime,
+      'endTime': endTime,
       'time': time,
       'place': place,
       'distance': distance,

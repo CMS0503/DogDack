@@ -6,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:latlong2/latlong.dart' as d;
-
 import '../../../models/position_data.dart';
 import '../../../models/walk_data.dart';
 
@@ -32,7 +31,7 @@ class _MapState extends State<Map> {
   final Set<Polyline> _polylines = {};
   List<LatLng> latlng = [];
 
-  final d.Distance distance = d.Distance();
+  final d.Distance distance = const d.Distance();
   late LatLng temp;
   double? total = 0;
 
@@ -47,7 +46,8 @@ class _MapState extends State<Map> {
     int id = Random().nextInt(100);
 
     setState(() {
-      markers.add(Marker(position: cordinate, markerId: MarkerId(id.toString())));
+      markers
+          .add(Marker(position: cordinate, markerId: MarkerId(id.toString())));
     });
   }
 
@@ -72,9 +72,14 @@ class _MapState extends State<Map> {
             _controller.animateCamera(CameraUpdate.newLatLng(cordinate));
             addMarker(cordinate);
 
-
-            FirebaseFirestore.instance.collection('${FirebaseAuth.instance.currentUser!.email}_position')
-                .withConverter(fromFirestore: (snapshot, options) => PosData.fromJson(snapshot.data()!), toFirestore: (value, options) => value.toJson(),)
+            FirebaseFirestore.instance
+                .collection(
+                    '${FirebaseAuth.instance.currentUser!.email}_position')
+                .withConverter(
+                  fromFirestore: (snapshot, options) =>
+                      PosData.fromJson(snapshot.data()!),
+                  toFirestore: (value, options) => value.toJson(),
+                )
                 .add(PosData(
                   timestamp: Timestamp.now(),
                   lat: cordinate.latitude.toString(),
@@ -125,12 +130,14 @@ class _MapState extends State<Map> {
                         Alignment.center.y,
                       ),
                       child: OutlineCircleButton(
-                          child: _isRunning ? Icon(Icons.pause, color: Colors.purple) : Icon(Icons.play_arrow, color: Colors.purple),
                           radius: 50.0,
                           borderSize: 5.0,
                           onTap: () async {
                             _clickPlayButton();
-                          }),
+                          },
+                          child: _isRunning
+                              ? Icon(Icons.pause, color: Colors.purple)
+                              : Icon(Icons.play_arrow, color: Colors.purple)),
                     ),
                     Align(
                       alignment: Alignment(
@@ -140,7 +147,7 @@ class _MapState extends State<Map> {
                       child: Text(
                         '${_timeCount ~/ 360000} : ${_timeCount ~/ 6000} : ${(_timeCount % 6000) ~/ 100}',
                         // (_timeCount ~/ 100).toString() + ' 초',
-                        style: TextStyle(fontSize: 30),
+                        style: const TextStyle(fontSize: 30),
                       ),
                     ),
                     Align(
@@ -149,14 +156,13 @@ class _MapState extends State<Map> {
                         Alignment.center.y,
                       ),
                       child: Text(
-                        total.toString() + ' m',
+                        '$total m',
                         // 'data',
-                        style: TextStyle(fontSize: 30),
+                        style: const TextStyle(fontSize: 30),
                       ),
                     ),
                   ],
-                )
-            ),
+                )),
           ),
         )
       ]),
@@ -171,14 +177,21 @@ class _MapState extends State<Map> {
               onPressed: () {
                 markers.clear();
                 latlng.clear();
-                FirebaseFirestore.instance.collection('${FirebaseAuth.instance.currentUser!.email}_position').get().then((snapshot) {
+                FirebaseFirestore.instance
+                    .collection(
+                        '${FirebaseAuth.instance.currentUser!.email}_position')
+                    .get()
+                    .then((snapshot) {
                   for (DocumentSnapshot ds in snapshot.docs) {
                     ds.reference.delete();
                   }
                 });
                 // _controller.animateCamera(CameraUpdate.zoomOut());
                 setState(() {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => WalkPage(tabIndex: 2)));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => WalkPage(tabIndex: 2)));
                 });
               },
               tooltip: '초기화',
@@ -189,28 +202,35 @@ class _MapState extends State<Map> {
           // DB 데이터로 좌표 찍기
           Align(
             alignment: Alignment(
-                Alignment.topLeft.x + 0.13, Alignment.topLeft.y + 0.4
-            ),
+                Alignment.topLeft.x + 0.13, Alignment.topLeft.y + 0.4),
             child: FloatingActionButton(
               heroTag: "2",
               onPressed: () async {
                 total = 0;
-                await for (var snapshot in FirebaseFirestore.instance.collection('${FirebaseAuth.instance.currentUser!.email}_position_test').orderBy('Timestamp', descending: true).snapshots()) {
+                await for (var snapshot in FirebaseFirestore.instance
+                    .collection(
+                        '${FirebaseAuth.instance.currentUser!.email}_position_test')
+                    .orderBy('Timestamp', descending: true)
+                    .snapshots()) {
                   for (var messege in snapshot.docs) {
-                    addMarker(LatLng(double.parse(messege.data()['lat']), double.parse(messege.data()['lng'])));
+                    addMarker(LatLng(double.parse(messege.data()['lat']),
+                        double.parse(messege.data()['lng'])));
 
                     if (markers.length == 1) {
-                      temp = LatLng(double.parse(messege.data()['lat']), double.parse(messege.data()['lng']));
+                      temp = LatLng(double.parse(messege.data()['lat']),
+                          double.parse(messege.data()['lng']));
                     } else {
                       total = total! +
                           distance(
                               d.LatLng(temp.latitude, temp.longitude),
-                              d.LatLng(double.parse(messege.data()['lat']), double.parse(messege.data()['lng']))
-                          );
-                      temp = LatLng(double.parse(messege.data()['lat']), double.parse(messege.data()['lng']));
+                              d.LatLng(double.parse(messege.data()['lat']),
+                                  double.parse(messege.data()['lng'])));
+                      temp = LatLng(double.parse(messege.data()['lat']),
+                          double.parse(messege.data()['lng']));
                     }
 
-                    latlng.add(LatLng(double.parse(messege.data()['lat']), double.parse(messege.data()['lng'])));
+                    latlng.add(LatLng(double.parse(messege.data()['lat']),
+                        double.parse(messege.data()['lng'])));
 
                     _polylines.add(Polyline(
                       polylineId: PolylineId(messege.data().toString()),
@@ -222,26 +242,31 @@ class _MapState extends State<Map> {
                 }
               },
               tooltip: '좌표 찍기',
-              child: Icon(Icons.access_time_filled),
+              child: const Icon(Icons.access_time_filled),
             ),
           ),
 
           // 이동거리, 시간 DB 저장 버튼
           Align(
             alignment: Alignment(
-                Alignment.topLeft.x + 0.13, Alignment.topLeft.y + 0.7
-            ),
+                Alignment.topLeft.x + 0.13, Alignment.topLeft.y + 0.7),
             child: FloatingActionButton(
               heroTag: "3",
               onPressed: () => setState(() {
-                FirebaseFirestore.instance.collection('${FirebaseAuth.instance.currentUser!.email}_walk')
-                    .withConverter(fromFirestore: (snapshot, options) => WalkData.fromJson(snapshot.data()!), toFirestore: (value, options) => value.toJson(),)
+                FirebaseFirestore.instance
+                    .collection(
+                        '${FirebaseAuth.instance.currentUser!.email}_walk')
+                    .withConverter(
+                      fromFirestore: (snapshot, options) =>
+                          WalkData.fromJson(snapshot.data()!),
+                      toFirestore: (value, options) => value.toJson(),
+                    )
                     .add(WalkData(
                       distance: total?.toInt(),
                       time: (_timeCount ~/ 100).toString(),
                     ));
               }),
-              child: Icon(Icons.add),
+              child: const Icon(Icons.add),
             ),
           ),
         ],
@@ -279,7 +304,7 @@ class _MapState extends State<Map> {
 }
 
 class OutlineCircleButton extends StatelessWidget {
-  OutlineCircleButton({
+  const OutlineCircleButton({
     Key? key,
     this.onTap,
     this.borderSize = 0.5,
@@ -310,7 +335,7 @@ class OutlineCircleButton extends StatelessWidget {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-              child: child ?? SizedBox(),
+              child: child ?? const SizedBox(),
               onTap: () async {
                 if (onTap != null) {
                   onTap();

@@ -68,7 +68,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
         )
         .set(WalkData(
           place: controller.place,
-          time: int.parse(controller.time),
+          time: controller.time,
           distance: int.parse(controller.distance),
         ))
         .then((value) => print("document added"))
