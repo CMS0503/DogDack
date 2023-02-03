@@ -1,17 +1,16 @@
+import 'package:dogdack/screens/calendar_main/calendar_main.dart';
 import 'package:flutter/material.dart';
-import 'package:dogdack/screens/calendar/calender_screen.dart';
 
 //screen
-import '../screens/home/b_screen.dart';
 
 class CalenderNavigator extends StatelessWidget {
   const CalenderNavigator({super.key, required this.tabIndex});
   final int tabIndex;
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      "/": (context) => CalenderPage(
-        tabIndex: tabIndex,
-      ),
+      "/": (context) => CalendarMain(
+            tabIndex: tabIndex,
+          ),
     };
   }
 

@@ -2,8 +2,10 @@ import 'package:dogdack/screens/login/login_after_screen.dart';
 import 'package:flutter/material.dart';
 
 //screen
+
 import 'package:dogdack/screens/login/login_screen.dart';
-import 'package:dogdack/screens/main_screen.dart';
+import 'package:get/get.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 //firebase
 import 'firebase_options.dart';
@@ -17,24 +19,25 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  initializeDateFormatting();
+
   runApp(MaterialApp(
     title: 'dogdack',
     theme: ThemeData(
-      primaryColor: Color.fromARGB(255, 100, 92, 170),
+      primaryColor: const Color.fromARGB(255, 100, 92, 170),
       fontFamily: 'bmjua',
       //textButtonTheme:,
       textTheme: const TextTheme(
-        bodyText1: TextStyle(
-          fontSize: 16,
-          color: Color.fromARGB(255, 100, 92, 170),
-        ),
-        bodyText2: TextStyle(
-          fontSize: 16,
-          color: Colors.black,
-        )
-      ),
+          bodyText1: TextStyle(
+            fontSize: 16,
+            color: Color.fromARGB(255, 100, 92, 170),
+          ),
+          bodyText2: TextStyle(
+            fontSize: 16,
+            color: Colors.black,
+          )),
     ),
-    home: MyApp(),
+    home: const MyApp(),
   ));
 }
 
@@ -48,7 +51,7 @@ class MyApp extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return LoginAfterPage();
+            return const LoginAfterPage();
           } else {
             return const LoginPage();
           }
