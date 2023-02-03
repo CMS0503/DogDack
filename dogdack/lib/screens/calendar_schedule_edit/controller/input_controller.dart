@@ -8,6 +8,7 @@ class InputController extends GetxController {
   String diary = '';
   bool bath = true;
   bool beauty = true;
+  List<String> imageUrl = [];
   // void input() {
   //   update();
   // }

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/models/calender_data.dart';
 import 'package:dogdack/models/walk_data.dart';
+import 'package:dogdack/screens/calendar_main/calendar_main.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/controller/input_controller.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_date_picker.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_diary_text.dart';
@@ -37,11 +38,14 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
               CalenderData.fromJson(snapshot.data()!),
           toFirestore: (value, options) => value.toJson(),
         )
-        .set(CalenderData(
-          diary: controller.diary,
-          bath: controller.bath,
-          beauty: controller.beauty,
-        ))
+        .set(
+          CalenderData(
+            diary: controller.diary,
+            bath: controller.bath,
+            beauty: controller.beauty,
+            imageUrl: controller.imageUrl,
+          ),
+        )
         .then((value) => print("document added"))
         .catchError((error) => print("Fail to add doc $error"));
 
@@ -99,9 +103,17 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                 child: ElevatedButton(
                   onPressed: () {
                     fbstoreWrite();
-                    Navigator.pop(context);
+                    // Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const CalendarMain(tabIndex: 1)));
+                    setState(() {});
                     controller.bath = true;
                     controller.beauty = true;
+                    controller.date = DateTime.now();
+                    controller.imageUrl = [];
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(

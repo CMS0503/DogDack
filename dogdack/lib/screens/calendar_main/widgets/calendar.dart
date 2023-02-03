@@ -40,17 +40,21 @@ class _CalendarState extends State<Calendar> {
         result.docs[i]['beauty'],
       ];
     }
+    setState(() {});
     return events;
   }
 
   final Map<String, List<Object>> events = {'': []};
+
+  @override
+  void initState() {
+    getData();
+  }
+
   @override
   Widget build(BuildContext context) {
-    getData();
-
     Size screenSize = MediaQuery.of(context).size;
     double height = screenSize.height;
-    print(events);
     List<dynamic> _getEventForDay(DateTime day) {
       return events[DateFormat('yyMMdd').format(day)] ?? [];
     }
@@ -68,9 +72,9 @@ class _CalendarState extends State<Calendar> {
       // 보여줄 날짜
       focusedDay: widget.focusedDay,
       // 달력 처음 날짜
-      firstDay: DateTime(2000),
+      firstDay: DateTime(1900),
       // 달력 마지막 날짜
-      lastDay: DateTime(3000),
+      lastDay: DateTime(2100),
       // 헤더
       headerStyle: const HeaderStyle(
         // 주별, 월별 포맷 제거

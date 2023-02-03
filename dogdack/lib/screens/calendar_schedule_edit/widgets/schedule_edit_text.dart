@@ -71,6 +71,7 @@ class _ScheduleEditTextState extends State<ScheduleEditText> {
               controller: inputController,
               cursorColor: Colors.grey,
               decoration: InputDecoration(
+                floatingLabelBehavior: FloatingLabelBehavior.never,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(
                     20.0,

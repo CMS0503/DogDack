@@ -220,12 +220,12 @@ class _BolleanBtnState extends State<BolleanBtn> {
                   });
                 },
                 style: OutlinedButton.styleFrom(
-                  backgroundColor: buttonsState
-                      ? const Color.fromARGB(255, 100, 92, 170)
-                      : Colors.white,
-                  side: const BorderSide(
-                    color: Colors.black,
-                    width: 1,
+                  backgroundColor: Colors.white,
+                  side: BorderSide(
+                    color: buttonsState
+                        ? const Color.fromARGB(255, 100, 92, 170)
+                        : const Color.fromARGB(255, 229, 229, 230),
+                    width: 3,
                   ),
                 ),
                 child: const Text(
@@ -255,12 +255,12 @@ class _BolleanBtnState extends State<BolleanBtn> {
                   });
                 },
                 style: OutlinedButton.styleFrom(
-                  backgroundColor: !buttonsState
-                      ? const Color.fromRGBO(100, 92, 170, 1)
-                      : Colors.white,
-                  side: const BorderSide(
-                    color: Colors.black,
-                    width: 1,
+                  backgroundColor: Colors.white,
+                  side: BorderSide(
+                    color: !buttonsState
+                        ? const Color.fromARGB(255, 100, 92, 170)
+                        : const Color.fromARGB(255, 229, 229, 230),
+                    width: 3,
                   ),
                 ),
                 child: const Text(
