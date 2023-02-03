@@ -1,8 +1,13 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dogdack/screens/calendar_schedule_edit/controller/input_controller.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 
 class ScheduleEditImage extends StatefulWidget {
@@ -15,6 +20,7 @@ class ScheduleEditImage extends StatefulWidget {
 class _ScheduleEditImageState extends State<ScheduleEditImage> {
   // firebase storage 불러오기
   FirebaseStorage storage = FirebaseStorage.instance;
+  final controller = Get.put(InputController());
 
   // 이미지 업로드 (카메라 / 갤러리)
   Future<void> _upload(String inputSource) async {
@@ -22,22 +28,37 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
     XFile? pickedImage;
     try {
       pickedImage = await picker.pickImage(
-          source: inputSource == 'camera'
-              ? ImageSource.camera
-              : ImageSource.gallery,
-          maxWidth: 1920);
+        source:
+            inputSource == 'camera' ? ImageSource.camera : ImageSource.gallery,
+        maxWidth: 1920,
+        // imageQuality: 50,
+      );
 
-      final String fileName = path.basename(pickedImage!.path);
+      if (pickedImage == null) {
+        return;
+      }
+
+      final String fileName = path.basename(pickedImage.path);
+      print('pickedImage.path : ${pickedImage.path}');
       File imageFile = File(pickedImage.path);
 
       try {
         // Uploading the selected image with some custom meta data
-        await storage.ref(fileName).putFile(
-            imageFile,
-            SettableMetadata(customMetadata: {
-              'uploaded_by': 'A bad guy',
-              'description': 'Some description...'
-            }));
+        final result = await storage.ref(fileName).putFile(
+              imageFile,
+              SettableMetadata(
+                customMetadata: {
+                  'uploaded_by': 'A bad guy',
+                  'description': 'Some description...'
+                },
+              ),
+            );
+        result.ref.getDownloadURL().then((value) {
+          controller.imageUrl.add(value.toString());
+          // print('이미지 url');
+          // print(controller.imageUrl);
+        });
+
         // Refresh the UI
         setState(() {});
       } on FirebaseException catch (error) {
@@ -60,16 +81,28 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
     final ListResult result = await storage.ref().list();
     final List<Reference> allFiles = result.items;
 
+    final snapshot = await FirebaseFirestore.instance
+        .collection(
+          'Users',
+        )
+        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .collection('Calendar')
+        .doc(DateFormat('yyMMdd').format(controller.date))
+        .get();
+
     await Future.forEach<Reference>(allFiles, (file) async {
       final String fileUrl = await file.getDownloadURL();
       final FullMetadata fileMeta = await file.getMetadata();
-      files.add({
-        "url": fileUrl,
-        "path": file.fullPath,
-        "uploaded_by": fileMeta.customMetadata?['uploaded_by'] ?? 'Nobody',
-        "description":
-            fileMeta.customMetadata?['description'] ?? 'No description'
-      });
+      print('$fileUrl, ${file.fullPath}');
+      if (controller.imageUrl.contains(fileUrl)) {
+        files.add({
+          "url": fileUrl,
+          "path": file.fullPath,
+          "uploaded_by": fileMeta.customMetadata?['uploaded_by'] ?? 'Nobody',
+          "description":
+              fileMeta.customMetadata?['description'] ?? 'No description'
+        });
+      }
     });
 
     return files;
@@ -77,8 +110,10 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
 
   // Delete the selected image
   // This function is called when a trash icon is pressed
-  Future<void> _delete(String ref) async {
+  Future<void> _delete(String ref, String url) async {
     await storage.ref(ref).delete();
+    controller.imageUrl.remove(url);
+    print('controller.imageUrl ${controller.imageUrl}');
     // Rebuild the UI
     setState(() {});
   }
@@ -90,7 +125,6 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
     double height = screenSize.height;
 
     return Column(
-      // mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Padding(
           padding: const EdgeInsets.all(5.0),
@@ -144,12 +178,8 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
               builder: (context,
                   AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  // print(snapshot.data);
                   if (snapshot.data!.isNotEmpty) {
-                    print(snapshot.hasData);
-                    print(snapshot.data!.length);
                     return Column(
-                      // mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
                           child: ListView.separated(
@@ -169,21 +199,6 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
                                     alignment: Alignment.center,
                                     width: width * 0.8,
                                     height: height * 0.3,
-                                    // decoration: const BoxDecoration(
-                                    //   boxShadow: [
-                                    //     BoxShadow(
-                                    //       color: Colors.grey,
-                                    //       blurRadius: 1,
-                                    //       offset: Offset(4, 8),
-                                    //     ),
-                                    //   ],
-                                    // ),
-                                    // decoration: BoxDecoration(
-                                    // border: Border.all(
-                                    // width: 3,
-                                    // ),
-                                    // borderRadius: BorderRadius.circular(8.0),
-                                    // ),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(
                                         20,
@@ -195,22 +210,6 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
                                       ),
                                     ),
                                   ),
-                                  // Card(
-                                  //   margin: const EdgeInsets.symmetric(vertical: 10),
-                                  //   child: ListTile(
-                                  //     dense: false,
-                                  //     leading: Image.network(image['url']),
-                                  //     title: Text(image['uploaded_by']),
-                                  //     subtitle: Text(image['description']),
-                                  //     trailing: IconButton(
-                                  //       onPressed: () => _delete(image['path']),
-                                  //       icon: const Icon(
-                                  //         Icons.delete,
-                                  //         color: Colors.red,
-                                  //       ),
-                                  //     ),
-                                  //   ),
-                                  // ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: SizedBox(
@@ -235,7 +234,10 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
                                             // ),
                                           ],
                                         ),
-                                        onPressed: () => _delete(image['path']),
+                                        onPressed: () => _delete(
+                                          image['path'],
+                                          image['url'],
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -250,10 +252,16 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
                     print(snapshot.hasData);
                     return Container(
                       decoration: const BoxDecoration(
-                        color: Colors.red,
+                        color: Color.fromARGB(255, 229, 229, 230),
+                        border: Border(),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(20.0),
+                        ),
                       ),
-                      height: 3,
-                      child: const Text('hi'),
+                      height: height * 0.3,
+                      width: width * 0.8,
+                      child: const Icon(Icons.add_photo_alternate_outlined,
+                          size: 80, color: Color.fromARGB(255, 147, 147, 147)),
                     );
                   }
                 }

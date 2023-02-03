@@ -1,3 +1,4 @@
+import 'package:dogdack/commons/logo_widget.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar_mark.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/calendar_schedule_edit.dart';
@@ -27,11 +28,12 @@ class _CalendarPageState extends State<CalendarMain> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    double width = screenSize.width;
     double height = screenSize.height;
-
     return Scaffold(
-      appBar: AppBar(title: const Text("Calender page")),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(height * 0.09),
+        child: const LogoWidget(),
+      ),
       floatingActionButton: renderFloatingActionButton(),
       body: SafeArea(
         child: Column(
@@ -62,7 +64,8 @@ class _CalendarPageState extends State<CalendarMain> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const CalendarScheduleEdit()),
+                builder: (context) =>
+                    CalendarScheduleEdit(day: DateTime.now())),
           );
         },
         // focusColor: Colors.black,

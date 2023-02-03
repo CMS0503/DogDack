@@ -1,46 +1,80 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dogdack/models/walk_data.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class Calendar extends StatelessWidget {
+class Calendar extends StatefulWidget {
+  static late Map<String, List> events;
   // 선택한 날짜
   final DateTime? selectedDay;
   // 보여줄 달 화면 날짜
   final DateTime focusedDay;
-  // 테스트용 이벤트 데이터
-  Map<DateTime, List<Event>> events = {
-    DateTime.utc(2023, 1, 25): [
-      Event('title'),
-      Event('title2'),
-      Event('title3')
-    ],
-  };
 
-  Calendar({
+  const Calendar({
     super.key,
     this.selectedDay,
+    // this.events,
     required this.focusedDay,
   });
 
-  List<Event> _getEventForDay(DateTime day) {
-    return events[day] ?? [];
+  @override
+  State<Calendar> createState() => _CalendarState();
+}
+
+class _CalendarState extends State<Calendar> {
+  final calendarRef = FirebaseFirestore.instance
+      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Calendar')
+      .withConverter(
+          fromFirestore: (snapshot, _) => WalkData.fromJson(snapshot.data()!),
+          toFirestore: (calendarData, _) => calendarData.toJson());
+
+  Future<Map<String, List<Object>>> getData() async {
+    var result = await calendarRef.get();
+
+    for (int i = 0; i < result.docs.length; i++) {
+      events[result.docs[i].reference.id] = [
+        result.docs[i]['diary'],
+        result.docs[i]['bath'],
+        result.docs[i]['beauty'],
+      ];
+    }
+    setState(() {});
+    return events;
+  }
+
+  final Map<String, List<Object>> events = {'': []};
+
+  @override
+  void initState() {
+    getData();
   }
 
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    double width = screenSize.width;
     double height = screenSize.height;
+    List<dynamic> _getEventForDay(DateTime day) {
+      return events[DateFormat('yyMMdd').format(day)] ?? [];
+    }
+
+    var colors = [
+      const Color.fromARGB(255, 100, 92, 170),
+      const Color.fromARGB(255, 191, 172, 224),
+      const Color.fromARGB(255, 235, 199, 232),
+    ];
     // 날짜별 박스 데코
 
     return TableCalendar(
       // 날짜 언어 설정
       locale: 'ko_KR',
       // 보여줄 날짜
-      focusedDay: focusedDay,
+      focusedDay: widget.focusedDay,
       // 달력 처음 날짜
-      firstDay: DateTime(2000),
+      firstDay: DateTime(1900),
       // 달력 마지막 날짜
-      lastDay: DateTime(3000),
+      lastDay: DateTime(2100),
       // 헤더
       headerStyle: const HeaderStyle(
         // 주별, 월별 포맷 제거
@@ -135,36 +169,82 @@ class Calendar extends StatelessWidget {
           markerBuilder: (context, day, events) {
         if (events.isEmpty) return const SizedBox();
         return Padding(
-          padding: const EdgeInsets.only(top: 30),
-          child: ListView.builder(
-            scrollDirection: Axis.vertical,
-            itemCount: events.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(
-                  left: 3.0,
-                  right: 3.0,
-                  bottom: 3.0,
+          padding: const EdgeInsets.only(top: 20),
+          child: ListView(children: <Widget>[
+            SizedBox(
+              height: 20,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
                 ),
-                child: Container(
-                  height: 15,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    color: const Color.fromARGB(255, 100, 92, 170),
-                    borderRadius: BorderRadius.circular(3),
-                  ),
+                elevation: 0,
+                child: ListTile(
+                  tileColor: events[0] == true
+                      ? colors[0]
+                      : const Color.fromARGB(255, 255, 255, 255),
                 ),
-              );
-            },
-          ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                elevation: 0,
+                child: ListTile(
+                  tileColor: events[1] == true
+                      ? colors[1]
+                      : const Color.fromARGB(255, 255, 255, 255),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                elevation: 0,
+                child: ListTile(
+                  tileColor: events[2] == true
+                      ? colors[2]
+                      : const Color.fromARGB(255, 255, 255, 255),
+                ),
+              ),
+            ),
+          ]),
         );
+        // return Padding(
+        //   padding: const EdgeInsets.only(top: 30),
+        //   child: ListView.builder(
+        //     scrollDirection: Axis.vertical,
+        //     itemCount: events.length,
+        //     itemBuilder: (context, index) {
+        //       return Padding(
+        //         padding: const EdgeInsets.only(
+        //           left: 3.0,
+        //           right: 3.0,
+        //           bottom: 3.0,
+        //         ),
+        //         child: Container(
+        //           height: 15,
+        //           decoration: BoxDecoration(
+        //             shape: BoxShape.rectangle,
+        //             color: colors[index],
+        //             borderRadius: BorderRadius.circular(3),
+        //           ),
+        //         ),
+        //       );
+        //     },
+        //   ),
+        // );
       }),
     );
   }
 }
 
-class Event {
-  String title;
-
-  Event(this.title);
-}
+// class Event {
+//   Object events;
+//   Event(this.events);
+// }
