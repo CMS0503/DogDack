@@ -21,9 +21,23 @@ void main() async {
 
   initializeDateFormatting();
 
-  runApp(const GetMaterialApp(
-    title: 'Navigation',
-    home: MyApp(),
+  runApp(MaterialApp(
+    title: 'dogdack',
+    theme: ThemeData(
+      primaryColor: const Color.fromARGB(255, 100, 92, 170),
+      fontFamily: 'bmjua',
+      //textButtonTheme:,
+      textTheme: const TextTheme(
+          bodyText1: TextStyle(
+            fontSize: 16,
+            color: Color.fromARGB(255, 100, 92, 170),
+          ),
+          bodyText2: TextStyle(
+            fontSize: 16,
+            color: Colors.black,
+          )),
+    ),
+    home: const MyApp(),
   ));
 }
 
@@ -37,7 +51,7 @@ class MyApp extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return LoginAfterPage();
+            return const LoginAfterPage();
           } else {
             return const LoginPage();
           }
