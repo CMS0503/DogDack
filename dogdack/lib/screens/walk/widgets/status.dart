@@ -37,14 +37,14 @@ class _StatusState extends State<Status> {
               children: [
                 Text(
                   '권장 산책 시간',
-                  style: Theme.of(context).textTheme.bodyText2,
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 SizedBox(
                   height: 3,
                 ),
                 Text(
                   '1시간',
-                  style: Theme.of(context).textTheme.bodyText1,
+                  style: Theme.of(context).textTheme.displayMedium,
                 ),
               ],
             ),
@@ -56,14 +56,14 @@ class _StatusState extends State<Status> {
               children: [
                 Text(
                   '목표 산책 달성량',
-                  style: Theme.of(context).textTheme.bodyText2,
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 SizedBox(
                   height: 3,
                 ),
                 Text(
                   '80%',
-                  style: Theme.of(context).textTheme.bodyText1,
+                  style: Theme.of(context).textTheme.displayMedium,
                 ),
               ],
             )

@@ -1,19 +1,20 @@
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../controller/walk_controller.dart';
 import 'dart:async';
-import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:get/get.dart';
+
+import '../controller/walk_controller.dart';
 
 class BleList extends StatefulWidget {
   BleList({Key? key}) : super(key: key);
 
   // 장치 정보 전달 받기
   late BluetoothDevice device;
-  final String serviceUuid = '0000ffe0-0000-1000-8000-00805f9b34fb';
-  final String characteristicUuid = '0000ffe1-0000-1000-8000-00805f9b34fb';
-  late String receiveData = '';
-  Map? location;
+  // final String serviceUuid = '0000ffe0-0000-1000-8000-00805f9b34fb';
+  // final String characteristicUuid = '0000ffe1-0000-1000-8000-00805f9b34fb';
+  // late String receiveData = '';
+  // Map? location;
   bool isConnected = false;
 
   @override
@@ -110,7 +111,7 @@ class _BleState extends State<BleList> {
      */
 
     widget.device = r.device;
-    walkController.connectBle(r.device);
+
     _stateListener = widget.device.state.listen((event) {
       debugPrint('event :  $event');
       if (deviceState == event) {
@@ -141,34 +142,9 @@ class _BleState extends State<BleList> {
         debugPrint('connection successful');
         print('start discover service');
 
-        int mtuSize = await widget.device.requestMtu(512);
-        print('MTU size: $mtuSize');
-        List<BluetoothService> bleServices =
-            await widget.device.discoverServices();
-        print('MTU size2: $mtuSize');
-        for (BluetoothService service in bleServices) {
-          if (service.uuid.toString() == widget.serviceUuid) {
-            for (BluetoothCharacteristic characteristic
-                in service.characteristics) {
-              if (characteristic.uuid.toString() == widget.characteristicUuid) {
-                characteristic.setNotifyValue(true);
-                characteristic.value.listen((value) {
-                  String stringValue = utf8.decode(value).toString();
-                  widget.receiveData += stringValue;
-                  if (stringValue.contains('}')) {
-                    widget.location = jsonDecode(widget.receiveData);
-                    walkController.setCurrentLocation(
-                        widget.location!["lat"], widget.location!["lon"]);
-                    print(
-                        'walkController location: ${walkController.latitude} ${walkController.longitude}');
-                    widget.receiveData = '';
-                  }
-                });
-              }
-            }
-          }
-        }
-
+        walkController.services = await widget.device.discoverServices();
+        walkController.connectBle(r.device);
+        print('end discovor service');
         returnValue = Future.value(true);
       }
     });

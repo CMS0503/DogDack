@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import './controller/walk_controller.dart';
 import './widgets/my_map.dart';
 import './widgets/status.dart';
-import 'package:get/get.dart';
-import './controller/walk_controller.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 class WalkPage extends StatelessWidget {
   WalkPage({super.key, required this.tabIndex});
@@ -21,44 +21,42 @@ class WalkPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Walk',
-          style: Theme.of(context).textTheme.bodyText1,
+          style: Theme.of(context).textTheme.titleMedium,
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(height: 10),
-            Status(),
-            SizedBox(height: 10),
-            Container(
-              height: screenHeight * 0.65,
-              width: screenWidth,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Map(),
-              ),
-            ),
-
-            // Row(
-            //   children: [
-            //     TextButton(
-            //       child: Text("Select Bluetooth"),
-            //       onPressed: () {
-            //         Navigator.pushNamed(context, '/Ble');
-            //       },
-            //     ),
-            //     TextButton(
-            //       onPressed: () {
-            //         walkController.device?.disconnect();
-            //       },
-            //       child: Text('Disconnect'),
-            //     ),
-            //
-            //   ],
-            // ),
-          ],
+      body: Obx(
+        () => Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(height: 10),
+              Status(),
+              SizedBox(height: 10),
+              walkController.isBleConnect == false
+                  ? Container(
+                      height: screenHeight * 0.65,
+                      width: screenWidth,
+                      child: Center(
+                        child: Text(
+                          '블루투스 연결을 확인해주세요',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    )
+                  : Container(
+                      height: screenHeight * 0.65,
+                      width: screenWidth,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: myMap(),
+                      ),
+                    ),
+            ],
+          ),
         ),
       ),
     );

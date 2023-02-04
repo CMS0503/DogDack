@@ -1,34 +1,33 @@
 import 'dart:async';
-import 'dart:math';
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/screens/walk/walk_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:latlong2/latlong.dart' as d;
-import '../controller/walk_controller.dart';
-import 'package:get/get.dart';
 
-import '../../../models/position_data.dart';
 import '../../../models/walk_data.dart';
+import '../controller/walk_controller.dart';
 
-class Map extends StatefulWidget {
+class myMap extends StatefulWidget {
   late final String title;
+  late String receiveData = '';
+  Map? location;
 
   @override
   _MapState createState() => _MapState();
 }
 
-class _MapState extends State<Map> {
-  late GoogleMapController _controller;
-
+class _MapState extends State<myMap> {
+  // late GoogleMapController _controller;
+  Completer<GoogleMapController> _controller = Completer();
   final walkController = Get.put(WalkController());
 
-  // 이 값은 지도가 시작될 때 첫 번째 위치입니다.
-  final CameraPosition _initialPosition = const CameraPosition(
-    target: LatLng(37.5012428, 127.0395859),
-    zoom: 17,
-  );
+  late CameraPosition? _initialPosition;
 
   // 지도 클릭 시 표시할 장소에 대한 마커 목록
   final List<Marker> markers = [];
@@ -48,93 +47,118 @@ class _MapState extends State<Map> {
   // List<String> _lapTimeList = [];
 
   addMarker(cordinate) {
-    int id = Random().nextInt(100);
-
     setState(() {
-      markers
-          .add(Marker(position: cordinate, markerId: MarkerId(id.toString())));
+      markers.add(Marker(
+          position: cordinate, markerId: MarkerId(cordinate.toString())));
     });
   }
 
-  //
-  void setCurrentLocation() {
-    Obx(() =>
-        _controller.animateCamera(
-            CameraUpdate.newCameraPosition(
-                target
-            )
-        ))
+  @override
+  void initState() {
+    print("init state map");
+    // 이 값은 지도가 시작될 때 첫 번째 위치입니다.
+    _initialPosition = CameraPosition(
+      target: LatLng(walkController.lat, walkController.lon),
+      zoom: 17,
+    );
+    updatePosition();
   }
 
+  void updatePosition() async {
+    GoogleMapController googleMapController = await _controller.future;
+    for (BluetoothService service in walkController.services!) {
+      if (service.uuid.toString() == walkController.serviceUuid) {
+        for (BluetoothCharacteristic characteristic
+            in service.characteristics) {
+          if (characteristic.uuid.toString() ==
+              walkController.characteristicUuid) {
+            characteristic.setNotifyValue(true);
+            characteristic.value.listen((value) {
+              String stringValue = utf8.decode(value).toString();
+              widget.receiveData += stringValue;
+              // 한번 갱신 될 때마다
+              if (stringValue.contains('}')) {
+                widget.location = jsonDecode(widget.receiveData);
+                walkController.setCurrentLocation(
+                    widget.location!['lat'], widget.location!["lon"]);
+                print(
+                    'gps: ${widget.location!['lat']} ${widget.location!["lon"]}');
+                print(
+                    'walkController location: ${walkController.lat} ${walkController.lon}');
+                widget.receiveData = '';
+
+                googleMapController.animateCamera(
+                  CameraUpdate.newCameraPosition(
+                    CameraPosition(
+                      zoom: 17,
+                      target: LatLng(
+                        walkController.lat,
+                        walkController.lon,
+                      ),
+                    ),
+                  ),
+                );
+                latlng.add(LatLng(walkController.lat, walkController.lon));
+                setState(() {});
+              }
+            });
+          }
+        }
+      }
+    }
+  }
+
+  // void getPolyPoints() async{
+  //   PolylinePoints polylinePoints = PolylinePoints;
+  // }
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery
-        .of(context)
-        .size;
-    // return GetBuilder(builder: () {
-    //
-    // })
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Stack(children: [
-        Obx(() =>
-            GoogleMap(
-              zoomControlsEnabled: false,
-              initialCameraPosition: _initialPosition,
-              mapType: MapType.normal,
-              onMapCreated: (controller) {
-                setState(() {
-                  _controller = controller;
-                });
-              },
-              markers: markers.toSet(),
+        GoogleMap(
+            // liteModeEnabled: true,
+            zoomControlsEnabled: false,
+            initialCameraPosition: _initialPosition!,
+            mapType: MapType.normal,
+            onMapCreated: (mapController) {
+              _controller.complete(mapController);
+            },
+            markers: markers.toSet(),
 
-          // 클릭한 위치가 중앙에 표시
-          onTap: (cordinate) {
-            _controller.animateCamera(CameraUpdate.newLatLng(LatLng(
-                walkController.lat, walkController.lon)));
-            addMarker(cordinate);
-
-            FirebaseFirestore.instance
-                .collection(
-                '${FirebaseAuth.instance.currentUser!.email}_position')
-                .withConverter(
-              fromFirestore: (snapshot, options) =>
-                  PosData.fromJson(snapshot.data()!),
-              toFirestore: (value, options) => value.toJson(),
-            )
-                .add(PosData(
-              timestamp: Timestamp.now(),
-              lat: cordinate.latitude.toString(),
-              lng: cordinate.longitude.toString(),
-            ));
-
-            // getDist(distance, temp, cordinate, markers, total);
-
-            // 좌표간 거리 계산
-            if (markers.length == 1) {
-              temp = LatLng(cordinate.latitude, cordinate.longitude);
-            } else {
-              total = total! +
-                  distance(d.LatLng(temp.latitude, temp.longitude),
-                      d.LatLng(cordinate.latitude, cordinate.longitude));
-
-              temp = LatLng(cordinate.latitude, cordinate.longitude);
-            }
-
-            latlng.add(LatLng(double.parse(cordinate.latitude.toString()),
-                double.parse(cordinate.longitude.toString())));
-
-            // 폴리라인
-            _polylines.add(Polyline(
-              polylineId: PolylineId(cordinate.toString()),
-              visible: true,
-              points: latlng,
-              color: Colors.blue,
-            ));
-          },
-              polylines: _polylines,
-            ))
-        ,
+            //   // getDist(distance, temp, cordinate, markers, total);
+            //
+            //   // 좌표간 거리 계산
+            //   if (markers.length == 1) {
+            //     temp = LatLng(cordinate.latitude, cordinate.longitude);
+            //   } else {
+            //     total = total! +
+            //         distance(d.LatLng(temp.latitude, temp.longitude),
+            //             d.LatLng(cordinate.latitude, cordinate.longitude));
+            //
+            //     temp = LatLng(cordinate.latitude, cordinate.longitude);
+            //   }
+            //
+            //   latlng.add(LatLng(double.parse(cordinate.latitude.toString()),
+            //       double.parse(cordinate.longitude.toString())));
+            //
+            //   // 폴리라인
+            //   _polylines.add(Polyline(
+            //     polylineId: PolylineId(cordinate.toString()),
+            //     visible: true,
+            //     points: latlng,
+            //     color: Colors.blue,
+            //   ));
+            // },
+            polylines: {
+              Polyline(
+                polylineId: PolylineId('route'),
+                visible: true,
+                width: 5,
+                points: latlng,
+                color: Colors.blue,
+              ),
+            }),
         Padding(
           padding: EdgeInsets.fromLTRB(
               size.height * 0.01, size.height * 0.53, size.height * 0.01, 0),
@@ -142,9 +166,7 @@ class _MapState extends State<Map> {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                    color: Theme
-                        .of(context)
-                        .primaryColor, width: 3.0)),
+                    color: Theme.of(context).primaryColor, width: 3.0)),
             child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -167,13 +189,9 @@ class _MapState extends State<Map> {
                           },
                           child: _isRunning
                               ? Icon(Icons.pause,
-                              color: Theme
-                                  .of(context)
-                                  .primaryColor)
+                                  color: Theme.of(context).primaryColor)
                               : Icon(Icons.play_arrow,
-                              color: Theme
-                                  .of(context)
-                                  .primaryColor)),
+                                  color: Theme.of(context).primaryColor)),
                     ),
                     Align(
                       alignment: Alignment(
@@ -181,10 +199,10 @@ class _MapState extends State<Map> {
                         Alignment.center.y,
                       ),
                       child: Text(
-                        '${_timeCount ~/ 360000} : ${_timeCount ~/
-                            6000} : ${(_timeCount % 6000) ~/ 100}',
+                        '${_timeCount ~/ 360000} : ${_timeCount ~/ 6000} : ${(_timeCount % 6000) ~/ 100}',
                         // (_timeCount ~/ 100).toString() + ' 초',
-                        style: TextStyle(fontSize: 30,
+                        style: TextStyle(
+                            fontSize: 30,
                             color: Color.fromARGB(255, 80, 78, 91)),
                       ),
                     ),
@@ -196,7 +214,8 @@ class _MapState extends State<Map> {
                       child: Text(
                         total.toString() + ' m',
                         // 'data',
-                        style: TextStyle(fontSize: 30,
+                        style: TextStyle(
+                            fontSize: 30,
                             color: Color.fromARGB(255, 80, 78, 91)),
                       ),
                     ),
@@ -218,7 +237,7 @@ class _MapState extends State<Map> {
                 latlng.clear();
                 FirebaseFirestore.instance
                     .collection(
-                    '${FirebaseAuth.instance.currentUser!.email}_position')
+                        '${FirebaseAuth.instance.currentUser!.email}_position')
                     .get()
                     .then((snapshot) {
                   for (DocumentSnapshot ds in snapshot.docs) {
@@ -248,7 +267,7 @@ class _MapState extends State<Map> {
                 total = 0;
                 await for (var snapshot in FirebaseFirestore.instance
                     .collection(
-                    '${FirebaseAuth.instance.currentUser!.email}_position_test')
+                        '${FirebaseAuth.instance.currentUser!.email}_position_test')
                     .orderBy('Timestamp', descending: true)
                     .snapshots()) {
                   for (var messege in snapshot.docs) {
@@ -291,21 +310,20 @@ class _MapState extends State<Map> {
                 Alignment.topLeft.x + 0.13, Alignment.topLeft.y + 0.7),
             child: FloatingActionButton(
               heroTag: "3",
-              onPressed: () =>
-                  setState(() {
-                    FirebaseFirestore.instance
-                        .collection(
+              onPressed: () => setState(() {
+                FirebaseFirestore.instance
+                    .collection(
                         '${FirebaseAuth.instance.currentUser!.email}_walk')
-                        .withConverter(
+                    .withConverter(
                       fromFirestore: (snapshot, options) =>
                           WalkData.fromJson(snapshot.data()!),
                       toFirestore: (value, options) => value.toJson(),
                     )
-                        .add(WalkData(
+                    .add(WalkData(
                       distance: total?.toInt(),
                       time: (_timeCount ~/ 100).toString(),
                     ));
-                  }),
+              }),
               child: Icon(Icons.add),
             ),
           ),
