@@ -45,12 +45,38 @@ class _MyPageState extends State<MyPage> {
   final petController = Get.put(PetController()); // 슬라이더에서 선택된 반려견 정보를 위젯간 공유
   final mypageStateController = Get.put(MyPageStateController()); // 현재 mypage 의 상태 표시
 
+  // Widget
+  // 정보 화면 타이틀 위젯
+  Container infoTitleBox(double cardWith, double cardHeight, String title) {
+    return Container(
+      width: cardWith * 0.48,
+      height: cardHeight * 0.08,
+      decoration: BoxDecoration(
+        border: Border.all(color: Color(0xff644CAA), width: 2),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Center(
+        child: Text(
+          title,
+          style: TextStyle(
+            color: Color(0xff644CAA),
+            fontSize: cardWith * 0.06,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // 디바이스 사이즈 크기 정의
     final Size size = MediaQuery.of(context).size;
 
-    // 스크린 상태 갱신
+    // 반려견 정보 표시 카드의 너비, 높이 정의
+    final double petInfoWidth = size.width * 0.8;
+    final double petInfoHeight = size.height * 0.45;
+
+    // 스크린 상태 갱신 : 정보 조회 화면
     mypageStateController.myPageStateType = MyPageStateType.View;
 
     return GestureDetector(
@@ -148,7 +174,7 @@ class _MyPageState extends State<MyPage> {
                             Column(
                               children: [
                                 Text(walkSnapshot.data!.docs.length.toString()),
-                                SizedBox(height: size.height * 0.01),
+                                SizedBox(height: size.height * 0.02),
                                 Text('산책 카운트'),
                               ],
                             ),
@@ -156,7 +182,7 @@ class _MyPageState extends State<MyPage> {
                             Column(
                               children: [
                                 Text(totalWalkHour.toString()),
-                                SizedBox(height: size.height * 0.01),
+                                SizedBox(height: size.height * 0.02),
                                 Text('산책 시간'),
                               ],
                             ),
@@ -164,7 +190,7 @@ class _MyPageState extends State<MyPage> {
                             Column(
                               children: [
                                 Text(petSnapshot.data!.docs.length.toString()),
-                                SizedBox(height: size.height * 0.01),
+                                SizedBox(height: size.height * 0.02),
                                 Text('댕댕이'),
                               ],
                             ),
@@ -194,6 +220,7 @@ class _MyPageState extends State<MyPage> {
                     // 여기서 부터는 등록된 반려견이 1마리 이상 존재함.
 
                     // 마지막으로 저장된 스크롤 인덱스에 맞춰 정보 갱신함
+                    // 인덱스는 0번 부터 시작하며 초기 값은 0
                     PetController().updateSelectedPetInfo(snapshot, petController, petController.selectedPetScrollIndex);
 
                     return Column(
@@ -202,6 +229,8 @@ class _MyPageState extends State<MyPage> {
                         CarouselSlider.builder(
                           options: CarouselOptions(
                             viewportFraction: 0.5,
+                            enlargeCenterPage : true,
+                            enlargeFactor : 0.4,
                             enableInfiniteScroll: false,
                             onPageChanged: (index, reason) {
                               setState(() {
@@ -212,7 +241,7 @@ class _MyPageState extends State<MyPage> {
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (context, itemIndex, pageViewIndex) {
                             return CircleAvatar(
-                              radius: 80,
+                              radius: size.width * 0.3,
                               child: ClipOval(
                                 child: FadeInImage.memoryNetwork(
                                   fit: BoxFit.cover,
@@ -226,8 +255,8 @@ class _MyPageState extends State<MyPage> {
                         SizedBox(height: size.height * 0.001),
                         Center(
                           child: Container(
-                            height: size.height * 0.45,
-                            width: size.width * 0.8,
+                            height: petInfoHeight,
+                            width: petInfoWidth,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
@@ -242,110 +271,149 @@ class _MyPageState extends State<MyPage> {
                             ),
                             child: Center(
                               child: Padding(
-                                padding: EdgeInsets.fromLTRB(size.width * 0.05, size.width * 0.05, size.width * 0.05, 0),
+                                padding: EdgeInsets.fromLTRB(petInfoWidth * 0.05, size.width * 0.05, petInfoWidth * 0.05, 0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    // 이름
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '이름'),
+                                        SizedBox(
+                                          width: petInfoWidth * 0.03,
+                                        ),
                                         Text(
-                                          '이름',
+                                          snapshot.data!.docs[petController.selectedPetScrollIndex].get('name'),
                                           style: TextStyle(
-                                            color: Colors.deepPurpleAccent,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: size.width * 0.04,
+                                            fontSize: size.width * 0.05,
+                                            color: Color(0xff504E5B),
                                           ),
                                         ),
                                       ],
                                     ),
                                     SizedBox(
-                                      height: size.height * 0.01,
+                                      height: petInfoHeight * 0.02,
                                     ),
-                                    Text(
-                                      snapshot.data!.docs[petController.selectedPetScrollIndex].get('name'),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: size.width * 0.05,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: size.height * 0.01,
-                                    ),
+                                    // 성별
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '성별'),
+                                        SizedBox(
+                                          width: petInfoWidth * 0.03,
+                                        ),
+                                        Container(
+                                          child: snapshot.data!.docs[petController.selectedPetScrollIndex].get('gender') == 'Male'
+                                              ? Icon(Icons.male, color: Colors.blueAccent,)
+                                              : Icon(Icons.female, color: Colors.pink,),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: petInfoHeight * 0.02,
+                                    ),
+                                    // 생일
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '생일'),
+                                        SizedBox(
+                                          width: petInfoWidth * 0.03,
+                                        ),
                                         Text(
-                                          '성별',
+                                          snapshot.data!.docs[petController.selectedPetScrollIndex].get('birth'),
                                           style: TextStyle(
-                                            color: Colors.deepPurpleAccent,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: size.width * 0.04,
+                                            fontSize: size.width * 0.05,
+                                            color: Color(0xff504E5B),
                                           ),
                                         ),
                                       ],
                                     ),
                                     SizedBox(
-                                      height: size.width * 0.01,
+                                      height: petInfoHeight * 0.02,
                                     ),
-                                    snapshot.data!.docs[petController.selectedPetScrollIndex].get('gender') == 'Male'
-                                        ? Icon(Icons.male, color: Colors.blueAccent,)
-                                        : Icon(Icons.female, color: Colors.pink,),
-                                    SizedBox(
-                                      height: size.width * 0.01,
-                                    ),
+                                    // 카테고리
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '카테고리'),
+                                        SizedBox(
+                                          width: petInfoWidth * 0.03,
+                                        ),
                                         Text(
-                                          '생일',
+                                          snapshot.data!.docs[petController.selectedPetScrollIndex].get('kategorie'),
                                           style: TextStyle(
-                                            color: Colors.deepPurpleAccent,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: size.width * 0.04,
+                                            fontSize: size.width * 0.05,
+                                            color: Color(0xff504E5B),
                                           ),
                                         ),
                                       ],
                                     ),
                                     SizedBox(
-                                      height: size.width * 0.01,
+                                      height: petInfoHeight * 0.02,
                                     ),
-                                    Text(
-                                      snapshot.data!.docs[petController.selectedPetScrollIndex].get('birth'),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: size.width * 0.05,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: size.width * 0.01,
-                                    ),
+                                    // 견종
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '견종'),
+                                        SizedBox(
+                                          width: petInfoWidth * 0.03,
+                                        ),
                                         Text(
-                                          '견종',
+                                          snapshot.data!.docs[petController.selectedPetScrollIndex].get('breed'),
                                           style: TextStyle(
-                                            color: Colors.deepPurpleAccent,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: size.width * 0.04,
+                                            color: Color(0xff504E5B),
+                                            fontSize: size.width * 0.05,
                                           ),
                                         ),
                                       ],
                                     ),
                                     SizedBox(
-                                      height: size.width * 0.01,
+                                      height: petInfoHeight * 0.02,
                                     ),
-                                    Text(
-                                      snapshot.data!.docs[petController.selectedPetScrollIndex].get('breed'),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: size.width * 0.05,
-                                      ),
+                                    // 몸무게
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '몸무게'),
+                                        SizedBox(
+                                          width: petInfoWidth * 0.03,
+                                        ),
+                                        Text(
+                                          '${snapshot.data!.docs[petController.selectedPetScrollIndex].get('weight')}kg',
+                                          style: TextStyle(
+                                            color: Color(0xff504E5B),
+                                            fontSize: size.width * 0.05,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                     SizedBox(
-                                      height: size.width * 0.07,
+                                      height: petInfoHeight * 0.02,
                                     ),
+                                    // 권장 산책 시간
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '하루 권장 산책 시간'),
+                                        SizedBox(
+                                          width: petInfoWidth * 0.03,
+                                        ),
+                                        Text(
+                                          '${(snapshot.data!.docs[petController.selectedPetScrollIndex].get('weight') / 60).round()}시간 ${snapshot.data!.docs[petController.selectedPetScrollIndex].get('weight') % 60}분',
+                                          style: TextStyle(
+                                            color: Color(0xff504E5B),
+                                            fontSize: size.width * 0.05,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: petInfoHeight * 0.02,
+                                    ),
+                                    //편집하기 버튼
                                     Center(
                                       child: ElevatedButton(
                                           onPressed: () {

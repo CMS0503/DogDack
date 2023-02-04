@@ -1,25 +1,31 @@
-import 'package:dogdack/screens/my/widgets/mypage_snackbar.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 // firebase
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_picker/picker.dart';
 
 // GetX
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'controller/mypage_controller.dart';
 
-// model
+// Model
 import '../../models/dog_data.dart';
 
-// File
+// Image File
 import 'dart:io';
 import 'package:path/path.dart' as Path;
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 
+// Widget
+import 'package:dogdack/screens/my/widgets/mypage_snackbar.dart';
+
+// DateFormat
 import 'package:intl/intl.dart';
 
 class EditDogInfoPage extends StatefulWidget {
@@ -38,13 +44,20 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   final petController = Get.put(PetController());
   final mypageStateController = Get.put(MyPageStateController());
 
-  // 강아지 정보
-  String name = ""; // 이름
-  List gender = ['Male', 'Female']; // 성별 리스트
-  String selectGender = 'Male'; // 성별 초기 값
-  String birth = '여기를 눌러 생일을 추가해주세요!'; // 생일
-  String breed = '미지정'; // 견종
+  // 강아지 정보 : (GetX 강아지 정보 관련 변수는 조회 페이지에서 선택한 정보이기 때문에 다르게 관리함)
+  final kategorieList = [['논스포팅', '하운드', '테리어', '허딩', '토이', '스포팅', '워킹']]; // 견종 카테고리 리스트
+  final weightList = [[]];
+  List genderList = ['Male', 'Female']; // 성별 리스트
+
   String imageUrl = ''; // 이미지 URL
+  String imageFileName = ''; // 이미지 파일 이름
+  String name = ""; // 이름
+  String gender = 'Male'; // 성별 초기 값
+  String birth = '여기를 눌러 생일을 추가해주세요!'; // 생일
+  String kategorie = '여기를 눌러 카테고리를 추가해주세요!'; // 견종 카테고리
+  String breed = '미지정'; // 견종
+  num weight = 0; // 몸무게
+  num recommend = 0; // 일일 권장 산책 시간
 
   // 성별 선택 Radio button 관련 위젯
   Row addRadioButton(int btnValue, String title) {
@@ -52,12 +65,12 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
       children: <Widget>[
         Radio(
           activeColor: Theme.of(context).primaryColor,
-          value: gender[btnValue],
-          groupValue: selectGender,
+          value: genderList[btnValue],
+          groupValue: gender,
           onChanged: (value) {
             FocusManager.instance.primaryFocus?.unfocus();
             setState(() {
-              selectGender = value;
+              gender = value;
             });
           },
         ),
@@ -68,8 +81,52 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     );
   }
 
+  // 견종 카테고리 선택
+  showPickerKategorieArray(BuildContext context) {
+    new Picker(
+        adapter: PickerDataAdapter<String>(
+          pickerData: kategorieList,
+          isArray: true),
+        hideHeader: true,
+        confirmText: '확인',
+        confirmTextStyle: TextStyle(color: Color(0xff646CAA), fontFamily: 'bmjua'),
+        cancelText: '취소',
+
+        cancelTextStyle: TextStyle(color: Color(0xff646CAA), fontFamily: 'bmjua'),
+        title: new Text("견종 카테고리를 골라주세요"),
+        onConfirm: (Picker picker, List value) {
+          setState(() {
+            kategorie = picker.getSelectedValues()[0];
+            print(kategorie);
+          });
+        },
+    ).showDialog(context);
+  }
+
+  // 몸무게 선택
+  showPickerWeightArray(BuildContext context) {
+    new Picker(
+      adapter: PickerDataAdapter<String>(
+          pickerData: weightList,
+          isArray: true),
+      hideHeader: true,
+      confirmText: '확인',
+      confirmTextStyle: TextStyle(color: Color(0xff646CAA), fontFamily: 'bmjua'),
+      cancelText: '취소',
+
+      cancelTextStyle: TextStyle(color: Color(0xff646CAA), fontFamily: 'bmjua'),
+      title: new Text("몸무게를 선택하세요"),
+      onConfirm: (Picker picker, List value) {
+        setState(() {
+          weight = int.parse(picker.getSelectedValues()[0]);
+          print(weight);
+        });
+      },
+    ).showDialog(context);
+  }
+
   // 강아지 이미지 선택
-  File dogImg = File(''); // 강아지 이미지 파일
+  File pickedPetImgFile = File(''); // 강아지 이미지 파일
   final picker = ImagePicker(); // 갤러리에서 가져오기 위한 ImagePicker
   bool pickComp = false; // 사진 선택 완료 여부 확인. 사진 추가 이미지를 선택한 이미지로 변경하기 위함
 
@@ -92,10 +149,11 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     }
 
     //선택 완료
-    setState(() => dogImg = File(file.path));
+    setState(() => pickedPetImgFile = File(file.path));
     if (file.path == null) retrieveLostData();
-    if (dogImg != null) {
+    if (pickedPetImgFile != null) {
       pickComp = true;
+      // 수정 모드일 경우, 기존 이미지 파일 제거 필요함. 플래그 변수를 활용하여 업데이트 할 때 파일을 삭제
       if(mypageStateController.myPageStateType == MyPageStateType.Edit) {
         isChangeImg = true;
       }
@@ -109,7 +167,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
       return;
     }
     if (response.file != null) {
-      setState(() => dogImg = File(response.file!.path));
+      setState(() => pickedPetImgFile = File(response.file!.path));
     } else {
       print(response.file);
     }
@@ -120,7 +178,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     await petsRef
         .doc(petController.selectedPetID)
         .delete()
-        .whenComplete(() => print('삭제 완료'))
+        .whenComplete(() {petController.selectedPetScrollIndex = 0;})
         .catchError((error) => print(error));
   }
 
@@ -132,19 +190,20 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     }
 
     Reference petImgRef = FirebaseStorage.instance.ref().child(
-        '${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${Path.basename(dogImg!.path)}');
+        '${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${Path.basename(pickedPetImgFile!.path)}');
 
-    print('update 시도함');
-
-    await petImgRef!.putFile(dogImg!).whenComplete(() async {
+    await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
       await petImgRef!.getDownloadURL().then((value) {
         var map = Map<String, dynamic>();
-        map["name"] = name;
-        map["gender"] = selectGender;
-        map["breed"] = breed;
         map["imageUrl"] = imageUrl;
+        map["imageFileName"] = Path.basename(pickedPetImgFile!.path);
+        map["name"] = name;
+        map["gender"] = gender;
         map["birth"] = birth;
-        map["imageFileName"] = Path.basename(dogImg!.path);
+        map["kategorie"] = kategorie;
+        map["breed"] = breed;
+        map["weight"] = weight;
+        map["recommend"] = recommend;
 
         petsRef
             .doc(petController.selectedPetID)
@@ -159,19 +218,22 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   Future<void> _create([DocumentSnapshot? documentSnapshot]) async {
     // 강아지 이미지 파일 저장 경로
     Reference petImgRef = FirebaseStorage.instance.ref().child(
-        '${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${Path.basename(dogImg!.path)}');
+        '${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${Path.basename(pickedPetImgFile!.path)}');
 
-    await petImgRef!.putFile(dogImg!).whenComplete(() async {
+    await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
       await petImgRef!.getDownloadURL().then((value) {
         //이미지 경로를 db 에 저장
         petsRef.add(DogData(
-          name: name,
-          gender: selectGender,
-          birth: birth,
-          breed: breed,
-          createdAt: Timestamp.now(),
           imageUrl: value,
-          imageFileName: Path.basename(dogImg!.path),
+          imageFileName: Path.basename(pickedPetImgFile!.path),
+          name: name,
+          gender: gender,
+          birth: birth,
+          kategorie: kategorie,
+          breed: breed,
+          weight: weight,
+          recommend: recommend,
+          createdAt: Timestamp.now(),
         )).then((value) => print('강아지 정보 저장 완료'))
             .catchError((error) => print('강아지 정보 저장 오류! ${petsRef}'));
       });
@@ -213,27 +275,60 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   // 편집 모드 일 경우 기존 데이터를 텍스트 폼에 띄우기 위함.
   TextEditingController _nameController = TextEditingController();
   TextEditingController _breedController = TextEditingController();
+  TextEditingController _weightController = TextEditingController();
+
+  // Widget
+  // 정보 화면 타이틀 위젯
+  Row infoTitleBox(double cardHeight, String title) {
+    return Row(
+      children: [
+        Text(
+          '${title}  ',
+          style: TextStyle(
+            color: Color(0xff646CAA),
+            fontSize: cardHeight * 0.035,
+          ),
+        ),
+        CircleAvatar(
+          child: Icon(
+            Icons.edit,
+            size: cardHeight * 0.025,
+            color: Colors.white,
+          ),
+          backgroundColor: Color(0xff504E5B),
+          radius: cardHeight * 0.015,
+        ),
+      ],
+    );
+  }
 
   @override
   void initState() {
     super.initState();
+    // 편집 모드인 경우 기존 정보를 띄우기 위함
     if (mypageStateController.myPageStateType == MyPageStateType.Edit) {
       pickComp = true; // 사진이 골라져있음
 
-      _nameController = TextEditingController(text: petController.selectedPetName);
-      _breedController = TextEditingController(text: petController.selectedPetBreed);
-      birth = petController.selectedPetBirth;
-      selectGender = petController.selectedPetGender;
+      _nameController = TextEditingController(text: petController.selectedPetName); // 이름
+      gender = petController.selectedPetGender; // 성별
+      birth = petController.selectedPetBirth; // 생일
+      kategorie = petController.selectedPetKategorie; // 카테고리
+      _breedController = TextEditingController(text: petController.selectedPetBreed); // 견종
+      _weightController = TextEditingController(text: petController.selectedPetWeight.toString()); // 몸무게
     }
+
+    for(int i = 1; i <= 200; i++)
+      weightList[0].add(i.toString());
   }
 
   @override
   Widget build(BuildContext context) {
-    // 신규 생성일 경우 초기화 데이터 입력
-    //_createDefaultPetInfo();
-
     // 디바이스 사이즈 크기 정의
     final Size size = MediaQuery.of(context).size;
+
+    // 반려견 정보 표시 카드의 너비, 높이 정의
+    final double petInfoWidth = size.width * 0.8;
+    final double petInfoHeight = size.height * 0.7;
 
     return GestureDetector(
       onTap: () {
@@ -250,7 +345,6 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
             mypageStateController.myPageStateType == MyPageStateType.Create ? '추가하기' : '편집하기',
             style: TextStyle(
               color: Colors.black,
-              fontWeight: FontWeight.bold,
             ),
           ),
         ),
@@ -266,27 +360,31 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                 child: Column(
                   children: [
                     CircleAvatar(
-                      backgroundColor: Colors.grey,
+                      backgroundColor: Color(0xff646CAA),
                       radius: size.width * 0.2,
                       child: pickComp
                           ? ClipOval(child: mypageStateController.myPageStateType == MyPageStateType.Create
-                            ? Image(image: FileImage(dogImg))
-                            : Image.network(petController.selectedPetImageUrl),)
-                          : Icon(Icons.add, size: size.width * 0.2,),
+                            ? Image(image: FileImage(pickedPetImgFile))
+                            : isChangeImg
+                              ? Image.network(petController.selectedPetImageUrl)
+                              : Image(image: FileImage(pickedPetImgFile)))
+                          : Icon(Icons.add, size: size.width * 0.2, color: Colors.white),
                     ),
                   ],
                 ),
                 onTap: () {
+                  // 키보드 해제
                   FocusManager.instance.primaryFocus?.unfocus();
+                  // 연속 클릭 방지
                   !uploadingImg ? chooseImage() : null;
                 },
               ),
-              SizedBox(height: 15),
+              SizedBox(height: size.height * 0.01),
               // 강아지 정보
               Center(
                 child: Container(
-                  height: size.height * 0.5,
-                  width: size.width * 0.8,
+                  height: petInfoHeight,
+                  width: petInfoWidth,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     boxShadow: [
@@ -309,29 +407,9 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // 이름
-                            Row(
-                              children: [
-                                Text(
-                                  '이름  ',
-                                  style: TextStyle(
-                                    color: Colors.deepPurpleAccent,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                                CircleAvatar(
-                                  child: Icon(
-                                    Icons.edit,
-                                    size: 15,
-                                    color: Colors.white,
-                                  ),
-                                  backgroundColor: Colors.black,
-                                  radius: 10,
-                                ),
-                              ],
-                            ),
+                            infoTitleBox(petInfoHeight, '이름'),
                             Container(
-                              height: 50,
+                              height: petInfoHeight * 0.07,
                               child: TextFormField(
                                 onSaved: (value) {
                                   name = value!;
@@ -339,37 +417,19 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                 onChanged: (value) {
                                   name = value!;
                                 },
+                                style: TextStyle(color: Color(0xff504E5B)),
                                 decoration: InputDecoration(
                                   hintText: '이름을 입력하세요!',
                                 ),
                                 controller: _nameController,
                               ),
                             ),
-                            SizedBox(height: 10),
+                            SizedBox(height: petInfoHeight * 0.03),
                             // 성별
-                            Row(
-                              children: [
-                                Text(
-                                  '성별  ',
-                                  style: TextStyle(
-                                    color: Colors.deepPurpleAccent,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                                CircleAvatar(
-                                  child: Icon(
-                                    Icons.edit,
-                                    size: 15,
-                                    color: Colors.white,
-                                  ),
-                                  backgroundColor: Colors.black,
-                                  radius: 10,
-                                )
-                              ],
-                            ),
+                            infoTitleBox(petInfoHeight, '성별'),
+                            SizedBox(height: petInfoHeight * 0.01),
                             Container(
-                              height: 50,
+                              height: petInfoHeight * 0.06,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -378,72 +438,50 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                 ],
                               ),
                             ),
+                            Divider(color: Color(0xff504E5B), height: petInfoHeight * 0.03, thickness: 0.5),
                             // 생일
+                            SizedBox(height: petInfoHeight * 0.02),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      '생일  ',
-                                      style: TextStyle(
-                                        color: Colors.deepPurpleAccent,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                    CircleAvatar(
-                                      child: Icon(
-                                        Icons.edit,
-                                        size: 15,
-                                        color: Colors.white,
-                                      ),
-                                      backgroundColor: Colors.black,
-                                      radius: 10,
-                                    )
-                                  ],
-                                ),
-                                Center(
+                                infoTitleBox(petInfoHeight, '생일'),
+                                Container(
+                                  height: petInfoHeight * 0.07,
                                   child: TextButton(
                                     onPressed: () async {
                                       FocusManager.instance.primaryFocus?.unfocus();
                                       await _selectDate(context);
                                     },
-                                    child: Text(
-                                      birth,
-                                      style: TextStyle(fontWeight: FontWeight.bold),
-                                    ),
+                                    child: Text(birth, style: TextStyle(color: Color(0xff504E5B), fontSize: petInfoHeight * 0.027)),
                                   ),
                                 ),
+                                Divider(color: Color(0xff504E5B), height: petInfoHeight * 0.01, thickness: 0.5),
                               ],
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            // 견종
-                            Row(
+                            SizedBox(height: petInfoHeight * 0.02),
+                            //카테고리
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  '견종  ',
-                                  style: TextStyle(
-                                    color: Colors.deepPurpleAccent,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
+                                infoTitleBox(petInfoHeight, '분류'),
+                                Container(
+                                  height: petInfoHeight * 0.06,
+                                  child: TextButton(
+                                    onPressed: () async {
+                                      FocusManager.instance.primaryFocus?.unfocus();
+                                      showPickerKategorieArray(context);
+                                    },
+                                    child: Text(kategorie, style: TextStyle(color: Color(0xff504E5B), fontSize: petInfoHeight * 0.027)),
                                   ),
                                 ),
-                                CircleAvatar(
-                                  child: Icon(
-                                    Icons.edit,
-                                    size: 15,
-                                    color: Colors.white,
-                                  ),
-                                  backgroundColor: Colors.black,
-                                  radius: 10,
-                                ),
+                                Divider(color: Color(0xff504E5B), height: petInfoHeight * 0.01, thickness: 0.5),
                               ],
                             ),
+                            SizedBox(height: petInfoHeight * 0.02),
+                            // 견종
+                            infoTitleBox(petInfoHeight, '견종'),
                             Container(
-                              height: 50,
+                              height: petInfoHeight * 0.07,
                               child: TextFormField(
                                 onSaved: (value) {
                                   breed = value!;
@@ -457,9 +495,27 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                 controller: _breedController,
                               ),
                             ),
-                            SizedBox(
-                              height: 10,
+                            SizedBox(height: petInfoHeight * 0.02),
+                            // 몸무게
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                infoTitleBox(petInfoHeight, '무게'),
+                                Container(
+                                  height: petInfoHeight * 0.07,
+                                  child: TextButton(
+                                    onPressed: () async {
+                                      FocusManager.instance.primaryFocus?.unfocus();
+                                      showPickerWeightArray(context);
+                                    },
+                                    child: Text(weight == 0? '몸무게를 입력하세요.' : '${weight}kg', style: TextStyle(color: Color(0xff504E5B), fontSize: petInfoHeight * 0.027)),
+                                  ),
+                                ),
+                                Divider(color: Color(0xff504E5B), height: petInfoHeight * 0.01, thickness: 0.5),
+                              ],
                             ),
+                            SizedBox(height: petInfoHeight * 0.04),
+
                             // 버튼
                             mypageStateController.myPageStateType == MyPageStateType.Create
                                 ? Center(child: !uploadingData
@@ -514,7 +570,11 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                     });
                                   }
                                     : null,
-                                  child: Text('등록하기'))
+                                  child: Text('등록하기'),
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(Color(0xff646CAA)),
+                                    foregroundColor: MaterialStateProperty.all(Colors.white),
+                                  ),)
                                   : CircularProgressIndicator(),
                             )
                                 : !editingData
@@ -570,6 +630,10 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                                 });}
                                               : null,
                                           child: Text('변경하기'),
+                                          style: ButtonStyle(
+                                            backgroundColor: MaterialStateProperty.all(Color(0xff646CAA)),
+                                            foregroundColor: MaterialStateProperty.all(Colors.white),
+                                          ),
                                         ),
                                         ElevatedButton(
                                           onPressed: ! editingData
@@ -597,6 +661,10 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                   }
                                               : null,
                                           child: Text('삭제하기'),
+                                          style: ButtonStyle(
+                                            backgroundColor: MaterialStateProperty.all(Color(0xff646CAA)),
+                                            foregroundColor: MaterialStateProperty.all(Colors.white),
+                                          ),
                                 ),
                               ],
                             )

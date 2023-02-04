@@ -6,6 +6,7 @@ enum SnackBarErrorType {
   NameNotExist, // 반려견 이름이 입력되지 않음
   BirthNotExist, // 반려견 생일이 입력되지 않음
   BreedNotExist, // 반려견 견종이 입력되지 않음
+  KategorieNotExist, // 반려견 카테고리가 입력되지 않음
 }
 
 class MyPageSnackBar {
@@ -34,6 +35,9 @@ class MyPageSnackBar {
         break;
       case SnackBarErrorType.BreedNotExist:
         msg = '강아지 견종을 등록 하세요';
+        break;
+      case SnackBarErrorType.KategorieNotExist:
+        msg = '강아지 그룹을 등록 하세요';
         break;
     }
 
