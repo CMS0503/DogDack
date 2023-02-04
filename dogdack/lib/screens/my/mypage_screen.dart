@@ -72,6 +72,7 @@ class _MyPageState extends State<MyPage> {
         floatingActionButton: Container(
           padding: EdgeInsets.fromLTRB(0, 0, size.width * 0.05, size.width * 0.05),
           child: FloatingActionButton(
+            heroTag: 'petAdd',
             onPressed: () {
               // 생성 모드
               mypageStateController.myPageStateType = MyPageStateType.Create;
