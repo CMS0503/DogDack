@@ -1,4 +1,6 @@
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_edit_text.dart';
+import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_number_picker.dart';
+import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_time_picker.dart';
 import 'package:flutter/material.dart';
 
 class ScheduleEditWalk extends StatefulWidget {
@@ -12,6 +14,7 @@ class _ScheduleEditWalkState extends State<ScheduleEditWalk> {
   String place = '';
   int time = 0;
   int distance = 0;
+  final int _currentValue = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +54,10 @@ class _ScheduleEditWalkState extends State<ScheduleEditWalk> {
           const SizedBox(height: 10),
           const ScheduleEditText(name: '장소'),
           const SizedBox(height: 10),
-          const ScheduleEditText(name: '시간'),
+          const ScheduleTimePicker(),
           const SizedBox(height: 10),
-          const ScheduleEditText(name: '거리'),
+          const ScheduleNumberPicker(),
+          const SizedBox(height: 10),
         ],
       ),
     );

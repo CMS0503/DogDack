@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dogdack/navigators/home_navigator.dart';
 import 'package:dogdack/navigators/calender_navigator.dart';
 import 'package:dogdack/navigators/walk_navigator.dart';
-import 'package:dogdack/navigators/mypage_navigator.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -41,10 +40,10 @@ class _MainPageState extends State<MainPage> {
           offstage: _currentTabIndex != 2,
           child: const WalkNavigator(tabIndex: 2),
         ),
-        Offstage(
-          offstage: _currentTabIndex != 3,
-          child: const MyPageNavigator(tabIndex: 3),
-        ),
+        // Offstage(
+        //   offstage: _currentTabIndex != 3,
+        //   child: const MyPageNavigator(tabIndex: 3),
+        // ),
       ]),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
