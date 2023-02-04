@@ -4,6 +4,7 @@ import 'package:dogdack/screens/login/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 //firebase
 import 'firebase_options.dart';
@@ -14,6 +15,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  initializeDateFormatting();
 
   runApp(MaterialApp(
     title: 'dogdack',
@@ -40,7 +43,7 @@ void main() async {
         ),
       ),
     ),
-    home: MyApp(),
+    home: const MyApp(),
   ));
 }
 

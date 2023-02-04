@@ -1,364 +1,376 @@
-import 'dart:io';
-import 'dart:typed_data';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart' as storage;
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
+
+// Firebase
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+// GetX
 import 'package:get/get.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
+import 'package:get/get_core/src/get_main.dart';
 
-import '../../models/user_data.dart';
+// Controller
+import 'controller/mypage_controller.dart';
 
-class MyPage extends StatelessWidget {
-  MyPage({super.key, required this.tabIndex});
-  final inputController = TextEditingController();
-  final int tabIndex;
+// models
+import 'package:dogdack/models/walk_data.dart';
+import 'package:dogdack/models/dog_data.dart';
 
-  void fbstoreWrite() {
-    FirebaseFirestore.instance
-        .collection(FirebaseAuth.instance.currentUser!.email.toString())
-        .withConverter(
-      fromFirestore: (snapshot, options) =>
-          UserData.fromJson(snapshot.data()!),
-      toFirestore: (value, options) => value.toJson(),
-    )
-        .add(UserData(
-        userText: inputController.text, createdAt: Timestamp.now()))
-        .then((value) => print("document added"))
-        .catchError((error) => print("Fail to add doc ${error}"));
-  }
+// Widgets
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:transparent_image/transparent_image.dart';
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: Text("My Page")),
-        body: SafeArea(
-          child: Column(children: [
-            Text("안녕! ${FirebaseAuth.instance.currentUser!.email}"),
-            UserImageWidget(),
-            TextButton(
-                onPressed: () => FirebaseAuth.instance.signOut(),
-                child: Text("로그아웃")),
-            TextField(
-              controller: inputController,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(), label: Text("텍스트를 입력하세요.")),
-            ),
-            ElevatedButton(
-                onPressed: () => fbstoreWrite(), child: Text("Text Upload")),
-            FirestoreRead(),
-          ]),
-        ));
-  }
-}
+// Screen
+import 'editinfo_screen.dart';
 
-class UserImageWidget extends StatefulWidget {
-  const UserImageWidget({Key? key}) : super(key: key);
-
-  @override
-  State<UserImageWidget> createState() => _UserImageWidgetState();
-}
-
-class _UserImageWidgetState extends State<UserImageWidget> {
-  String imageUrl = '';
-  final inputController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return UserImage(
-        onFileChanged: (imageUrl) {
-          setState(() {
-            this.imageUrl = imageUrl;
-          });
-        }
-    );
-  }
-}
-
-/*class MyPage extends StatelessWidget {
+class MyPage extends StatefulWidget {
   MyPage({super.key, required this.tabIndex});
 
   final int tabIndex;
   final inputController = TextEditingController();
 
-  void fbstoreWrite() {
-    FirebaseFirestore.instance
-        .collection(FirebaseAuth.instance.currentUser!.email.toString())
-        .withConverter(
-      fromFirestore: (snapshot, options) =>
-          UserData.fromJson(snapshot.data()!),
-      toFirestore: (value, options) => value.toJson(),
-    )
-        .add(UserData(
-        userText: inputController.text, createdAt: Timestamp.now()))
-        .then((value) => print("document added"))
-        .catchError((error) => print("Fail to add doc ${error}"));
-  }
+  @override
+  State<MyPage> createState() => _MyPageState();
+}
 
-  Future setUserImage(ImageSource imageSource) async {
-    ImagePicker imagePicker = ImagePicker();
+class _MyPageState extends State<MyPage> {
+  // Firebase : 반려견 테이블 참조 값
+  final petsRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
+  .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
 
-    try {
-      //image picker 를 통해 image 선택
-      var tempImage = await imagePicker.pickImage(source: imageSource);
-      if(tempImage != null) {
-        ImageCropper().cropImage(
-          cropStyle: CropStyle.circle,
-          sourcePath: tempImage.path,
-          aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1), //crop 비율 1:1
-          uiSettings: [
-            AndroidUiSettings(
-              toolbarTitle: '이미지 편집',
-              toolbarColor: Colors.deepOrange,
-              toolbarWidgetColor: Colors.white,
-              initAspectRatio: CropAspectRatioPreset.original,
-              lockAspectRatio: true,
-            ),
-            IOSUiSettings(
-              title: '이미지 편집',
-              aspectRatioLockEnabled: true,
-              resetAspectRatioEnabled: false,
-            )
-          ],
-        ).then((croppedImage) { //image 자르기가 완료되었으면
-          if(croppedImage != null) {
-            //잘린 이미지를 저장
-            _userNewImage.value = File(croppedImage.path);
-          }
-          Get.back();
-        });
-      }
+  // Firebase : 산책 테이블 참조 값
+  final walkRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Walk')
+      .withConverter(fromFirestore: (snapshot, _) => WalkData.fromJson(snapshot.data()!), toFirestore: (walkData, _) => walkData.toJson());
 
-    } catch (e) {
-      print(e);
-      Get.back();
-    }
-  }
-
-  String imageUrl = '';
+  // GetX
+  final petController = Get.put(PetController()); // 슬라이더에서 선택된 반려견 정보를 위젯간 공유
+  final mypageStateController = Get.put(MyPageStateController()); // 현재 mypage 의 상태 표시
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: Text("My Page")),
-        body: SafeArea(
-          child: Column(children: [
-            Text("안녕! ${FirebaseAuth.instance.currentUser!.email}"),
-            Text("from tab: ${tabIndex.toString()}"),
-            UserImage(
-              onFileChanged: (imageUrl) {
-                setState(() {
-                  this.imageUrl = imageUrl;
-                });
-              }
-            ),
-            TextButton(
-                onPressed: () => FirebaseAuth.instance.signOut(),
-                child: Text("로그아웃")),
-            TextField(
-              controller: inputController,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(), label: Text("텍스트를 입력하세요.")),
-            ),
-            ElevatedButton(
-                onPressed: () => fbstoreWrite(), child: Text("Text Upload")),
-            FirestoreRead(),
-          ]),
-        ));
-  }
-}*/
+    // 디바이스 사이즈 크기 정의
+    final Size size = MediaQuery.of(context).size;
 
-class UserImage extends StatefulWidget {
-  final Function(String imageUrl) onFileChanged;
+    // 스크린 상태 갱신
+    mypageStateController.myPageStateType = MyPageStateType.View;
 
-  UserImage({required this.onFileChanged});
-
-  @override
-  State<UserImage> createState() => _UserImageState();
-}
-
-class _UserImageState extends State<UserImage> {
-
-  final ImagePicker _picker = ImagePicker();
-
-  String? imageUrl;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if(imageUrl == null)
-          Icon(Icons.image, size: 68, color: Theme.of(context).primaryColor,),
-
-        if(imageUrl != null)
-          InkWell(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            onTap: () => _selectPhoto(),
-            child: AppRoundImage.url(
-              imageUrl!,
-              width: 80,
-              height: 80,
-            ),
-          ),
-
-        InkWell(
-          onTap: () => _selectPhoto(),
-          child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(imageUrl != null ?
-                'Change photo' :
-                'Select photo',
-              style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold,),
-            ),
-          ),
-        )
-      ],
-    );
-  }
-
-  Future _selectPhoto() async {
-    await showModalBottomSheet(context: context, builder: (context) => BottomSheet(
-        builder : (context) => Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(leading: Icon(Icons.camera), title: Text('Camera'), onTap: () {
-              Navigator.of(context).pop();
-              _pickImage(ImageSource.camera);
-            },),
-            ListTile(leading: Icon(Icons.filter), title: Text('Pick a file'), onTap: () {
-              Navigator.of(context).pop();
-              _pickImage(ImageSource.gallery);
-            },),
-          ],
-        ),
-        onClosing: () {},
-    ));
-  }
-
-  Future _pickImage(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(source: source, imageQuality: 50);
-    if(pickedFile == null) {
-      return;
-    }
-
-    var file = await ImageCropper().cropImage(
-      compressFormat: ImageCompressFormat.jpg,
-      compressQuality: 100,
-      sourcePath: pickedFile.path,
-      aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
-    );
-
-    if(file == null) {
-      return;
-    }
-
-    await _uploadFile(file.path);
-  }
-
-  Future _uploadFile(String path) async {
-    final ref = storage.FirebaseStorage.instance.ref()
-        .child('image')
-        .child('${DateTime.now().toIso8601String() + p.basename(path)}');
-    
-    final result = await ref.putFile(File(path));
-    final fileUrl = await result.ref.getDownloadURL();
-
-    setState(() {
-      imageUrl = fileUrl;
-    });
-
-    widget.onFileChanged(fileUrl);
-  }
-}
-
-class AppRoundImage extends StatelessWidget {
-  final ImageProvider provider;
-  final double height;
-  final double width;
-
-  AppRoundImage(this.provider, {
-    required this.height,
-    required this.width,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(height / 2),
-      child: Image(
-        image: provider,
-        height: height,
-        width: width,
-      ),
-    );
-  }
-
-  factory AppRoundImage.url(String url, {required double height, required double width, }) {
-    return AppRoundImage(
-      NetworkImage(url),
-      height: height,
-      width: width,
-    );
-  }
-
-  factory AppRoundImage.memory(Uint8List data, {required double height, required double width, }) {
-    return AppRoundImage(
-      MemoryImage(data),
-      height: height,
-      width: width,
-    );
-  }
-}
-
-class FirestoreRead extends StatefulWidget {
-  const FirestoreRead({super.key});
-
-  @override
-  State<FirestoreRead> createState() => _FirestoreReadState();
-}
-
-class _FirestoreReadState extends State<FirestoreRead> {
-  final userTextColRef = FirebaseFirestore.instance
-      .collection(FirebaseAuth.instance.currentUser!.email.toString())
-      .withConverter(
-      fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
-      toFirestore: (movie, _) => movie.toJson());
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: userTextColRef.orderBy('createdAt').snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Text("There is no data!");
-        }
-        if (snapshot.hasError) {
-          return Text("Failed to read the snapshot");
-        }
-
-        return Expanded(
-          child: ListView(
-            //리스트뷰 써보자! 왜냐면 데이터가 많을 거니까!
-            shrinkWrap: true, //이거 없으면 hasSize에서 에러발생!!
-            //snapshot을 map으로 돌려버림!
-            children: snapshot.data!.docs.map((document) {
-              return Column(children: [
-                Divider(
-                  thickness: 2,
-                ),
-                ListTile(title: Text(document.data().userText!))
-              ]); //Listtile 생성!
-            }).toList(), //map을 list로 만들어서 반환!
-          ),
-        );
+    return GestureDetector(
+      onTap: () {
+        // 포커스를 벗어나면 키보드를 해제함
+        FocusManager.instance.primaryFocus?.unfocus();
       },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: Text(
+            'DOGDACK',
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        floatingActionButton: Container(
+          padding: EdgeInsets.fromLTRB(0, 0, size.width * 0.05, size.width * 0.05),
+          child: FloatingActionButton(
+            onPressed: () {
+              // 생성 모드
+              mypageStateController.myPageStateType = MyPageStateType.Create;
+              // 반려견 정보 추가 페이지로 이동
+              Navigator.push(context, MaterialPageRoute(builder: (context) => EditDogInfoPage()));
+            },
+            child: Icon(Icons.add),
+            backgroundColor: Colors.deepPurple,
+          ),
+        ),
+        // 키보드 등장 시 화면 오버플로우가 발생하지 않도록 함.
+        body: SingleChildScrollView(
+          child: Padding(
+            // body 내 모든 위젯의 padding 설정
+            padding: EdgeInsets.fromLTRB(0, size.height * 0.03, 0, 0),
+            child: Column(
+              children: [
+                // 사용자 정보
+                StreamBuilder(
+                  stream: petsRef.snapshots(),
+                  builder: (petContext, petSnapshot) {
+                    //데이터를 불러오지 못했으면 로딩
+                    if (!petSnapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+
+                    return StreamBuilder(
+                      stream: walkRef.snapshots(),
+                      builder: (walkContext, walkSnapshot) {
+                        //데이터를 불러오지 못했으면 로딩
+                        if (!walkSnapshot.hasData) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+
+                        // 총 산책 시간 계산
+                        num totalWalkHour = 0;
+                        walkSnapshot.data!.docs.forEach((element) {
+                          totalWalkHour = totalWalkHour + element.get('totalTimeMin');
+                        });
+
+                        // 사용자 정보
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Column(
+                              children: [
+                                // 사용자 계정 이미지
+                                CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  radius: size.width * 0.10,
+                                  child: ClipOval(
+                                    child: Image.network(FirebaseAuth.instance.currentUser!.photoURL.toString()),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: size.height * 0.01,
+                                ),
+                                // 사용자 닉네임
+                                Container(
+                                  width: size.width * 0.2,
+                                  child: Text(
+                                    FirebaseAuth.instance.currentUser!.displayName.toString(),
+                                    style: TextStyle(
+                                      fontSize: size.width * 0.04,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            // 산책 횟수
+                            Column(
+                              children: [
+                                Text(walkSnapshot.data!.docs.length.toString()),
+                                SizedBox(height: size.height * 0.01),
+                                Text('산책 카운트'),
+                              ],
+                            ),
+                            // 산책 시간
+                            Column(
+                              children: [
+                                Text(totalWalkHour.toString()),
+                                SizedBox(height: size.height * 0.01),
+                                Text('산책 시간'),
+                              ],
+                            ),
+                            // 반려견 수
+                            Column(
+                              children: [
+                                Text(petSnapshot.data!.docs.length.toString()),
+                                SizedBox(height: size.height * 0.01),
+                                Text('댕댕이'),
+                              ],
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+                // 반려견 정보
+                StreamBuilder(
+                  stream: petsRef.orderBy('createdAt').snapshots(),
+                  builder: (context, snapshot) {
+                    // 데이터를 아직 불러오지 못했으면 로딩
+                    if (!snapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+
+                    // 불러온 데이터가 없을 경우 등록 안내
+                    if (snapshot.data!.docs.length == 0) {
+                      return Padding(
+                        padding: EdgeInsets.fromLTRB(0, size.height * 0.3, 0, 0),
+                        child: Text('댕댕이를 등록해주세요!'),
+                      );
+                    }
+
+                    // 여기서 부터는 등록된 반려견이 1마리 이상 존재함.
+
+                    // 마지막으로 저장된 스크롤 인덱스에 맞춰 정보 갱신함
+                    PetController().updateSelectedPetInfo(snapshot, petController, petController.selectedPetScrollIndex);
+
+                    return Column(
+                      children: [
+                        // 좌우 스크롤 슬라이더
+                        CarouselSlider.builder(
+                          options: CarouselOptions(
+                            viewportFraction: 0.5,
+                            enableInfiniteScroll: false,
+                            onPageChanged: (index, reason) {
+                              setState(() {
+                                PetController().updateSelectedPetInfo(snapshot, petController, index);
+                              });
+                            },
+                          ),
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (context, itemIndex, pageViewIndex) {
+                            return CircleAvatar(
+                              radius: 80,
+                              child: ClipOval(
+                                child: FadeInImage.memoryNetwork(
+                                  fit: BoxFit.cover,
+                                  placeholder: kTransparentImage,
+                                  image: snapshot.data!.docs[itemIndex].get('imageUrl'),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        SizedBox(height: size.height * 0.001),
+                        Center(
+                          child: Container(
+                            height: size.height * 0.45,
+                            width: size.width * 0.8,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.7),
+                                  blurRadius: 5.0,
+                                  spreadRadius: 0.0,
+                                  offset: const Offset(0, 7),
+                                )
+                              ],
+                            ),
+                            child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(size.width * 0.05, size.width * 0.05, size.width * 0.05, 0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '이름',
+                                          style: TextStyle(
+                                            color: Colors.deepPurpleAccent,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: size.width * 0.04,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: size.height * 0.01,
+                                    ),
+                                    Text(
+                                      snapshot.data!.docs[petController.selectedPetScrollIndex].get('name'),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: size.width * 0.05,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: size.height * 0.01,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '성별',
+                                          style: TextStyle(
+                                            color: Colors.deepPurpleAccent,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: size.width * 0.04,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: size.width * 0.01,
+                                    ),
+                                    snapshot.data!.docs[petController.selectedPetScrollIndex].get('gender') == 'Male'
+                                        ? Icon(Icons.male, color: Colors.blueAccent,)
+                                        : Icon(Icons.female, color: Colors.pink,),
+                                    SizedBox(
+                                      height: size.width * 0.01,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '생일',
+                                          style: TextStyle(
+                                            color: Colors.deepPurpleAccent,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: size.width * 0.04,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: size.width * 0.01,
+                                    ),
+                                    Text(
+                                      snapshot.data!.docs[petController.selectedPetScrollIndex].get('birth'),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: size.width * 0.05,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: size.width * 0.01,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '견종',
+                                          style: TextStyle(
+                                            color: Colors.deepPurpleAccent,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: size.width * 0.04,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: size.width * 0.01,
+                                    ),
+                                    Text(
+                                      snapshot.data!.docs[petController.selectedPetScrollIndex].get('breed'),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: size.width * 0.05,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: size.width * 0.07,
+                                    ),
+                                    Center(
+                                      child: ElevatedButton(
+                                          onPressed: () {
+                                            // 편집 상태
+                                            mypageStateController.myPageStateType = MyPageStateType.Edit;
+
+                                            // 편집 페이지로 이동
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) => EditDogInfoPage()));
+                                          },
+                                          child: Text('편집하기')),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
