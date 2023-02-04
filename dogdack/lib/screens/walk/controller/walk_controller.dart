@@ -3,16 +3,20 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 class WalkController extends GetxController {
   RxBool isBleConnect = false.obs;
-  double latitude = 0;
-  double longitude = 0;
+  RxDouble latitude = 0.0.obs;
+  RxDouble longitude = 0.0.obs;
+  String name = "Gong";
   BluetoothDevice? _device;
 
   BluetoothDevice? get device => _device;
 
+  double get lat => latitude.toDouble();
+
+  double get lon => latitude.toDouble();
+
   void setCurrentLocation(curLatitude, curLongitude) {
     latitude = curLatitude;
     longitude = curLongitude;
-    update();
   }
 
   void connectBle(device) {

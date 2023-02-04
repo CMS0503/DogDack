@@ -33,54 +33,31 @@ class WalkPage extends StatelessWidget {
             Status(),
             SizedBox(height: 10),
             Container(
-              height: screenHeight * 0.5,
+              height: screenHeight * 0.65,
               width: screenWidth,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Map(),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Column(
-                  children: [
-                    Text(
-                      '00:00:00',
-                      style: Theme.of(context).textTheme.bodyText1,
-                    )
-                  ],
-                ),
-                Text('play'),
-                Column(),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                TextButton(
-                  child: Text("Select Bluetooth"),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/Ble');
-                  },
-                ),
-                TextButton(
-                  onPressed: () {
-                    walkController.device?.disconnect();
-                  },
-                  child: Text('Disconnect'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/Data');
-                  },
-                  child: Text('Data'),
-                ),
-              ],
-            ),
+
+            // Row(
+            //   children: [
+            //     TextButton(
+            //       child: Text("Select Bluetooth"),
+            //       onPressed: () {
+            //         Navigator.pushNamed(context, '/Ble');
+            //       },
+            //     ),
+            //     TextButton(
+            //       onPressed: () {
+            //         walkController.device?.disconnect();
+            //       },
+            //       child: Text('Disconnect'),
+            //     ),
+            //
+            //   ],
+            // ),
           ],
         ),
       ),

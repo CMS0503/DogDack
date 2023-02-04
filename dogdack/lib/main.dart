@@ -30,8 +30,8 @@ void main() async {
         ),
         bodyText2: TextStyle(
           fontSize: 16,
-          color: Colors.black,
-        )
+          color: Color.fromARGB(255, 80, 78, 91),
+        ),
       ),
     ),
     home: MyApp(),

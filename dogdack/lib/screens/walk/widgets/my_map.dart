@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:latlong2/latlong.dart' as d;
+import '../controller/walk_controller.dart';
+import 'package:get/get.dart';
 
 import '../../../models/position_data.dart';
 import '../../../models/walk_data.dart';
@@ -19,6 +21,8 @@ class Map extends StatefulWidget {
 
 class _MapState extends State<Map> {
   late GoogleMapController _controller;
+
+  final walkController = Get.put(WalkController());
 
   // 이 값은 지도가 시작될 때 첫 번째 위치입니다.
   final CameraPosition _initialPosition = const CameraPosition(
@@ -47,39 +51,62 @@ class _MapState extends State<Map> {
     int id = Random().nextInt(100);
 
     setState(() {
-      markers.add(Marker(position: cordinate, markerId: MarkerId(id.toString())));
+      markers
+          .add(Marker(position: cordinate, markerId: MarkerId(id.toString())));
     });
+  }
+
+  //
+  void setCurrentLocation() {
+    Obx(() =>
+        _controller.animateCamera(
+            CameraUpdate.newCameraPosition(
+                target
+            )
+        ))
   }
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    Size size = MediaQuery
+        .of(context)
+        .size;
+    // return GetBuilder(builder: () {
+    //
+    // })
     return Scaffold(
       body: Stack(children: [
-        GoogleMap(
-          zoomControlsEnabled: false,
-          initialCameraPosition: _initialPosition,
-          mapType: MapType.normal,
-          onMapCreated: (controller) {
-            setState(() {
-              _controller = controller;
-            });
-          },
-          markers: markers.toSet(),
+        Obx(() =>
+            GoogleMap(
+              zoomControlsEnabled: false,
+              initialCameraPosition: _initialPosition,
+              mapType: MapType.normal,
+              onMapCreated: (controller) {
+                setState(() {
+                  _controller = controller;
+                });
+              },
+              markers: markers.toSet(),
 
           // 클릭한 위치가 중앙에 표시
           onTap: (cordinate) {
-            _controller.animateCamera(CameraUpdate.newLatLng(cordinate));
+            _controller.animateCamera(CameraUpdate.newLatLng(LatLng(
+                walkController.lat, walkController.lon)));
             addMarker(cordinate);
 
-
-            FirebaseFirestore.instance.collection('${FirebaseAuth.instance.currentUser!.email}_position')
-                .withConverter(fromFirestore: (snapshot, options) => PosData.fromJson(snapshot.data()!), toFirestore: (value, options) => value.toJson(),)
+            FirebaseFirestore.instance
+                .collection(
+                '${FirebaseAuth.instance.currentUser!.email}_position')
+                .withConverter(
+              fromFirestore: (snapshot, options) =>
+                  PosData.fromJson(snapshot.data()!),
+              toFirestore: (value, options) => value.toJson(),
+            )
                 .add(PosData(
-                  timestamp: Timestamp.now(),
-                  lat: cordinate.latitude.toString(),
-                  lng: cordinate.longitude.toString(),
-                ));
+              timestamp: Timestamp.now(),
+              lat: cordinate.latitude.toString(),
+              lng: cordinate.longitude.toString(),
+            ));
 
             // getDist(distance, temp, cordinate, markers, total);
 
@@ -105,18 +132,26 @@ class _MapState extends State<Map> {
               color: Colors.blue,
             ));
           },
-          polylines: _polylines,
-        ),
+              polylines: _polylines,
+            ))
+        ,
         Padding(
           padding: EdgeInsets.fromLTRB(
               size.height * 0.01, size.height * 0.53, size.height * 0.01, 0),
           child: Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.purple, width: 3.0)),
+                border: Border.all(
+                    color: Theme
+                        .of(context)
+                        .primaryColor, width: 3.0)),
             child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 height: size.height * 0.1,
-                color: Colors.white,
+                // color: Colors.white,
                 child: Stack(
                   children: <Widget>[
                     Align(
@@ -125,12 +160,20 @@ class _MapState extends State<Map> {
                         Alignment.center.y,
                       ),
                       child: OutlineCircleButton(
-                          child: _isRunning ? Icon(Icons.pause, color: Colors.purple) : Icon(Icons.play_arrow, color: Colors.purple),
                           radius: 50.0,
                           borderSize: 5.0,
                           onTap: () async {
                             _clickPlayButton();
-                          }),
+                          },
+                          child: _isRunning
+                              ? Icon(Icons.pause,
+                              color: Theme
+                                  .of(context)
+                                  .primaryColor)
+                              : Icon(Icons.play_arrow,
+                              color: Theme
+                                  .of(context)
+                                  .primaryColor)),
                     ),
                     Align(
                       alignment: Alignment(
@@ -138,9 +181,11 @@ class _MapState extends State<Map> {
                         Alignment.center.y,
                       ),
                       child: Text(
-                        '${_timeCount ~/ 360000} : ${_timeCount ~/ 6000} : ${(_timeCount % 6000) ~/ 100}',
+                        '${_timeCount ~/ 360000} : ${_timeCount ~/
+                            6000} : ${(_timeCount % 6000) ~/ 100}',
                         // (_timeCount ~/ 100).toString() + ' 초',
-                        style: TextStyle(fontSize: 30),
+                        style: TextStyle(fontSize: 30,
+                            color: Color.fromARGB(255, 80, 78, 91)),
                       ),
                     ),
                     Align(
@@ -151,12 +196,12 @@ class _MapState extends State<Map> {
                       child: Text(
                         total.toString() + ' m',
                         // 'data',
-                        style: TextStyle(fontSize: 30),
+                        style: TextStyle(fontSize: 30,
+                            color: Color.fromARGB(255, 80, 78, 91)),
                       ),
                     ),
                   ],
-                )
-            ),
+                )),
           ),
         )
       ]),
@@ -171,14 +216,21 @@ class _MapState extends State<Map> {
               onPressed: () {
                 markers.clear();
                 latlng.clear();
-                FirebaseFirestore.instance.collection('${FirebaseAuth.instance.currentUser!.email}_position').get().then((snapshot) {
+                FirebaseFirestore.instance
+                    .collection(
+                    '${FirebaseAuth.instance.currentUser!.email}_position')
+                    .get()
+                    .then((snapshot) {
                   for (DocumentSnapshot ds in snapshot.docs) {
                     ds.reference.delete();
                   }
                 });
                 // _controller.animateCamera(CameraUpdate.zoomOut());
                 setState(() {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => WalkPage(tabIndex: 2)));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => WalkPage(tabIndex: 2)));
                 });
               },
               tooltip: '초기화',
@@ -189,28 +241,35 @@ class _MapState extends State<Map> {
           // DB 데이터로 좌표 찍기
           Align(
             alignment: Alignment(
-                Alignment.topLeft.x + 0.13, Alignment.topLeft.y + 0.4
-            ),
+                Alignment.topLeft.x + 0.13, Alignment.topLeft.y + 0.4),
             child: FloatingActionButton(
               heroTag: "2",
               onPressed: () async {
                 total = 0;
-                await for (var snapshot in FirebaseFirestore.instance.collection('${FirebaseAuth.instance.currentUser!.email}_position_test').orderBy('Timestamp', descending: true).snapshots()) {
+                await for (var snapshot in FirebaseFirestore.instance
+                    .collection(
+                    '${FirebaseAuth.instance.currentUser!.email}_position_test')
+                    .orderBy('Timestamp', descending: true)
+                    .snapshots()) {
                   for (var messege in snapshot.docs) {
-                    addMarker(LatLng(double.parse(messege.data()['lat']), double.parse(messege.data()['lng'])));
+                    addMarker(LatLng(double.parse(messege.data()['lat']),
+                        double.parse(messege.data()['lng'])));
 
                     if (markers.length == 1) {
-                      temp = LatLng(double.parse(messege.data()['lat']), double.parse(messege.data()['lng']));
+                      temp = LatLng(double.parse(messege.data()['lat']),
+                          double.parse(messege.data()['lng']));
                     } else {
                       total = total! +
                           distance(
                               d.LatLng(temp.latitude, temp.longitude),
-                              d.LatLng(double.parse(messege.data()['lat']), double.parse(messege.data()['lng']))
-                          );
-                      temp = LatLng(double.parse(messege.data()['lat']), double.parse(messege.data()['lng']));
+                              d.LatLng(double.parse(messege.data()['lat']),
+                                  double.parse(messege.data()['lng'])));
+                      temp = LatLng(double.parse(messege.data()['lat']),
+                          double.parse(messege.data()['lng']));
                     }
 
-                    latlng.add(LatLng(double.parse(messege.data()['lat']), double.parse(messege.data()['lng'])));
+                    latlng.add(LatLng(double.parse(messege.data()['lat']),
+                        double.parse(messege.data()['lng'])));
 
                     _polylines.add(Polyline(
                       polylineId: PolylineId(messege.data().toString()),
@@ -229,18 +288,24 @@ class _MapState extends State<Map> {
           // 이동거리, 시간 DB 저장 버튼
           Align(
             alignment: Alignment(
-                Alignment.topLeft.x + 0.13, Alignment.topLeft.y + 0.7
-            ),
+                Alignment.topLeft.x + 0.13, Alignment.topLeft.y + 0.7),
             child: FloatingActionButton(
               heroTag: "3",
-              onPressed: () => setState(() {
-                FirebaseFirestore.instance.collection('${FirebaseAuth.instance.currentUser!.email}_walk')
-                    .withConverter(fromFirestore: (snapshot, options) => WalkData.fromJson(snapshot.data()!), toFirestore: (value, options) => value.toJson(),)
-                    .add(WalkData(
+              onPressed: () =>
+                  setState(() {
+                    FirebaseFirestore.instance
+                        .collection(
+                        '${FirebaseAuth.instance.currentUser!.email}_walk')
+                        .withConverter(
+                      fromFirestore: (snapshot, options) =>
+                          WalkData.fromJson(snapshot.data()!),
+                      toFirestore: (value, options) => value.toJson(),
+                    )
+                        .add(WalkData(
                       distance: total?.toInt(),
                       time: (_timeCount ~/ 100).toString(),
                     ));
-              }),
+                  }),
               child: Icon(Icons.add),
             ),
           ),
@@ -284,7 +349,7 @@ class OutlineCircleButton extends StatelessWidget {
     this.onTap,
     this.borderSize = 0.5,
     this.radius = 20.0,
-    this.borderColor = Colors.purple,
+    this.borderColor = const Color.fromARGB(255, 100, 92, 170),
     this.foregroundColor = Colors.white,
     this.child,
   }) : super(key: key);
