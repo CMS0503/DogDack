@@ -1,4 +1,5 @@
 // Widgets
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/models/dog_data.dart';
@@ -49,12 +50,38 @@ class _MyPageState extends State<MyPage> {
   final mypageStateController =
       Get.put(MyPageStateController()); // 현재 mypage 의 상태 표시
 
+  // Widget
+  // 정보 화면 타이틀 위젯
+  Container infoTitleBox(double cardWith, double cardHeight, String title) {
+    return Container(
+      width: cardWith * 0.48,
+      height: cardHeight * 0.08,
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color(0xff644CAA), width: 2),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Center(
+        child: Text(
+          title,
+          style: TextStyle(
+            color: const Color(0xff644CAA),
+            fontSize: cardWith * 0.06,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // 디바이스 사이즈 크기 정의
     final Size size = MediaQuery.of(context).size;
 
-    // 스크린 상태 갱신
+    // 반려견 정보 표시 카드의 너비, 높이 정의
+    final double petInfoWidth = size.width * 0.8;
+    final double petInfoHeight = size.height * 0.45;
+
+    // 스크린 상태 갱신 : 정보 조회 화면
     mypageStateController.myPageStateType = MyPageStateType.View;
 
     return GestureDetector(
@@ -65,7 +92,7 @@ class _MyPageState extends State<MyPage> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
-          title: Text(
+          title: const Text(
             'DOGDACK',
             style: TextStyle(
               color: Colors.black,
@@ -82,11 +109,13 @@ class _MyPageState extends State<MyPage> {
               // 생성 모드
               mypageStateController.myPageStateType = MyPageStateType.Create;
               // 반려견 정보 추가 페이지로 이동
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => EditDogInfoPage()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const EditDogInfoPage()));
             },
-            child: Icon(Icons.add),
             backgroundColor: Colors.deepPurple,
+            child: Icon(Icons.add),
           ),
         ),
         // 키보드 등장 시 화면 오버플로우가 발생하지 않도록 함.
@@ -102,7 +131,7 @@ class _MyPageState extends State<MyPage> {
                   builder: (petContext, petSnapshot) {
                     //데이터를 불러오지 못했으면 로딩
                     if (!petSnapshot.hasData) {
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     }
 
                     return StreamBuilder(
@@ -110,15 +139,16 @@ class _MyPageState extends State<MyPage> {
                       builder: (walkContext, walkSnapshot) {
                         //데이터를 불러오지 못했으면 로딩
                         if (!walkSnapshot.hasData) {
-                          return Center(child: CircularProgressIndicator());
+                          return const Center(
+                              child: CircularProgressIndicator());
                         }
 
                         // 총 산책 시간 계산
                         num totalWalkHour = 0;
-                        walkSnapshot.data!.docs.forEach((element) {
+                        for (var element in walkSnapshot.data!.docs) {
                           totalWalkHour =
                               totalWalkHour + element.get('totalTimeMin');
-                        });
+                        }
 
                         // 사용자 정보
                         return Row(
@@ -140,7 +170,7 @@ class _MyPageState extends State<MyPage> {
                                   height: size.height * 0.01,
                                 ),
                                 // 사용자 닉네임
-                                Container(
+                                SizedBox(
                                   width: size.width * 0.2,
                                   child: Text(
                                     FirebaseAuth
@@ -159,24 +189,24 @@ class _MyPageState extends State<MyPage> {
                             Column(
                               children: [
                                 Text(walkSnapshot.data!.docs.length.toString()),
-                                SizedBox(height: size.height * 0.01),
-                                Text('산책 카운트'),
+                                SizedBox(height: size.height * 0.02),
+                                const Text('산책 카운트'),
                               ],
                             ),
                             // 산책 시간
                             Column(
                               children: [
                                 Text(totalWalkHour.toString()),
-                                SizedBox(height: size.height * 0.01),
-                                Text('산책 시간'),
+                                SizedBox(height: size.height * 0.02),
+                                const Text('산책 시간'),
                               ],
                             ),
                             // 반려견 수
                             Column(
                               children: [
                                 Text(petSnapshot.data!.docs.length.toString()),
-                                SizedBox(height: size.height * 0.01),
-                                Text('댕댕이'),
+                                SizedBox(height: size.height * 0.02),
+                                const Text('댕댕이'),
                               ],
                             ),
                           ],
@@ -191,21 +221,22 @@ class _MyPageState extends State<MyPage> {
                   builder: (context, snapshot) {
                     // 데이터를 아직 불러오지 못했으면 로딩
                     if (!snapshot.hasData) {
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     }
 
                     // 불러온 데이터가 없을 경우 등록 안내
-                    if (snapshot.data!.docs.length == 0) {
+                    if (snapshot.data!.docs.isEmpty) {
                       return Padding(
                         padding:
                             EdgeInsets.fromLTRB(0, size.height * 0.3, 0, 0),
-                        child: Text('댕댕이를 등록해주세요!'),
+                        child: const Text('댕댕이를 등록해주세요!'),
                       );
                     }
 
                     // 여기서 부터는 등록된 반려견이 1마리 이상 존재함.
 
                     // 마지막으로 저장된 스크롤 인덱스에 맞춰 정보 갱신함
+
                     PetController().updateSelectedPetInfo(snapshot,
                         petController, petController.selectedPetScrollIndex);
 
@@ -215,6 +246,8 @@ class _MyPageState extends State<MyPage> {
                         CarouselSlider.builder(
                           options: CarouselOptions(
                             viewportFraction: 0.5,
+                            enlargeCenterPage: true,
+                            enlargeFactor: 0.4,
                             enableInfiniteScroll: false,
                             onPageChanged: (index, reason) {
                               setState(() {
@@ -226,7 +259,7 @@ class _MyPageState extends State<MyPage> {
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (context, itemIndex, pageViewIndex) {
                             return CircleAvatar(
-                              radius: 80,
+                              radius: size.width * 0.3,
                               child: ClipOval(
                                 child: FadeInImage.memoryNetwork(
                                   fit: BoxFit.cover,
@@ -241,8 +274,8 @@ class _MyPageState extends State<MyPage> {
                         SizedBox(height: size.height * 0.001),
                         Center(
                           child: Container(
-                            height: size.height * 0.45,
-                            width: size.width * 0.8,
+                            height: petInfoHeight,
+                            width: petInfoWidth,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
@@ -262,23 +295,33 @@ class _MyPageState extends State<MyPage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    // 이름
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
+                                        infoTitleBox(
+                                            petInfoWidth, petInfoHeight, '이름'),
+                                        SizedBox(
+                                          width: petInfoWidth * 0.03,
+                                        ),
                                         Text(
-                                          '이름',
+                                          snapshot
+                                              .data!
+                                              .docs[petController
+                                                  .selectedPetScrollIndex]
+                                              .get('name'),
                                           style: TextStyle(
-                                            color: Colors.deepPurpleAccent,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: size.width * 0.04,
+                                            fontSize: size.width * 0.05,
+                                            color: const Color(0xff504E5B),
                                           ),
                                         ),
                                       ],
                                     ),
                                     SizedBox(
-                                      height: size.height * 0.01,
+                                      height: petInfoHeight * 0.02,
                                     ),
+
                                     Text(
                                       snapshot
                                           .data!
@@ -291,18 +334,27 @@ class _MyPageState extends State<MyPage> {
                                       ),
                                     ),
                                     SizedBox(
-                                      height: size.height * 0.01,
+                                      height: petInfoHeight * 0.02,
                                     ),
+                                    // 생일
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
+                                        infoTitleBox(
+                                            petInfoWidth, petInfoHeight, '생일'),
+                                        SizedBox(
+                                          width: petInfoWidth * 0.03,
+                                        ),
                                         Text(
-                                          '성별',
+                                          snapshot
+                                              .data!
+                                              .docs[petController
+                                                  .selectedPetScrollIndex]
+                                              .get('birth'),
                                           style: TextStyle(
-                                            color: Colors.deepPurpleAccent,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: size.width * 0.04,
+                                            fontSize: size.width * 0.05,
+                                            color: const Color(0xff504E5B),
                                           ),
                                         ),
                                       ],
@@ -316,34 +368,44 @@ class _MyPageState extends State<MyPage> {
                                                     .selectedPetScrollIndex]
                                                 .get('gender') ==
                                             'Male'
-                                        ? Icon(
+                                        ? const Icon(
                                             Icons.male,
                                             color: Colors.blueAccent,
                                           )
-                                        : Icon(
+                                        : const Icon(
                                             Icons.female,
                                             color: Colors.pink,
                                           ),
                                     SizedBox(
                                       height: size.width * 0.01,
                                     ),
+                                    // 카테고리
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
+                                        infoTitleBox(
+                                            petInfoWidth, petInfoHeight, '분류'),
+                                        SizedBox(
+                                          width: petInfoWidth * 0.03,
+                                        ),
                                         Text(
-                                          '생일',
+                                          snapshot
+                                              .data!
+                                              .docs[petController
+                                                  .selectedPetScrollIndex]
+                                              .get('kategorie'),
                                           style: TextStyle(
-                                            color: Colors.deepPurpleAccent,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: size.width * 0.04,
+                                            fontSize: size.width * 0.05,
+                                            color: const Color(0xff504E5B),
                                           ),
                                         ),
                                       ],
                                     ),
                                     SizedBox(
-                                      height: size.width * 0.01,
+                                      height: petInfoHeight * 0.02,
                                     ),
+
                                     Text(
                                       snapshot
                                           .data!
@@ -356,24 +418,36 @@ class _MyPageState extends State<MyPage> {
                                       ),
                                     ),
                                     SizedBox(
-                                      height: size.width * 0.01,
+                                      height: petInfoHeight * 0.02,
                                     ),
+                                    // 몸무게
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
+                                        infoTitleBox(
+                                            petInfoWidth, petInfoHeight, '무게'),
+                                        SizedBox(
+                                          width: petInfoWidth * 0.03,
+                                        ),
                                         Text(
-                                          '견종',
+                                          snapshot
+                                                      .data!
+                                                      .docs[petController
+                                                          .selectedPetScrollIndex]
+                                                      .get('weight') ==
+                                                  0
+                                              ? '몸무게 미입력'
+                                              : '${snapshot.data!.docs[petController.selectedPetScrollIndex].get('weight')}kg',
                                           style: TextStyle(
-                                            color: Colors.deepPurpleAccent,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: size.width * 0.04,
+                                            color: const Color(0xff504E5B),
+                                            fontSize: size.width * 0.05,
                                           ),
                                         ),
                                       ],
                                     ),
                                     SizedBox(
-                                      height: size.width * 0.01,
+                                      height: petInfoHeight * 0.02,
                                     ),
                                     Text(
                                       snapshot
@@ -387,24 +461,34 @@ class _MyPageState extends State<MyPage> {
                                       ),
                                     ),
                                     SizedBox(
-                                      height: size.width * 0.07,
+                                      height: petInfoHeight * 0.07,
                                     ),
+                                    //편집하기 버튼
                                     Center(
                                       child: ElevatedButton(
-                                          onPressed: () {
-                                            // 편집 상태
-                                            mypageStateController
-                                                    .myPageStateType =
-                                                MyPageStateType.Edit;
+                                        onPressed: () {
+                                          // 편집 상태
+                                          mypageStateController
+                                                  .myPageStateType =
+                                              MyPageStateType.Edit;
 
-                                            // 편집 페이지로 이동
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        EditDogInfoPage()));
-                                          },
-                                          child: Text('편집하기')),
+                                          // 편집 페이지로 이동
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const EditDogInfoPage()));
+                                        },
+                                        style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                                  const Color(0xff646CAA)),
+                                          foregroundColor:
+                                              MaterialStateProperty.all(
+                                                  Colors.white),
+                                        ),
+                                        child: Text('편집하기'),
+                                      ),
                                     )
                                   ],
                                 ),
