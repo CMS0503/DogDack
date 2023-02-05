@@ -1,4 +1,8 @@
+// Widgets
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:transparent_image/transparent_image.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 // Firebase
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,13 +15,9 @@ import 'package:get/get_core/src/get_main.dart';
 // Controller
 import 'controller/mypage_controller.dart';
 
-// models
+// Models
 import 'package:dogdack/models/walk_data.dart';
 import 'package:dogdack/models/dog_data.dart';
-
-// Widgets
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 // Screen
 import 'editinfo_screen.dart';
@@ -337,7 +337,7 @@ class _MyPageState extends State<MyPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '카테고리'),
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '분류'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
@@ -361,11 +361,18 @@ class _MyPageState extends State<MyPage> {
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
-                                        Text(
-                                          snapshot.data!.docs[petController.selectedPetScrollIndex].get('breed'),
-                                          style: TextStyle(
-                                            color: Color(0xff504E5B),
-                                            fontSize: size.width * 0.05,
+                                        Container(
+                                          width: petInfoWidth * 0.3,
+                                          height: petInfoHeight * 0.06,
+                                          child: AutoSizeText(
+                                            snapshot.data!.docs[petController.selectedPetScrollIndex].get('breed'),
+                                            minFontSize: 1,
+                                            style: TextStyle(
+                                              color: Color(0xff504E5B),
+                                              fontSize: size.width * 0.05,
+                                              overflow: TextOverflow.ellipsis
+                                            ),
+                                            maxLines: 2,
                                           ),
                                         ),
                                       ],
@@ -377,7 +384,7 @@ class _MyPageState extends State<MyPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '몸무게'),
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '무게'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),

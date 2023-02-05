@@ -629,6 +629,13 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                       return;
                                     }
 
+                                    // 견종이 20글자를 초과할 경우 알림
+                                    if(breed.length > 20) {
+                                      MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BreedOverflow);
+                                      uploadingData = false;
+                                      return;
+                                    }
+
                                     // 몸무게 미 입력은 미입력으로 표기
 
                                     await _create().whenComplete(() {
@@ -689,6 +696,13 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                                 if(breed.length == 0) {
                                                   MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BreedNotExist);
                                                   editingData = false;
+                                                  return;
+                                                }
+
+                                                // 견종이 20글자를 초과할 경우 알림
+                                                if(breed.length > 20) {
+                                                  MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BreedOverflow);
+                                                  uploadingData = false;
                                                   return;
                                                 }
 
