@@ -25,7 +25,9 @@ class Calendar extends StatefulWidget {
 
 class _CalendarState extends State<Calendar> {
   final calendarRef = FirebaseFirestore.instance
-      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Calendar')
+      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets')
+      .doc()
+      .collection('Calendar')
       .withConverter(
           fromFirestore: (snapshot, _) =>
               CalenderData.fromJson(snapshot.data()!),

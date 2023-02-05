@@ -29,6 +29,8 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
     FirebaseFirestore.instance
         .collection(
             'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
+        .where("name", isEqualTo: "짬")
+        .collection('Calendar')
         .doc(DateFormat('yyMMdd').format(controller.date))
         .withConverter(
           fromFirestore: (snapshot, options) =>

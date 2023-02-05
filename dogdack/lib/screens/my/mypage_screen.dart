@@ -11,7 +11,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 // GetX
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 // Controller
 import 'controller/mypage_controller.dart';
@@ -38,6 +37,7 @@ class _MyPageState extends State<MyPage> {
   final petsRef = FirebaseFirestore.instance
       .collection(
           'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
+      .doc()
       .withConverter(
           fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
           toFirestore: (dogData, _) => dogData.toJson());
