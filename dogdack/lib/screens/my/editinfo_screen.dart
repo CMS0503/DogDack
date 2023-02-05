@@ -187,61 +187,109 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
 
   // 강아지 정보 데이터 수정
   Future<void> _update([DocumentSnapshot? documentSnapshot]) async {
+    // 편집 모드에서는 이미지 파일을 변경하였을 경우 기존 이미지를 제거하고 새로운 이미지로 갱신
+    // 이미지 파일을 변경하지 않았을 경우, Url download 불필요
     if(isChangeImg) {
       // 이미지 파일이 변경되었다면 기존 사진 데이터 제거
       FirebaseStorage.instance.ref().child('${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${petController.selectedPetImageFileName}').delete();
-    }
 
-    Reference petImgRef = FirebaseStorage.instance.ref().child(
-        '${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${Path.basename(pickedPetImgFile!.path)}');
+      Reference petImgRef = FirebaseStorage.instance.ref().child(
+          '${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${Path.basename(pickedPetImgFile!.path)}');
 
-    await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
-      await petImgRef!.getDownloadURL().then((value) {
-        switch(kategorie) {
-          case '논스포팅' :
-            recommend = 60;
-            break;
-          case '시각 하운드' :
-            recommend = 30;
-            break;
-          case '후각 하운드' :
-            recommend = 60;
-            break;
-          case '테리어' :
-            recommend = 40;
-            break;
-          case '허딩' :
-            recommend = 90;
-            break;
-          case '토이' :
-            recommend = 40;
-            break;
-          case '스포팅' :
-            recommend = 90;
-            break;
-          case '워킹' :
-            recommend = 120;
-            break;
-        }
+      await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
+        await petImgRef!.getDownloadURL().then((value) {
+          switch(kategorie) {
+            case '논스포팅' :
+              recommend = 60;
+              break;
+            case '시각 하운드' :
+              recommend = 30;
+              break;
+            case '후각 하운드' :
+              recommend = 60;
+              break;
+            case '테리어' :
+              recommend = 40;
+              break;
+            case '허딩' :
+              recommend = 90;
+              break;
+            case '토이' :
+              recommend = 40;
+              break;
+            case '스포팅' :
+              recommend = 90;
+              break;
+            case '워킹' :
+              recommend = 120;
+              break;
+          }
 
-        var map = Map<String, dynamic>();
-        map["imageUrl"] = value;
-        map["imageFileName"] = Path.basename(pickedPetImgFile!.path);
-        map["name"] = name;
-        map["gender"] = gender;
-        map["birth"] = birth;
-        map["kategorie"] = kategorie;
-        map["breed"] = breed;
-        map["weight"] = weight;
-        map["recommend"] = recommend;
+          print('수정 확인 : ${name}');
 
-        petsRef
-            .doc(petController.selectedPetID)
-            .update(map)
-            .whenComplete(() => print("변경 완료"))
-            .catchError((error) => print(error));
+          var map = Map<String, dynamic>();
+          map["imageUrl"] = value;
+          map["imageFileName"] = Path.basename(pickedPetImgFile!.path);
+          map["name"] = name;
+          map["gender"] = gender;
+          map["birth"] = birth;
+          map["kategorie"] = kategorie;
+          map["breed"] = breed;
+          map["weight"] = weight;
+          map["recommend"] = recommend;
+
+          petsRef
+              .doc(petController.selectedPetID)
+              .update(map)
+              .whenComplete(() => print("변경 완료"))
+              .catchError((error) => print(error));
+        });
       });
-    });
+    } else {
+      switch(kategorie) {
+        case '논스포팅' :
+          recommend = 60;
+          break;
+        case '시각 하운드' :
+          recommend = 30;
+          break;
+        case '후각 하운드' :
+          recommend = 60;
+          break;
+        case '테리어' :
+          recommend = 40;
+          break;
+        case '허딩' :
+          recommend = 90;
+          break;
+        case '토이' :
+          recommend = 40;
+          break;
+        case '스포팅' :
+          recommend = 90;
+          break;
+        case '워킹' :
+          recommend = 120;
+          break;
+      }
+
+      print('수정 확인 : ${name}');
+
+      var map = Map<String, dynamic>();
+      map["name"] = name;
+      map["gender"] = gender;
+      map["birth"] = birth;
+      map["kategorie"] = kategorie;
+      map["breed"] = breed;
+      map["weight"] = weight;
+      map["recommend"] = recommend;
+
+      petsRef
+          .doc(petController.selectedPetID)
+          .update(map)
+          .whenComplete(() => print("변경 완료"))
+          .catchError((error) => print(error));
+    }
   }
 
   // 강아지 정보 데이터 추가
