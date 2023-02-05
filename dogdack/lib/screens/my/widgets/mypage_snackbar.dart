@@ -6,6 +6,9 @@ enum SnackBarErrorType {
   NameNotExist, // 반려견 이름이 입력되지 않음
   BirthNotExist, // 반려견 생일이 입력되지 않음
   BreedNotExist, // 반려견 견종이 입력되지 않음
+  KategorieNotExist, // 반려견 카테고리가 입력되지 않음
+  NameOverflow, // 반려견 이름이 제한 글자(10글자) 를 초과함
+  BreedOverflow, // 반려견 견종이 제한 글자(20글자) 를 초과함
 }
 
 class MyPageSnackBar {
@@ -33,7 +36,16 @@ class MyPageSnackBar {
         msg = '강아지 생일을 등록 하세요!';
         break;
       case SnackBarErrorType.BreedNotExist:
-        msg = '강아지 견종을 등록 하세요';
+        msg = '강아지 견종을 등록 하세요!';
+        break;
+      case SnackBarErrorType.KategorieNotExist:
+        msg = '강아지 분류를 등록 하세요!';
+        break;
+      case SnackBarErrorType.NameOverflow:
+        msg = '이름은 10글자 까지 입력 가능해요!';
+        break;
+      case SnackBarErrorType.BreedOverflow:
+        msg = '견종은 20글자 까지 입력 가능해요!';
         break;
     }
 
