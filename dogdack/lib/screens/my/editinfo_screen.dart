@@ -22,6 +22,7 @@ import 'package:image_cropper/image_cropper.dart';
 
 // Widget
 import 'package:dogdack/screens/my/widgets/mypage_snackbar.dart';
+import 'package:dogdack/screens/my/widgets/mypage_kategorie_guide.dart';
 
 // DateFormat
 import 'package:intl/intl.dart';
@@ -519,7 +520,26 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                infoTitleBox(petInfoHeight, '분류'),
+                                Row(
+                                  children: [
+                                    infoTitleBox(petInfoHeight, '분류'),
+                                    SizedBox(width: petInfoWidth * 0.02,),
+                                    InkWell(
+                                      onTap: () {
+                                        FlutterDialog(context);
+                                      },
+                                      child: CircleAvatar(
+                                        child: Icon(
+                                          Icons.question_mark,
+                                          size: petInfoHeight * 0.025,
+                                          color: Colors.white,
+                                        ),
+                                        backgroundColor: Color(0xff504E5B),
+                                        radius: petInfoHeight * 0.015,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                                 Container(
                                   height: petInfoHeight * 0.06,
                                   child: TextButton(
