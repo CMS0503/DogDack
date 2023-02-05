@@ -382,7 +382,9 @@ class _MyPageState extends State<MyPage> {
                                           width: petInfoWidth * 0.03,
                                         ),
                                         Text(
-                                          '${snapshot.data!.docs[petController.selectedPetScrollIndex].get('weight')}kg',
+                                          snapshot.data!.docs[petController.selectedPetScrollIndex].get('weight') == 0
+                                              ? '몸무게 미입력'
+                                              : '${snapshot.data!.docs[petController.selectedPetScrollIndex].get('weight')}kg',
                                           style: TextStyle(
                                             color: Color(0xff504E5B),
                                             fontSize: size.width * 0.05,
@@ -402,7 +404,7 @@ class _MyPageState extends State<MyPage> {
                                           width: petInfoWidth * 0.03,
                                         ),
                                         Text(
-                                          '${(snapshot.data!.docs[petController.selectedPetScrollIndex].get('weight') / 60).round()}시간 ${snapshot.data!.docs[petController.selectedPetScrollIndex].get('weight') % 60}분',
+                                          '${(snapshot.data!.docs[petController.selectedPetScrollIndex].get('recommend') / 60).toInt()}시간 ${snapshot.data!.docs[petController.selectedPetScrollIndex].get('recommend') % 60}분',
                                           style: TextStyle(
                                             color: Color(0xff504E5B),
                                             fontSize: size.width * 0.05,
@@ -411,7 +413,7 @@ class _MyPageState extends State<MyPage> {
                                       ],
                                     ),
                                     SizedBox(
-                                      height: petInfoHeight * 0.02,
+                                      height: petInfoHeight * 0.07,
                                     ),
                                     //편집하기 버튼
                                     Center(
@@ -423,7 +425,12 @@ class _MyPageState extends State<MyPage> {
                                             // 편집 페이지로 이동
                                             Navigator.push(context, MaterialPageRoute(builder: (context) => EditDogInfoPage()));
                                           },
-                                          child: Text('편집하기')),
+                                          child: Text('편집하기'),
+                                          style: ButtonStyle(
+                                            backgroundColor: MaterialStateProperty.all(Color(0xff646CAA)),
+                                            foregroundColor: MaterialStateProperty.all(Colors.white),
+                                          ),
+                                      ),
                                     )
                                   ],
                                 ),

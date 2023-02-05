@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
 // firebase
@@ -45,7 +43,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   final mypageStateController = Get.put(MyPageStateController());
 
   // 강아지 정보 : (GetX 강아지 정보 관련 변수는 조회 페이지에서 선택한 정보이기 때문에 다르게 관리함)
-  final kategorieList = [['논스포팅', '하운드', '테리어', '허딩', '토이', '스포팅', '워킹']]; // 견종 카테고리 리스트
+  final kategorieList = [['논스포팅', '시각 하운드', '후각 하운드', '테리어', '허딩', '토이', '스포팅', '워킹']]; // 견종 카테고리 리스트
   final weightList = [[]];
   List genderList = ['Male', 'Female']; // 성별 리스트
 
@@ -97,6 +95,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
         onConfirm: (Picker picker, List value) {
           setState(() {
             kategorie = picker.getSelectedValues()[0];
+            selectKategorie = true;
             print(kategorie);
           });
         },
@@ -194,6 +193,33 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
 
     await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
       await petImgRef!.getDownloadURL().then((value) {
+        switch(kategorie) {
+          case '논스포팅' :
+            recommend = 60;
+            break;
+          case '시각 하운드' :
+            recommend = 30;
+            break;
+          case '후각 하운드' :
+            recommend = 60;
+            break;
+          case '테리어' :
+            recommend = 40;
+            break;
+          case '허딩' :
+            recommend = 90;
+            break;
+          case '토이' :
+            recommend = 40;
+            break;
+          case '스포팅' :
+            recommend = 90;
+            break;
+          case '워킹' :
+            recommend = 120;
+            break;
+        }
+
         var map = Map<String, dynamic>();
         map["imageUrl"] = imageUrl;
         map["imageFileName"] = Path.basename(pickedPetImgFile!.path);
@@ -222,6 +248,33 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
 
     await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
       await petImgRef!.getDownloadURL().then((value) {
+        switch(kategorie) {
+          case '논스포팅' :
+            recommend = 60;
+            break;
+          case '시각 하운드' :
+            recommend = 30;
+            break;
+          case '후각 하운드' :
+            recommend = 60;
+            break;
+          case '테리어' :
+            recommend = 40;
+            break;
+          case '허딩' :
+            recommend = 90;
+            break;
+          case '토이' :
+            recommend = 40;
+            break;
+          case '스포팅' :
+            recommend = 90;
+            break;
+          case '워킹' :
+            recommend = 120;
+            break;
+        }
+
         //이미지 경로를 db 에 저장
         petsRef.add(DogData(
           imageUrl: value,
@@ -245,8 +298,9 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   bool createData = false; // 데이터 생성 완료 여부
   bool uploadingData = false; // 데이터 업로드 여부 => 버튼을 누르는 순간 다시 동작 못하게 하기 위함.
   bool editingData = false; // 데이터 수정/삭제 여부 => 버튼을 누르는 순간 다시 동작 못하게 하기 위함.
-  bool selectedBirth = false; // 생일 선택 완료 확인
+  bool selectBirth = false; // 생일 선택 완료 확인
   bool isChangeImg = false; // 편집 모드에서 기존 사진을 변경 완료했는지 여부
+  bool selectKategorie = false; // 카테고리 선택 완료 확인
 
   // 생일 선택
   Future _selectDate(BuildContext context) async {
@@ -263,7 +317,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
         String day = (DateFormat.d()).format(selected);
 
         birth = '${year}.${month}.${day}';
-        selectedBirth = true;
+        selectBirth = true;
       });
     }
   }
@@ -275,7 +329,6 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   // 편집 모드 일 경우 기존 데이터를 텍스트 폼에 띄우기 위함.
   TextEditingController _nameController = TextEditingController();
   TextEditingController _breedController = TextEditingController();
-  TextEditingController _weightController = TextEditingController();
 
   // Widget
   // 정보 화면 타이틀 위젯
@@ -314,7 +367,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
       birth = petController.selectedPetBirth; // 생일
       kategorie = petController.selectedPetKategorie; // 카테고리
       _breedController = TextEditingController(text: petController.selectedPetBreed); // 견종
-      _weightController = TextEditingController(text: petController.selectedPetWeight.toString()); // 몸무게
+      weight = petController.selectedPetWeight; // 몸무게
     }
 
     for(int i = 1; i <= 200; i++)
@@ -365,7 +418,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                       child: pickComp
                           ? ClipOval(child: mypageStateController.myPageStateType == MyPageStateType.Create
                             ? Image(image: FileImage(pickedPetImgFile))
-                            : isChangeImg
+                            : !isChangeImg
                               ? Image.network(petController.selectedPetImageUrl)
                               : Image(image: FileImage(pickedPetImgFile)))
                           : Icon(Icons.add, size: size.width * 0.2, color: Colors.white),
@@ -545,19 +598,35 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                       return;
                                     }
 
-                                    // 생일을 선택하지 않은 경우
-                                    if (!selectedBirth) {
+                                    // 이름이 10글자를 초과할 경우 알림
+                                    if(name.length > 10) {
+                                      MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameOverflow);
+                                      uploadingData = false;
+                                      return;
+                                    }
+
+                                    // 생일을 선택하지 않은 경우 알림
+                                    if(!selectBirth) {
                                       MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BirthNotExist);
                                       uploadingData = false;
                                       return;
                                     }
 
-                                    // 견종을 입력하지 않은 경우
+                                    // 견종 그룹을 입력하지 않은 경우 알림
+                                    if(!selectKategorie) {
+                                      MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.KategorieNotExist);
+                                      uploadingData = false;
+                                      return;
+                                    }
+
+                                    // 견종을 입력하지 않은 경우 알림
                                     if(breed.length == 0) {
                                       MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BreedNotExist);
                                       uploadingData = false;
                                       return;
                                     }
+
+                                    // 몸무게 미 입력은 미입력으로 표기
 
                                     await _create().whenComplete(() {
                                       if (Navigator.canPop(context))
@@ -607,7 +676,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                                 }
 
                                                 // 생일을 선택하지 않은 경우
-                                                if (!selectedBirth) {
+                                                if (!selectBirth) {
                                                   MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BirthNotExist);
                                                   editingData = false;
                                                   return;
@@ -651,14 +720,13 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                                   if (Navigator.canPop(context))
                                                     Navigator.pop(context);
 
-                                                  petController.selectedPetScrollIndex = petController.selectedPetScrollIndex - 1;
-                                                  if(petController.selectedPetScrollIndex < 0) petController.selectedPetScrollIndex = 0;
+                                                  petController.selectedPetScrollIndex = 0;
 
                                                   setState(() {
                                                     editingData = false;
                                                   });
                                                 });
-                                  }
+                                              }
                                               : null,
                                           child: Text('삭제하기'),
                                           style: ButtonStyle(
