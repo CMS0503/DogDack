@@ -1,10 +1,9 @@
-import 'package:dogdack/screens/walk/widgets/data.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
 //screen
 import 'package:dogdack/screens/walk/walk_screen.dart';
 import 'package:dogdack/screens/walk/widgets/ble_list.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
 import '../screens/walk/controller/walk_controller.dart';
 
 class WalkNavigator extends StatelessWidget {
@@ -19,7 +18,6 @@ class WalkNavigator extends StatelessWidget {
             tabIndex: tabIndex,
           ),
       "/Ble": (context) => BleList(),
-      "/Data": (context) => DeviceScreen(device: walkController.device!)
     };
   }
 
