@@ -68,9 +68,9 @@ class _MapState extends State<myMap> {
               if (!walkController.isRunning.value) {
                 // 시작 전
                 widget.receiveData = '';
-              } else if (stringValue.contains('}') &&
-                  widget.receiveData.contains('{')) {
-                // 시작 후
+              } else if (widget.receiveData[0] == '{' &&
+                  widget.receiveData[widget.receiveData.length - 1] == '}') {
+                // 받은 데이터 포맷이 올바를 때
                 widget.location = jsonDecode(widget.receiveData);
                 walkController.setCurrentLocation(
                     widget.location!['lat'], widget.location!["lon"]);
@@ -102,8 +102,10 @@ class _MapState extends State<myMap> {
                 latlng.add(currentPosition);
                 print('totaldistance: ${totalDistance}');
                 setState(() {});
+              } else if (widget.receiveData[0] == '{') {
+              } else {
+                widget.receiveData = '';
               }
-              widget.receiveData = '';
             });
           }
         }
