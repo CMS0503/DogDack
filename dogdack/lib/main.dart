@@ -1,16 +1,13 @@
 import 'package:dogdack/screens/login/login_after_screen.dart';
-import 'package:flutter/material.dart';
-
 //screen
-
 import 'package:dogdack/screens/login/login_screen.dart';
-import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 //firebase
 import 'firebase_options.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,9 +18,32 @@ void main() async {
 
   initializeDateFormatting();
 
-  runApp(const GetMaterialApp(
-    title: 'Navigation',
-    home: MyApp(),
+  runApp(MaterialApp(
+    title: 'dogdack',
+    theme: ThemeData(
+      appBarTheme: AppBarTheme(
+        backgroundColor: Color.fromARGB(255, 100, 92, 170),
+      ),
+      primaryColor: Color.fromARGB(255, 100, 92, 170),
+      fontFamily: 'bmjua',
+      //textButtonTheme:,
+      textTheme: TextTheme(
+        titleLarge: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 20,
+          color: Color.fromARGB(255, 80, 78, 91),
+        ),
+        displayMedium: TextStyle(
+          fontSize: 16,
+          color: Color.fromARGB(255, 100, 92, 170),
+        ),
+        bodyMedium: TextStyle(
+          fontSize: 16,
+          color: Color.fromARGB(255, 80, 78, 91),
+        ),
+      ),
+    ),
+    home: const MyApp(),
   ));
 }
 
@@ -32,16 +52,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return LoginAfterPage();
-          } else {
-            return const LoginPage();
-          }
-        },
+    return SafeArea(
+      child: Scaffold(
+        body: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return LoginAfterPage();
+            } else {
+              return const LoginPage();
+            }
+          },
+        ),
       ),
     );
   }

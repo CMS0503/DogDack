@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dogdack/commons/logo_widget.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key, required this.tabIndex});
@@ -22,4 +23,23 @@ class HomePage extends StatelessWidget {
         ),
         body: Container());
   }
+}
+
+class NewWidget extends StatelessWidget {
+  const NewWidget({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      "안녕하세요! ${FirebaseAuth.instance.currentUser!.email} 님!",
+      style: Theme.of(context).textTheme.bodyText1,
+    );
+  }
+}
+
+@override
+Widget build(BuildContext context) {
+  return const SizedBox();
 }

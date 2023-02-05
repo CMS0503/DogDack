@@ -1,11 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:dogdack/navigators/calender_navigator.dart';
 //navigator
 import 'package:dogdack/navigators/home_navigator.dart';
-import 'package:dogdack/navigators/calender_navigator.dart';
-import 'package:dogdack/navigators/walk_navigator.dart';
 import 'package:dogdack/navigators/mypage_navigator.dart';
+import 'package:dogdack/navigators/walk_navigator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -39,7 +38,7 @@ class _MainPageState extends State<MainPage> {
         ),
         Offstage(
           offstage: _currentTabIndex != 2,
-          child: const WalkNavigator(tabIndex: 2),
+          child: WalkNavigator(tabIndex: 2),
         ),
         Offstage(
           offstage: _currentTabIndex != 3,
