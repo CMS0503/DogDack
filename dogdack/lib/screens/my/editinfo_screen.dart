@@ -174,6 +174,9 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
 
   // 강아지 정보 데이터 삭제
   Future<void> _delete([DocumentSnapshot? documentSnapshot]) async {
+    // Firebase storage 해당 이미지 제거
+    FirebaseStorage.instance.ref().child('${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${petController.selectedPetImageFileName}').delete();
+
     await petsRef
         .doc(petController.selectedPetID)
         .delete()
@@ -221,7 +224,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
         }
 
         var map = Map<String, dynamic>();
-        map["imageUrl"] = imageUrl;
+        map["imageUrl"] = value;
         map["imageFileName"] = Path.basename(pickedPetImgFile!.path);
         map["name"] = name;
         map["gender"] = gender;
