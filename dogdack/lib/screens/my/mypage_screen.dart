@@ -1,9 +1,17 @@
 // Widgets
+<<<<<<< dogdack/lib/screens/my/mypage_screen.dart
+import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:transparent_image/transparent_image.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+
+=======
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/models/dog_data.dart';
 // models
 import 'package:dogdack/models/walk_data.dart';
+>>>>>>> dogdack/lib/screens/my/mypage_screen.dart
 // Firebase
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +22,14 @@ import 'package:transparent_image/transparent_image.dart';
 
 // Controller
 import 'controller/mypage_controller.dart';
+<<<<<<< dogdack/lib/screens/my/mypage_screen.dart
+
+// Models
+import 'package:dogdack/models/walk_data.dart';
+import 'package:dogdack/models/dog_data.dart';
+
+=======
+>>>>>>> dogdack/lib/screens/my/mypage_screen.dart
 // Screen
 import 'editinfo_screen.dart';
 
@@ -49,12 +65,38 @@ class _MyPageState extends State<MyPage> {
   final mypageStateController =
       Get.put(MyPageStateController()); // 현재 mypage 의 상태 표시
 
+  // Widget
+  // 정보 화면 타이틀 위젯
+  Container infoTitleBox(double cardWith, double cardHeight, String title) {
+    return Container(
+      width: cardWith * 0.48,
+      height: cardHeight * 0.08,
+      decoration: BoxDecoration(
+        border: Border.all(color: Color(0xff644CAA), width: 2),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Center(
+        child: Text(
+          title,
+          style: TextStyle(
+            color: Color(0xff644CAA),
+            fontSize: cardWith * 0.06,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // 디바이스 사이즈 크기 정의
     final Size size = MediaQuery.of(context).size;
 
-    // 스크린 상태 갱신
+    // 반려견 정보 표시 카드의 너비, 높이 정의
+    final double petInfoWidth = size.width * 0.8;
+    final double petInfoHeight = size.height * 0.45;
+
+    // 스크린 상태 갱신 : 정보 조회 화면
     mypageStateController.myPageStateType = MyPageStateType.View;
 
     return GestureDetector(
@@ -77,7 +119,11 @@ class _MyPageState extends State<MyPage> {
           padding:
               EdgeInsets.fromLTRB(0, 0, size.width * 0.05, size.width * 0.05),
           child: FloatingActionButton(
+<<<<<<< dogdack/lib/screens/my/mypage_screen.dart
+            heroTag: 'petAdd',
+=======
             heroTag: 'btn1',
+>>>>>>> dogdack/lib/screens/my/mypage_screen.dart
             onPressed: () {
               // 생성 모드
               mypageStateController.myPageStateType = MyPageStateType.Create;
@@ -159,7 +205,7 @@ class _MyPageState extends State<MyPage> {
                             Column(
                               children: [
                                 Text(walkSnapshot.data!.docs.length.toString()),
-                                SizedBox(height: size.height * 0.01),
+                                SizedBox(height: size.height * 0.02),
                                 Text('산책 카운트'),
                               ],
                             ),
@@ -167,7 +213,7 @@ class _MyPageState extends State<MyPage> {
                             Column(
                               children: [
                                 Text(totalWalkHour.toString()),
-                                SizedBox(height: size.height * 0.01),
+                                SizedBox(height: size.height * 0.02),
                                 Text('산책 시간'),
                               ],
                             ),
@@ -175,7 +221,7 @@ class _MyPageState extends State<MyPage> {
                             Column(
                               children: [
                                 Text(petSnapshot.data!.docs.length.toString()),
-                                SizedBox(height: size.height * 0.01),
+                                SizedBox(height: size.height * 0.02),
                                 Text('댕댕이'),
                               ],
                             ),
@@ -206,8 +252,13 @@ class _MyPageState extends State<MyPage> {
                     // 여기서 부터는 등록된 반려견이 1마리 이상 존재함.
 
                     // 마지막으로 저장된 스크롤 인덱스에 맞춰 정보 갱신함
+<<<<<<< dogdack/lib/screens/my/mypage_screen.dart
+                    // 인덱스는 0번 부터 시작하며 초기 값은 0
+                    PetController().updateSelectedPetInfo(snapshot, petController, petController.selectedPetScrollIndex);
+=======
                     PetController().updateSelectedPetInfo(snapshot,
                         petController, petController.selectedPetScrollIndex);
+>>>>>>> dogdack/lib/screens/my/mypage_screen.dart
 
                     return Column(
                       children: [
@@ -215,6 +266,8 @@ class _MyPageState extends State<MyPage> {
                         CarouselSlider.builder(
                           options: CarouselOptions(
                             viewportFraction: 0.5,
+                            enlargeCenterPage : true,
+                            enlargeFactor : 0.4,
                             enableInfiniteScroll: false,
                             onPageChanged: (index, reason) {
                               setState(() {
@@ -226,7 +279,7 @@ class _MyPageState extends State<MyPage> {
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (context, itemIndex, pageViewIndex) {
                             return CircleAvatar(
-                              radius: 80,
+                              radius: size.width * 0.3,
                               child: ClipOval(
                                 child: FadeInImage.memoryNetwork(
                                   fit: BoxFit.cover,
@@ -241,8 +294,8 @@ class _MyPageState extends State<MyPage> {
                         SizedBox(height: size.height * 0.001),
                         Center(
                           child: Container(
-                            height: size.height * 0.45,
-                            width: size.width * 0.8,
+                            height: petInfoHeight,
+                            width: petInfoWidth,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
@@ -257,28 +310,52 @@ class _MyPageState extends State<MyPage> {
                             ),
                             child: Center(
                               child: Padding(
+<<<<<<< dogdack/lib/screens/my/mypage_screen.dart
+                                padding: EdgeInsets.fromLTRB(petInfoWidth * 0.05, size.width * 0.05, petInfoWidth * 0.05, 0),
+=======
                                 padding: EdgeInsets.fromLTRB(size.width * 0.05,
                                     size.width * 0.05, size.width * 0.05, 0),
+>>>>>>> dogdack/lib/screens/my/mypage_screen.dart
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    // 이름
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '이름'),
+                                        SizedBox(
+                                          width: petInfoWidth * 0.03,
+                                        ),
                                         Text(
-                                          '이름',
+                                          snapshot.data!.docs[petController.selectedPetScrollIndex].get('name'),
                                           style: TextStyle(
-                                            color: Colors.deepPurpleAccent,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: size.width * 0.04,
+                                            fontSize: size.width * 0.05,
+                                            color: Color(0xff504E5B),
                                           ),
                                         ),
                                       ],
                                     ),
                                     SizedBox(
-                                      height: size.height * 0.01,
+                                      height: petInfoHeight * 0.02,
                                     ),
+<<<<<<< dogdack/lib/screens/my/mypage_screen.dart
+                                    // 성별
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '성별'),
+                                        SizedBox(
+                                          width: petInfoWidth * 0.03,
+                                        ),
+                                        Container(
+                                          child: snapshot.data!.docs[petController.selectedPetScrollIndex].get('gender') == 'Male'
+                                              ? Icon(Icons.male, color: Colors.blueAccent,)
+                                              : Icon(Icons.female, color: Colors.pink,),
+                                        ),
+                                      ],
+=======
                                     Text(
                                       snapshot
                                           .data!
@@ -289,25 +366,33 @@ class _MyPageState extends State<MyPage> {
                                         fontWeight: FontWeight.bold,
                                         fontSize: size.width * 0.05,
                                       ),
+>>>>>>> dogdack/lib/screens/my/mypage_screen.dart
                                     ),
                                     SizedBox(
-                                      height: size.height * 0.01,
+                                      height: petInfoHeight * 0.02,
                                     ),
+                                    // 생일
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '생일'),
+                                        SizedBox(
+                                          width: petInfoWidth * 0.03,
+                                        ),
                                         Text(
-                                          '성별',
+                                          snapshot.data!.docs[petController.selectedPetScrollIndex].get('birth'),
                                           style: TextStyle(
-                                            color: Colors.deepPurpleAccent,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: size.width * 0.04,
+                                            fontSize: size.width * 0.05,
+                                            color: Color(0xff504E5B),
                                           ),
                                         ),
                                       ],
                                     ),
                                     SizedBox(
+<<<<<<< dogdack/lib/screens/my/mypage_screen.dart
+                                      height: petInfoHeight * 0.02,
+=======
                                       height: size.width * 0.01,
                                     ),
                                     snapshot
@@ -326,24 +411,54 @@ class _MyPageState extends State<MyPage> {
                                           ),
                                     SizedBox(
                                       height: size.width * 0.01,
+>>>>>>> dogdack/lib/screens/my/mypage_screen.dart
                                     ),
+                                    // 카테고리
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '분류'),
+                                        SizedBox(
+                                          width: petInfoWidth * 0.03,
+                                        ),
                                         Text(
-                                          '생일',
+                                          snapshot.data!.docs[petController.selectedPetScrollIndex].get('kategorie'),
                                           style: TextStyle(
-                                            color: Colors.deepPurpleAccent,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: size.width * 0.04,
+                                            fontSize: size.width * 0.05,
+                                            color: Color(0xff504E5B),
                                           ),
                                         ),
                                       ],
                                     ),
                                     SizedBox(
-                                      height: size.width * 0.01,
+                                      height: petInfoHeight * 0.02,
                                     ),
+<<<<<<< dogdack/lib/screens/my/mypage_screen.dart
+                                    // 견종
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '견종'),
+                                        SizedBox(
+                                          width: petInfoWidth * 0.03,
+                                        ),
+                                        Container(
+                                          width: petInfoWidth * 0.3,
+                                          height: petInfoHeight * 0.06,
+                                          child: AutoSizeText(
+                                            snapshot.data!.docs[petController.selectedPetScrollIndex].get('breed'),
+                                            minFontSize: 1,
+                                            style: TextStyle(
+                                              color: Color(0xff504E5B),
+                                              fontSize: size.width * 0.05,
+                                              overflow: TextOverflow.ellipsis
+                                            ),
+                                            maxLines: 2,
+                                          ),
+                                        ),
+                                      ],
+=======
                                     Text(
                                       snapshot
                                           .data!
@@ -354,27 +469,52 @@ class _MyPageState extends State<MyPage> {
                                         fontWeight: FontWeight.bold,
                                         fontSize: size.width * 0.05,
                                       ),
+>>>>>>> dogdack/lib/screens/my/mypage_screen.dart
                                     ),
                                     SizedBox(
-                                      height: size.width * 0.01,
+                                      height: petInfoHeight * 0.02,
                                     ),
+                                    // 몸무게
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '무게'),
+                                        SizedBox(
+                                          width: petInfoWidth * 0.03,
+                                        ),
                                         Text(
-                                          '견종',
+                                          snapshot.data!.docs[petController.selectedPetScrollIndex].get('weight') == 0
+                                              ? '몸무게 미입력'
+                                              : '${snapshot.data!.docs[petController.selectedPetScrollIndex].get('weight')}kg',
                                           style: TextStyle(
-                                            color: Colors.deepPurpleAccent,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: size.width * 0.04,
+                                            color: Color(0xff504E5B),
+                                            fontSize: size.width * 0.05,
                                           ),
                                         ),
                                       ],
                                     ),
                                     SizedBox(
-                                      height: size.width * 0.01,
+                                      height: petInfoHeight * 0.02,
                                     ),
+<<<<<<< dogdack/lib/screens/my/mypage_screen.dart
+                                    // 권장 산책 시간
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '하루 권장 산책 시간'),
+                                        SizedBox(
+                                          width: petInfoWidth * 0.03,
+                                        ),
+                                        Text(
+                                          '${(snapshot.data!.docs[petController.selectedPetScrollIndex].get('recommend') / 60).toInt()}시간 ${snapshot.data!.docs[petController.selectedPetScrollIndex].get('recommend') % 60}분',
+                                          style: TextStyle(
+                                            color: Color(0xff504E5B),
+                                            fontSize: size.width * 0.05,
+                                          ),
+                                        ),
+                                      ],
+=======
                                     Text(
                                       snapshot
                                           .data!
@@ -385,10 +525,12 @@ class _MyPageState extends State<MyPage> {
                                         fontWeight: FontWeight.bold,
                                         fontSize: size.width * 0.05,
                                       ),
+>>>>>>> dogdack/lib/screens/my/mypage_screen.dart
                                     ),
                                     SizedBox(
-                                      height: size.width * 0.07,
+                                      height: petInfoHeight * 0.07,
                                     ),
+                                    //편집하기 버튼
                                     Center(
                                       child: ElevatedButton(
                                           onPressed: () {
@@ -404,7 +546,12 @@ class _MyPageState extends State<MyPage> {
                                                     builder: (context) =>
                                                         EditDogInfoPage()));
                                           },
-                                          child: Text('편집하기')),
+                                          child: Text('편집하기'),
+                                          style: ButtonStyle(
+                                            backgroundColor: MaterialStateProperty.all(Color(0xff646CAA)),
+                                            foregroundColor: MaterialStateProperty.all(Colors.white),
+                                          ),
+                                      ),
                                     )
                                   ],
                                 ),
