@@ -47,6 +47,7 @@ void main() async {
           ),
         ),
       ),
+      home: const MyApp(),
     ),
   );
 }
