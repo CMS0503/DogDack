@@ -28,10 +28,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
   void fbstoreWrite() {
     FirebaseFirestore.instance
         .collection(
-          'Users',
-        )
-        .doc('${FirebaseAuth.instance.currentUser!.email}')
-        .collection('Calendar')
+            'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
         .doc(DateFormat('yyMMdd').format(controller.date))
         .withConverter(
           fromFirestore: (snapshot, options) =>
@@ -51,16 +48,8 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
 
     FirebaseFirestore.instance
         .collection(
-          'Users',
-        )
-        .doc('${FirebaseAuth.instance.currentUser!.email}')
-        .collection('Walk')
+            'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Walk')
         .doc(DateFormat('yyMMdd').format(controller.date))
-        .withConverter(
-          fromFirestore: (snapshot, options) =>
-              CalenderData.fromJson(snapshot.data()!),
-          toFirestore: (value, options) => value.toJson(),
-        )
         .withConverter(
           fromFirestore: (snapshot, options) =>
               WalkData.fromJson(snapshot.data()!),
@@ -68,7 +57,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
         )
         .set(WalkData(
           place: controller.place,
-          time: controller.time,
+          // startTime: controller.time,
           distance: int.parse(controller.distance),
         ))
         .then((value) => print("document added"))

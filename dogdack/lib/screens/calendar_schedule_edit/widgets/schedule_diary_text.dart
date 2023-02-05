@@ -29,6 +29,7 @@ class ScheduleDiaryText extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: TextField(
+              maxLength: 20,
               onChanged: (value) {
                 controller.diary = value;
               },

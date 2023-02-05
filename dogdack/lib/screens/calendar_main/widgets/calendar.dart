@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dogdack/models/walk_data.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:dogdack/models/calender_data.dart';
 
 class Calendar extends StatefulWidget {
   static late Map<String, List> events;
@@ -27,7 +27,8 @@ class _CalendarState extends State<Calendar> {
   final calendarRef = FirebaseFirestore.instance
       .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Calendar')
       .withConverter(
-          fromFirestore: (snapshot, _) => WalkData.fromJson(snapshot.data()!),
+          fromFirestore: (snapshot, _) =>
+              CalenderData.fromJson(snapshot.data()!),
           toFirestore: (calendarData, _) => calendarData.toJson());
 
   Future<Map<String, List<Object>>> getData() async {
@@ -84,19 +85,17 @@ class _CalendarState extends State<Calendar> {
         titleTextStyle: TextStyle(
           fontFamily: 'bmjua',
           // fontWeight: FontWeight.w700,
-          fontSize: 19,
+          fontSize: 18,
           color: Colors.white,
         ),
         // Chevron
         leftChevronIcon: Icon(
           Icons.chevron_left,
           color: Colors.white,
-          // size: 30,
         ),
         rightChevronIcon: Icon(
           Icons.chevron_right,
           color: Colors.white,
-          // size: 30,
         ),
         decoration: BoxDecoration(
           color: Color.fromARGB(255, 100, 92, 170),
@@ -136,6 +135,7 @@ class _CalendarState extends State<Calendar> {
           color: Colors.red,
           shape: BoxShape.circle,
         ),
+
         // 테이블 경계선 넣기
         tableBorder: TableBorder(
           verticalInside: BorderSide(
@@ -162,89 +162,65 @@ class _CalendarState extends State<Calendar> {
           fontWeight: FontWeight.w400,
         ),
       ),
+      // firebase 산책 기록 불러오기
       eventLoader: _getEventForDay,
       calendarBuilders: CalendarBuilders(
-
-          // 마커 디자인
-          markerBuilder: (context, day, events) {
-        if (events.isEmpty) return const SizedBox();
-        return Padding(
-          padding: const EdgeInsets.only(top: 20),
-          child: ListView(children: <Widget>[
-            SizedBox(
-              height: 20,
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0),
+        // 마커 디자인
+        // 불러온 events 순회하면서
+        markerBuilder: (context, day, events) {
+          // 이벤트 비어 있으면 빈 Box
+          if (events.isEmpty) return const SizedBox();
+          return Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: ListView(
+              children: <Widget>[
+                SizedBox(
+                  height: 20,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    elevation: 0,
+                    child: ListTile(
+                      tileColor: events[0] == true
+                          ? colors[0]
+                          : const Color.fromARGB(255, 255, 255, 255),
+                    ),
+                  ),
                 ),
-                elevation: 0,
-                child: ListTile(
-                  tileColor: events[0] == true
-                      ? colors[0]
-                      : const Color.fromARGB(255, 255, 255, 255),
+                SizedBox(
+                  height: 20,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    elevation: 0,
+                    child: ListTile(
+                      tileColor: events[1] == true
+                          ? colors[1]
+                          : const Color.fromARGB(255, 255, 255, 255),
+                    ),
+                  ),
                 ),
-              ),
+                SizedBox(
+                  height: 20,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    elevation: 0,
+                    child: ListTile(
+                      tileColor: events[2] == true
+                          ? colors[2]
+                          : const Color.fromARGB(255, 255, 255, 255),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(
-              height: 20,
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-                elevation: 0,
-                child: ListTile(
-                  tileColor: events[1] == true
-                      ? colors[1]
-                      : const Color.fromARGB(255, 255, 255, 255),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 20,
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-                elevation: 0,
-                child: ListTile(
-                  tileColor: events[2] == true
-                      ? colors[2]
-                      : const Color.fromARGB(255, 255, 255, 255),
-                ),
-              ),
-            ),
-          ]),
-        );
-        // return Padding(
-        //   padding: const EdgeInsets.only(top: 30),
-        //   child: ListView.builder(
-        //     scrollDirection: Axis.vertical,
-        //     itemCount: events.length,
-        //     itemBuilder: (context, index) {
-        //       return Padding(
-        //         padding: const EdgeInsets.only(
-        //           left: 3.0,
-        //           right: 3.0,
-        //           bottom: 3.0,
-        //         ),
-        //         child: Container(
-        //           height: 15,
-        //           decoration: BoxDecoration(
-        //             shape: BoxShape.rectangle,
-        //             color: colors[index],
-        //             borderRadius: BorderRadius.circular(3),
-        //           ),
-        //         ),
-        //       );
-        //     },
-        //   ),
-        // );
-      }),
+          );
+        },
+      ),
     );
   }
 }
-
-// class Event {
-//   Object events;
-//   Event(this.events);
-// }

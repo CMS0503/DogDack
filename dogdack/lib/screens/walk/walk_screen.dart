@@ -13,7 +13,7 @@ class WalkPage extends StatelessWidget {
   final walkController = Get.put(WalkController());
 
   Widget mapAreaWidget(w, h) {
-    return Container(
+    return SizedBox(
       height: h * 0.65,
       width: w,
       child: ClipRRect(
@@ -24,13 +24,13 @@ class WalkPage extends StatelessWidget {
   }
 
   Widget requestBluetoothConnectWidget(w, h, context) {
-    return Container(
+    return SizedBox(
       height: h * 0.65,
       width: w,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
+          const Text(
             '블루투스 연결을 확인해주세요',
             style: TextStyle(
               fontSize: 20,
@@ -40,13 +40,13 @@ class WalkPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              const Icon(
                 Icons.bluetooth_outlined,
                 color: Colors.blue,
               ),
               TextButton(
                 onPressed: () => Navigator.pushNamed(context, '/Ble'),
-                child: Text('지금 연결하러 가기'),
+                child: const Text('지금 연결하러 가기'),
               ),
             ],
           ),
@@ -59,7 +59,7 @@ class WalkPage extends StatelessWidget {
     return Opacity(
       opacity: 0.7,
       child: Container(
-        decoration: BoxDecoration(color: Colors.grey),
+        decoration: const BoxDecoration(color: Colors.grey),
         height: h * 0.65,
         width: w,
         child: Align(
@@ -72,18 +72,18 @@ class WalkPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
-                Text('산책하기를 종료합니다'),
-                Text('산책 거리가 짧으면 기록되지 않습니다.'),
-                SizedBox(
+                const Text('산책하기를 종료합니다'),
+                const Text('산책 거리가 짧으면 기록되지 않습니다.'),
+                const SizedBox(
                   height: 5,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
+                    SizedBox(
                       width: w * 0.45,
                       // decoration: BoxDecoration(color: Colors.red),
                       child: Align(
@@ -91,7 +91,7 @@ class WalkPage extends StatelessWidget {
                         child: TextButton(
                           style: TextButton.styleFrom(
                               padding: EdgeInsets.zero,
-                              minimumSize: Size(50, 30)),
+                              minimumSize: const Size(50, 30)),
                           child: Text(
                             '산책 계속하기',
                             style: Theme.of(context).textTheme.bodyMedium,
@@ -103,13 +103,13 @@ class WalkPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       width: w * 0.45,
                       // decoration: BoxDecoration(color: Colors.blue),
                       child: Align(
                         alignment: Alignment.center,
                         child: TextButton(
-                          child: Text(
+                          child: const Text(
                             '종료',
                             style: TextStyle(color: Colors.red, fontSize: 16),
                           ),
@@ -119,7 +119,7 @@ class WalkPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 )
               ],
@@ -147,9 +147,9 @@ class WalkPage extends StatelessWidget {
         () => Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(height: 10),
-            Status(),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
+            const Status(),
+            const SizedBox(height: 10),
             walkController.isBleConnect.value == false
                 ? requestBluetoothConnectWidget(
                     screenWidth, screenHeight, context)
