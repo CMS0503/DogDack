@@ -135,9 +135,14 @@ class _MyPageState extends State<MyPage> {
 
                         // 총 산책 시간 계산
                         num totalWalkHour = 0;
-                        walkSnapshot.data!.docs.forEach((element) {
-                          totalWalkHour = totalWalkHour + element.get('totalTimeMin');
-                        });
+
+                        if(walkSnapshot.data!.docs.length == 0) {
+                          totalWalkHour = 0;
+                        } else {
+                          walkSnapshot.data!.docs.forEach((element) {
+                            totalWalkHour = totalWalkHour + element.get('totalTimeMin');
+                          });
+                        }
 
                         // 사용자 정보
                         return Row(
