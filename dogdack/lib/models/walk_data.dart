@@ -23,25 +23,25 @@ class WalkData {
 
   WalkData.fromJson(Map<String, dynamic> json)
       : this(
-    name: json['name']! as String,
-    imageUrl: json['imageUrl']! as String,
-    startTime: json['startTime']! as Timestamp,
-    endTime: json['endTime']! as Timestamp,
-    totalTime: json['totalTime'] as num,
-    isAuto: json['isAuto'] as bool,
-    place: json['place']! as String,
-    distance: json['distance']! as num,
-  );
+          name: json['name']! as String,
+          imageUrl: json['imageUrl']! as String,
+          startTime: json['startTime']! as Timestamp,
+          endTime: json['endTime']! as Timestamp,
+          totalTime: json['totalTime'] as num,
+          isAuto: json['isAuto'] as bool,
+          place: json['place']! as String,
+          distance: json['distance']! as num,
+        );
 
   Map<String, dynamic> toJson() {
     return {
       'name': name,
-      'imageUrl' : imageUrl,
+      'imageUrl': imageUrl,
       'startTime': startTime,
       'endTime': endTime,
       'totalTime': totalTime,
       'isAuto': isAuto,
-      'place' : place,
+      'place': place,
       'distance': distance,
     };
   }

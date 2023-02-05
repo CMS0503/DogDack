@@ -72,7 +72,7 @@ class ScheduleEditBollean extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          const BolleanBtn(name: '목욕'),
+          const BolleanBtn(name: '미용'),
           const SizedBox(
             height: 10,
           ),
@@ -251,6 +251,10 @@ class _BolleanBtnState extends State<BolleanBtn> {
                       controller.bath = buttonsState;
                     } else {
                       controller.beauty = buttonsState;
+                      print(controller.beauty);
+                      print(controller.beauty);
+                      print(controller.beauty);
+                      print(controller.beauty);
                     }
                   });
                 },

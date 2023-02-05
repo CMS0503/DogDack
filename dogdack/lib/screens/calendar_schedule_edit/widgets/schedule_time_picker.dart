@@ -2,27 +2,24 @@ import 'package:dogdack/screens/calendar_schedule_edit/controller/input_controll
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ScheduleEditText extends StatefulWidget {
-  final name;
-
-  const ScheduleEditText({
-    super.key,
-    required this.name,
-  });
+class ScheduleTimePicker extends StatefulWidget {
+  const ScheduleTimePicker({super.key});
 
   @override
-  State<ScheduleEditText> createState() => _ScheduleEditTextState();
+  State<ScheduleTimePicker> createState() => _ScheduleTimePickerState();
 }
 
-class _ScheduleEditTextState extends State<ScheduleEditText> {
+class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
+  Duration duration = const Duration(hours: 1, minutes: 23);
   final controller = Get.put(InputController());
-  final inputController = TextEditingController();
+  final timeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     double height = screenSize.height;
+
     return SizedBox(
       height: height * 0.05,
       width: width,
@@ -38,14 +35,14 @@ class _ScheduleEditTextState extends State<ScheduleEditText> {
                 color: const Color.fromARGB(255, 100, 92, 170),
               ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
+            child: const Padding(
+              padding: EdgeInsets.symmetric(
                 horizontal: 20,
                 vertical: 7,
               ),
               child: Text(
-                '${widget.name}',
-                style: const TextStyle(
+                '시간',
+                style: TextStyle(
                   fontFamily: 'bmjua',
                   fontSize: 20,
                   color: Color.fromARGB(255, 100, 92, 170),
@@ -58,18 +55,23 @@ class _ScheduleEditTextState extends State<ScheduleEditText> {
           ),
           SizedBox(
             width: width * 0.65,
-            child: TextField(
+            child: TextFormField(
+              onTap: () async {
+                FocusManager.instance.primaryFocus?.unfocus();
+                var time = await showTimePicker(
+                    context: context, initialTime: TimeOfDay.now());
+                if (!mounted) return;
+                if (time == null) {
+                  return;
+                }
+                timeController.text = time.format(context);
+                controller.time = time.format(context);
+              },
               // maxLength: 20,
               onChanged: (value) {
-                if (widget.name == '장소') {
-                  controller.place = value;
-                } else if (widget.name == '시간') {
-                  controller.time = value;
-                } else {
-                  controller.distance = value;
-                }
+                controller.time = value;
               },
-              controller: inputController,
+              controller: timeController,
               cursorColor: Colors.grey,
               decoration: InputDecoration(
                 floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -83,15 +85,14 @@ class _ScheduleEditTextState extends State<ScheduleEditText> {
                   ),
                 ),
                 labelStyle: const TextStyle(
-                  // color: Colors.red,
                   fontSize: 22,
                   fontFamily: 'bmjua',
                 ),
                 filled: true,
                 fillColor: const Color.fromARGB(255, 229, 229, 230),
-                label: Text(
-                  "산책 ${widget.name}",
-                  style: const TextStyle(
+                label: const Text(
+                  "산책 시간",
+                  style: TextStyle(
                     color: Color.fromARGB(255, 121, 119, 129),
                   ),
                 ),
