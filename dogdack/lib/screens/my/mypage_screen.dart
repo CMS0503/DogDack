@@ -526,7 +526,7 @@ class _MyPageState extends State<MyPage> {
                                               MaterialStateProperty.all(
                                                   Colors.white),
                                         ),
-                                        child: Text('편집하기'),
+                                        child: const Text('편집하기'),
                                       ),
                                     )
                                   ],

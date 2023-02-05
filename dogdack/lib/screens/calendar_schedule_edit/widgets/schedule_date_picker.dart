@@ -15,6 +15,15 @@ class _DatePickerState extends State<DatePicker> {
   final controller = Get.put(InputController());
   DateTime date = DateTime.now();
 
+  // 강아지 이름 불러오기 추가
+  // final dogRef = FirebaseFirestore.instance
+  //     .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Calendar')
+  //     .withConverter(
+  //         fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+  //         toFirestore: (dogData, _) => dogData.toJson());
+
+  // dogname =
+
   @override
   Widget build(BuildContext context) {
     return Column(
