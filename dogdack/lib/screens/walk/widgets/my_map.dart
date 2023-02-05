@@ -34,13 +34,6 @@ class _MapState extends State<myMap> {
   late LatLng temp;
   double? totalDistance = 0;
 
-  // 타이머 변수
-  // late Timer _timer;
-  // int _timeCount = 0;
-  // bool walkController.isRunning = false;
-
-  // List<String> _lapTimeList = [];
-
   addMarker(cordinate) {
     setState(() {
       markers.add(Marker(
@@ -109,9 +102,6 @@ class _MapState extends State<myMap> {
                 latlng.add(currentPosition);
                 print('totaldistance: ${totalDistance}');
                 setState(() {});
-                // WalkPageState parent =
-                //     context.findAncestorStateOfType<WalkPageState>()!;
-                // parent.setState(() {});
               }
               widget.receiveData = '';
             });
@@ -327,24 +317,6 @@ class _MapState extends State<myMap> {
       // ),
     );
   }
-
-  // @override
-  // void dispose() {
-  //   _timer.cancel();
-  //   super.dispose();
-  // }
-
-  // void _start() {
-  //   _timer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
-  //     setState(() {
-  //       _timeCount++;
-  //     });
-  //   });
-  // }
-
-  // void _pause() {
-  //   _timer.cancel();
-  // }
 
   void _clickPlayButton() {
     walkController.updateWalkingState();
