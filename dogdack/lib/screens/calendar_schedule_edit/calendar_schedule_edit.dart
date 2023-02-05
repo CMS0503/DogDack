@@ -58,11 +58,6 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
         .doc(DateFormat('yyMMdd').format(controller.date))
         .withConverter(
           fromFirestore: (snapshot, options) =>
-              CalenderData.fromJson(snapshot.data()!),
-          toFirestore: (value, options) => value.toJson(),
-        )
-        .withConverter(
-          fromFirestore: (snapshot, options) =>
               WalkData.fromJson(snapshot.data()!),
           toFirestore: (value, options) => value.toJson(),
         )

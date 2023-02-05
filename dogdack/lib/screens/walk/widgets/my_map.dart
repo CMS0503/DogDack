@@ -136,8 +136,9 @@ class _MapState extends State<Map> {
                             _clickPlayButton();
                           },
                           child: _isRunning
-                              ? Icon(Icons.pause, color: Colors.purple)
-                              : Icon(Icons.play_arrow, color: Colors.purple)),
+                              ? const Icon(Icons.pause, color: Colors.purple)
+                              : const Icon(Icons.play_arrow,
+                                  color: Colors.purple)),
                     ),
                     Align(
                       alignment: Alignment(
@@ -191,7 +192,7 @@ class _MapState extends State<Map> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => WalkPage(tabIndex: 2)));
+                          builder: (context) => const WalkPage(tabIndex: 2)));
                 });
               },
               tooltip: '초기화',

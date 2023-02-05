@@ -4,7 +4,7 @@ import './widgets/status.dart';
 import './widgets/ble_screen.dart';
 
 class WalkPage extends StatelessWidget {
-  WalkPage({super.key, required this.tabIndex});
+  const WalkPage({super.key, required this.tabIndex});
 
   final int tabIndex;
 
@@ -25,43 +25,17 @@ class WalkPage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           children: [
-            SizedBox(height: 10),
-            Status(),
-            SizedBox(height: 10),
-            Container(
+            const SizedBox(height: 10),
+            const Status(),
+            const SizedBox(height: 10),
+            SizedBox(
               height: screenHeight * 0.65,
               width: screenWidth,
-              child:
-              ClipRRect(
+              child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Map(),
               ),
             ),
-
-
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   crossAxisAlignment: CrossAxisAlignment.center,
-            //   children: [
-            //     Column(
-            //       children: [
-            //         Text(
-            //           '00:00:00',
-            //           style: Theme.of(context).textTheme.bodyText1,
-            //         )
-            //       ],
-            //     ),
-            //     Text('play'),
-            //     Column(),
-            //   ],
-            // ),
-            // SizedBox(height: 10,),
-            // TextButton(
-            //   child: Text("Select Bluetooth"),
-            //   onPressed: () {
-            //     Navigator.pushNamed(context, '/Ble');
-            //   },
-            // ),
           ],
         ),
       ),
