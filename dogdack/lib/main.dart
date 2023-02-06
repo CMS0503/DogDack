@@ -49,10 +49,9 @@ void main() async {
           ),
         ),
       ),
-      home: const MyApp(),
+      home: MyApp(),
     ),
-    home: MyApp(),
-  ));
+  );
 }
 
 class MyApp extends StatefulWidget {

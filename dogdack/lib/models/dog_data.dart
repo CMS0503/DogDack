@@ -10,7 +10,7 @@ class DogData {
     this.breed,
     this.weight,
     this.recommend,
-    this.createdAt
+    this.createdAt,
   });
 
   final String? imageUrl; // 반려견 사진 Download URL
