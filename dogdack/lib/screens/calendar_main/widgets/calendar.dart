@@ -35,15 +35,12 @@ class _CalendarState extends State<Calendar> {
 
     await petsRef.get().then(
       (value) {
-        print('hsdfsdfsdi');
-        print('$value');
         for (var element in value.docs) {
-          if (element.id == '짬뽕') {
+          if (element.id == controller.name) {
             docId = element.id;
             // print('here');
             // print(docId);
           } else {
-            print('dsfkjsadfasldk;fjasdkl;');
             docId = '짬뽕';
           }
         }
