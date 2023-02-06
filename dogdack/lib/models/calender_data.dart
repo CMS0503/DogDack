@@ -1,6 +1,7 @@
 class CalenderData {
-  CalenderData({this.beauty, this.bath, this.imageUrl, this.diary});
+  CalenderData({this.isWalk, this.beauty, this.bath, this.imageUrl, this.diary});
 
+  final bool? isWalk; // 산책 여부
   final bool? beauty; // 미용 여부
   final bool? bath; // 목욕 여부
   final List<String>? imageUrl; // 오늘의 일기 사진 URL
@@ -8,6 +9,7 @@ class CalenderData {
 
   CalenderData.fromJson(Map<String, dynamic> json)
       : this(
+          isWalk: json['isWalk']! as bool,
           beauty: json['beauty']! as bool,
           bath: json['bath']! as bool,
           imageUrl: json['imageUrl']! as List<String>,
@@ -16,6 +18,7 @@ class CalenderData {
 
   Map<String, dynamic> toJson() {
     return {
+      'isWalk' : isWalk,
       'beauty': beauty,
       'bath': bath,
       'imageUrl': imageUrl,
