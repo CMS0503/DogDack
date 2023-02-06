@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:dogdack/screens/home/home_screen.dart';
 
-//screen
-import '../screens/home/b_screen.dart';
-
 class HomeNavigator extends StatelessWidget {
   const HomeNavigator({super.key, required this.tabIndex});
   final int tabIndex;
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
       "/": (context) => HomePage(
-            tabIndex: tabIndex,
-          ),
-      "/ScreenB": (context) => ScreenB(
             tabIndex: tabIndex,
           ),
     };
