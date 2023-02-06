@@ -9,6 +9,7 @@ class InputController extends GetxController {
   bool bath = true;
   bool beauty = true;
   List<String> imageUrl = [];
+  DateTime today = DateTime.now();
   // void input() {
   //   update();
   // }

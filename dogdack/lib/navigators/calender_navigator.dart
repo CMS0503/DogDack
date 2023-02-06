@@ -10,7 +10,7 @@ class CalenderNavigator extends StatelessWidget {
   final int tabIndex;
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      "/": (context) => CalenderDetail(
+      "/": (context) => CalendarMain(
             tabIndex: tabIndex,
           ),
     };

@@ -11,26 +11,29 @@ import 'package:dogdack/screens/calendar_detail/widget/walk/car_walk_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 
 
 import '../../models/calender_data.dart';
-import '../../models/walk_data.dart';
+import '../calendar_schedule_edit/controller/input_controller.dart';
 
 class CalenderDetail extends StatefulWidget {
+  DateTime today;
+  CalenderDetail({required this.today});
+
   static late Map<String, List> events;
   static late Map<String, List> w_events;
 
-  CalenderDetail({super.key, required this.tabIndex});
-
-  final int tabIndex;
 
   @override
   State<CalenderDetail> createState() => _CalenderDetailState();
 }
 
 class _CalenderDetailState extends State<CalenderDetail> {
+
+  final controller = Get.put(InputController());
   final calendarRef = FirebaseFirestore.instance
       .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Calendar')
       .withConverter(
@@ -309,8 +312,10 @@ class _CalenderDetailState extends State<CalenderDetail> {
   String walk_distance_plus = "증가했어요!";
   String walk_distance_minus = "감소했어요!";
 
-  DateTime date = DateTime.now();
-  late String today = DateFormat('yyMMdd').format(date);
+  // late DateTime date = DateTime.now();
+
+
+  // late String today = DateFormat('yyMMdd').format(date);
 
   //////////////////////오늘의 일기///////////////////
   //갖고와야해
@@ -324,10 +329,6 @@ class _CalenderDetailState extends State<CalenderDetail> {
   Widget build(BuildContext context) {
 
     // 달력에서 선택한 날
-    String today = DateFormat('yyMMdd').format(date);
-    // diary_text = events[today]?[0].toString();
-    print(diary_text);
-    // print(events);
 
 
 
@@ -426,10 +427,10 @@ class _CalenderDetailState extends State<CalenderDetail> {
                   // 등록한 날짜가 나와야 함
                   CalDetailDateWidget(
                       time:
-                          "${date.year}년 ${date.month}월 ${date.day}일 ${date.hour}시 ${date.second}분에서"),
+                          "${widget.today.year}년 ${widget.today.month}월 ${widget.today.day}일 ${widget.today.hour}시 ${widget.today.second}분에서"),
                   CalDetailDateWidget(
                       time:
-                          "${date.year}년 ${date.month}월 ${date.day}일 ${date.hour}시 ${date.second}분까지")
+                          "${widget.today.year}년 ${widget.today.month}월 ${widget.today.day}일 ${widget.today.hour}시 ${widget.today.second}분까지")
                 ],
               ),
             ),
