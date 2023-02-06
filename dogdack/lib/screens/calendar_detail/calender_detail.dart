@@ -1,4 +1,3 @@
-import 'package:dogdack/commons/logo_widget.dart';
 import 'package:dogdack/screens/calendar_detail/widget/beauty/beauty_icon.dart';
 import 'package:dogdack/screens/calendar_detail/widget/diary/diary_widget.dart';
 import 'package:dogdack/screens/calendar_detail/widget/health/car_health_line_graph_card.dart';
@@ -423,7 +422,7 @@ class _CalenderDetailState extends State<CalenderDetail> {
       title: Text(
         mypageStateController.myPageStateType == MyPageStateType.Create ? '추가하기' : '캘린더 상세페이지',
         style: TextStyle(
-          color: Colors.black,
+          color: grey,
         ),
       ),
     ),
