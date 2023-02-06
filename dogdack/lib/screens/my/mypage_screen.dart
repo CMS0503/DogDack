@@ -63,6 +63,27 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
+  void searchTest() {
+    CollectionReference petRef = FirebaseFirestore.instance
+        .collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
+    final testBong = petRef.where("name", isEqualTo: "짬뽕이");
+    testBong.get().then((value) {
+      String zzamid = value.docs[0].id;
+      print('짬뽕이의 문서 id : ${zzamid}');
+
+      CollectionReference petRef = FirebaseFirestore.instance
+          .collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets/${zzamid}/Calendar');
+
+      petRef.get().then((value) {
+        //짬뽕이 모든 날짜중 첫번째 문서의 미용 여부
+        bool zzambeauty = value.docs[0]['beauty'];
+
+        print('짬뽕이 미용 여부 : ${zzambeauty}');
+      });
+
+    });
+  }
+
   void getTotalWalkMin() async {
     num totalWalkMin = 0; // 총 산책 시간
     num totalWalkCnt = 0; // 총 산책 횟수
@@ -104,8 +125,13 @@ class _MyPageState extends State<MyPage> {
     // 스크린 상태 갱신 : 정보 조회 화면
     mypageStateController.myPageStateType = MyPageStateType.View;
 
+    //test
+    searchTest();
+
     //총 산책 시간, 총 산책 횟수 계산
     getTotalWalkMin();
+
+
 
     return GestureDetector(
       onTap: () {
