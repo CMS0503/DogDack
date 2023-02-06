@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class WalkData {
   WalkData({
-    this.name,
     this.imageUrl,
     this.startTime,
     this.endTime,
@@ -12,7 +11,6 @@ class WalkData {
     this.distance,
   });
 
-  final String? name; // 반려견 이름
   final String? imageUrl; // 산책 경로 이미지 Url
   final Timestamp? startTime; // 산책 시작 시간
   final Timestamp? endTime; // 산책 종료 시간
@@ -23,7 +21,6 @@ class WalkData {
 
   WalkData.fromJson(Map<String, dynamic> json)
       : this(
-          name: json['name']! as String,
           imageUrl: json['imageUrl']! as String,
           startTime: json['startTime']! as Timestamp,
           endTime: json['endTime']! as Timestamp,
@@ -35,7 +32,6 @@ class WalkData {
 
   Map<String, dynamic> toJson() {
     return {
-      'name': name,
       'imageUrl': imageUrl,
       'startTime': startTime,
       'endTime': endTime,
