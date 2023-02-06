@@ -1,7 +1,9 @@
 import 'package:dogdack/screens/login/login_after_screen.dart';
+import 'dart:async';
+
 //screen
 import 'package:dogdack/screens/login/login_screen.dart';
-
+import 'package:dogdack/screens/main_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -49,11 +51,31 @@ void main() async {
       ),
       home: const MyApp(),
     ),
-  );
+    home: MyApp(),
+  ));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MyApp extends StatefulWidget {
+  MyApp({Key? key}) : super(key: key);
+  bool isFinish = false;
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  void callDelay() async {
+    // await Timer(const Duration(seconds: 3), () {});
+    await Future.delayed(Duration(seconds: 3));
+
+    widget.isFinish = true;
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    callDelay();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +85,7 @@ class MyApp extends StatelessWidget {
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return const LoginAfterPage();
+              return widget.isFinish == true ? MainPage() : LoginAfterPage();
             } else {
               return const LoginPage();
             }

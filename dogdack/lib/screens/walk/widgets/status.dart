@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import '../../../models/dog_data.dart';
 
 class Status extends StatefulWidget {
   const Status({
@@ -10,6 +14,13 @@ class Status extends StatefulWidget {
 }
 
 class _StatusState extends State<Status> {
+  final petsRef = FirebaseFirestore.instance
+      .collection(
+          'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
+      .withConverter(
+          fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+          toFirestore: (dogData, _) => dogData.toJson());
+
   @override
   Widget build(BuildContext context) {
     return Padding(

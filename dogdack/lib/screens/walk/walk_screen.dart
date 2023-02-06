@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import './controller/walk_controller.dart';
 import './widgets/my_map.dart';
 import './widgets/status.dart';
+import '../../commons/logo_widget.dart';
 
 class WalkPage extends StatelessWidget {
   WalkPage({super.key, required this.tabIndex});
@@ -13,8 +14,8 @@ class WalkPage extends StatelessWidget {
   final walkController = Get.put(WalkController());
 
   Widget mapAreaWidget(w, h) {
-    return SizedBox(
-      height: h * 0.65,
+    return Container(
+      height: h * 0.5,
       width: w,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
@@ -24,8 +25,8 @@ class WalkPage extends StatelessWidget {
   }
 
   Widget requestBluetoothConnectWidget(w, h, context) {
-    return SizedBox(
-      height: h * 0.65,
+    return Container(
+      height: h * 0.5,
       width: w,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -50,6 +51,9 @@ class WalkPage extends StatelessWidget {
               ),
             ],
           ),
+          SizedBox(
+            height: 100,
+          )
         ],
       ),
     );
@@ -137,19 +141,16 @@ class WalkPage extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Walk',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(screenHeight * 0.12),
+        child: const LogoWidget(),
       ),
       body: Obx(
         () => Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const SizedBox(height: 10),
-            const Status(),
-            const SizedBox(height: 10),
+            Status(),
+            SizedBox(height: 10),
             walkController.isBleConnect.value == false
                 ? requestBluetoothConnectWidget(
                     screenWidth, screenHeight, context)
