@@ -1,3 +1,4 @@
+import 'package:dogdack/screens/home/bar_char.dart';
 import 'package:flutter/material.dart';
 import 'package:dogdack/commons/logo_widget.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -21,7 +22,9 @@ class HomePage extends StatelessWidget {
           preferredSize: Size.fromHeight(height * 0.12),
           child: const LogoWidget(),
         ),
-        body: Container());
+        body: Container(child:
+        BarChartSample1()
+          ,));
   }
 }
 

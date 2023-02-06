@@ -4,6 +4,8 @@ import 'package:dogdack/screens/calendar_main/widgets/calendar_mark.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/calendar_schedule_edit.dart';
 import 'package:flutter/material.dart';
 
+import '../calendar_schedule_edit/controller/input_controller.dart';
+
 class CalendarMain extends StatefulWidget {
   const CalendarMain({super.key, required this.tabIndex});
   final int tabIndex;
@@ -23,7 +25,7 @@ class _CalendarPageState extends State<CalendarMain> {
   // 보여줄 월
   DateTime focusedDay = DateTime.now();
 
-  final inputController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -34,22 +36,30 @@ class _CalendarPageState extends State<CalendarMain> {
         preferredSize: Size.fromHeight(height * 0.09),
         child: const LogoWidget(),
       ),
-      floatingActionButton: renderFloatingActionButton(),
-      body: SafeArea(
+      body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            SizedBox(
+              height: height * 0.01,
+            ),
             Calendar(focusedDay: focusedDay),
+            SizedBox(
+              height: height * 0.01,
+            ),
             const CalendarMark(),
           ],
         ),
       ),
+      // CalendarScheduleEdit으로 가는 floating button
+      floatingActionButton: renderFloatingActionButton(),
     );
   }
 
   renderFloatingActionButton() {
     return Container(
+      width: 48,
+      height: 48,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
@@ -57,23 +67,22 @@ class _CalendarPageState extends State<CalendarMain> {
             width: 3,
             style: BorderStyle.solid),
       ),
-      width: 48,
-      height: 48,
       child: FloatingActionButton.small(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    CalendarScheduleEdit(day: DateTime.now())),
+              builder: (context) => CalendarScheduleEdit(
+                day: DateTime.now(),
+              ),
+            ),
           );
         },
-        // focusColor: Colors.black,
         backgroundColor: Colors.white,
         child: const Icon(
           Icons.add,
-          color: Color.fromARGB(255, 100, 92, 170),
           size: 40,
+          color: Color.fromARGB(255, 100, 92, 170),
         ),
       ),
     );
