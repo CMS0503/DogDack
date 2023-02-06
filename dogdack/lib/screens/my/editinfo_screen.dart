@@ -331,7 +331,6 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
         petsRef.add(DogData(
           imageUrl: value,
           imageFileName: Path.basename(pickedPetImgFile!.path),
-          name: name,
           gender: gender,
           birth: birth,
           kategorie: kategorie,
@@ -414,7 +413,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     if (mypageStateController.myPageStateType == MyPageStateType.Edit) {
       pickComp = true; // 사진이 골라져있음
 
-      _nameController = TextEditingController(text: petController.selectedPetName); // 이름
+      _nameController = TextEditingController(text: petController.selectedPetID); // 이름
       gender = petController.selectedPetGender; // 성별
       birth = petController.selectedPetBirth; // 생일
       kategorie = petController.selectedPetKategorie; // 카테고리
