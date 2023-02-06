@@ -37,51 +37,29 @@ class _CalenderDetailState extends State<CalenderDetail> {
           fromFirestore: (snapshot, _) => CalenderData.fromJson(snapshot.data()!),
           toFirestore: (calendarData, _) => calendarData.toJson());
 
-  final walkRef = FirebaseFirestore.instance
-      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
-      .withConverter(
-      fromFirestore: (snapshot, _) => WalkData.fromJson(snapshot.data()!),
-      toFirestore: (walkData, _) => walkData.toJson());
 
 
-
-  Future<Map<String, List<Object>>> getData() async {
-    var result = await calendarRef.get();
-
-    for (int i = 0; i < result.docs.length; i++) {
-      events[result.docs[i].reference.id] = [
-        result.docs[i]['diary'],
-        result.docs[i]['bath'],
-        result.docs[i]['beauty'],
-      ];
-    }
-    setState(() {});
-    return events;
-  }
-
-  Future<Map<String, List<Object>>> getWalkData() async {
-    var w_result = await walkRef.get();
-
-    for (int i = 0; i < w_result.docs.length; i++) {
-      w_events[w_result.docs[i].reference.id] = [
-        w_result.docs[i]['distance'],
-        w_result.docs[i]['name'],
-        w_result.docs[i]['place'],
-        w_result.docs[i]['time'],
-      ];
-    }
-    setState(() {});
-    return w_events;
-  }
-
-  final Map<String, List<Object>> events = {'': []};
-  final Map<String, List<Object>> w_events = {'': []};
-
-  @override
-  void initState() {
-    getData();
-    getWalkData();
-  }
+  //
+  // Future<Map<String, List<Object>>> getData() async {
+  //   var result = await calendarRef.get();
+  //
+  //   for (int i = 0; i < result.docs.length; i++) {
+  //     events[result.docs[i].reference.id] = [
+  //       result.docs[i]['diary'],
+  //       result.docs[i]['bath'],
+  //       result.docs[i]['beauty'],
+  //     ];
+  //   }
+  //   setState(() {});
+  //   return events;
+  // }
+  //
+  //
+  // final Map<String, List<Object>> events = {'': []};
+  // @override
+  // void initState() {
+  //   getData();
+  // }
 
   // 드롭박스 값
   final List<String> _valueList = ['일주일', '한달'];
@@ -347,10 +325,10 @@ class _CalenderDetailState extends State<CalenderDetail> {
 
     // 달력에서 선택한 날
     String today = DateFormat('yyMMdd').format(date);
-    diary_text = events[today]?[0].toString();
+    // diary_text = events[today]?[0].toString();
     print(diary_text);
-    print(events);
-    print(w_events);
+    // print(events);
+
 
 
     Size screenSize = MediaQuery.of(context).size;
@@ -360,23 +338,23 @@ class _CalenderDetailState extends State<CalenderDetail> {
     Color violet = Color.fromARGB(255, 100, 92, 170);
     Color violet2 = Color.fromARGB(255, 160, 132, 202);
 
-    String? do_bath = events[today]?[1].toString();
-    String? do_hair = events[today]?[2].toString();
+    // String? do_bath = events[today]?[1].toString();
+    // String? do_hair = events[today]?[2].toString();
     late Color hair_color =  grey;
     late Color bath_color = grey;
 
 
 
-    if(do_bath == "true"){
-      bath_color = violet;
-    }else{
-      bath_color = grey;
-    }
-    if(do_hair == "true"){
-      hair_color = violet;
-    }else{
-      bath_color = grey;
-    }
+    // if(do_bath == "true"){
+    //   bath_color = violet;
+    // }else{
+    //   bath_color = grey;
+    // }
+    // if(do_hair == "true"){
+    //   hair_color = violet;
+    // }else{
+    //   bath_color = grey;
+    // }
 
 
 
