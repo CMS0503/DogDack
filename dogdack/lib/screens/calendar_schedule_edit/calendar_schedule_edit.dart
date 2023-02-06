@@ -25,11 +25,29 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
   final inputController = TextEditingController();
   final controller = Get.put(InputController());
 
-  void fbstoreWrite() {
-    final ref = FirebaseFirestore.instance
-        .collection(
-            'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
-        .doc(controller.name)
+  void fbstoreWrite() async {
+    final petsRef = FirebaseFirestore.instance.collection(
+        'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/pets');
+
+    // var dogId = '';
+    var result = await petsRef
+        .where("name", isEqualTo: controller.name.toString())
+        .get();
+
+    String dogId = result.docs[0].id;
+    print('@@@@@@@ $dogId');
+
+    // await petsRef.where('name', isEqualTo: controller.name).get().then(
+    //   (value) {
+    //     print(value);
+    //     print(value.docs[0].id);
+    //     dogId = value.docs[0].id;
+    //     print('here');
+    //   },
+    // );
+
+    petsRef
+        .doc(dogId)
         .collection('Calendar')
         .doc(DateFormat('yyMMdd').format(controller.date))
         .withConverter(
@@ -46,10 +64,16 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
         .then((value) => print("document added"))
         .catchError((error) => print("Fail to add doc $error"));
 
-    FirebaseFirestore.instance
-        .collection(
-            'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Walk')
+    // FirebaseFirestore.instance.collection(
+    //     'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Walk');
+    print('@!!!!!!!!!@@ $dogId');
+
+    petsRef
+        .doc(dogId.toString())
+        .collection('Calendar')
         .doc(DateFormat('yyMMdd').format(controller.date))
+        .collection('Walk')
+        .doc()
         .withConverter(
           fromFirestore: (snapshot, options) =>
               WalkData.fromJson(snapshot.data()!),
@@ -59,9 +83,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
           place: controller.place,
           // startTime: controller.time,
           distance: int.parse(controller.distance),
-        ))
-        .then((value) => print("document added"))
-        .catchError((error) => print("Fail to add doc $error"));
+        ));
   }
 
   @override

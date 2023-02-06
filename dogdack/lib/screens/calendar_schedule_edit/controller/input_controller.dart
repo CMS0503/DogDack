@@ -9,8 +9,8 @@ class InputController extends GetxController {
   bool bath = true;
   bool beauty = true;
   List<String> imageUrl = [];
-  String name = '';
-  var dognames = [];
+  String name = '짬뽕';
+  List<String> dognames = [];
   // void input() {
   //   update();
   // }

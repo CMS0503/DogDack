@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/controller/input_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CalendarDrop extends StatefulWidget {
   const CalendarDrop({super.key});
@@ -15,11 +17,35 @@ class _CalendarDropState extends State<CalendarDrop> {
   // String selectedValue = '안뇽';
   // final valueList = ['첫 번째', '두 번째', '세 번째', '네 번째'];
   // var selectedValue = '첫 번째';
+  final petsRef = FirebaseFirestore.instance
+      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/pets');
+
+  getName() async {
+    var names = await petsRef.get();
+
+    List<String> dogs = [];
+
+    for (int i = 0; i < names.docs.length; i++) {
+      dogs.insert(0, names.docs[i]['name']);
+    }
+
+    setState(() {
+      controller.dognames = dogs;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getName();
+    print('${controller.dognames} sdfsdfewiruqrioqfjnsdklfmksl');
+  }
 
   @override
   Widget build(BuildContext context) {
     var valueList = controller.dognames;
     var selectedValue = '';
+
     if (valueList.isEmpty) {
       valueList = ['강아지를 등록하세요'];
       selectedValue = '강아지를 등록하세요';

@@ -33,32 +33,53 @@ class _CalendarState extends State<Calendar> {
     final petsRef = FirebaseFirestore.instance
         .collection('Users/${FirebaseAuth.instance.currentUser!.email}/pets');
 
-    await petsRef.get().then(
-      (value) {
-        for (var element in value.docs) {
-          if (element.id == controller.name) {
-            docId = element.id;
-          }
-        }
-      },
-    );
+    var result = await petsRef
+        .where("name", isEqualTo: controller.name.toString())
+        .get();
 
-    if (docId == '') {
+    String dogId = result.docs[0].id;
+
+    String getName() {
+      for (var name in controller.dognames) {
+        if (name == controller.name) {
+          return name;
+        }
+      }
+      return 'no dog';
+    }
+
+    var dog = getName();
+
+    if (dog == 'no dog') {
       return events;
     }
 
-    final calRef = petsRef.doc(docId).collection('Calendar');
-    var result = await calRef.get();
+    final calRef = petsRef.doc(dogId).collection('Calendar');
+    var data = await calRef.get();
 
     for (int i = 0; i < result.docs.length; i++) {
-      events[result.docs[i].reference.id] = [
-        result.docs[i]['diary'],
-        result.docs[i]['bath'],
-        result.docs[i]['beauty'],
+      events[data.docs[i].reference.id] = [
+        data.docs[i]['diary'],
+        data.docs[i]['bath'],
+        data.docs[i]['beauty'],
       ];
     }
+
     setState(() {});
     return events;
+    // await petsRef.get().then(
+    //   (value) {
+    //     for (var element in value.docs) {
+    //       if (element.id == controller.name) {
+    //         docId = element.id;
+    //       }
+    //     }
+    //   },
+    // );
+
+    // if (docId == '') {
+    //   return events;
+    // }
   }
 
   @override
