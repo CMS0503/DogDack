@@ -25,11 +25,11 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
   final inputController = TextEditingController();
   final controller = Get.put(InputController());
 
-  void fbstoreWrite(String name) {
+  void fbstoreWrite() {
     final ref = FirebaseFirestore.instance
         .collection(
             'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
-        .doc(name)
+        .doc(controller.name)
         .collection('Calendar')
         .doc(DateFormat('yyMMdd').format(controller.date))
         .withConverter(
@@ -45,48 +45,6 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
         ))
         .then((value) => print("document added"))
         .catchError((error) => print("Fail to add doc $error"));
-
-    // ref. .doc().get().then((value) {
-    //   for (var element in value.docs) {
-    //     docId.add(element.id);
-    //   }
-    // });
-
-    // ref
-    //     .doc('$docId')
-    //     .collection('Calendar')
-    //     .doc(DateFormat('yyMMdd').format(controller.date))
-    //     .withConverter(
-    //       fromFirestore: (snapshot, options) =>
-    //           CalenderData.fromJson(snapshot.data()!),
-    //       toFirestore: (value, options) => value.toJson(),
-    //     )
-    //     .set(CalenderData(
-    //       diary: controller.diary,
-    //       bath: controller.bath,
-    //       beauty: controller.beauty,
-    //       imageUrl: controller.imageUrl,
-    //     ))
-    //     .then((value) => print("document added"))
-    //     .catchError((error) => print("Fail to add doc $error"));
-
-    // .collection('Calendar')
-    // .doc(DateFormat('yyMMdd').format(controller.date))
-    // .withConverter(
-    //   fromFirestore: (snapshot, options) =>
-    //       CalenderData.fromJson(snapshot.data()!),
-    //   toFirestore: (value, options) => value.toJson(),
-    // )
-    // .set(
-    //   CalenderData(
-    // diary: controller.diary,
-    // bath: controller.bath,
-    // beauty: controller.beauty,
-    // imageUrl: controller.imageUrl,
-    //   ),
-    // )
-    // .then((value) => print("document added"))
-    // .catchError((error) => print("Fail to add doc $error"));
 
     FirebaseFirestore.instance
         .collection(
@@ -133,7 +91,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                 width: width * 0.8,
                 child: ElevatedButton(
                   onPressed: () {
-                    fbstoreWrite('짬뽕');
+                    fbstoreWrite();
                     // Navigator.pop(context);
                     Navigator.push(
                         context,

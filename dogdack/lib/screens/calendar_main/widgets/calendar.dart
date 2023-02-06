@@ -38,24 +38,19 @@ class _CalendarState extends State<Calendar> {
         for (var element in value.docs) {
           if (element.id == controller.name) {
             docId = element.id;
-            // print('here');
-            // print(docId);
-          } else {
-            docId = '짬뽕';
           }
         }
       },
     );
-    print('hihihihihihihihi');
-    print(docId);
-    // docId = '짬뽕';
-    // print(docId);
+
+    if (docId == '') {
+      return events;
+    }
+
     final calRef = petsRef.doc(docId).collection('Calendar');
     var result = await calRef.get();
 
     for (int i = 0; i < result.docs.length; i++) {
-      print('안녕하세요');
-      print(result.docs);
       events[result.docs[i].reference.id] = [
         result.docs[i]['diary'],
         result.docs[i]['bath'],
@@ -63,21 +58,17 @@ class _CalendarState extends State<Calendar> {
       ];
     }
     setState(() {});
-    print(events);
     return events;
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getData();
   }
 
   @override
   Widget build(BuildContext context) {
-    print('byebybyebye');
-    print(docId);
     Size screenSize = MediaQuery.of(context).size;
     double height = screenSize.height;
 

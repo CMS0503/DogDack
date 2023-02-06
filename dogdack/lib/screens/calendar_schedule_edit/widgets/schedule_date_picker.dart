@@ -13,7 +13,6 @@ class DatePicker extends StatefulWidget {
 class _DatePickerState extends State<DatePicker> {
   // 오늘 날짜를 기본으로 저장
   final controller = Get.put(InputController());
-  final name = '짬뽕이';
 
   DateTime date = DateTime.now();
 
@@ -28,7 +27,13 @@ class _DatePickerState extends State<DatePicker> {
 
   @override
   Widget build(BuildContext context) {
-    // controller.name = name;
+    var name = controller.name;
+
+    if (controller.name == '') {
+      name = '댕댕이 없음';
+    } else {
+      name = controller.name;
+    }
 
     return Column(
       children: [
