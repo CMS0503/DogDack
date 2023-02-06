@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dogdack/screens/calendar_schedule_edit/controller/input_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:dogdack/models/calender_data.dart';
 
 class Calendar extends StatefulWidget {
-  static late Map<String, List> events;
+  static Map<String, List> events = {'': []};
   // 선택한 날짜
   final DateTime? selectedDay;
   // 보여줄 달 화면 날짜
@@ -24,19 +25,40 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  final calendarRef = FirebaseFirestore.instance
-      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets')
-      .doc()
-      .collection('Calendar')
-      .withConverter(
-          fromFirestore: (snapshot, _) =>
-              CalenderData.fromJson(snapshot.data()!),
-          toFirestore: (calendarData, _) => calendarData.toJson());
+  final controller = Get.put(InputController());
+  final Map<String, List<Object>> events = {'': []};
 
+  String docId = '';
   Future<Map<String, List<Object>>> getData() async {
-    var result = await calendarRef.get();
+    final petsRef = FirebaseFirestore.instance
+        .collection('Users/${FirebaseAuth.instance.currentUser!.email}/pets');
+
+    await petsRef.get().then(
+      (value) {
+        print('hsdfsdfsdi');
+        print('$value');
+        for (var element in value.docs) {
+          if (element.id == '짬뽕') {
+            docId = element.id;
+            // print('here');
+            // print(docId);
+          } else {
+            print('dsfkjsadfasldk;fjasdkl;');
+            docId = '짬뽕';
+          }
+        }
+      },
+    );
+    print('hihihihihihihihi');
+    print(docId);
+    // docId = '짬뽕';
+    // print(docId);
+    final calRef = petsRef.doc(docId).collection('Calendar');
+    var result = await calRef.get();
 
     for (int i = 0; i < result.docs.length; i++) {
+      print('안녕하세요');
+      print(result.docs);
       events[result.docs[i].reference.id] = [
         result.docs[i]['diary'],
         result.docs[i]['bath'],
@@ -44,20 +66,24 @@ class _CalendarState extends State<Calendar> {
       ];
     }
     setState(() {});
+    print(events);
     return events;
   }
 
-  final Map<String, List<Object>> events = {'': []};
-
   @override
   void initState() {
+    // TODO: implement initState
+    super.initState();
     getData();
   }
 
   @override
   Widget build(BuildContext context) {
+    print('byebybyebye');
+    print(docId);
     Size screenSize = MediaQuery.of(context).size;
     double height = screenSize.height;
+
     List<dynamic> _getEventForDay(DateTime day) {
       return events[DateFormat('yyMMdd').format(day)] ?? [];
     }
@@ -67,8 +93,8 @@ class _CalendarState extends State<Calendar> {
       const Color.fromARGB(255, 191, 172, 224),
       const Color.fromARGB(255, 235, 199, 232),
     ];
-    // 날짜별 박스 데코
 
+    // 날짜별 박스 데코
     return TableCalendar(
       // 날짜 언어 설정
       locale: 'ko_KR',

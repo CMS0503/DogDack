@@ -118,7 +118,7 @@ class _MyPageState extends State<MyPage> {
                       builder: (context) => const EditDogInfoPage()));
             },
             backgroundColor: Colors.deepPurple,
-            child: Icon(Icons.add),
+            child: const Icon(Icons.add),
           ),
         ),
         // 키보드 등장 시 화면 오버플로우가 발생하지 않도록 함.
@@ -523,7 +523,7 @@ class _MyPageState extends State<MyPage> {
                                               MaterialStateProperty.all(
                                                   Colors.white),
                                         ),
-                                        child: Text('편집하기'),
+                                        child: const Text('편집하기'),
                                       ),
                                     )
                                   ],

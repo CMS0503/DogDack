@@ -13,6 +13,8 @@ class DatePicker extends StatefulWidget {
 class _DatePickerState extends State<DatePicker> {
   // 오늘 날짜를 기본으로 저장
   final controller = Get.put(InputController());
+  final name = '짬뽕이';
+
   DateTime date = DateTime.now();
 
   // 강아지 이름 불러오기 추가
@@ -26,6 +28,8 @@ class _DatePickerState extends State<DatePicker> {
 
   @override
   Widget build(BuildContext context) {
+    // controller.name = name;
+
     return Column(
       children: [
         // appbar로 교체해야함
@@ -89,16 +93,16 @@ class _DatePickerState extends State<DatePicker> {
                             },
                           ),
                           Row(
-                            children: const [
+                            children: [
                               Text(
-                                '짬뽕이',
-                                style: TextStyle(
+                                name,
+                                style: const TextStyle(
                                   color: Colors.black,
                                   fontFamily: 'bmjua',
                                   fontSize: 22,
                                 ),
                               ),
-                              Icon(
+                              const Icon(
                                 Icons.expand_more,
                                 color: Colors.black,
                               ),
