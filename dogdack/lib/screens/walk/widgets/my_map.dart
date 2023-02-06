@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import 'package:latlong2/latlong.dart' as ll;
 
 import '../controller/walk_controller.dart';
@@ -20,7 +21,7 @@ class myMap extends StatefulWidget {
 
 class _MapState extends State<myMap> {
   // late GoogleMapController _controller;
-  Completer<GoogleMapController> _controller = Completer();
+  final Completer<GoogleMapController> _controller = Completer();
   final walkController = Get.put(WalkController());
 
   late CameraPosition? _initialPosition;
@@ -30,7 +31,7 @@ class _MapState extends State<myMap> {
 
   List<LatLng> latlng = [];
 
-  final ll.Distance distance = ll.Distance();
+  final ll.Distance distance = const ll.Distance();
   late LatLng temp;
   double? totalDistance = 0;
 
@@ -101,7 +102,7 @@ class _MapState extends State<myMap> {
                 }
 
                 latlng.add(currentPosition);
-                print('totaldistance: ${totalDistance}');
+                print('totaldistance: $totalDistance');
                 setState(() {});
               } else if (widget.receiveData[0] == '{') {} else {
                 widget.receiveData = '';
@@ -135,7 +136,7 @@ class _MapState extends State<myMap> {
                 markers: markers.toSet(),
                 polylines: {
                   Polyline(
-                    polylineId: PolylineId('route'),
+                    polylineId: const PolylineId('route'),
                     visible: true,
                     width: 5,
                     points: latlng,
@@ -186,7 +187,7 @@ class _MapState extends State<myMap> {
                           child: Text(
                             '${walkController.timeCount ~/ 360000} : ${walkController.timeCount ~/ 6000} : ${(walkController.timeCount % 6000) ~/ 100}',
                             // (_timeCount ~/ 100).toString() + ' 초',
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 30,
                                 color: Color.fromARGB(255, 80, 78, 91)),
                           ),
@@ -198,9 +199,9 @@ class _MapState extends State<myMap> {
                             Alignment.center.y,
                           ),
                           child: Text(
-                            totalDistance.toString() + ' m',
+                            '$totalDistance m',
                             // 'data',
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 30,
                                 color: Color.fromARGB(255, 80, 78, 91)),
                           ),
@@ -229,7 +230,7 @@ class _MapState extends State<myMap> {
 }
 
 class OutlineCircleButton extends StatelessWidget {
-  OutlineCircleButton({
+  const OutlineCircleButton({
     Key? key,
     this.onTap,
     this.borderSize = 0.5,
@@ -260,7 +261,7 @@ class OutlineCircleButton extends StatelessWidget {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-              child: child ?? SizedBox(),
+              child: child ?? const SizedBox(),
               onTap: () async {
                 if (onTap != null) {
                   onTap();

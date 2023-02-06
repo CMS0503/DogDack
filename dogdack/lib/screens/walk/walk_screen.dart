@@ -1,5 +1,3 @@
-import 'package:dogdack/controlls/main_controll.dart';
-import 'package:dogdack/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -7,6 +5,7 @@ import './controller/walk_controller.dart';
 import './widgets/my_map.dart';
 import './widgets/status.dart';
 import '../../commons/logo_widget.dart';
+import '../../controlls/main_controll.dart';
 
 class WalkPage extends StatelessWidget {
   WalkPage({super.key, required this.tabIndex});
@@ -18,8 +17,7 @@ class WalkPage extends StatelessWidget {
 
   Widget mapAreaWidget(w, h) {
     return Container(
-      decoration: BoxDecoration(color: Colors.red),
-      height: h * 0.6,
+      height: h * 0.5,
       width: w,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
@@ -134,7 +132,7 @@ class WalkPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 )
               ],

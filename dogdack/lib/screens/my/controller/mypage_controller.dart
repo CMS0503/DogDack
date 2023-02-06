@@ -29,7 +29,10 @@ class PetController extends GetxController {
   String selectedPetName = '';
   String selectedPetGender = '';
   String selectedPetBirth = '';
+  String selectedPetKategorie = '';
   String selectedPetBreed = '';
+  num selectedPetWeight = 0;
+  num selectedPetRecommend = 0;
   int selectedPetScrollIndex = 0; // 해당 반려견의 슬라이더 인덱스
 
   // 슬라이더 인덱스로 선택한 반려견의 정보를 갱신
@@ -41,6 +44,9 @@ class PetController extends GetxController {
     petController.selectedPetGender = snapshot.data!.docs[index].get('gender');
     petController.selectedPetBirth = snapshot.data!.docs[index].get('birth');
     petController.selectedPetBreed = snapshot.data!.docs[index].get('breed');
+    petController.selectedPetKategorie = snapshot.data!.docs[index].get('kategorie');
+    petController.selectedPetWeight = snapshot.data!.docs[index].get('weight');
+    petController.selectedPetRecommend = snapshot.data!.docs[index].get('recommend');
     petController.selectedPetScrollIndex = index;
   }
 }
