@@ -1,3 +1,5 @@
+import 'package:dogdack/controlls/main_controll.dart';
+import 'package:dogdack/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,10 +14,12 @@ class WalkPage extends StatelessWidget {
   final int tabIndex;
 
   final walkController = Get.put(WalkController());
+  final mainController = Get.put(MainController());
 
   Widget mapAreaWidget(w, h) {
     return Container(
-      height: h * 0.5,
+      decoration: BoxDecoration(color: Colors.red),
+      height: h * 0.6,
       width: w,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
@@ -64,7 +68,7 @@ class WalkPage extends StatelessWidget {
       opacity: 0.7,
       child: Container(
         decoration: BoxDecoration(color: Colors.grey),
-        height: h * 0.65,
+        height: h * 0.6,
         width: w,
         child: Align(
           alignment: Alignment.center,
@@ -113,9 +117,16 @@ class WalkPage extends StatelessWidget {
                       child: Align(
                         alignment: Alignment.center,
                         child: TextButton(
-                          child: Text(
-                            '종료',
-                            style: TextStyle(color: Colors.red, fontSize: 16),
+                          child: TextButton(
+                            child: Text(
+                              '종료',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            onPressed: () {
+                              // 캘린더 화면으로
+                              mainController.changeTabIndex(1);
+                              // 캘린더 상세화면으로 이동해야함
+                            },
                           ),
                           onPressed: () => {},
                         ),
@@ -146,22 +157,21 @@ class WalkPage extends StatelessWidget {
         child: const LogoWidget(),
       ),
       body: Obx(
-        () => Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            () => Column(
           children: [
             Status(),
             SizedBox(height: 10),
-            walkController.isBleConnect.value == false
+            walkController.isBleConnect.value == true
                 ? requestBluetoothConnectWidget(
-                    screenWidth, screenHeight, context)
+                screenWidth, screenHeight, context)
                 : Stack(
-                    children: [
-                      mapAreaWidget(screenWidth, screenHeight),
-                      (walkController.isRunning.value == walkController.isStart)
-                          ? Container()
-                          : endWalkModal(screenWidth, screenHeight, context),
-                    ],
-                  ),
+              children: [
+                mapAreaWidget(screenWidth, screenHeight),
+                (walkController.isRunning.value == walkController.isStart)
+                    ? Container()
+                    : endWalkModal(screenWidth, screenHeight, context),
+              ],
+            ),
           ],
         ),
       ),

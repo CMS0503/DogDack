@@ -49,10 +49,11 @@ class _MapState extends State<myMap> {
       target: LatLng(walkController.lat, walkController.lon),
       zoom: 17,
     );
-    updatePosition();
+    // updatePosition();
   }
 
   void updatePosition() async {
+    print('call updatePision');
     GoogleMapController googleMapController = await _controller.future;
     for (BluetoothService service in walkController.services!) {
       if (service.uuid.toString() == walkController.serviceUuid) {
@@ -102,8 +103,7 @@ class _MapState extends State<myMap> {
                 latlng.add(currentPosition);
                 print('totaldistance: ${totalDistance}');
                 setState(() {});
-              } else if (widget.receiveData[0] == '{') {
-              } else {
+              } else if (widget.receiveData[0] == '{') {} else {
                 widget.receiveData = '';
               }
             });
@@ -212,111 +212,6 @@ class _MapState extends State<myMap> {
           ],
         ),
       ),
-      // floatingActionButton: Stack(
-      //   children: <Widget>[
-      //     // 초기화 버튼
-      //     Align(
-      //       alignment: Alignment(
-      //           Alignment.topLeft.x + 0.13, Alignment.topLeft.y + 0.1),
-      //       child: FloatingActionButton(
-      //         heroTag: "1",
-      //         onPressed: () {
-      //           markers.clear();
-      //           latlng.clear();
-      //           FirebaseFirestore.instance
-      //               .collection(
-      //                   '${FirebaseAuth.instance.currentUser!.email}_position')
-      //               .get()
-      //               .then((snapshot) {
-      //             for (DocumentSnapshot ds in snapshot.docs) {
-      //               ds.reference.delete();
-      //             }
-      //           });
-      //           // _controller.animateCamera(CameraUpdate.zoomOut());
-      //           setState(() {
-      //             Navigator.push(
-      //                 context,
-      //                 MaterialPageRoute(
-      //                     builder: (context) => WalkPage(tabIndex: 2)));
-      //           });
-      //         },
-      //         tooltip: '초기화',
-      //         child: const Icon(Icons.refresh),
-      //       ),
-      //     ),
-      //
-      //     // DB 데이터로 좌표 찍기
-      //     Align(
-      //       alignment: Alignment(
-      //           Alignment.topLeft.x + 0.13, Alignment.topLeft.y + 0.4),
-      //       child: FloatingActionButton(
-      //         heroTag: "2",
-      //         onPressed: () async {
-      //           totalDistance = 0;
-      //           await for (var snapshot in FirebaseFirestore.instance
-      //               .collection(
-      //                   '${FirebaseAuth.instance.currentUser!.email}_position_test')
-      //               .orderBy('Timestamp', descending: true)
-      //               .snapshots()) {
-      //             for (var messege in snapshot.docs) {
-      //               addMarker(LatLng(double.parse(messege.data()['lat']),
-      //                   double.parse(messege.data()['lng'])));
-      //
-      //               if (markers.length == 1) {
-      //                 temp = LatLng(double.parse(messege.data()['lat']),
-      //                     double.parse(messege.data()['lng']));
-      //               } else {
-      //                 totalDistance = totalDistance! +
-      //                     distance(
-      //                         ll.LatLng(temp.latitude, temp.longitude),
-      //                         ll.LatLng(double.parse(messege.data()['lat']),
-      //                             double.parse(messege.data()['lng'])));
-      //                 temp = LatLng(double.parse(messege.data()['lat']),
-      //                     double.parse(messege.data()['lng']));
-      //               }
-      //
-      //               latlng.add(LatLng(double.parse(messege.data()['lat']),
-      //                   double.parse(messege.data()['lng'])));
-      //
-      //               _polylines.add(Polyline(
-      //                 polylineId: PolylineId(messege.data().toString()),
-      //                 visible: true,
-      //                 points: latlng,
-      //                 color: Colors.blue,
-      //               ));
-      //             }
-      //           }
-      //         },
-      //         tooltip: '좌표 찍기',
-      //         child: Icon(Icons.access_time_filled),
-      //       ),
-      //     ),
-      //
-      //     // 이동거리, 시간 DB 저장 버튼
-      //     Align(
-      //       alignment: Alignment(
-      //           Alignment.topLeft.x + 0.13, Alignment.topLeft.y + 0.7),
-      //       child: FloatingActionButton(
-      //         heroTag: "3",
-      //         onPressed: () => setState(() {
-      //           FirebaseFirestore.instance
-      //               .collection(
-      //                   '${FirebaseAuth.instance.currentUser!.email}_walk')
-      //               .withConverter(
-      //                 fromFirestore: (snapshot, options) =>
-      //                     WalkData.fromJson(snapshot.data()!),
-      //                 toFirestore: (value, options) => value.toJson(),
-      //               )
-      //               .add(WalkData(
-      //                 distance: totalDistance?.toInt(),
-      //                 time: (_timeCount ~/ 100).toString(),
-      //               ));
-      //         }),
-      //         child: Icon(Icons.add),
-      //       ),
-      //     ),
-      //   ],
-      // ),
     );
   }
 
