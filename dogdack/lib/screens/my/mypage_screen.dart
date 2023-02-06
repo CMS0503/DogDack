@@ -12,10 +12,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
 // Controller
+import '../../commons/logo_widget.dart';
 import 'controller/mypage_controller.dart';
 
 // Models
-import 'package:dogdack/models/walk_data.dart';
 import 'package:dogdack/models/dog_data.dart';
 
 // Screen
@@ -40,18 +40,11 @@ class _MyPageState extends State<MyPage> {
           fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
           toFirestore: (dogData, _) => dogData.toJson());
 
-  // Firebase : 산책 테이블 참조 값
-  final walkRef = FirebaseFirestore.instance
-      .collection(
-          'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Walk')
-      .withConverter(
-          fromFirestore: (snapshot, _) => WalkData.fromJson(snapshot.data()!),
-          toFirestore: (walkData, _) => walkData.toJson());
-
   // GetX
   final petController = Get.put(PetController()); // 슬라이더에서 선택된 반려견 정보를 위젯간 공유
   final mypageStateController =
       Get.put(MyPageStateController()); // 현재 mypage 의 상태 표시
+  final userDataController = Get.put(UserDataController());
 
   // Widget
   // 정보 화면 타이틀 위젯
@@ -75,6 +68,43 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
+  void getTotalWalkMin() async {
+    num totalWalkMin = 0; // 총 산책 시간
+    num totalWalkCnt = 0; // 총 산책 횟수
+    CollectionReference petRef = FirebaseFirestore.instance.collection(
+        'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
+    QuerySnapshot docInPets = await petRef.get();
+    for (int i = 0; i < docInPets.docs.length; i++) {
+      String docInPetsID =
+          docInPets.docs[i].id; // Pets Collection 아래 문서 이름 (반려견 이름)
+      CollectionReference calendarRef =
+          petsRef.doc(docInPetsID).collection('Calendar');
+      QuerySnapshot docInCalendar = await calendarRef.get();
+      print('_docInPetsID $docInPetsID');
+      print('_docInCalendar.docs.length ${docInCalendar.docs.length}');
+      for (int j = 0; j < docInCalendar.docs.length; j++) {
+        String docInCalendarID =
+            docInCalendar.docs[j].id; // Calendar Collection 아래 문서 이름 (날짜)
+        CollectionReference walkRef =
+            calendarRef.doc(docInCalendarID).collection('Walk');
+        QuerySnapshot docInWalk = await walkRef.get();
+        totalWalkCnt += docInWalk.docs.length;
+        print('_docInCalendarID $docInCalendarID');
+        print('_docInWalk.docs.length ${docInWalk.docs.length}');
+        for (int k = 0; k < docInWalk.docs.length; k++) {
+          final int = docInWalk.docs[k]
+              ['totalTimeMin']; // Walk Collection 아래 문서 이름 (산책당 자동 ID)
+          totalWalkMin += docInWalk.docs[k]['totalTimeMin'];
+        }
+      }
+    }
+
+    setState(() {
+      userDataController.totalWalkCnt = totalWalkCnt;
+      userDataController.totalWalkTime = totalWalkMin;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // 디바이스 사이즈 크기 정의
@@ -87,21 +117,18 @@ class _MyPageState extends State<MyPage> {
     // 스크린 상태 갱신 : 정보 조회 화면
     mypageStateController.myPageStateType = MyPageStateType.View;
 
+    //총 산책 시간, 총 산책 횟수 계산
+    getTotalWalkMin();
+
     return GestureDetector(
       onTap: () {
         // 포커스를 벗어나면 키보드를 해제함
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: const Text(
-            'DOGDACK',
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(size.height * 0.12),
+          child: const LogoWidget(),
         ),
         floatingActionButton: Container(
           padding:
@@ -117,8 +144,8 @@ class _MyPageState extends State<MyPage> {
                   MaterialPageRoute(
                       builder: (context) => const EditDogInfoPage()));
             },
-            backgroundColor: Colors.deepPurple,
-            child: const Icon(Icons.add),
+            backgroundColor: const Color(0xff644CAA),
+            child: Icon(Icons.add),
           ),
         ),
         // 키보드 등장 시 화면 오버플로우가 발생하지 않도록 함.
@@ -137,89 +164,67 @@ class _MyPageState extends State<MyPage> {
                       return const Center(child: CircularProgressIndicator());
                     }
 
-                    return StreamBuilder(
-                      stream: walkRef.snapshots(),
-                      builder: (walkContext, walkSnapshot) {
-                        //데이터를 불러오지 못했으면 로딩
-                        if (!walkSnapshot.hasData) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
+                    getTotalWalkMin();
 
-                        // 총 산책 시간 계산
-                        num totalWalkHour = 0;
-
-                        if (walkSnapshot.data!.docs.isEmpty) {
-                          totalWalkHour = 0;
-                        } else {
-                          for (var element in walkSnapshot.data!.docs) {
-                            totalWalkHour =
-                                totalWalkHour + element.get('totalTimeMin');
-                          }
-                        }
-
-                        // 사용자 정보
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //사용자 정보
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Column(
                           children: [
-                            Column(
-                              children: [
-                                // 사용자 계정 이미지
-                                CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  radius: size.width * 0.10,
-                                  child: ClipOval(
-                                    child: Image.network(FirebaseAuth
-                                        .instance.currentUser!.photoURL
-                                        .toString()),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: size.height * 0.01,
-                                ),
-                                // 사용자 닉네임
-                                SizedBox(
-                                  width: size.width * 0.2,
-                                  child: Text(
-                                    FirebaseAuth
-                                        .instance.currentUser!.displayName
-                                        .toString(),
-                                    style: TextStyle(
-                                      fontSize: size.width * 0.04,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
+                            // 사용자 계정 이미지
+                            CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: size.width * 0.10,
+                              child: ClipOval(
+                                child: Image.network(FirebaseAuth
+                                    .instance.currentUser!.photoURL
+                                    .toString()),
+                              ),
                             ),
-                            // 산책 횟수
-                            Column(
-                              children: [
-                                Text(walkSnapshot.data!.docs.length.toString()),
-                                SizedBox(height: size.height * 0.02),
-                                const Text('산책 카운트'),
-                              ],
+                            SizedBox(
+                              height: size.height * 0.01,
                             ),
-                            // 산책 시간
-                            Column(
-                              children: [
-                                Text(totalWalkHour.toString()),
-                                SizedBox(height: size.height * 0.02),
-                                const Text('산책 시간'),
-                              ],
-                            ),
-                            // 반려견 수
-                            Column(
-                              children: [
-                                Text(petSnapshot.data!.docs.length.toString()),
-                                SizedBox(height: size.height * 0.02),
-                                const Text('댕댕이'),
-                              ],
+                            // 사용자 닉네임
+                            SizedBox(
+                              width: size.width * 0.2,
+                              child: Text(
+                                FirebaseAuth.instance.currentUser!.displayName
+                                    .toString(),
+                                style: TextStyle(
+                                  fontSize: size.width * 0.04,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ],
-                        );
-                      },
+                        ),
+                        // 산책 횟수
+                        Column(
+                          children: [
+                            Text(userDataController.totalWalkCnt.toString()),
+                            SizedBox(height: size.height * 0.02),
+                            const Text('산책 카운트'),
+                          ],
+                        ),
+                        // 산책 시간
+                        Column(
+                          children: [
+                            Text(userDataController.totalWalkTime.toString()),
+                            SizedBox(height: size.height * 0.02),
+                            const Text('산책 시간'),
+                          ],
+                        ),
+                        // 반려견 수
+                        Column(
+                          children: [
+                            Text(petSnapshot.data!.docs.length.toString()),
+                            SizedBox(height: size.height * 0.02),
+                            const Text('댕댕이'),
+                          ],
+                        ),
+                      ],
                     );
                   },
                 ),

@@ -1,4 +1,3 @@
-import 'package:dogdack/commons/logo_widget.dart';
 import 'package:dogdack/screens/calendar_detail/widget/beauty/beauty_icon.dart';
 import 'package:dogdack/screens/calendar_detail/widget/diary/diary_widget.dart';
 import 'package:dogdack/screens/calendar_detail/widget/health/car_health_line_graph_card.dart';
@@ -11,77 +10,69 @@ import 'package:dogdack/screens/calendar_detail/widget/walk/car_walk_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 
 
 import '../../models/calender_data.dart';
-import '../../models/walk_data.dart';
+import '../calendar_schedule_edit/controller/input_controller.dart';
+import '../my/controller/mypage_controller.dart';
 
 class CalenderDetail extends StatefulWidget {
+  DateTime today;
+  CalenderDetail({required this.today});
+
   static late Map<String, List> events;
   static late Map<String, List> w_events;
 
-  CalenderDetail({super.key, required this.tabIndex});
-
-  final int tabIndex;
 
   @override
   State<CalenderDetail> createState() => _CalenderDetailState();
 }
 
 class _CalenderDetailState extends State<CalenderDetail> {
+
+  final controller = Get.put(InputController());
+  final mypageStateController = Get.put(MyPageStateController());
   final calendarRef = FirebaseFirestore.instance
       .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Calendar')
       .withConverter(
           fromFirestore: (snapshot, _) => CalenderData.fromJson(snapshot.data()!),
           toFirestore: (calendarData, _) => calendarData.toJson());
 
-  final walkRef = FirebaseFirestore.instance
-      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
-      .withConverter(
-      fromFirestore: (snapshot, _) => WalkData.fromJson(snapshot.data()!),
-      toFirestore: (walkData, _) => walkData.toJson());
+
+
+  //
+  // Future<Map<String, List<Object>>> getData() async {
+  //   var result = await calendarRef.get();
+  //
+  //   for (int i = 0; i < result.docs.length; i++) {
+  //     events[result.docs[i].reference.id] = [
+  //       result.docs[i]['diary'],
+  //       result.docs[i]['bath'],
+  //       result.docs[i]['beauty'],
+  //     ];
+  //   }
+  //   setState(() {});
+  //   return events;
+  // }
+  //
+  //
+  // final Map<String, List<Object>> events = {'': []};
+  // @override
+  // void initState() {
+  //   getData();
+  // }
+
+  ////////////////////////////////산책카드////////////////////////////////////////////
+  late String place ="";
+  late num distance = 1;
+  late num totalTimeMin = 1;
+  late String imageUrl = 'images/login/login_image.png';
 
 
 
-  Future<Map<String, List<Object>>> getData() async {
-    var result = await calendarRef.get();
-
-    for (int i = 0; i < result.docs.length; i++) {
-      events[result.docs[i].reference.id] = [
-        result.docs[i]['diary'],
-        result.docs[i]['bath'],
-        result.docs[i]['beauty'],
-      ];
-    }
-    setState(() {});
-    return events;
-  }
-
-  Future<Map<String, List<Object>>> getWalkData() async {
-    var w_result = await walkRef.get();
-
-    for (int i = 0; i < w_result.docs.length; i++) {
-      w_events[w_result.docs[i].reference.id] = [
-        w_result.docs[i]['distance'],
-        w_result.docs[i]['name'],
-        w_result.docs[i]['place'],
-        w_result.docs[i]['time'],
-      ];
-    }
-    setState(() {});
-    return w_events;
-  }
-
-  final Map<String, List<Object>> events = {'': []};
-  final Map<String, List<Object>> w_events = {'': []};
-
-  @override
-  void initState() {
-    getData();
-    getWalkData();
-  }
 
   // 드롭박스 값
   final List<String> _valueList = ['일주일', '한달'];
@@ -331,8 +322,10 @@ class _CalenderDetailState extends State<CalenderDetail> {
   String walk_distance_plus = "증가했어요!";
   String walk_distance_minus = "감소했어요!";
 
-  DateTime date = DateTime.now();
-  late String today = DateFormat('yyMMdd').format(date);
+  // late DateTime date = DateTime.now();
+
+
+  // late String today = DateFormat('yyMMdd').format(date);
 
   //////////////////////오늘의 일기///////////////////
   //갖고와야해
@@ -346,11 +339,7 @@ class _CalenderDetailState extends State<CalenderDetail> {
   Widget build(BuildContext context) {
 
     // 달력에서 선택한 날
-    String today = DateFormat('yyMMdd').format(date);
-    diary_text = events[today]?[0].toString();
-    print(diary_text);
-    print(events);
-    print(w_events);
+
 
 
     Size screenSize = MediaQuery.of(context).size;
@@ -360,23 +349,23 @@ class _CalenderDetailState extends State<CalenderDetail> {
     Color violet = Color.fromARGB(255, 100, 92, 170);
     Color violet2 = Color.fromARGB(255, 160, 132, 202);
 
-    String? do_bath = events[today]?[1].toString();
-    String? do_hair = events[today]?[2].toString();
+    // String? do_bath = events[today]?[1].toString();
+    // String? do_hair = events[today]?[2].toString();
     late Color hair_color =  grey;
     late Color bath_color = grey;
 
 
 
-    if(do_bath == "true"){
-      bath_color = violet;
-    }else{
-      bath_color = grey;
-    }
-    if(do_hair == "true"){
-      hair_color = violet;
-    }else{
-      bath_color = grey;
-    }
+    // if(do_bath == "true"){
+    //   bath_color = violet;
+    // }else{
+    //   bath_color = grey;
+    // }
+    // if(do_hair == "true"){
+    //   hair_color = violet;
+    // }else{
+    //   bath_color = grey;
+    // }
 
 
 
@@ -425,10 +414,18 @@ class _CalenderDetailState extends State<CalenderDetail> {
         (last_week_avg_distance / week_hour_points.length).toInt();
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(height * 0.12),
-        child: LogoWidget(),
+      appBar: AppBar(
+      backgroundColor: Colors.white,
+      iconTheme: IconThemeData(
+        color: grey,
       ),
+      title: Text(
+        mypageStateController.myPageStateType == MyPageStateType.Create ? '추가하기' : '캘린더 상세페이지',
+        style: TextStyle(
+          color: grey,
+        ),
+      ),
+    ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -448,15 +445,15 @@ class _CalenderDetailState extends State<CalenderDetail> {
                   // 등록한 날짜가 나와야 함
                   CalDetailDateWidget(
                       time:
-                          "${date.year}년 ${date.month}월 ${date.day}일 ${date.hour}시 ${date.second}분에서"),
+                          "${widget.today.year}년 ${widget.today.month}월 ${widget.today.day}일 ${widget.today.hour}시 ${widget.today.second}분에서"),
                   CalDetailDateWidget(
                       time:
-                          "${date.year}년 ${date.month}월 ${date.day}일 ${date.hour}시 ${date.second}분까지")
+                          "${widget.today.year}년 ${widget.today.month}월 ${widget.today.day}일 ${widget.today.hour}시 ${widget.today.second}분까지")
                 ],
               ),
             ),
             // 산책 카드
-            CalWalkCardWidget(),
+            CalWalkCardWidget(distance: distance, imageUrl: imageUrl, place: place, totalTimeMin: totalTimeMin),
 //            건강지수 타이틀  + 드롭다운 박스
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <
                 Widget>[

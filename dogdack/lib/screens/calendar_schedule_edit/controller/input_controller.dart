@@ -11,6 +11,7 @@ class InputController extends GetxController {
   List<String> imageUrl = [];
   String name = '짬뽕';
   List<String> dognames = [];
+
   // void input() {
   //   update();
   // }

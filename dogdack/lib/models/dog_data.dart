@@ -11,7 +11,7 @@ class DogData {
     this.breed,
     this.weight,
     this.recommend,
-    this.createdAt
+    this.createdAt,
   });
 
   final String? imageUrl; // 반려견 사진 Download URL
@@ -29,7 +29,7 @@ class DogData {
       : this(
     imageUrl: json['imageUrl']! as String,
     imageFileName: json['imageFileName'] as String,
-    name: json['name']! as String,
+    name: json['name'] as String,
     gender: json['gender']! as String,
     birth: json['birth']! as String,
     kategorie: json['kategorie']! as String,
