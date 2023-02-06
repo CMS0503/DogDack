@@ -39,7 +39,7 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
       }
 
       final String fileName = path.basename(pickedImage.path);
-      print('pickedImage.path : ${pickedImage.path}');
+      // print('pickedImage.path : ${pickedImage.path}');
       File imageFile = File(pickedImage.path);
 
       try {

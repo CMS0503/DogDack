@@ -1,5 +1,4 @@
 // Widgets
-
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -37,7 +36,6 @@ class _MyPageState extends State<MyPage> {
   final petsRef = FirebaseFirestore.instance
       .collection(
           'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
-      .doc()
       .withConverter(
           fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
           toFirestore: (dogData, _) => dogData.toJson());
@@ -114,14 +112,13 @@ class _MyPageState extends State<MyPage> {
               // 생성 모드
               mypageStateController.myPageStateType = MyPageStateType.Create;
               // 반려견 정보 추가 페이지로 이동
-
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => const EditDogInfoPage()));
             },
             backgroundColor: Colors.deepPurple,
-            child: const Icon(Icons.add),
+            child: Icon(Icons.add),
           ),
         ),
         // 키보드 등장 시 화면 오버플로우가 발생하지 않도록 함.
@@ -152,9 +149,13 @@ class _MyPageState extends State<MyPage> {
                         // 총 산책 시간 계산
                         num totalWalkHour = 0;
 
-                        for (var element in walkSnapshot.data!.docs) {
-                          totalWalkHour =
-                              totalWalkHour + element.get('totalTimeMin');
+                        if (walkSnapshot.data!.docs.isEmpty) {
+                          totalWalkHour = 0;
+                        } else {
+                          for (var element in walkSnapshot.data!.docs) {
+                            totalWalkHour =
+                                totalWalkHour + element.get('totalTimeMin');
+                          }
                         }
 
                         // 사용자 정보
@@ -243,7 +244,6 @@ class _MyPageState extends State<MyPage> {
                     // 여기서 부터는 등록된 반려견이 1마리 이상 존재함.
 
                     // 마지막으로 저장된 스크롤 인덱스에 맞춰 정보 갱신함
-
                     // 인덱스는 0번 부터 시작하며 초기 값은 0
                     PetController().updateSelectedPetInfo(snapshot,
                         petController, petController.selectedPetScrollIndex);
@@ -332,7 +332,6 @@ class _MyPageState extends State<MyPage> {
                                     SizedBox(
                                       height: petInfoHeight * 0.02,
                                     ),
-
                                     // 성별
                                     Row(
                                       mainAxisAlignment:
@@ -416,7 +415,6 @@ class _MyPageState extends State<MyPage> {
                                     SizedBox(
                                       height: petInfoHeight * 0.02,
                                     ),
-
                                     // 견종
                                     Row(
                                       mainAxisAlignment:
@@ -506,7 +504,6 @@ class _MyPageState extends State<MyPage> {
                                       child: ElevatedButton(
                                         onPressed: () {
                                           // 편집 상태
-
                                           mypageStateController
                                                   .myPageStateType =
                                               MyPageStateType.Edit;
@@ -526,7 +523,7 @@ class _MyPageState extends State<MyPage> {
                                               MaterialStateProperty.all(
                                                   Colors.white),
                                         ),
-                                        child: const Text('편집하기'),
+                                        child: Text('편집하기'),
                                       ),
                                     )
                                   ],
