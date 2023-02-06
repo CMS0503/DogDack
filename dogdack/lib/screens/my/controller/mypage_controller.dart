@@ -26,7 +26,6 @@ class PetController extends GetxController {
   String selectedPetID = ''; // 해당 반려견의 Firebase Document ID
   String selectedPetImageUrl = '';
   String selectedPetImageFileName = ''; // 해당 반려견 이미지의 Firebase storage 저장된 파일명
-  String selectedPetName = '';
   String selectedPetGender = '';
   String selectedPetBirth = '';
   String selectedPetKategorie = '';
@@ -40,7 +39,6 @@ class PetController extends GetxController {
     petController.selectedPetID = snapshot.data!.docs[index].id;
     petController.selectedPetImageUrl = snapshot.data!.docs[index].get('imageUrl');
     petController.selectedPetImageFileName = snapshot.data!.docs[index].get('imageFileName');
-    petController.selectedPetName = snapshot.data!.docs[index].get('name');
     petController.selectedPetGender = snapshot.data!.docs[index].get('gender');
     petController.selectedPetBirth = snapshot.data!.docs[index].get('birth');
     petController.selectedPetBreed = snapshot.data!.docs[index].get('breed');

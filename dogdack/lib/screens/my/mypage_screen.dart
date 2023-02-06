@@ -37,10 +37,6 @@ class _MyPageState extends State<MyPage> {
   final petsRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
       .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
 
-  // Firebase : 산책 테이블 참조 값
-  final walkRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Walk')
-      .withConverter(fromFirestore: (snapshot, _) => WalkData.fromJson(snapshot.data()!), toFirestore: (walkData, _) => walkData.toJson());
-
   // GetX
   final petController = Get.put(PetController()); // 슬라이더에서 선택된 반려견 정보를 위젯간 공유
   final mypageStateController = Get.put(MyPageStateController()); // 현재 mypage 의 상태 표시
@@ -124,6 +120,15 @@ class _MyPageState extends State<MyPage> {
                     if (!petSnapshot.hasData) {
                       return Center(child: CircularProgressIndicator());
                     }
+
+                    //User - email - Pets - 고유ID - Calendar - 날짜 - Walk - 고유ID - totalTimeMin
+
+                    for(int aa = 0; aa < petSnapshot.data!.docs.length; a++) {
+                      petsRef.doc().collection('Calendar').doc().collection('Walk')
+                    }
+
+
+
 
                     return StreamBuilder(
                       stream: walkRef.snapshots(),
