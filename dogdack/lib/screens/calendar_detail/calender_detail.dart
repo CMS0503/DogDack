@@ -18,6 +18,7 @@ import 'package:get/get_core/src/get_main.dart';
 
 import '../../models/calender_data.dart';
 import '../calendar_schedule_edit/controller/input_controller.dart';
+import '../my/controller/mypage_controller.dart';
 
 class CalenderDetail extends StatefulWidget {
   DateTime today;
@@ -34,6 +35,7 @@ class CalenderDetail extends StatefulWidget {
 class _CalenderDetailState extends State<CalenderDetail> {
 
   final controller = Get.put(InputController());
+  final mypageStateController = Get.put(MyPageStateController());
   final calendarRef = FirebaseFirestore.instance
       .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Calendar')
       .withConverter(
@@ -63,6 +65,15 @@ class _CalenderDetailState extends State<CalenderDetail> {
   // void initState() {
   //   getData();
   // }
+
+  ////////////////////////////////산책카드////////////////////////////////////////////
+  late String place ="";
+  late num distance = 1;
+  late num totalTimeMin = 1;
+  late String imageUrl = 'images/login/login_image.png';
+
+
+
 
   // 드롭박스 값
   final List<String> _valueList = ['일주일', '한달'];
@@ -404,10 +415,18 @@ class _CalenderDetailState extends State<CalenderDetail> {
         (last_week_avg_distance / week_hour_points.length).toInt();
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(height * 0.12),
-        child: LogoWidget(),
+      appBar: AppBar(
+      backgroundColor: Colors.white,
+      iconTheme: IconThemeData(
+        color: grey,
       ),
+      title: Text(
+        mypageStateController.myPageStateType == MyPageStateType.Create ? '추가하기' : '캘린더 상세페이지',
+        style: TextStyle(
+          color: Colors.black,
+        ),
+      ),
+    ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -435,7 +454,7 @@ class _CalenderDetailState extends State<CalenderDetail> {
               ),
             ),
             // 산책 카드
-            CalWalkCardWidget(),
+            CalWalkCardWidget(distance: distance, imageUrl: imageUrl, place: place, totalTimeMin: totalTimeMin),
 //            건강지수 타이틀  + 드롭다운 박스
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <
                 Widget>[

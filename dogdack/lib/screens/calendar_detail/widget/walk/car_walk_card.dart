@@ -5,6 +5,13 @@ import 'package:flutter/material.dart';
 
 class CalWalkCardWidget extends StatefulWidget {
 
+  String place;
+  num distance;
+  num totalTimeMin;
+  String imageUrl;
+  CalWalkCardWidget({required this.place, required this.distance, required this.totalTimeMin, required this.imageUrl});
+
+
 
   @override
   State<CalWalkCardWidget> createState() => _CalWalkCardWidget();
@@ -34,17 +41,18 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
                 height: height * 0.2,
                 margin: EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 80, 78, 91),
                     borderRadius: BorderRadius.circular(16.0)),
+                child: Image.asset("${widget.imageUrl}")
               ),
+
               // 산책 정보
               Padding(
                 padding: EdgeInsets.only(top: 25),
                 child: Column(
                   children: <Widget>[
-                    Flexible(child: CalDetailTextWidget(title: "산책 장소", text: "데이터 베이스",)),
-                    Flexible(child: CalDetailTextWidget(title: "이동 거리",text: "데이터 베이스")),
-                    Flexible(child: CalDetailTextWidget(title: "산책 시간",text: "데이터 베이스")),
+                    Flexible(child: CalDetailTextWidget(title: "산책 장소", text: "${widget.place}",)),
+                    Flexible(child: CalDetailTextWidget(title: "이동 거리",text: "${widget.distance}미터")),
+                    Flexible(child: CalDetailTextWidget(title: "산책 시간",text: "${widget.totalTimeMin}분")),
                   ],
                 ),
               )
