@@ -21,6 +21,12 @@ class MyPageStateController extends GetxController {
   MyPageStateType myPageStateType = MyPageStateType.View;
 }
 
+class UserDataController extends GetxController {
+  // 유저 데이터 컨트롤러
+  num totalWalkTime = 0; // 총 산책 시간
+  num totalWalkCnt = 0; // 총 산책 횟수
+}
+
 class PetController extends GetxController {
   //My Page 에서 슬라이더로 선택된 Pet 의 정보 : 반려견 정보 수정 화면에서 기존 데이터를 가져올 때 활용
   String selectedPetID = ''; // 해당 반려견의 Firebase Document ID

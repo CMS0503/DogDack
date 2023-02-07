@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import './controller/walk_controller.dart';
 import './widgets/my_map.dart';
 import './widgets/status.dart';
+import '../../commons/logo_widget.dart';
+import '../../controlls/main_controll.dart';
 
 class WalkPage extends StatelessWidget {
   WalkPage({super.key, required this.tabIndex});
@@ -11,10 +13,11 @@ class WalkPage extends StatelessWidget {
   final int tabIndex;
 
   final walkController = Get.put(WalkController());
+  final mainController = Get.put(MainController());
 
   Widget mapAreaWidget(w, h) {
-    return SizedBox(
-      height: h * 0.65,
+    return Container(
+      height: h * 0.5,
       width: w,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
@@ -24,13 +27,13 @@ class WalkPage extends StatelessWidget {
   }
 
   Widget requestBluetoothConnectWidget(w, h, context) {
-    return SizedBox(
-      height: h * 0.65,
+    return Container(
+      height: h * 0.5,
       width: w,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
+          Text(
             '블루투스 연결을 확인해주세요',
             style: TextStyle(
               fontSize: 20,
@@ -40,16 +43,19 @@ class WalkPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
+              Icon(
                 Icons.bluetooth_outlined,
                 color: Colors.blue,
               ),
               TextButton(
                 onPressed: () => Navigator.pushNamed(context, '/Ble'),
-                child: const Text('지금 연결하러 가기'),
+                child: Text('지금 연결하러 가기'),
               ),
             ],
           ),
+          SizedBox(
+            height: 100,
+          )
         ],
       ),
     );
@@ -59,8 +65,8 @@ class WalkPage extends StatelessWidget {
     return Opacity(
       opacity: 0.7,
       child: Container(
-        decoration: const BoxDecoration(color: Colors.grey),
-        height: h * 0.65,
+        decoration: BoxDecoration(color: Colors.grey),
+        height: h * 0.6,
         width: w,
         child: Align(
           alignment: Alignment.center,
@@ -72,18 +78,18 @@ class WalkPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(
+                SizedBox(
                   height: 10,
                 ),
-                const Text('산책하기를 종료합니다'),
-                const Text('산책 거리가 짧으면 기록되지 않습니다.'),
-                const SizedBox(
+                Text('산책하기를 종료합니다'),
+                Text('산책 거리가 짧으면 기록되지 않습니다.'),
+                SizedBox(
                   height: 5,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(
+                    Container(
                       width: w * 0.45,
                       // decoration: BoxDecoration(color: Colors.red),
                       child: Align(
@@ -91,7 +97,7 @@ class WalkPage extends StatelessWidget {
                         child: TextButton(
                           style: TextButton.styleFrom(
                               padding: EdgeInsets.zero,
-                              minimumSize: const Size(50, 30)),
+                              minimumSize: Size(50, 30)),
                           child: Text(
                             '산책 계속하기',
                             style: Theme.of(context).textTheme.bodyMedium,
@@ -103,15 +109,22 @@ class WalkPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    Container(
                       width: w * 0.45,
                       // decoration: BoxDecoration(color: Colors.blue),
                       child: Align(
                         alignment: Alignment.center,
                         child: TextButton(
-                          child: const Text(
-                            '종료',
-                            style: TextStyle(color: Colors.red, fontSize: 16),
+                          child: TextButton(
+                            child: Text(
+                              '종료',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            onPressed: () {
+                              // 캘린더 화면으로
+                              mainController.changeTabIndex(1);
+                              // 캘린더 상세화면으로 이동해야함
+                            },
                           ),
                           onPressed: () => {},
                         ),
@@ -137,30 +150,26 @@ class WalkPage extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Walk',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(screenHeight * 0.12),
+        child: const LogoWidget(),
       ),
       body: Obx(
-        () => Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            () => Column(
           children: [
-            const SizedBox(height: 10),
-            const Status(),
-            const SizedBox(height: 10),
-            walkController.isBleConnect.value == false
+            Status(),
+            SizedBox(height: 10),
+            walkController.isBleConnect.value == true
                 ? requestBluetoothConnectWidget(
-                    screenWidth, screenHeight, context)
+                screenWidth, screenHeight, context)
                 : Stack(
-                    children: [
-                      mapAreaWidget(screenWidth, screenHeight),
-                      (walkController.isRunning.value == walkController.isStart)
-                          ? Container()
-                          : endWalkModal(screenWidth, screenHeight, context),
-                    ],
-                  ),
+              children: [
+                mapAreaWidget(screenWidth, screenHeight),
+                (walkController.isRunning.value == walkController.isStart)
+                    ? Container()
+                    : endWalkModal(screenWidth, screenHeight, context),
+              ],
+            ),
           ],
         ),
       ),
