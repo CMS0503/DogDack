@@ -64,18 +64,18 @@ class WalkController extends GetxController {
     timer!.cancel();
   }
 
-  void saveWalkData() {
-    FirebaseFirestore.instance
-        .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
-        .withConverter(
-          fromFirestore: (snapshot, options) =>
-              PosData.fromJson(snapshot.data()!),
-          toFirestore: (value, options) => value.toJson(),
-        )
-        .add(PosData(
-          loc: geoloc,
-        ));
-  }
+  // void saveWalkData() {
+  //   FirebaseFirestore.instance
+  //       .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
+  //       .withConverter(
+  //         fromFirestore: (snapshot, options) =>
+  //             PosData.fromJson(snapshot.data()!),
+  //         toFirestore: (value, options) => value.toJson(),
+  //       )
+  //       .add(PosData(
+  //         loc: geoloc,
+  //       ));
+  // }
 
   @override
   void onClose() {
