@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.fromLTRB(0, size.height * 0.03, 0, 0),
               child: Column(
                 children: [
-                  StreamBuilder(
+                  /*StreamBuilder(
                     stream: petsRef.orderBy('createdAt').snapshots(),
                     builder: (context, snapshot) {
                       // 데이터를 아직 불러오지 못했으면 로딩
@@ -104,7 +104,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Container(
                     child: BarChartSample1(),
-                  ),
+                  ),*/
                 ],
               ),
             ),
