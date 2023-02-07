@@ -182,18 +182,21 @@ class _CalendarState extends State<Calendar> {
             return ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
                 onPressed: () {
-                  controller.date = day;
+                  controller.setDate(day);
 
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => CalenderDetail(today: day,)),
+                    MaterialPageRoute(
+                        builder: (context) => CalenderDetail(
+                              today: day,
+                            )),
                   );
                 },
                 child: const SizedBox());
           return ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
             onPressed: () {
-              controller.date = day;
+              controller.setDate(day);
             },
             child: Padding(
               padding: const EdgeInsets.only(top: 20),
