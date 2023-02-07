@@ -9,7 +9,7 @@ import 'package:flutter_picker/picker.dart';
 // GetX
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'controller/mypage_controller.dart';
+import '../../controllers/mypage_controller.dart';
 
 // Model
 import '../../models/dog_data.dart';

@@ -4,7 +4,7 @@ import 'package:dogdack/screens/walk/widgets/ble_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../screens/walk/controller/walk_controller.dart';
+import '../controllers/walk_controller.dart';
 
 class WalkNavigator extends StatelessWidget {
   WalkNavigator({super.key});

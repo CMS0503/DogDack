@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import './controller/walk_controller.dart';
+import '../../controllers/walk_controller.dart';
 import './widgets/my_map.dart';
 import './widgets/status.dart';
 import '../../commons/logo_widget.dart';
-import '../../controlls/main_controll.dart';
+import '../../controllers/main_controll.dart';
 
 class WalkPage extends StatelessWidget {
   WalkPage({super.key});

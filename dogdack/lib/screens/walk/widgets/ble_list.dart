@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 
-import '../controller/walk_controller.dart';
+import '../../../controllers/walk_controller.dart';
 
 class BleList extends StatefulWidget {
   BleList({Key? key}) : super(key: key);

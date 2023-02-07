@@ -7,7 +7,7 @@ import 'package:dogdack/commons/logo_widget.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '../../models/dog_data.dart';
-import '../my/controller/mypage_controller.dart';
+import '../../controllers/mypage_controller.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({super.key});

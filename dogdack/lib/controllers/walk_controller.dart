@@ -1,7 +1,11 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
+
+import '../models/position_data.dart';
 
 class WalkController extends GetxController {
   // 블루투스 장치 id
@@ -58,6 +62,19 @@ class WalkController extends GetxController {
 
   void pauseTimer() {
     timer!.cancel();
+  }
+
+  void saveWalkData() {
+    FirebaseFirestore.instance
+        .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
+        .withConverter(
+          fromFirestore: (snapshot, options) =>
+              PosData.fromJson(snapshot.data()!),
+          toFirestore: (value, options) => value.toJson(),
+        )
+        .add(PosData(
+          loc: geoloc,
+        ));
   }
 
   @override

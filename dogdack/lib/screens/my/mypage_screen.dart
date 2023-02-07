@@ -14,7 +14,7 @@ import 'package:get/get_core/src/get_main.dart';
 
 // Controller
 import '../../commons/logo_widget.dart';
-import 'controller/mypage_controller.dart';
+import '../../controllers/mypage_controller.dart';
 
 // Models
 import 'package:dogdack/models/dog_data.dart';

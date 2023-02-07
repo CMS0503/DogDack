@@ -13,19 +13,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
-
-
 import '../../models/calender_data.dart';
-import '../calendar_schedule_edit/controller/input_controller.dart';
-import '../my/controller/mypage_controller.dart';
+import '../../controllers/input_controller.dart';
+import '../../controllers/mypage_controller.dart';
 
 class CalenderDetail extends StatefulWidget {
   DateTime today;
+
   CalenderDetail({required this.today});
 
   static late Map<String, List> events;
   static late Map<String, List> w_events;
-
 
   @override
   State<CalenderDetail> createState() => _CalenderDetailState();

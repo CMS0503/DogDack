@@ -8,7 +8,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dogdack/models/calender_data.dart';
 
-import '../../calendar_schedule_edit/controller/input_controller.dart';
+import '../../../controllers/input_controller.dart';
 
 class Calendar extends StatefulWidget {
   static late Map<String, List> events;

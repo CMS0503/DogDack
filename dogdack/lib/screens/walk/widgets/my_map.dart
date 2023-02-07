@@ -8,7 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:latlong2/latlong.dart' as ll;
 
-import '../controller/walk_controller.dart';
+import '../../../controllers/walk_controller.dart';
 
 class myMap extends StatefulWidget {
   late final String title;

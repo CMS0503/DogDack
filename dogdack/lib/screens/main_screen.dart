@@ -1,4 +1,4 @@
-import 'package:dogdack/controlls/main_controll.dart';
+import 'package:dogdack/controllers/main_controll.dart';
 import 'package:dogdack/navigators/calender_navigator.dart';
 
 //navigator

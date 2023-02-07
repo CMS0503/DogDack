@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 
-import '../../my/controller/mypage_controller.dart';
+import '../../../controllers/mypage_controller.dart';
 import '../../../models/dog_data.dart';
 
 class Status extends StatefulWidget {
