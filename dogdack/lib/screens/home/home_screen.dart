@@ -10,9 +10,8 @@ import '../../models/dog_data.dart';
 import '../my/controller/mypage_controller.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({super.key, required this.tabIndex});
+  HomePage({super.key});
 
-  final int tabIndex;
   final inputController = TextEditingController();
 
   @override

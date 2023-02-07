@@ -8,9 +8,7 @@ import '../../commons/logo_widget.dart';
 import '../../controlls/main_controll.dart';
 
 class WalkPage extends StatelessWidget {
-  WalkPage({super.key, required this.tabIndex});
-
-  final int tabIndex;
+  WalkPage({super.key});
 
   final walkController = Get.put(WalkController());
   final mainController = Get.put(MainController());
@@ -122,6 +120,7 @@ class WalkPage extends StatelessWidget {
                             ),
                             onPressed: () {
                               // 캘린더 화면으로
+                              // walkController.saveWalkData();
                               mainController.changeTabIndex(1);
                               // 캘린더 상세화면으로 이동해야함
                             },

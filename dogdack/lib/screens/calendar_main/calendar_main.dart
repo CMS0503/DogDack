@@ -7,8 +7,7 @@ import 'package:flutter/material.dart';
 import '../calendar_schedule_edit/controller/input_controller.dart';
 
 class CalendarMain extends StatefulWidget {
-  const CalendarMain({super.key, required this.tabIndex});
-  final int tabIndex;
+  const CalendarMain({super.key});
 
   @override
   State<CalendarMain> createState() => _CalendarPageState();

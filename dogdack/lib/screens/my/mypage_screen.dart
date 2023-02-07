@@ -23,9 +23,8 @@ import 'package:dogdack/models/dog_data.dart';
 import 'editinfo_screen.dart';
 
 class MyPage extends StatefulWidget {
-  MyPage({super.key, required this.tabIndex});
+  MyPage({super.key});
 
-  final int tabIndex;
   final inputController = TextEditingController();
 
   @override
