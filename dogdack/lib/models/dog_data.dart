@@ -4,6 +4,7 @@ class DogData {
   DogData({
     this.imageUrl,
     this.imageFileName,
+    this.name,
     this.gender,
     this.birth,
     this.kategorie,
@@ -15,6 +16,7 @@ class DogData {
 
   final String? imageUrl; // 반려견 사진 Download URL
   final String? imageFileName; // Firebase Storage 에 저장된 반려견 사진 파일명
+  final String? name; // 반려견 이름
   final String? gender; // 반려견 성별
   final String? birth; // 반려견 생일
   final String? kategorie; // 반려견 견종 분류
@@ -27,6 +29,7 @@ class DogData {
       : this(
     imageUrl: json['imageUrl']! as String,
     imageFileName: json['imageFileName'] as String,
+    name: json['name'] as String,
     gender: json['gender']! as String,
     birth: json['birth']! as String,
     kategorie: json['kategorie']! as String,
@@ -40,6 +43,7 @@ class DogData {
     return {
       'imageUrl': imageUrl,
       'imageFileName': imageFileName,
+      'name': name,
       'gender': gender,
       'birth': birth,
       'kategorie' : kategorie,
