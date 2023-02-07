@@ -10,7 +10,9 @@ class InputController extends GetxController {
   bool beauty = true;
   List<String> imageUrl = [];
   DateTime today = DateTime.now();
-  // void input() {
-  //   update();
-  // }
+
+  void setDate(selectedDate) {
+    date = selectedDate;
+    update();
+  }
 }

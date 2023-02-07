@@ -8,16 +8,14 @@ import '../../commons/logo_widget.dart';
 import '../../controlls/main_controll.dart';
 
 class WalkPage extends StatelessWidget {
-  WalkPage({super.key, required this.tabIndex});
-
-  final int tabIndex;
+  WalkPage({super.key});
 
   final walkController = Get.put(WalkController());
   final mainController = Get.put(MainController());
 
   Widget mapAreaWidget(w, h) {
     return Container(
-      height: h * 0.5,
+      height: h * 0.6,
       width: w,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
@@ -122,6 +120,7 @@ class WalkPage extends StatelessWidget {
                             ),
                             onPressed: () {
                               // 캘린더 화면으로
+                              // walkController.saveWalkData();
                               mainController.changeTabIndex(1);
                               // 캘린더 상세화면으로 이동해야함
                             },
@@ -159,17 +158,17 @@ class WalkPage extends StatelessWidget {
           children: [
             Status(),
             SizedBox(height: 10),
-            walkController.isBleConnect.value == true
+            walkController.isBleConnect.value == false
                 ? requestBluetoothConnectWidget(
-                screenWidth, screenHeight, context)
+                    screenWidth, screenHeight, context)
                 : Stack(
-              children: [
-                mapAreaWidget(screenWidth, screenHeight),
-                (walkController.isRunning.value == walkController.isStart)
-                    ? Container()
-                    : endWalkModal(screenWidth, screenHeight, context),
-              ],
-            ),
+                    children: [
+                      mapAreaWidget(screenWidth, screenHeight),
+                      (walkController.isRunning.value == walkController.isStart)
+                          ? Container()
+                          : endWalkModal(screenWidth, screenHeight, context),
+                    ],
+                  ),
           ],
         ),
       ),

@@ -6,7 +6,7 @@ import 'package:dogdack/screens/calendar_detail/widget/cal_detail_date.dart';
 import 'package:dogdack/screens/calendar_detail/widget/cal_detail_title.dart';
 import 'package:dogdack/screens/calendar_detail/widget/cal_edit_button.dart';
 import 'package:dogdack/screens/calendar_detail/widget/health/graph_day.dart';
-import 'package:dogdack/screens/calendar_detail/widget/walk/car_walk_card.dart';
+import 'package:dogdack/screens/calendar_detail/widget/walk/cal_walk_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -320,10 +320,10 @@ class _CalenderDetailState extends State<CalenderDetail> {
                   // 등록한 날짜가 나와야 함
                   CalDetailDateWidget(
                       time:
-                          "${widget.today.year}년 ${widget.today.month}월 ${widget.today.day}일 ${widget.today.hour}시 ${widget.today.second}분에서"),
+                          "${controller.date.year}년 ${controller.date.month}월 ${controller.date.day}일 ${controller.date.hour}시 ${controller.date.second}분에서"),
                   CalDetailDateWidget(
                       time:
-                          "${widget.today.year}년 ${widget.today.month}월 ${widget.today.day}일 ${widget.today.hour}시 ${widget.today.second}분까지")
+                          "${controller.date.year}년 ${controller.date.month}월 ${controller.date.day}일 ${controller.date.hour}시 ${controller.date.second}분까지")
                 ],
               ),
             ),

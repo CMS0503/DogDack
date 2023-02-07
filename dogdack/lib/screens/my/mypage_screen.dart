@@ -23,9 +23,8 @@ import 'package:dogdack/models/dog_data.dart';
 import 'editinfo_screen.dart';
 
 class MyPage extends StatefulWidget {
-  MyPage({super.key, required this.tabIndex});
+  MyPage({super.key});
 
-  final int tabIndex;
   final inputController = TextEditingController();
 
   @override
@@ -64,7 +63,7 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
-  void getTotalWalkMin() async {
+  Future<void> getTotalWalkMin() async {
     num totalWalkMin = 0; // 총 산책 시간
     num totalWalkCnt = 0; // 총 산책 횟수
     CollectionReference petRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');

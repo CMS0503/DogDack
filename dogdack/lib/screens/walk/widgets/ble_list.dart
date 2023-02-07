@@ -11,10 +11,7 @@ class BleList extends StatefulWidget {
 
   // 장치 정보 전달 받기
   late BluetoothDevice device;
-  // final String serviceUuid = '0000ffe0-0000-1000-8000-00805f9b34fb';
-  // final String characteristicUuid = '0000ffe1-0000-1000-8000-00805f9b34fb';
-  // late String receiveData = '';
-  // Map? location;
+
   bool isConnected = false;
 
   @override
@@ -145,6 +142,7 @@ class _BleState extends State<BleList> {
         walkController.services = await widget.device.discoverServices();
         walkController.connectBle(r.device);
         print('end discovor service');
+
         returnValue = Future.value(true);
       }
     });
@@ -205,7 +203,10 @@ class _BleState extends State<BleList> {
             height: 28,
             child: OutlinedButton(
               child: Text('Connect'),
-              onPressed: () => {connect(r), setState(() {})},
+              onPressed: () async {
+                connect(r);
+                setState(() {});
+              },
             ),
           );
   }
