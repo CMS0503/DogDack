@@ -13,32 +13,30 @@ class CalendarDrop extends StatefulWidget {
 
 class _CalendarDropState extends State<CalendarDrop> {
   final controller = Get.put(InputController());
+  final petsRef = FirebaseFirestore.instance
+      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');
   // late List<String> valueList = ["짬뽕", "공숙"];
   // String selectedValue = '안뇽';
   // final valueList = ['첫 번째', '두 번째', '세 번째', '네 번째'];
   // var selectedValue = '첫 번째';
-  final petsRef = FirebaseFirestore.instance
-      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');
-
   getName() async {
     var names = await petsRef.get();
-
+    print('getName의 names : $names');
     List<String> dogs = [];
 
     for (int i = 0; i < names.docs.length; i++) {
       dogs.insert(0, names.docs[i]['name']);
     }
 
-    setState(() {
-      controller.dognames = dogs;
-    });
+    controller.dognames.value = dogs;
+    print('hi');
+    // setState(() {});
   }
 
   @override
   void initState() {
     super.initState();
     getName();
-    print('${controller.dognames} sdfsdfewiruqrioqfjnsdklfmksl');
   }
 
   @override
@@ -51,7 +49,7 @@ class _CalendarDropState extends State<CalendarDrop> {
     var selectedValue = '';
 
     if (valueList.isEmpty) {
-      valueList = ['댕댕이를 등록하세요'];
+      valueList.value = ['댕댕이를 등록하세요'];
       selectedValue = '댕댕이를 등록하세요';
     } else {
       selectedValue = valueList[0];

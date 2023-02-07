@@ -30,44 +30,50 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
         'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/pets');
 
     // var dogId = '';
-    var result = await petsRef
-        .where("name", isEqualTo: controller.name.toString())
-        .get();
+    var result = await petsRef.where("name", isEqualTo: controller.name).get();
 
-    String dogId = result.docs[0].id;
+    if (result.docs.isNotEmpty) {
+      String dogId = result.docs[0].id;
 
-    petsRef
-        .doc(dogId)
-        .collection('Calendar')
-        .doc(DateFormat('yyMMdd').format(controller.date))
-        .withConverter(
-          fromFirestore: (snapshot, options) =>
-              CalenderData.fromJson(snapshot.data()!),
-          toFirestore: (value, options) => value.toJson(),
-        )
-        .set(CalenderData(
-          diary: controller.diary,
-          bath: controller.bath,
-          beauty: controller.beauty,
-          imageUrl: controller.imageUrl,
-        ))
-        .then((value) => print("document added"))
-        .catchError((error) => print("Fail to add doc $error"));
+      petsRef
+          .doc(dogId)
+          .collection('Calendar')
+          .doc(DateFormat('yyMMdd').format(controller.date))
+          .withConverter(
+            fromFirestore: (snapshot, options) =>
+                CalenderData.fromJson(snapshot.data()!),
+            toFirestore: (value, options) => value.toJson(),
+          )
+          .set(CalenderData(
+            diary: controller.diary,
+            bath: controller.bath,
+            beauty: controller.beauty,
+            imageUrl: controller.imageUrl,
+          ))
+          .then((value) => print("document added"))
+          .catchError((error) => print("Fail to add doc $error"));
 
-    petsRef
-        .doc(dogId.toString())
-        .collection('Walk')
-        .doc()
-        .withConverter(
-          fromFirestore: (snapshot, options) =>
-              WalkData.fromJson(snapshot.data()!),
-          toFirestore: (value, options) => value.toJson(),
-        )
-        .set(WalkData(
-          place: controller.place,
-          // startTime: controller.time,
-          distance: int.parse(controller.distance),
-        ));
+      petsRef
+          .doc(dogId)
+          .collection('Walk')
+          .doc()
+          .withConverter(
+            fromFirestore: (snapshot, options) =>
+                WalkData.fromJson(snapshot.data()!),
+            toFirestore: (value, options) => value.toJson(),
+          )
+          .set(
+            WalkData(
+              place: controller.place,
+              startTime: controller.startTime,
+              endTime: controller.endTime,
+              totalTimeMin: (int.parse(controller.endTime.toString()) -
+                      int.parse(controller.startTime.toString())) /
+                  60,
+              distance: int.parse(controller.distance),
+            ),
+          );
+    }
   }
 
   @override
