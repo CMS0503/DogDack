@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 // Controller
+import '../../commons/logo_widget.dart';
 import 'controller/mypage_controller.dart';
 
 // Models
@@ -113,15 +114,9 @@ class _MyPageState extends State<MyPage> {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: Text(
-            'DOGDACK',
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(size.height * 0.12),
+          child: const LogoWidget(),
         ),
         floatingActionButton: Container(
           padding: EdgeInsets.fromLTRB(0, 0, size.width * 0.05, size.width * 0.05),
