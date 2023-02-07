@@ -89,8 +89,10 @@ class _MyPageState extends State<MyPage> {
       }
     }
 
-    userDataController.totalWalkCnt = totalWalkCnt;
-    userDataController.totalWalkTime = totalWalkMin;
+    setState(() {
+      userDataController.totalWalkCnt = totalWalkCnt;
+      userDataController.totalWalkTime = totalWalkMin;
+    });
   }
 
   @override
@@ -147,6 +149,8 @@ class _MyPageState extends State<MyPage> {
                     if (!petSnapshot.hasData) {
                       return Center(child: CircularProgressIndicator());
                     }
+
+                    getTotalWalkMin();
 
                     //사용자 정보
                     return Row(

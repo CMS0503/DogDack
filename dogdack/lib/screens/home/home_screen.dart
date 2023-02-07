@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
                               viewportFraction: 0.5,
                               enlargeCenterPage : true,
                               enlargeFactor : 0.4,
-                              enableInfiniteScroll: false,
+                              enableInfiniteScroll: true,
                               onPageChanged: (index, reason) {
                                 setState(() {
                                   selectSliderIdx = index;
