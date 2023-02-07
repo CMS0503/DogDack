@@ -17,7 +17,7 @@ class WalkPage extends StatelessWidget {
 
   Widget mapAreaWidget(w, h) {
     return Container(
-      height: h * 0.5,
+      height: h * 0.6,
       width: w,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
@@ -159,17 +159,17 @@ class WalkPage extends StatelessWidget {
           children: [
             Status(),
             SizedBox(height: 10),
-            walkController.isBleConnect.value == true
+            walkController.isBleConnect.value == false
                 ? requestBluetoothConnectWidget(
-                screenWidth, screenHeight, context)
+                    screenWidth, screenHeight, context)
                 : Stack(
-              children: [
-                mapAreaWidget(screenWidth, screenHeight),
-                (walkController.isRunning.value == walkController.isStart)
-                    ? Container()
-                    : endWalkModal(screenWidth, screenHeight, context),
-              ],
-            ),
+                    children: [
+                      mapAreaWidget(screenWidth, screenHeight),
+                      (walkController.isRunning.value == walkController.isStart)
+                          ? Container()
+                          : endWalkModal(screenWidth, screenHeight, context),
+                    ],
+                  ),
           ],
         ),
       ),
