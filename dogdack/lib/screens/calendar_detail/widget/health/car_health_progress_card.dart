@@ -72,7 +72,7 @@ class _CalHealthProgressCardWidget extends State<CalHealthProgressCardWidget> {
             width: width * 0.9,
             height: height * 0.18,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              // crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

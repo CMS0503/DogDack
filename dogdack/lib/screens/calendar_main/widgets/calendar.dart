@@ -8,6 +8,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dogdack/models/calender_data.dart';
 
+import '../../../models/walk_data.dart';
 import '../../../controllers/input_controller.dart';
 
 class Calendar extends StatefulWidget {
@@ -34,7 +35,7 @@ class _CalendarState extends State<Calendar> {
   final controller = Get.put(InputController());
 
   final calendarRef = FirebaseFirestore.instance
-      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Calendar')
+      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets')
       .withConverter(
           fromFirestore: (snapshot, _) =>
               CalenderData.fromJson(snapshot.data()!),
