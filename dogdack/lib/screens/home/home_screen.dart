@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage> {
                       // 불러온 데이터가 없을 경우 등록 안내
                       if (snapshot.data!.docs.length == 0) {
                         return Center(
-                          child: Text('댕댕이를 등록해주세요!'),
+                          child: Text('마이 페이지에서 댕댕이를 등록해주세요!'),
                         );
                       }
 
@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                               );
                             },
                           ),
-                          SizedBox(height: size.height * 0.001),
+                          SizedBox(height: size.height * 0.003),
                           Center(
                             child: Text(
                               snapshot.data!.docs[selectSliderIdx].get('name'),
