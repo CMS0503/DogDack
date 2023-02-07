@@ -19,9 +19,6 @@ import 'controller/calendar_detail_controller.dart';
 class CalenderDetail extends StatefulWidget {
   static Map<String, List> events = {'': []};
 
-  DateTime today;
-
-  CalenderDetail({required this.today});
 
   @override
   State<CalenderDetail> createState() => _CalenderDetailState();
@@ -147,10 +144,6 @@ class _CalenderDetailState extends State<CalenderDetail> {
   int last_sum_week_walk_distance = 1;
 
 
-
-  late String place = "";
-  late num distance = 1;
-  late num totalTimeMin = 1;
   late String imageUrl = 'images/login/login_image.png';
 
   // 드롭박스 값
@@ -239,6 +232,17 @@ class _CalenderDetailState extends State<CalenderDetail> {
   @override
   Widget build(BuildContext context) {
 
+    Size screenSize = MediaQuery.of(context).size;
+    double width = screenSize.width;
+    double height = screenSize.height;
+    Color grey = Color.fromARGB(255, 80, 78, 91);
+    Color violet = Color.fromARGB(255, 100, 92, 170);
+    Color violet2 = Color.fromARGB(255, 160, 132, 202);
+
+    late Color hair_color = grey;
+    late Color bath_color = grey;
+
+
     // 일주일 동안 실제 산책한 평균 시간
     for (int i = 0; i < day_hour_points.length; i++) {
       sum_day_walk_hour += day_hour_points[i].toInt();
@@ -265,25 +269,19 @@ class _CalenderDetailState extends State<CalenderDetail> {
     walk_goal_increment =
         (walk_goal_data - last_walk_goal_data).toInt();
 
-
-
-
-
-
-
-
-
-
-
-    Size screenSize = MediaQuery.of(context).size;
-    double width = screenSize.width;
-    double height = screenSize.height;
-    Color grey = Color.fromARGB(255, 80, 78, 91);
-    Color violet = Color.fromARGB(255, 100, 92, 170);
-    Color violet2 = Color.fromARGB(255, 160, 132, 202);
-
-    late Color hair_color = grey;
-    late Color bath_color = grey;
+    if(controller.beauty == true){
+      hair_color = violet;
+    }else{
+      hair_color = grey;
+    }
+    if(controller.bath == true){
+      bath_color = violet;
+    }else{
+      bath_color = grey;
+    }
+    if(controller.imageUrl.length!=0){
+      imageUrl = controller.imageUrl[0];
+    }
 
 
     return Scaffold(
@@ -329,10 +327,10 @@ class _CalenderDetailState extends State<CalenderDetail> {
             ),
             // 산책 카드
             CalWalkCardWidget(
-                distance: distance,
+                distance: controller.distance,
                 imageUrl: imageUrl,
-                place: place,
-                totalTimeMin: totalTimeMin),
+                place: controller.place,
+                totalTimeMin: controller.time),
 //            건강지수 타이틀  + 드롭다운 박스
 
             Row(
@@ -472,7 +470,7 @@ class _CalenderDetailState extends State<CalenderDetail> {
             CalDetailTitleWidget(name: "짬뽕이", title: "뷰티도장"),
             BeautyWidget(hair_color: hair_color, bath_color: bath_color),
             CalDetailTitleWidget(name: "짬뽕이", title: "오늘의 일기"),
-            DiaryWidget(diary_image: image_path, diary_text: diary_text),
+            DiaryWidget(diary_image: imageUrl, diary_text: controller.diary),
           ],
         ),
       ),
