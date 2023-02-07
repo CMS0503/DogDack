@@ -13,21 +13,24 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-
-
+import 'package:intl/intl.dart';
 
 import '../../models/calender_data.dart';
+import '../../models/dog_data.dart';
 import '../calendar_schedule_edit/controller/input_controller.dart';
 import '../my/controller/mypage_controller.dart';
 import 'controller/calendar_detail_controller.dart';
 
+
+
 class CalenderDetail extends StatefulWidget {
-
   static Map<String, List> events = {'': []};
-  DateTime today;
-  CalenderDetail({required this.today});
 
-  static late Map<String, List> w_events;
+  static Map<String, List> day_events = {'':[]};
+
+  DateTime today;
+
+  CalenderDetail({required this.today});
 
 
   @override
@@ -40,32 +43,52 @@ class _CalenderDetailState extends State<CalenderDetail> {
   final mypageStateController = Get.put(MyPageStateController());
 
   final Map<String, List<Object>> events = {'': []};
-// 캘린더에서 받아온 강아지아이디
+
+// 캘린더에서 받아온 데이터
   String docId = '짬뽕';
   bool bath = false;
   bool beauty = false;
   String diary = "오늘의 일기";
   String today = "230206";
+  late String image_path = 'images/login/login_image.png';
+  late String? diary_text = "";
+  late List<double> day_list = [];
+
+  //갖고와야해
+
+
+  String days = '230206';
+  String start = '230206';
+  String end = '230207';
+
   Future<Map<String, List<Object>>> getData() async {
-
-
     final calRef = FirebaseFirestore.instance
-        .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets').doc(docId).collection('Calendar');
+        .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets')
+        .doc(docId)
+        .collection('Calendar')
+        .doc(end)
+        .collection('Walk');
+
+
+    final test = FirebaseFirestore.instance
+        .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets')
+        .doc(docId)
+        .collection('Walk').where('startTime',isLessThan:DateTime.now()).where('startTime',isGreaterThan:   DateTime.now().subtract(Duration(days:7)));
+
+
 
 
 
     var result = await calRef.get();
-    var walk_collection = await calRef.get();
-    for (int i = 0; i < result.docs.length; i++) {
-      events[result.docs[i].reference.id] = [
-        result.docs[i]['diary'],
-        result.docs[i]['bath'],
-        result.docs[i]['beauty'],
-      ];
+    var test_result = await test.get();
 
 
-
+    for (int i = 0; i < test_result.docs.length; i++) {
+      // day_list.add(DateFormat('yyMMdd').format(test_result.docs[i]['startTime'].toDate()));
+      day_list.add(test_result.docs[i]['totalTimeMin'].toDouble());
     }
+    print("case1");
+    print(day_list);
 
     return events;
   }
@@ -76,13 +99,11 @@ class _CalenderDetailState extends State<CalenderDetail> {
     getData();
   }
 
-
   ////////////////////////////////산책카드////////////////////////////////////////////
-  late String place ="";
+  late String place = "";
   late num distance = 1;
   late num totalTimeMin = 1;
   late String imageUrl = 'images/login/login_image.png';
-
 
   // 드롭박스 값
   final List<String> _valueList = ['일주일', '한달'];
@@ -318,7 +339,37 @@ class _CalenderDetailState extends State<CalenderDetail> {
   //저번주, 저번달
   late List<double> last_distance_points = last_day_distance_points;
   List<double> last_day_distance_points = [100, 70, 150, 60, 0, 40, 50];
-  List<double> last_week_distance_points = [50, 90,200, 100, 150, 80, 200, 100, 70, 150, 60, 0, 40, 50, 50, 90, 200, 100, 150, 80, 200, 100, 70, 150, 60, 0, 40, 50, 50];
+  List<double> last_week_distance_points = [
+    50,
+    90,
+    200,
+    100,
+    150,
+    80,
+    200,
+    100,
+    70,
+    150,
+    60,
+    0,
+    40,
+    50,
+    50,
+    90,
+    200,
+    100,
+    150,
+    80,
+    200,
+    100,
+    70,
+    150,
+    60,
+    0,
+    40,
+    50,
+    50
+  ];
 
   late int last_avg_distance = 0;
   int last_day_avg_distance = 0;
@@ -334,25 +385,15 @@ class _CalenderDetailState extends State<CalenderDetail> {
 
   // late DateTime date = DateTime.now();
 
-
   // late String today = DateFormat('yyMMdd').format(date);
 
   //////////////////////오늘의 일기///////////////////
-  //갖고와야해
-  late String image_path = 'images/login/login_image.png';
-  late String? diary_text = "";
-
-
-
 
   @override
   Widget build(BuildContext context) {
-    print("case3");
+
     print(events);
-
     // 달력에서 선택한 날
-
-
 
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
@@ -363,10 +404,8 @@ class _CalenderDetailState extends State<CalenderDetail> {
 
     // String? do_bath = events[today]?[1].toString();
     // String? do_hair = events[today]?[2].toString();
-    late Color hair_color =  grey;
+    late Color hair_color = grey;
     late Color bath_color = grey;
-
-
 
     // if(do_bath == "true"){
     //   bath_color = violet;
@@ -378,8 +417,6 @@ class _CalenderDetailState extends State<CalenderDetail> {
     // }else{
     //   bath_color = grey;
     // }
-
-
 
 // x축 표시될 값
 
@@ -432,14 +469,15 @@ class _CalenderDetailState extends State<CalenderDetail> {
           color: grey,
         ),
         title: Text(
-          mypageStateController.myPageStateType == MyPageStateType.Create ? '추가하기' : '캘린더 상세페이지',
+          mypageStateController.myPageStateType == MyPageStateType.Create
+              ? '추가하기'
+              : '캘린더 상세페이지',
           style: TextStyle(
             color: grey,
           ),
         ),
       ),
-      body:
-      SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -458,24 +496,25 @@ class _CalenderDetailState extends State<CalenderDetail> {
                   // 등록한 날짜가 나와야 함
                   CalDetailDateWidget(
                       time:
-                      "${widget.today.year}년 ${widget.today.month}월 ${widget.today.day}일 ${widget.today.hour}시 ${widget.today.second}분에서"),
+                          "${widget.today.year}년 ${widget.today.month}월 ${widget.today.day}일 ${widget.today.hour}시 ${widget.today.second}분에서"),
                   CalDetailDateWidget(
                       time:
-                      "${widget.today.year}년 ${widget.today.month}월 ${widget.today.day}일 ${widget.today.hour}시 ${widget.today.second}분까지")
+                          "${widget.today.year}년 ${widget.today.month}월 ${widget.today.day}일 ${widget.today.hour}시 ${widget.today.second}분까지")
                 ],
               ),
             ),
             // 산책 카드
-            CalWalkCardWidget(distance: distance, imageUrl: imageUrl, place: place, totalTimeMin: totalTimeMin),
+            CalWalkCardWidget(
+                distance: distance,
+                imageUrl: imageUrl,
+                place: place,
+                totalTimeMin: totalTimeMin),
 //            건강지수 타이틀  + 드롭다운 박스
 
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <
                 Widget>[
               CalDetailTitleWidget(name: "짬뽕이", title: "건강 지수"),
-
-              CalHealthDropdownWidget(),
-
-
+              // CalHealthDropdownWidget(),
               Padding(
                 padding: const EdgeInsets.all(3.0),
                 child: Center(
@@ -511,7 +550,9 @@ class _CalenderDetailState extends State<CalenderDetail> {
                       () {
                         _selectedValue = value!;
                         if (_selectedValue == '일주일') {
-                          hour_points = day_hour_points;
+                          print("case2");
+                          print(day_list);
+                          hour_points = day_list;
                           last_hour_points = last_day_hour_points;
                           hour_target_points = day_hour_target_points;
                           last_hour_target_points = last_day_hour_target_points;
@@ -629,6 +670,5 @@ class _CalenderDetailState extends State<CalenderDetail> {
         ),
       ),
     );
-
   }
 }
