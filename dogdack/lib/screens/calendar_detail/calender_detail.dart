@@ -6,7 +6,7 @@ import 'package:dogdack/screens/calendar_detail/widget/cal_detail_date.dart';
 import 'package:dogdack/screens/calendar_detail/widget/cal_detail_title.dart';
 import 'package:dogdack/screens/calendar_detail/widget/cal_edit_button.dart';
 import 'package:dogdack/screens/calendar_detail/widget/health/graph_day.dart';
-import 'package:dogdack/screens/calendar_detail/widget/walk/car_walk_card.dart';
+import 'package:dogdack/screens/calendar_detail/widget/walk/cal_walk_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
