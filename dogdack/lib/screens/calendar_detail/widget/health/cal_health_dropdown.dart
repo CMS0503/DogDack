@@ -3,8 +3,11 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 import '../../calender_detail.dart';
+import '../../controller/calendar_detail_controller.dart';
 
 class CalHealthDropdownWidget extends StatefulWidget {
+
+  const CalHealthDropdownWidget({super.key});
 
   @override
   State<CalHealthDropdownWidget> createState() =>
@@ -13,10 +16,12 @@ class CalHealthDropdownWidget extends StatefulWidget {
 
 class _CalHealthDropdownWidgetState extends State<CalHealthDropdownWidget> {
 
+  final controller = Get.put(CalendarDetailController());
+
 
 
   final List<String> _valueList = ['일', '월'];
-  String _selectedValue = '일';
+  var selectedValue = '일';
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +35,7 @@ class _CalHealthDropdownWidgetState extends State<CalHealthDropdownWidget> {
         elevation: 0,
         focusColor: Color.fromARGB(255, 100, 92, 170),
         borderRadius: BorderRadius.circular(10),
-        value: _selectedValue,
+        value: selectedValue,
         items: _valueList.map((value) {
           return DropdownMenuItem(
             value: value,
@@ -56,7 +61,10 @@ class _CalHealthDropdownWidgetState extends State<CalHealthDropdownWidget> {
         onChanged: (value) {
           setState(
             () {
-              _selectedValue = value!;
+              selectedValue = value!;
+              controller.drop_value.value = value;
+              print(selectedValue+"여긴드롭");
+
             },
           );
         },

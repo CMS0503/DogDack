@@ -331,7 +331,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
         petsRef.add(DogData(
           imageUrl: value,
           imageFileName: Path.basename(pickedPetImgFile!.path),
-          name: name,
+          // name: name,
           gender: gender,
           birth: birth,
           kategorie: kategorie,

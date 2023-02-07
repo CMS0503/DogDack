@@ -1,4 +1,7 @@
 import 'package:dogdack/screens/home/bar_char.dart';
+import 'package:dogdack/screens/home/widget/day_graph.dart';
+import 'package:dogdack/screens/home/widget/pet_goal.dart';
+import 'package:dogdack/screens/home/widget/pet_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:dogdack/commons/logo_widget.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -6,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key, required this.tabIndex});
+
   final int tabIndex;
   final inputController = TextEditingController();
 
@@ -22,9 +26,18 @@ class HomePage extends StatelessWidget {
           preferredSize: Size.fromHeight(height * 0.12),
           child: const LogoWidget(),
         ),
-        body: Container(child:
-        BarChartSample1()
-          ,));
+        body: Column(
+          children: [
+            PetGoalWidget(goal: 85),
+            Container(
+              width: width,
+              height: height * 0.25,
+            ),
+            PetProfileWidget(name: "공숙이", birth: 185),
+            DayGraphWidget(name: "공숙이")
+
+          ],
+        ));
   }
 }
 

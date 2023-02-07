@@ -1,5 +1,6 @@
 import 'package:dogdack/screens/calendar_detail/widget/beauty/beauty_icon.dart';
 import 'package:dogdack/screens/calendar_detail/widget/diary/diary_widget.dart';
+import 'package:dogdack/screens/calendar_detail/widget/health/cal_health_dropdown.dart';
 import 'package:dogdack/screens/calendar_detail/widget/health/car_health_line_graph_card.dart';
 import 'package:dogdack/screens/calendar_detail/widget/health/car_health_progress_card.dart';
 import 'package:dogdack/screens/calendar_detail/widget/cal_detail_date.dart';
@@ -18,12 +19,14 @@ import 'package:get/get_core/src/get_main.dart';
 import '../../models/calender_data.dart';
 import '../calendar_schedule_edit/controller/input_controller.dart';
 import '../my/controller/mypage_controller.dart';
+import 'controller/calendar_detail_controller.dart';
 
 class CalenderDetail extends StatefulWidget {
+
+  static Map<String, List> events = {'': []};
   DateTime today;
   CalenderDetail({required this.today});
 
-  static late Map<String, List> events;
   static late Map<String, List> w_events;
 
 
@@ -32,46 +35,53 @@ class CalenderDetail extends StatefulWidget {
 }
 
 class _CalenderDetailState extends State<CalenderDetail> {
-
+  final drop_controller = Get.put(CalendarDetailController());
   final controller = Get.put(InputController());
   final mypageStateController = Get.put(MyPageStateController());
-  final calendarRef = FirebaseFirestore.instance
-      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Calendar')
-      .withConverter(
-          fromFirestore: (snapshot, _) => CalenderData.fromJson(snapshot.data()!),
-          toFirestore: (calendarData, _) => calendarData.toJson());
+
+  final Map<String, List<Object>> events = {'': []};
+// 캘린더에서 받아온 강아지아이디
+  String docId = '짬뽕';
+  bool bath = false;
+  bool beauty = false;
+  String diary = "오늘의 일기";
+  String today = "230206";
+  Future<Map<String, List<Object>>> getData() async {
+
+
+    final calRef = FirebaseFirestore.instance
+        .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets').doc(docId).collection('Calendar');
 
 
 
-  //
-  // Future<Map<String, List<Object>>> getData() async {
-  //   var result = await calendarRef.get();
-  //
-  //   for (int i = 0; i < result.docs.length; i++) {
-  //     events[result.docs[i].reference.id] = [
-  //       result.docs[i]['diary'],
-  //       result.docs[i]['bath'],
-  //       result.docs[i]['beauty'],
-  //     ];
-  //   }
-  //   setState(() {});
-  //   return events;
-  // }
-  //
-  //
-  // final Map<String, List<Object>> events = {'': []};
-  // @override
-  // void initState() {
-  //   getData();
-  // }
+    var result = await calRef.get();
+    var walk_collection = await calRef.get();
+    for (int i = 0; i < result.docs.length; i++) {
+      events[result.docs[i].reference.id] = [
+        result.docs[i]['diary'],
+        result.docs[i]['bath'],
+        result.docs[i]['beauty'],
+      ];
+
+
+
+    }
+
+    return events;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
 
   ////////////////////////////////산책카드////////////////////////////////////////////
   late String place ="";
   late num distance = 1;
   late num totalTimeMin = 1;
   late String imageUrl = 'images/login/login_image.png';
-
-
 
 
   // 드롭박스 값
@@ -331,12 +341,14 @@ class _CalenderDetailState extends State<CalenderDetail> {
   //갖고와야해
   late String image_path = 'images/login/login_image.png';
   late String? diary_text = "";
-  
-  
-  
+
+
+
 
   @override
   Widget build(BuildContext context) {
+    print("case3");
+    print(events);
 
     // 달력에서 선택한 날
 
@@ -415,18 +427,19 @@ class _CalenderDetailState extends State<CalenderDetail> {
 
     return Scaffold(
       appBar: AppBar(
-      backgroundColor: Colors.white,
-      iconTheme: IconThemeData(
-        color: grey,
-      ),
-      title: Text(
-        mypageStateController.myPageStateType == MyPageStateType.Create ? '추가하기' : '캘린더 상세페이지',
-        style: TextStyle(
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(
           color: grey,
         ),
+        title: Text(
+          mypageStateController.myPageStateType == MyPageStateType.Create ? '추가하기' : '캘린더 상세페이지',
+          style: TextStyle(
+            color: grey,
+          ),
+        ),
       ),
-    ),
-      body: SingleChildScrollView(
+      body:
+      SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -445,19 +458,24 @@ class _CalenderDetailState extends State<CalenderDetail> {
                   // 등록한 날짜가 나와야 함
                   CalDetailDateWidget(
                       time:
-                          "${widget.today.year}년 ${widget.today.month}월 ${widget.today.day}일 ${widget.today.hour}시 ${widget.today.second}분에서"),
+                      "${widget.today.year}년 ${widget.today.month}월 ${widget.today.day}일 ${widget.today.hour}시 ${widget.today.second}분에서"),
                   CalDetailDateWidget(
                       time:
-                          "${widget.today.year}년 ${widget.today.month}월 ${widget.today.day}일 ${widget.today.hour}시 ${widget.today.second}분까지")
+                      "${widget.today.year}년 ${widget.today.month}월 ${widget.today.day}일 ${widget.today.hour}시 ${widget.today.second}분까지")
                 ],
               ),
             ),
             // 산책 카드
             CalWalkCardWidget(distance: distance, imageUrl: imageUrl, place: place, totalTimeMin: totalTimeMin),
 //            건강지수 타이틀  + 드롭다운 박스
+
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <
                 Widget>[
               CalDetailTitleWidget(name: "짬뽕이", title: "건강 지수"),
+
+              CalHealthDropdownWidget(),
+
+
               Padding(
                 padding: const EdgeInsets.all(3.0),
                 child: Center(
@@ -568,6 +586,13 @@ class _CalenderDetailState extends State<CalenderDetail> {
                 )),
               ),
             ]),
+            // Obx(() => Text('${drop_controller.drop_value.value}'),
+            //
+            // drop_controller.drop_value.value == '월'
+            // ? hour_points = week_hour_points : hour_points = week_hour_points;
+            //
+            // )
+
             //건강지수 카드
             CalHealthProgressCardWidget(
                 last_data: walk_target_increment,
@@ -604,5 +629,6 @@ class _CalenderDetailState extends State<CalenderDetail> {
         ),
       ),
     );
+
   }
 }

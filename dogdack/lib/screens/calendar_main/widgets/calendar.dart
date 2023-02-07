@@ -8,6 +8,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dogdack/models/calender_data.dart';
 
+import '../../../models/walk_data.dart';
 import '../../calendar_schedule_edit/controller/input_controller.dart';
 
 class Calendar extends StatefulWidget {
@@ -30,15 +31,19 @@ class Calendar extends StatefulWidget {
   State<Calendar> createState() => _CalendarState();
 }
 
+
+
 class _CalendarState extends State<Calendar> {
   final controller = Get.put(InputController());
 
   final calendarRef = FirebaseFirestore.instance
-      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Calendar')
+      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets')
       .withConverter(
           fromFirestore: (snapshot, _) =>
               CalenderData.fromJson(snapshot.data()!),
           toFirestore: (calendarData, _) => calendarData.toJson());
+
+
 
   Future<Map<String, List<Object>>> getData() async {
     var result = await calendarRef.get();
@@ -63,6 +68,8 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
+
+    print(events);
     Size screenSize = MediaQuery.of(context).size;
     double height = screenSize.height;
     List<dynamic> _getEventForDay(DateTime day) {

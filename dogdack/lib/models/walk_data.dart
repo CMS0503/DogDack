@@ -30,7 +30,7 @@ class WalkData {
           isAuto: json['isAuto'] as bool,
           place: json['place']! as String,
           distance: json['distance']! as num,
-          goal : json['goal']! as num,
+          goal: json['goal']! as num,
         );
 
   Map<String, dynamic> toJson() {
@@ -42,7 +42,7 @@ class WalkData {
       'isAuto': isAuto,
       'place': place,
       'distance': distance,
-      'goal' : goal,
+      'goal': goal,
     };
   }
 }
