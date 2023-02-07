@@ -193,6 +193,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
       // 이미지 파일이 변경되었다면 기존 사진 데이터 제거
       FirebaseStorage.instance.ref().child('${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${petController.selectedPetImageFileName}').delete();
 
+      // 새로 저장할 이미지의 레퍼런스
       Reference petImgRef = FirebaseStorage.instance.ref().child(
           '${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${Path.basename(pickedPetImgFile!.path)}');
 
@@ -224,8 +225,6 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
               recommend = 120;
               break;
           }
-
-          print('수정 확인 : ${name}');
 
           var map = Map<String, dynamic>();
           map["imageUrl"] = value;
@@ -272,8 +271,6 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
           recommend = 120;
           break;
       }
-
-      print('수정 확인 : ${name}');
 
       var map = Map<String, dynamic>();
       map["name"] = name;

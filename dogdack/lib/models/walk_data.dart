@@ -19,7 +19,7 @@ class WalkData {
   final bool? isAuto; // 해당 산책 Document 기록이 자동입력인지 수동입력인지
   final String? place; // 대표 산책 장소
   final num? distance; // 이동 거리
-  final num? goal; // 목표 산책 시간(단위 : 분)
+  final num? goal;
 
   WalkData.fromJson(Map<String, dynamic> json)
       : this(
@@ -30,7 +30,7 @@ class WalkData {
           isAuto: json['isAuto'] as bool,
           place: json['place']! as String,
           distance: json['distance']! as num,
-          goal : json['goal']! as num,
+          goal: json['goal'] as num,
         );
 
   Map<String, dynamic> toJson() {
@@ -42,7 +42,7 @@ class WalkData {
       'isAuto': isAuto,
       'place': place,
       'distance': distance,
-      'goal' : goal,
+      'goal': goal,
     };
   }
 }
