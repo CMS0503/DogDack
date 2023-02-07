@@ -36,13 +36,11 @@ class _CalendarState extends State<Calendar> {
   String docId = '';
   Future<Map<String, List<Object>>> getData() async {
     final petsRef = FirebaseFirestore.instance
-        .collection('Users/${FirebaseAuth.instance.currentUser!.email}/pets');
+        .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');
 
     var result = await petsRef
         .where("name", isEqualTo: controller.name.toString())
         .get();
-
-    String dogId = result.docs[0].id;
 
     String getName() {
       for (var name in controller.dognames) {
@@ -59,19 +57,25 @@ class _CalendarState extends State<Calendar> {
       return events;
     }
 
-    final calRef = petsRef.doc(dogId).collection('Calendar');
-    var data = await calRef.get();
+    if (result.docs.isNotEmpty) {
+      String dogId = result.docs[0].id;
 
-    for (int i = 0; i < result.docs.length; i++) {
-      events[data.docs[i].reference.id] = [
-        data.docs[i]['diary'],
-        data.docs[i]['bath'],
-        data.docs[i]['beauty'],
-      ];
+      final calRef = petsRef.doc(dogId).collection('Calendar');
+      var data = await calRef.get();
+
+      for (int i = 0; i < result.docs.length; i++) {
+        events[data.docs[i].reference.id] = [
+          data.docs[i]['diary'],
+          data.docs[i]['bath'],
+          data.docs[i]['beauty'],
+        ];
+      }
+      setState(() {});
+      return events;
+    } else {
+      return events;
     }
 
-    setState(() {});
-    return events;
     // await petsRef.get().then(
     //   (value) {
     //     for (var element in value.docs) {

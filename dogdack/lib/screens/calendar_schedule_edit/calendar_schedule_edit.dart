@@ -35,16 +35,6 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
         .get();
 
     String dogId = result.docs[0].id;
-    print('@@@@@@@ $dogId');
-
-    // await petsRef.where('name', isEqualTo: controller.name).get().then(
-    //   (value) {
-    //     print(value);
-    //     print(value.docs[0].id);
-    //     dogId = value.docs[0].id;
-    //     print('here');
-    //   },
-    // );
 
     petsRef
         .doc(dogId)
@@ -64,14 +54,8 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
         .then((value) => print("document added"))
         .catchError((error) => print("Fail to add doc $error"));
 
-    // FirebaseFirestore.instance.collection(
-    //     'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Walk');
-    print('@!!!!!!!!!@@ $dogId');
-
     petsRef
         .doc(dogId.toString())
-        .collection('Calendar')
-        .doc(DateFormat('yyMMdd').format(controller.date))
         .collection('Walk')
         .doc()
         .withConverter(
@@ -90,17 +74,33 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
+    double height = screenSize.height;
+
     return GestureDetector(
       onTap: () {
         // 암기, 아무데나 눌러도 키보드 닫히게
         FocusScope.of(context).requestFocus(FocusNode());
       },
       child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          iconTheme: const IconThemeData(
+            color: Colors.black,
+          ),
+          title: const Text(
+            '캘린더 스케줄 관리',
+            style: TextStyle(
+              color: Colors.black,
+            ),
+          ),
+        ),
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              const SizedBox(height: 20),
               const DatePicker(),
               const ScheduleEditWalk(),
               const SizedBox(

@@ -18,7 +18,7 @@ class _CalendarDropState extends State<CalendarDrop> {
   // final valueList = ['첫 번째', '두 번째', '세 번째', '네 번째'];
   // var selectedValue = '첫 번째';
   final petsRef = FirebaseFirestore.instance
-      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/pets');
+      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');
 
   getName() async {
     var names = await petsRef.get();
@@ -43,40 +43,55 @@ class _CalendarDropState extends State<CalendarDrop> {
 
   @override
   Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
+    double width = screenSize.width;
+    double height = screenSize.height;
+
     var valueList = controller.dognames;
     var selectedValue = '';
 
     if (valueList.isEmpty) {
-      valueList = ['강아지를 등록하세요'];
-      selectedValue = '강아지를 등록하세요';
+      valueList = ['댕댕이를 등록하세요'];
+      selectedValue = '댕댕이를 등록하세요';
     } else {
       selectedValue = valueList[0];
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('DropDownButton'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Center(
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 10, left: 20),
+          child: SizedBox(
+            height: height * 0.05,
             child: DropdownButton(
-          value: selectedValue,
-          items: valueList.map(
-            (value) {
-              return DropdownMenuItem(
-                value: value,
-                child: Text(value),
-              );
-            },
-          ).toList(),
-          onChanged: (value) {
-            setState(() {
-              selectedValue = value.toString();
-            });
-          },
-        )),
-      ),
+              underline: Container(),
+              value: selectedValue,
+              items: valueList.map(
+                (value) {
+                  return DropdownMenuItem(
+                    value: value,
+                    child: Text(
+                      value,
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 100, 92, 170),
+                        fontFamily: 'bmjua',
+                        fontSize: 20,
+                      ),
+                    ),
+                  );
+                },
+              ).toList(),
+              onChanged: (value) {
+                setState(
+                  () {
+                    selectedValue = value.toString();
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

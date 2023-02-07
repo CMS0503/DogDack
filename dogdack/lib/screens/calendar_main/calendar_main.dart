@@ -5,8 +5,6 @@ import 'package:dogdack/screens/calendar_main/widgets/calendar_mark.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/calendar_schedule_edit.dart';
 import 'package:flutter/material.dart';
 
-import '../calendar_schedule_edit/controller/input_controller.dart';
-
 class CalendarMain extends StatefulWidget {
   const CalendarMain({super.key, required this.tabIndex});
   final int tabIndex;
@@ -26,8 +24,6 @@ class _CalendarPageState extends State<CalendarMain> {
   // 보여줄 월
   DateTime focusedDay = DateTime.now();
 
-
-
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -41,7 +37,7 @@ class _CalendarPageState extends State<CalendarMain> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(height: 300, child: CalendarDrop()),
+            const CalendarDrop(),
             SizedBox(
               height: height * 0.01,
             ),

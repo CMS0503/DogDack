@@ -41,7 +41,7 @@ class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
                 vertical: 7,
               ),
               child: Text(
-                '시간',
+                '시작',
                 style: TextStyle(
                   fontFamily: 'bmjua',
                   fontSize: 20,

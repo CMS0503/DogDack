@@ -38,9 +38,9 @@ class _DatePickerState extends State<DatePicker> {
     return Column(
       children: [
         // appbar로 교체해야함
-        const SizedBox(
-          height: 100,
-        ),
+        // const SizedBox(
+        //   height: 100,
+        // ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5),
           child: Row(
