@@ -50,7 +50,7 @@ class _MapState extends State<myMap> {
       target: LatLng(walkController.lat, walkController.lon),
       zoom: 17,
     );
-    // updatePosition();
+    updatePosition();
   }
 
   void updatePosition() async {
@@ -62,7 +62,14 @@ class _MapState extends State<myMap> {
             in service.characteristics) {
           if (characteristic.uuid.toString() ==
               walkController.characteristicUuid) {
+            // var sendData = '01085382550';
+            // print(utf8.encode(sendData));
+            // characteristic.write(utf8.encode(sendData), withoutResponse: true);
+
+            await Future.delayed(Duration(milliseconds: 10));
+
             characteristic.setNotifyValue(true);
+
             characteristic.value.listen((value) {
               String stringValue = utf8.decode(value).toString();
               widget.receiveData += stringValue;
@@ -104,7 +111,8 @@ class _MapState extends State<myMap> {
                 latlng.add(currentPosition);
                 print('totaldistance: $totalDistance');
                 setState(() {});
-              } else if (widget.receiveData[0] == '{') {} else {
+              } else if (widget.receiveData[0] == '{') {
+              } else {
                 widget.receiveData = '';
               }
             });

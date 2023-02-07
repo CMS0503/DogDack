@@ -96,8 +96,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                const CalendarMain(tabIndex: 1)));
+                            builder: (context) => const CalendarMain()));
                     setState(() {});
                     controller.bath = true;
                     controller.beauty = true;

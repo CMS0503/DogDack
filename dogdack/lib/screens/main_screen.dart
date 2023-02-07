@@ -27,19 +27,19 @@ class MainPage extends StatelessWidget {
           body: Stack(children: [
             Offstage(
               offstage: mainController.tabindex != 0,
-              child: const HomeNavigator(tabIndex: 0),
+              child: HomeNavigator(),
             ),
             Offstage(
               offstage: mainController.tabindex != 1,
-              child: const CalenderNavigator(tabIndex: 1),
+              child: const CalenderNavigator(),
             ),
             Offstage(
               offstage: mainController.tabindex != 2,
-              child: WalkNavigator(tabIndex: 2),
+              child: WalkNavigator(),
             ),
             Offstage(
               offstage: mainController.tabindex != 3,
-              child: const MyPageNavigator(tabIndex: 3),
+              child: const MyPageNavigator(),
             ),
           ]),
           bottomNavigationBar: BottomNavigationBar(
