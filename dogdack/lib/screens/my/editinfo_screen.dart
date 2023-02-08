@@ -10,6 +10,7 @@ import 'package:flutter_picker/picker.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import '../../controllers/mypage_controller.dart';
+import '../../controllers/input_controller.dart';
 
 // Model
 import '../../models/dog_data.dart';
@@ -105,7 +106,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
       cancelText: '취소',
       cancelTextStyle:
           const TextStyle(color: Color(0xff646CAA), fontFamily: 'bmjua'),
-      title: Text("견종 카테고리를 골라주세요"),
+      title: const Text("견종 카테고리를 골라주세요"),
       onConfirm: (Picker picker, List value) {
         setState(() {
           kategorie = picker.getSelectedValues()[0];
@@ -127,7 +128,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
       cancelText: '취소',
       cancelTextStyle:
           const TextStyle(color: Color(0xff646CAA), fontFamily: 'bmjua'),
-      title: Text("몸무게를 선택하세요"),
+      title: const Text("몸무게를 선택하세요"),
       onConfirm: (Picker picker, List value) {
         setState(() {
           weight = int.parse(picker.getSelectedValues()[0]);
@@ -221,7 +222,11 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   // 강아지 정보 데이터 삭제
   Future<void> _delete() async {
     // Firebase storage 해당 이미지 제거
-    // FirebaseStorage.instance.ref().child('${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${petController.selectedPetImageFileName}').delete();
+    FirebaseStorage.instance
+        .ref()
+        .child(
+            '${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${petController.selectedPetImageFileName}')
+        .delete();
 
     await petsRef.doc(petController.selectedPetID).delete().whenComplete(() {
       petController.selectedPetScrollIndex = 0;
@@ -230,14 +235,15 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
 
   // 강아지 정보 데이터 수정
   Future<void> _update() async {
-    // Strage 사용을 막기 위해 임시로 설정함.
-    isChangeImg = false;
-
     // 편집 모드에서는 이미지 파일을 변경하였을 경우 기존 이미지를 제거하고 새로운 이미지로 갱신
     // 이미지 파일을 변경하지 않았을 경우, Url download 불필요
     if (isChangeImg) {
       // 이미지 파일이 변경되었다면 기존 사진 데이터 제거
-      // FirebaseStorage.instance.ref().child('${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${petController.selectedPetImageFileName}').delete();
+      FirebaseStorage.instance
+          .ref()
+          .child(
+              '${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${petController.selectedPetImageFileName}')
+          .delete();
 
       // 새로 저장할 이미지의 레퍼런스
       Reference petImgRef = FirebaseStorage.instance.ref().child(
@@ -245,7 +251,32 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
 
       await petImgRef.putFile(pickedPetImgFile).whenComplete(() async {
         await petImgRef.getDownloadURL().then((value) {
-          recommend = getRecommendTime(kategorie);
+          switch (kategorie) {
+            case '논스포팅':
+              recommend = 60;
+              break;
+            case '시각 하운드':
+              recommend = 30;
+              break;
+            case '후각 하운드':
+              recommend = 60;
+              break;
+            case '테리어':
+              recommend = 40;
+              break;
+            case '허딩':
+              recommend = 90;
+              break;
+            case '토이':
+              recommend = 40;
+              break;
+            case '스포팅':
+              recommend = 90;
+              break;
+            case '워킹':
+              recommend = 120;
+              break;
+          }
 
           var map = <String, dynamic>{};
           map["imageUrl"] = value;
@@ -266,7 +297,32 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
         });
       });
     } else {
-      recommend = getRecommendTime(kategorie);
+      switch (kategorie) {
+        case '논스포팅':
+          recommend = 60;
+          break;
+        case '시각 하운드':
+          recommend = 30;
+          break;
+        case '후각 하운드':
+          recommend = 60;
+          break;
+        case '테리어':
+          recommend = 40;
+          break;
+        case '허딩':
+          recommend = 90;
+          break;
+        case '토이':
+          recommend = 40;
+          break;
+        case '스포팅':
+          recommend = 90;
+          break;
+        case '워킹':
+          recommend = 120;
+          break;
+      }
 
       var map = <String, dynamic>{};
       map["name"] = name;
@@ -291,26 +347,53 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     Reference petImgRef = FirebaseStorage.instance.ref().child(
         '${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${Path.basename(pickedPetImgFile.path)}');
 
-    /*await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
-      await petImgRef!.getDownloadURL().then((value) {
-        recommend = getRecommendTime(kategorie);
+    await petImgRef.putFile(pickedPetImgFile).whenComplete(() async {
+      await petImgRef.getDownloadURL().then((value) {
+        switch (kategorie) {
+          case '논스포팅':
+            recommend = 60;
+            break;
+          case '시각 하운드':
+            recommend = 30;
+            break;
+          case '후각 하운드':
+            recommend = 60;
+            break;
+          case '테리어':
+            recommend = 40;
+            break;
+          case '허딩':
+            recommend = 90;
+            break;
+          case '토이':
+            recommend = 40;
+            break;
+          case '스포팅':
+            recommend = 90;
+            break;
+          case '워킹':
+            recommend = 120;
+            break;
+        }
 
         //이미지 경로를 db 에 저장
-        petsRef.add(DogData(
-          imageUrl: value,
-          imageFileName: Path.basename(pickedPetImgFile!.path),
-          name: name,
-          gender: gender,
-          birth: birth,
-          kategorie: kategorie,
-          breed: breed,
-          weight: weight,
-          recommend: recommend,
-          createdAt: Timestamp.now(),
-        )).then((value) => print('강아지 정보 저장 완료'))
-            .catchError((error) => print('강아지 정보 저장 오류! ${petsRef}'));
+        petsRef
+            .add(DogData(
+              imageUrl: value,
+              imageFileName: Path.basename(pickedPetImgFile.path),
+              name: name,
+              gender: gender,
+              birth: birth,
+              kategorie: kategorie,
+              breed: breed,
+              weight: weight,
+              recommend: recommend,
+              createdAt: Timestamp.now(),
+            ))
+            .then((value) => print('강아지 정보 저장 완료'))
+            .catchError((error) => print('강아지 정보 저장 오류! $petsRef'));
       });
-    });*/
+    });
 
     recommend = getRecommendTime(kategorie);
 
@@ -402,23 +485,14 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     if (mypageStateController.myPageStateType == MyPageStateType.Edit) {
       pickComp = true; // 사진이 골라져있음
 
-      // 선택한 강아지로 이름 초기화
-      name = petController.selectedPetName;
       _nameController =
-          TextEditingController(text: petController.selectedPetName);
-      // 선택한 강아지로 성별 초기화
-      gender = petController.selectedPetGender;
-      // 선택한 강아지로 생일 초기화
-      birth = petController.selectedPetBirth;
-      selectBirth = true;
-      // 선택한 강아지로 카테고리 초기화
-      kategorie = petController.selectedPetKategorie;
-      // 선택한 강아지로 견종 초기화
-      breed = petController.selectedPetBreed;
+          TextEditingController(text: petController.selectedPetName); // 이름
+      gender = petController.selectedPetGender; // 성별
+      birth = petController.selectedPetBirth; // 생일
+      kategorie = petController.selectedPetKategorie; // 카테고리
       _breedController =
-          TextEditingController(text: petController.selectedPetBreed);
-      // 선택한 강아지로 무게 초기화
-      weight = petController.selectedPetWeight;
+          TextEditingController(text: petController.selectedPetBreed); // 견종
+      weight = petController.selectedPetWeight; // 몸무게
     }
 
     for (int i = 1; i <= 200; i++) {
@@ -430,6 +504,8 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   Widget build(BuildContext context) {
     // 디바이스 사이즈 크기 정의
     final Size size = MediaQuery.of(context).size;
+    // 캘린더 input 초기화용
+    final controller = Get.put(InputController());
 
     // 반려견 정보 표시 카드의 너비, 높이 정의
     final double petInfoWidth = size.width * 0.8;
@@ -526,6 +602,8 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                               child: TextFormField(
                                 onSaved: (value) {
                                   name = value!;
+                                  // controller.selectedValue =
+                                  //     value; // 달력 controller 변경
                                 },
                                 onChanged: (value) {
                                   name = value;
@@ -800,7 +878,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                                   MaterialStateProperty.all(
                                                       Colors.white),
                                             ),
-                                            child: Text('등록하기'),
+                                            child: const Text('등록하기'),
                                           )
                                         : const CircularProgressIndicator(),
                                   )
@@ -842,17 +920,6 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                                               SnackBarErrorType
                                                                   .NameNotExist);
                                                       editingData = false;
-                                                      return;
-                                                    }
-
-                                                    // 이름이 10글자를 초과할 경우 알림
-                                                    if (name.length > 10) {
-                                                      MyPageSnackBar()
-                                                          .notfoundDogData(
-                                                              context,
-                                                              SnackBarErrorType
-                                                                  .NameOverflow);
-                                                      uploadingData = false;
                                                       return;
                                                     }
 
@@ -910,7 +977,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                                   MaterialStateProperty.all(
                                                       Colors.white),
                                             ),
-                                            child: Text('변경하기'),
+                                            child: const Text('변경하기'),
                                           ),
                                           ElevatedButton(
                                             onPressed: !editingData
@@ -926,17 +993,15 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                                       editingData = true;
                                                     });
 
-                                                    petController
-                                                        .selectedPetScrollIndex = 0;
-                                                    homeSliderController
-                                                        .sliderIdx = 0;
-
                                                     await _delete()
                                                         .whenComplete(() {
                                                       if (Navigator.canPop(
                                                           context)) {
                                                         Navigator.pop(context);
                                                       }
+
+                                                      petController
+                                                          .selectedPetScrollIndex = 0;
 
                                                       setState(() {
                                                         editingData = false;
@@ -952,13 +1017,11 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                                   MaterialStateProperty.all(
                                                       Colors.white),
                                             ),
-                                            child: Text('삭제하기'),
+                                            child: const Text('삭제하기'),
                                           ),
                                         ],
                                       )
-                                    : const Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
+                                    : const CircularProgressIndicator(),
                           ],
                         ),
                       ),
