@@ -365,7 +365,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
         String month = (DateFormat.M()).format(selected);
         String day = (DateFormat.d()).format(selected);
 
-        birth = '${year}.${month}.${day}';
+        birth = '${year}.${month.padLeft(2, '0')}.${day.padLeft(2, '0')}';
         selectBirth = true;
       });
     }

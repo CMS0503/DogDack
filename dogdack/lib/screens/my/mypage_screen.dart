@@ -1,4 +1,6 @@
 // Widgets
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:dogdack/models/user_data.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -14,6 +16,7 @@ import 'package:get/get_core/src/get_main.dart';
 
 // Controller
 import '../../commons/logo_widget.dart';
+import '../../controllers/main_controll.dart';
 import '../../controllers/mypage_controller.dart';
 
 // Models
@@ -36,10 +39,15 @@ class _MyPageState extends State<MyPage> {
   final petsRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
       .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
 
+  // Firebase : 유저 전화 번호 저장을 위한 참조 값
+  final userRef = FirebaseFirestore.instance.collection('Users')
+      .withConverter(fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!), toFirestore: (userData, _) => userData.toJson());
+
   // GetX
   final petController = Get.put(PetController()); // 슬라이더에서 선택된 반려견 정보를 위젯간 공유
   final mypageStateController = Get.put(MyPageStateController()); // 현재 mypage 의 상태 표시
   final userDataController = Get.put(UserDataController());
+  final mainController = Get.put(MainController());
 
   // Widget
   // 정보 화면 타이틀 위젯
@@ -63,33 +71,48 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
-  Future<void> getTotalWalkMin() async {
+  // 총 산책 시간 계산
+  Stream<num> getTotalWalkMin() async* {
     num totalWalkMin = 0; // 총 산책 시간
-    num totalWalkCnt = 0; // 총 산책 횟수
-    CollectionReference petRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
+    CollectionReference petRef = FirebaseFirestore.instance
+        .collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
     QuerySnapshot _docInPets = await petRef.get();
-    for(int i = 0; i < _docInPets.docs.length; i++) {
+    for (int i = 0; i < _docInPets.docs.length; i++) {
       String _docInPetsID = _docInPets.docs[i].id; // Pets Collection 아래 문서 이름 (반려견 이름)
-      CollectionReference calendarRef = petsRef.doc('${_docInPetsID}').collection('Calendar');
-      QuerySnapshot _docInCalendar = await calendarRef.get();
-      print('_docInPetsID ${_docInPetsID}');
-      print('_docInCalendar.docs.length ${_docInCalendar.docs.length}');
-      for(int j = 0; j < _docInCalendar.docs.length; j++) {
-        String _docInCalendarID = _docInCalendar.docs[j].id; // Calendar Collection 아래 문서 이름 (날짜)
-        CollectionReference walkRef = calendarRef.doc('${_docInCalendarID}').collection('Walk');
-        QuerySnapshot _docInWalk = await walkRef.get();
-        totalWalkCnt += _docInWalk.docs.length;
-        print('_docInCalendarID ${_docInCalendarID}');
-        print('_docInWalk.docs.length ${_docInWalk.docs.length}');
-        for(int k = 0; k < _docInWalk.docs.length; k++) {
-          final int = _docInWalk.docs[k]['totalTimeMin']; // Walk Collection 아래 문서 이름 (산책당 자동 ID)
-          totalWalkMin += _docInWalk.docs[k]['totalTimeMin'];
-        }
+      CollectionReference walkRef = petsRef.doc('${_docInPetsID}').collection('Walk');
+      QuerySnapshot _docInWalk = await walkRef.get();
+      for (int j = 0; j < _docInWalk.docs.length; j++) {
+        totalWalkMin += _docInWalk.docs[j]['totalTimeMin'];
       }
     }
 
-    userDataController.totalWalkCnt = totalWalkCnt;
-    userDataController.totalWalkTime = totalWalkMin;
+    yield totalWalkMin;
+  }
+
+  // 총 산책 횟수 계산
+  Stream<num> getTotalWalkCnt() async* {
+    num totalWalkCnt = 0; // 총 산책 횟수
+    CollectionReference petRef = FirebaseFirestore.instance.collection(
+        'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
+    QuerySnapshot _docInPets = await petRef.get();
+    for (int i = 0; i < _docInPets.docs.length; i++) {
+      String _docInPetsID = _docInPets.docs[i]
+          .id; // Pets Collection 아래 문서 이름 (반려견 이름)
+      CollectionReference walkRef = petsRef.doc('${_docInPetsID}').collection(
+          'Walk');
+      QuerySnapshot _docInWalk = await walkRef.get();
+      totalWalkCnt += _docInWalk.docs.length;
+    }
+
+    yield totalWalkCnt;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // 총 산책 시간과 총 산책 횟수 계산
+    getTotalWalkMin();
+    getTotalWalkCnt();
   }
 
   @override
@@ -106,6 +129,7 @@ class _MyPageState extends State<MyPage> {
 
     //총 산책 시간, 총 산책 횟수 계산
     getTotalWalkMin();
+    getTotalWalkCnt();
 
     return GestureDetector(
       onTap: () {
@@ -154,12 +178,47 @@ class _MyPageState extends State<MyPage> {
                         Column(
                           children: [
                             // 사용자 계정 이미지
-                            CircleAvatar(
-                              backgroundColor: Colors.white,
-                              radius: size.width * 0.10,
-                              child: ClipOval(
-                                child: Image.network(FirebaseAuth.instance.currentUser!.photoURL.toString()),
-                              ),
+                            StreamBuilder(
+                              stream: userRef.snapshots(),
+                              builder: (userContext, userSnapshot) {
+                                return InkWell(
+                                  onTap: () {
+                                    showTextInputDialog(
+                                      context: context,
+                                      textFields: [
+                                        DialogTextField(
+                                          keyboardType: TextInputType.number,
+                                          hintText: '전화 번호를 입력하세요',
+                                          initialText: '',
+                                        )
+                                      ],
+                                    ).then((value) {
+                                      var map = Map<String, dynamic>();
+                                      map["phoneNumber"] = value!.elementAt(0).toString();
+
+                                      userRef.doc('${FirebaseAuth.instance.currentUser!.email}').update(map)
+                                          .whenComplete(() => print("변경 완료")).catchError((error) => print(error));
+                                    });
+                                  },
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.white,
+                                    radius: size.width * 0.10,
+                                    backgroundImage: NetworkImage(FirebaseAuth.instance.currentUser!.photoURL.toString()),
+                                    child: Align(
+                                      alignment: Alignment.bottomRight,
+                                      child: CircleAvatar(
+                                        backgroundColor: Color(0xff504E5B),
+                                        radius: petInfoWidth * 0.05,
+                                        child: Icon(
+                                          Icons.phone,
+                                          size: petInfoWidth * 0.05,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
                             ),
                             SizedBox(
                               height: size.height * 0.01,
@@ -181,7 +240,21 @@ class _MyPageState extends State<MyPage> {
                         // 산책 횟수
                         Column(
                           children: [
-                            Text(userDataController.totalWalkCnt.toString()),
+                            GetBuilder<MainController>(
+                              builder: (_) {
+                                getTotalWalkCnt();
+                                return StreamBuilder(
+                                    stream: getTotalWalkCnt(),
+                                    builder: (context, snapshot) {
+                                      if(!snapshot.hasData) {
+                                        return Text('0');
+                                      }
+
+                                      return Text(snapshot.data.toString());
+                                    }
+                                );
+                              },
+                            ),
                             SizedBox(height: size.height * 0.02),
                             Text('산책 카운트'),
                           ],
@@ -189,7 +262,21 @@ class _MyPageState extends State<MyPage> {
                         // 산책 시간
                         Column(
                           children: [
-                            Text(userDataController.totalWalkTime.toString()),
+                            GetBuilder<MainController>(
+                              builder: (_) {
+                                getTotalWalkMin();
+                                return StreamBuilder(
+                                    stream: getTotalWalkMin(),
+                                    builder: (context, snapshot) {
+                                      if(!snapshot.hasData) {
+                                        return Text('0');
+                                      }
+
+                                      return Text(snapshot.data.toString());
+                                    }
+                                );
+                              },
+                            ),
                             SizedBox(height: size.height * 0.02),
                             Text('산책 시간'),
                           ],
