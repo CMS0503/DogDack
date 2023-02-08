@@ -1,9 +1,7 @@
 // Widgets
-
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:dogdack/models/user_data.dart';
 import 'package:dogdack/screens/my/widgets/mypage_snackbar.dart';
-
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -15,6 +13,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 // GetX
 import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 // Controller
 import '../../commons/logo_widget.dart';
@@ -57,7 +56,6 @@ class _MyPageState extends State<MyPage> {
   final petController = Get.put(PetController()); // 슬라이더에서 선택된 반려견 정보를 위젯간 공유
   final mypageStateController =
       Get.put(MyPageStateController()); // 현재 mypage 의 상태 표시
-  final userDataController = Get.put(UserDataController());
   final mainController = Get.put(MainController());
 
   // Widget
@@ -85,7 +83,6 @@ class _MyPageState extends State<MyPage> {
   // 총 산책 시간 계산
   Stream<num> getTotalWalkMin() async* {
     num totalWalkMin = 0; // 총 산책 시간
-
     CollectionReference petRef = FirebaseFirestore.instance.collection(
         'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
     QuerySnapshot docInPets = await petRef.get();
@@ -98,6 +95,8 @@ class _MyPageState extends State<MyPage> {
         totalWalkMin += docInWalk.docs[j]['totalTimeMin'];
       }
     }
+
+    totalWalkMin = totalWalkMin ~/ 60;
 
     yield totalWalkMin;
   }
@@ -168,7 +167,7 @@ class _MyPageState extends State<MyPage> {
                       builder: (context) => const EditDogInfoPage()));
             },
             backgroundColor: const Color(0xff644CAA),
-            child: const Icon(Icons.add),
+            child: Icon(Icons.add),
           ),
         ),
         // 키보드 등장 시 화면 오버플로우가 발생하지 않도록 함.
@@ -194,7 +193,6 @@ class _MyPageState extends State<MyPage> {
                         Column(
                           children: [
                             // 사용자 계정 이미지
-
                             StreamBuilder(
                                 stream: userRef.snapshots(),
                                 builder: (userContext, userSnapshot) {
@@ -402,12 +400,13 @@ class _MyPageState extends State<MyPage> {
                             return CircleAvatar(
                               radius: size.width * 0.3,
                               child: ClipOval(
-                                child: FadeInImage.memoryNetwork(
+                                child:
+                                    Container() /*FadeInImage.memoryNetwork(
                                   fit: BoxFit.cover,
                                   placeholder: kTransparentImage,
-                                  image: snapshot.data!.docs[itemIndex]
-                                      .get('imageUrl'),
-                                ),
+                                  image: snapshot.data!.docs[itemIndex].get('imageUrl'),
+                                )*/
+                                ,
                               ),
                             );
                           },
@@ -656,7 +655,7 @@ class _MyPageState extends State<MyPage> {
                                               MaterialStateProperty.all(
                                                   Colors.white),
                                         ),
-                                        child: const Text('편집하기'),
+                                        child: Text('편집하기'),
                                       ),
                                     )
                                   ],
@@ -669,6 +668,9 @@ class _MyPageState extends State<MyPage> {
                     );
                   },
                 ),
+                SizedBox(
+                  height: size.height * 0.05,
+                )
               ],
             ),
           ),
