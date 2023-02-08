@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/models/walk_data.dart';
@@ -107,5 +108,20 @@ class WalkController extends GetxController {
       timer!.cancel();
     }
     super.onClose();
+  }
+
+  void sendData(data) async {
+    for (BluetoothService service in services!) {
+      if (service.uuid.toString() == serviceUuid) {
+        for (BluetoothCharacteristic characteristic
+            in service.characteristics) {
+          if (characteristic.uuid.toString() == characteristicUuid) {
+            await characteristic.write(utf8.encode(data),
+                withoutResponse: true);
+            print('device.mtu: ${device!.mtu.first}');
+          }
+        }
+      }
+    }
   }
 }

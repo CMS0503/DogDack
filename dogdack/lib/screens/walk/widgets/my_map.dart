@@ -53,7 +53,6 @@ class _MapState extends State<myMap> {
   }
 
   void updatePosition() async {
-    print('call updatePision');
     GoogleMapController googleMapController = await _controller.future;
     for (BluetoothService service in walkController.services!) {
       if (service.uuid.toString() == walkController.serviceUuid) {
@@ -61,13 +60,7 @@ class _MapState extends State<myMap> {
             in service.characteristics) {
           if (characteristic.uuid.toString() ==
               walkController.characteristicUuid) {
-            // var sendData = '01085382550';
-            // print(utf8.encode(sendData));
-            // characteristic.write(utf8.encode(sendData), withoutResponse: true);
-
-            await Future.delayed(Duration(milliseconds: 10));
-
-            characteristic.setNotifyValue(true);
+            await characteristic.setNotifyValue(true);
 
             characteristic.value.listen((value) {
               String stringValue = utf8.decode(value).toString();
