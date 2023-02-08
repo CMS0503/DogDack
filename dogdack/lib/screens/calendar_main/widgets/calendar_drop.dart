@@ -15,7 +15,7 @@ class _CalendarDropState extends State<CalendarDrop> {
   final controller = Get.put(InputController());
   final petsRef = FirebaseFirestore.instance
       .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');
-  var selectedValue;
+  // var selectedValue;
 
   @override
   Widget build(BuildContext context) {

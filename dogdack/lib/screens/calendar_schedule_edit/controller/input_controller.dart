@@ -8,6 +8,7 @@ class InputController extends GetxController {
   Timestamp endTime = Timestamp.now();
   String distance = '';
   String diary = '';
+  bool walkCheck = true;
   bool bath = true;
   bool beauty = true;
   List<String> imageUrl = [];
@@ -16,9 +17,8 @@ class InputController extends GetxController {
   List<String> valueList = [];
   String selectedValue = '';
   String saveName = '';
-  // RxMap<dynamic, dynamic> events = {}.obs;
 
-  // void input() {
-  //   update();
-  // }
+  void input() {
+    update();
+  }
 }

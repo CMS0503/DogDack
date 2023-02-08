@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dogdack/screens/calendar_main/widgets/calendar.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/controller/input_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -53,40 +52,41 @@ class _DatePickerState extends State<DatePicker> {
       if (selectedValue == '') {
         // 그냥 처음 강아지로 가져오기
         selectedValue = dogs[0];
-        var result =
-            await petsRef.where("name", isEqualTo: selectedValue).get();
-        if (result.docs.isNotEmpty) {
-          String dogId = result.docs[0].id;
-          final calRef = petsRef.doc(dogId).collection('Calendar');
-          var data = await calRef.get();
-          for (int i = 0; i < data.docs.length; i++) {
-            Calendar.events['${data.docs[i].reference.id}/$selectedValue'] = [
-              data.docs[i]['diary'],
-              data.docs[i]['bath'],
-              data.docs[i]['beauty'],
-            ];
-          }
-          setState(() {});
-        }
-      } else {
-        // 그게 아니면 selectedValue로 데이터 가져오기
-        var result =
-            await petsRef.where("name", isEqualTo: selectedValue).get();
-        if (result.docs.isNotEmpty) {
-          String dogId = result.docs[0].id;
-          final calRef = petsRef.doc(dogId).collection('Calendar');
-          var data = await calRef.get();
-          for (int i = 0; i < data.docs.length; i++) {
-            Calendar.events['${data.docs[i].reference.id}/$selectedValue'] = [
-              data.docs[i]['diary'],
-              data.docs[i]['bath'],
-              data.docs[i]['beauty'],
-            ];
-          }
-          setState(() {});
-          print(Calendar.events);
-        }
+        // var result =
+        //     await petsRef.where("name", isEqualTo: selectedValue).get();
+        // if (result.docs.isNotEmpty) {
+        //   String dogId = result.docs[0].id;
+        //   final calRef = petsRef.doc(dogId).collection('Calendar');
+        //   var data = await calRef.get();
+        //   for (int i = 0; i < data.docs.length; i++) {
+        //     Calendar.events['${data.docs[i].reference.id}/$selectedValue'] = [
+        //       data.docs[i]['diary'],
+        //       data.docs[i]['bath'],
+        //       data.docs[i]['beauty'],
+        //     ];
+        //   }
+        setState(() {});
+        // }
       }
+      //  else {
+      //   // 그게 아니면 selectedValue로 데이터 가져오기
+      //   var result =
+      //       await petsRef.where("name", isEqualTo: selectedValue).get();
+      //   if (result.docs.isNotEmpty) {
+      //     String dogId = result.docs[0].id;
+      //     final calRef = petsRef.doc(dogId).collection('Calendar');
+      //     var data = await calRef.get();
+      //     for (int i = 0; i < data.docs.length; i++) {
+      //       Calendar.events['${data.docs[i].reference.id}/$selectedValue'] = [
+      //         data.docs[i]['diary'],
+      //         data.docs[i]['bath'],
+      //         data.docs[i]['beauty'],
+      //       ];
+      //     }
+      //     setState(() {});
+      //     print(Calendar.events);
+      //   }
+      // }
     }
   }
 
@@ -138,7 +138,7 @@ class _DatePickerState extends State<DatePicker> {
                             child: Row(
                               children: [
                                 Text(
-                                  '${date.year}년 ${date.month}월 ${date.day}일 ${DateFormat.E('ko_KR').format(date)}',
+                                  '${controller.date.year}년 ${controller.date.month}월 ${controller.date.day}일 ${DateFormat.E('ko_KR').format(controller.date)}',
                                   style: const TextStyle(
                                     fontSize: 22,
                                     fontFamily: 'bmjua',
@@ -164,9 +164,12 @@ class _DatePickerState extends State<DatePicker> {
                                 firstDate: DateTime(1900),
                                 lastDate: DateTime(2100),
                               );
-                              if (newDate == null) return;
-                              setState(() => date = newDate);
-                              controller.date = date;
+                              // print(newDate);
+                              // setState(() {
+                              controller.date = newDate!;
+                              // });
+
+                              // if (newDate == null) return;
                             },
                           ),
                           Container(
@@ -193,7 +196,7 @@ class _DatePickerState extends State<DatePicker> {
                                       onChanged: (value) {
                                         setState(() {
                                           selectedValue = value.toString();
-                                          getName();
+                                          // getName();
                                           controller.saveName = selectedValue;
                                         });
                                       },

@@ -28,19 +28,21 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
   void fbstoreWrite() async {
     final petsRef = FirebaseFirestore.instance.collection(
         'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
+    final walkCheck = (int.parse(controller.endTime.seconds.toString()) -
+            int.parse(controller.startTime.seconds.toString())) /
+        60;
+    if (walkCheck == 0) {
+      controller.walkCheck = false;
+    }
 
-    // var dogId = '';
-    print('controller.saveName ${controller.saveName}');
     var result =
         await petsRef.where("name", isEqualTo: controller.saveName).get();
-
     if (result.docs.isNotEmpty) {
       String dogId = result.docs[0].id;
-
       petsRef
           .doc(dogId)
           .collection('Calendar')
-          .doc(DateFormat('yyMMdd').format(controller.date))
+          .doc(DateFormat('yyMMdd').format(controller.date).toString())
           .withConverter(
             fromFirestore: (snapshot, options) =>
                 CalenderData.fromJson(snapshot.data()!),
@@ -50,6 +52,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
             diary: controller.diary,
             bath: controller.bath,
             beauty: controller.beauty,
+            isWalk: controller.walkCheck,
             imageUrl: controller.imageUrl,
           ))
           .then((value) => print("document added"))
@@ -69,8 +72,8 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
               place: controller.place,
               startTime: controller.startTime,
               endTime: controller.endTime,
-              totalTimeMin: (int.parse(controller.endTime.toString()) -
-                      int.parse(controller.startTime.toString())) /
+              totalTimeMin: (int.parse(controller.endTime.seconds.toString()) -
+                      int.parse(controller.startTime.seconds.toString())) /
                   60,
               distance: int.parse(controller.distance),
             ),
@@ -121,6 +124,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                 width: width * 0.8,
                 child: ElevatedButton(
                   onPressed: () {
+                    // setState(() {});
                     fbstoreWrite();
                     // Navigator.pop(context);
                     Navigator.push(
@@ -128,11 +132,11 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                         MaterialPageRoute(
                             builder: (context) =>
                                 const CalendarMain(tabIndex: 1)));
-                    setState(() {});
-                    controller.bath = true;
-                    controller.beauty = true;
-                    controller.date = DateTime.now();
-                    controller.imageUrl = [];
+                    print(controller.date);
+                    // setState(() {});
+                    // controller.bath = true;
+                    // controller.beauty = true;
+                    // controller.imageUrl = [];
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(

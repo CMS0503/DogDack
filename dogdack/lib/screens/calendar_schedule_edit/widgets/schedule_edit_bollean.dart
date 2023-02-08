@@ -251,10 +251,6 @@ class _BolleanBtnState extends State<BolleanBtn> {
                       controller.bath = buttonsState;
                     } else {
                       controller.beauty = buttonsState;
-                      print(controller.beauty);
-                      print(controller.beauty);
-                      print(controller.beauty);
-                      print(controller.beauty);
                     }
                   });
                 },

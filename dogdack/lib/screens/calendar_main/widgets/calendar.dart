@@ -79,79 +79,17 @@ class _CalendarState extends State<Calendar> {
           var data = await calRef.get();
           for (int i = 0; i < data.docs.length; i++) {
             Calendar.events['${data.docs[i].reference.id}/$selectedValue'] = [
-              data.docs[i]['diary'],
+              data.docs[i]['isWalk'],
               data.docs[i]['bath'],
               data.docs[i]['beauty'],
             ];
           }
           setState(() {});
-          print(Calendar.events);
+          // print(Calendar.events);
         }
       }
     }
   }
-  //   var names = await petsRef.get();
-  //   List<String> dogs = [];
-
-  //   for (int i = 0; i < names.docs.length; i++) {
-  //     dogs.insert(0, names.docs[i]['name']);
-  //   }
-
-  //   controller.valueList = dogs;
-  //   controller.selectedValue = dogs[0];
-  //   print('controller.valueList : ${controller.valueList}');
-  //   // controller.dognames = dogs;
-  //   if (dogs.isNotEmpty) {
-  //     // var result = await petsRef
-  //     //     .where("name", isEqualTo: controller.selectedValue)
-  //     //     .get();
-  //     // if (result.docs.isNotEmpty) {
-  //     //   String dogId = result.docs[0].id;
-
-  //     final calRef =
-  //         petsRef.doc(controller.selectedValue).collection('Calendar');
-  //     var data = await calRef.get();
-
-  //     for (int i = 0; i < data.docs.length; i++) {
-  //       events[data.docs[i].reference.id] = [
-  //         data.docs[i]['diary'],
-  //         data.docs[i]['bath'],
-  //         data.docs[i]['beauty'],
-  //       ];
-  //     }
-  //   }
-  // }
-  // else {
-  //   controller.selectedValue = '멍멍이를 등록해주세요';
-  // }
-
-  // print('여기서 selectedValue ${controller.selectedValue}');
-  // await petsRef.where("name", isEqualTo: controller.selectedValue).get();
-
-  // if (result.docs.isNotEmpty) {
-  //   String dogId = result.docs[0].id;
-
-  //   final calRef = petsRef.doc(dogId).collection('Calendar');
-  //   var data = await calRef.get();
-
-  //   for (int i = 0; i < result.docs.length; i++) {
-  //     events[data.docs[i].reference.id] = [
-  //       data.docs[i]['diary'],
-  //       data.docs[i]['bath'],
-  //       data.docs[i]['beauty'],
-  //     ];
-  //   }
-  // }
-  // print(controller.valueList);
-  // if (controller.dognames.isEmpty) {
-  //   controller.valueList = ['댕댕이를 등록하세요'];
-  //   selectedValue = '댕댕이를 등록하세요';
-  // } else {
-  //   controller.valueList = controller.dognames;
-  //   selectedValue = controller.valueList[0];
-  //   print('controller.valuelist = ${controller.valueList}');
-  // }
-  // setState(() {});
 
   @override
   void initState() {
@@ -331,8 +269,8 @@ class _CalendarState extends State<Calendar> {
                         child: ListTile(
                           // tileColor: Colors.black,
                           tileColor: events[0] == true
-                              ? const Color.fromARGB(255, 255, 255, 255)
-                              : colors[0],
+                              ? colors[0]
+                              : const Color.fromARGB(255, 255, 255, 255),
                         ),
                       ),
                     ),
@@ -345,8 +283,8 @@ class _CalendarState extends State<Calendar> {
                         elevation: 0,
                         child: ListTile(
                           tileColor: events[1] == true
-                              ? const Color.fromARGB(255, 255, 255, 255)
-                              : colors[1],
+                              ? colors[1]
+                              : const Color.fromARGB(255, 255, 255, 255),
                         ),
                       ),
                     ),
@@ -359,8 +297,8 @@ class _CalendarState extends State<Calendar> {
                         elevation: 0,
                         child: ListTile(
                           tileColor: events[2] == true
-                              ? const Color.fromARGB(255, 255, 255, 255)
-                              : colors[2],
+                              ? colors[2]
+                              : const Color.fromARGB(255, 255, 255, 255),
                         ),
                       ),
                     ),

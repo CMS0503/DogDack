@@ -1,7 +1,6 @@
 import 'package:dogdack/controlls/main_controll.dart';
 import 'package:dogdack/navigators/calender_navigator.dart';
 import 'package:dogdack/navigators/home_navigator.dart';
-import 'package:dogdack/navigators/mypage_navigator.dart';
 
 //navigator
 
@@ -37,10 +36,10 @@ class MainPage extends StatelessWidget {
               offstage: mainController.tabindex != 2,
               child: WalkNavigator(tabIndex: 2),
             ),
-            Offstage(
-              offstage: mainController.tabindex != 3,
-              child: const MyPageNavigator(tabIndex: 3),
-            ),
+            // Offstage(
+            //   offstage: mainController.tabindex != 3,
+            //   child: const MyPageNavigator(tabIndex: 3),
+            // ),
           ]),
           bottomNavigationBar: BottomNavigationBar(
             items: const [
