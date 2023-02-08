@@ -49,8 +49,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
     latlng.clear();
     var documentSnapshot = await FirebaseFirestore.instance
         .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
-        // .doc('${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}')
-        .doc('2023_2_7')
+        .doc('${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}')
         .get();
     // var documentSnapshot = await FirebaseFirestore.instance
     //     .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
