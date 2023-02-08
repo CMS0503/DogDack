@@ -1,4 +1,6 @@
 // Widgets
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:dogdack/models/user_data.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -36,6 +38,10 @@ class _MyPageState extends State<MyPage> {
   // Firebase : 반려견 테이블 참조 값
   final petsRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
       .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
+
+  // Firebase : 유저 전화 번호 저장을 위한 참조 값
+  final userRef = FirebaseFirestore.instance.collection('Users')
+      .withConverter(fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!), toFirestore: (userData, _) => userData.toJson());
 
   // GetX
   final petController = Get.put(PetController()); // 슬라이더에서 선택된 반려견 정보를 위젯간 공유
@@ -172,12 +178,47 @@ class _MyPageState extends State<MyPage> {
                         Column(
                           children: [
                             // 사용자 계정 이미지
-                            CircleAvatar(
-                              backgroundColor: Colors.white,
-                              radius: size.width * 0.10,
-                              child: ClipOval(
-                                child: Image.network(FirebaseAuth.instance.currentUser!.photoURL.toString()),
-                              ),
+                            StreamBuilder(
+                              stream: userRef.snapshots(),
+                              builder: (userContext, userSnapshot) {
+                                return InkWell(
+                                  onTap: () {
+                                    showTextInputDialog(
+                                      context: context,
+                                      textFields: [
+                                        DialogTextField(
+                                          keyboardType: TextInputType.number,
+                                          hintText: '전화 번호를 입력하세요',
+                                          initialText: '',
+                                        )
+                                      ],
+                                    ).then((value) {
+                                      var map = Map<String, dynamic>();
+                                      map["phoneNumber"] = value!.elementAt(0).toString();
+
+                                      userRef.doc('${FirebaseAuth.instance.currentUser!.email}').update(map)
+                                          .whenComplete(() => print("변경 완료")).catchError((error) => print(error));
+                                    });
+                                  },
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.white,
+                                    radius: size.width * 0.10,
+                                    backgroundImage: NetworkImage(FirebaseAuth.instance.currentUser!.photoURL.toString()),
+                                    child: Align(
+                                      alignment: Alignment.bottomRight,
+                                      child: CircleAvatar(
+                                        backgroundColor: Color(0xff504E5B),
+                                        radius: petInfoWidth * 0.05,
+                                        child: Icon(
+                                          Icons.phone,
+                                          size: petInfoWidth * 0.05,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
                             ),
                             SizedBox(
                               height: size.height * 0.01,
