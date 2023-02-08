@@ -1,16 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import './controller/walk_controller.dart';
+import '../../controllers/walk_controller.dart';
 import './widgets/my_map.dart';
 import './widgets/status.dart';
 import '../../commons/logo_widget.dart';
-import '../../controlls/main_controll.dart';
+import '../../controllers/main_controll.dart';
 
 class WalkPage extends StatelessWidget {
-  WalkPage({super.key, required this.tabIndex});
-
-  final int tabIndex;
+  WalkPage({super.key});
 
   final walkController = Get.put(WalkController());
   final mainController = Get.put(MainController());
@@ -122,6 +121,8 @@ class WalkPage extends StatelessWidget {
                             ),
                             onPressed: () {
                               // 캘린더 화면으로
+                              walkController.endTime = Timestamp.now();
+                              walkController.sendDB();
                               mainController.changeTabIndex(1);
                               // 캘린더 상세화면으로 이동해야함
                             },

@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:dogdack/screens/calendar_schedule_edit/controller/input_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:dogdack/models/calender_data.dart';
+
+import '../../../controllers/input_controller.dart';
 
 class Calendar extends StatefulWidget {
   static Map<String, List> events = {};
@@ -30,7 +33,12 @@ class Calendar extends StatefulWidget {
 class _CalendarState extends State<Calendar> {
   final controller = Get.put(InputController());
 
-  // final Map<String, List<Object>> events = {'': []};
+  final calendarRef = FirebaseFirestore.instance
+      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets')
+      .withConverter(
+          fromFirestore: (snapshot, _) =>
+              CalenderData.fromJson(snapshot.data()!),
+          toFirestore: (calendarData, _) => calendarData.toJson());
 
   final petsRef = FirebaseFirestore.instance
       .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');

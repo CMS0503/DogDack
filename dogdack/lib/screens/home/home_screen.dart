@@ -7,12 +7,11 @@ import 'package:dogdack/commons/logo_widget.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '../../models/dog_data.dart';
-import '../my/controller/mypage_controller.dart';
+import '../../controllers/mypage_controller.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({super.key, required this.tabIndex});
+  HomePage({super.key});
 
-  final int tabIndex;
   final inputController = TextEditingController();
 
   @override
@@ -39,10 +38,10 @@ class _HomePageState extends State<HomePage> {
         ),
         body: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.fromLTRB(0, size.height * 0.03, 0, 0),
+              padding: EdgeInsets.fromLTRB(0, size.height * 0.02, 0, 0),
               child: Column(
                 children: [
-                  /*StreamBuilder(
+                  StreamBuilder(
                     stream: petsRef.orderBy('createdAt').snapshots(),
                     builder: (context, snapshot) {
                       // 데이터를 아직 불러오지 못했으면 로딩
@@ -59,8 +58,37 @@ class _HomePageState extends State<HomePage> {
 
                       // 여기서 부터는 등록된 반려견이 1마리 이상 존재함.
 
+                      //오늘 날짜 구하기
+                      var _today = DateTime.now();
+                      //현재 선택된 반려견 생일 문자열 파싱
+                      String _petBirthYearOrigin = snapshot.data!.docs[selectSliderIdx].get('birth');
+                      String _petBirth = '';
+                      List<String> birthList = _petBirthYearOrigin.split('.');
+                      for(int liIdx = 0; liIdx < birthList.length; liIdx++) {
+                        _petBirth += birthList.elementAt(liIdx);
+                      }
+
                       return Column(
                         children: [
+                          Text(
+                            '오늘 목표 산책 달성량',
+                            style: TextStyle(
+                              color: Color(0xff504E5B),
+                            ),
+                          ),
+                          SizedBox(
+                            height: height * 0.02,
+                          ),
+                          Text(
+                            '%',
+                            style: TextStyle(
+                              color: Color(0xff644CAA),
+                              fontSize: width * 0.07
+                            ),
+                          ),
+                          SizedBox(
+                            height: height * 0.01,
+                          ),
                           // 좌우 스크롤 슬라이더
                           CarouselSlider.builder(
                             options: CarouselOptions(
@@ -78,7 +106,7 @@ class _HomePageState extends State<HomePage> {
                             itemCount: snapshot.data!.docs.length,
                             itemBuilder: (context, itemIndex, pageViewIndex) {
                               return CircleAvatar(
-                                radius: size.width * 0.3,
+                                radius: size.width * 0.25,
                                 child: ClipOval(
                                   child: FadeInImage.memoryNetwork(
                                     fit: BoxFit.cover,
@@ -89,12 +117,21 @@ class _HomePageState extends State<HomePage> {
                               );
                             },
                           ),
-                          SizedBox(height: size.height * 0.003),
+                          SizedBox(height: size.height * 0.02),
                           Center(
                             child: Text(
                               snapshot.data!.docs[selectSliderIdx].get('name'),
                               style: TextStyle(
                                 color: Color(0xff644CAA),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: size.height * 0.02),
+                          Center(
+                            child: Text(
+                              '함께한지 ${_petBirth}일',
+                              style: TextStyle(
+                                color: Color(0xff504E5B),
                               ),
                             ),
                           )
@@ -104,7 +141,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Container(
                     child: BarChartSample1(),
-                  ),*/
+                  ),
                 ],
               ),
             ),

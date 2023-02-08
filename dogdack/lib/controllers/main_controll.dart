@@ -7,5 +7,6 @@ class MainController extends GetxController {
 
   void changeTabIndex(idx) {
     _tabIndex.value = idx;
+    update();
   }
 }

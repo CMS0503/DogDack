@@ -36,7 +36,12 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
     });
 
     _polyline.add(
-      Polyline(polylineId: PolylineId('1'), points: latlng, color: Colors.blue),
+      Polyline(
+          polylineId: PolylineId('1'),
+          points: latlng,
+          width: 3,
+          color: Colors.blue
+      ),
     );
   }
 
@@ -44,9 +49,12 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
     latlng.clear();
     var documentSnapshot = await FirebaseFirestore.instance
         .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
-        .doc(
-            '${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}')
+        .doc('${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}')
         .get();
+    // var documentSnapshot = await FirebaseFirestore.instance
+    //     .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
+    //     .where('startTime', isEqualTo: )
+
     var data = await documentSnapshot.data()!['geolist'];
     for (int i = 0; i < data.length; i++) {
       latlng.add(LatLng(data[i].latitude, data[i].longitude));

@@ -1,4 +1,4 @@
-import 'package:dogdack/screens/calendar_schedule_edit/controller/input_controller.dart';
+import 'package:dogdack/controllers/input_controller.dart';
 import 'package:flutter/material.dart';
 
 // firebase
@@ -9,7 +9,9 @@ import 'package:flutter_picker/picker.dart';
 
 // GetX
 import 'package:get/get.dart';
-import 'controller/mypage_controller.dart';
+
+import 'package:get/get_core/src/get_main.dart';
+import '../../controllers/mypage_controller.dart';
 
 // Model
 import '../../models/dog_data.dart';
@@ -384,7 +386,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
         String month = (DateFormat.M()).format(selected);
         String day = (DateFormat.d()).format(selected);
 
-        birth = '$year.$month.$day';
+        birth = '$year.${month.padLeft(2, '0')}.${day.padLeft(2, '0')}';
         selectBirth = true;
       });
     }
