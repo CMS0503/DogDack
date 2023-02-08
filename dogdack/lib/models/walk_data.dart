@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class WalkData {
   WalkData({
-    this.imageUrl,
+    this.geolist,
     this.startTime,
     this.endTime,
     this.totalTimeMin,
@@ -12,7 +12,7 @@ class WalkData {
     this.goal,
   });
 
-  final String? imageUrl; // 산책 경로 이미지 Url
+  final List<GeoPoint>? geolist;
   final Timestamp? startTime; // 산책 시작 시간
   final Timestamp? endTime; // 산책 종료 시간
   final num? totalTimeMin; // 실제로 산책한 시간. 분 단위 (일시정지 있는 경우 필요)
@@ -23,7 +23,7 @@ class WalkData {
 
   WalkData.fromJson(Map<String, dynamic> json)
       : this(
-          imageUrl: json['imageUrl']! as String,
+          geolist: json['geolist']! as List<GeoPoint>,
           startTime: json['startTime']! as Timestamp,
           endTime: json['endTime']! as Timestamp,
           totalTimeMin: json['totalTimeMin'] as num,
@@ -35,7 +35,7 @@ class WalkData {
 
   Map<String, dynamic> toJson() {
     return {
-      'imageUrl': imageUrl,
+      'geolist': geolist,
       'startTime': startTime,
       'endTime': endTime,
       'totalTimeMin': totalTimeMin,

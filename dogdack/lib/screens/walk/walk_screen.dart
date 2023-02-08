@@ -120,7 +120,7 @@ class WalkPage extends StatelessWidget {
                             ),
                             onPressed: () {
                               // 캘린더 화면으로
-                              // walkController.saveWalkData();
+                              walkController.sendDB();
                               mainController.changeTabIndex(1);
                               // 캘린더 상세화면으로 이동해야함
                             },

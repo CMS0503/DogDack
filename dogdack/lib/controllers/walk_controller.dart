@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../models/position_data.dart';
 
@@ -12,7 +13,7 @@ class WalkController extends GetxController {
   final String serviceUuid = '0000ffe0-0000-1000-8000-00805f9b34fb';
   final String characteristicUuid = '0000ffe1-0000-1000-8000-00805f9b34fb';
 
-  RxBool isBleConnect = false.obs;
+  RxBool isBleConnect = true.obs;
 
   // 위도, 경도
   RxDouble latitude = 37.500735.obs;
@@ -34,6 +35,29 @@ class WalkController extends GetxController {
   RxBool isRunning = false.obs;
   Timer? timer;
   RxInt timeCount = 0.obs;
+
+  List<GeoPoint>? geoloc = [];
+  List<LatLng> latlng = [];
+
+  void addData(lat, lng){
+    geoloc?.add(GeoPoint(lat, lon));
+    update();
+  }
+
+  void sendDB() {
+    print("-----------send to DB-------------");
+    geoloc?.add(GeoPoint(23.412, 125.234125));
+    geoloc?.add(GeoPoint(42.213, 142.234125));
+
+    FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets_test')
+        .withConverter(
+          fromFirestore: (snapshot, options) => PosData.fromJson(snapshot.data()!),
+          toFirestore: (value, options) => value.toJson(),
+        )
+        .add(PosData(
+          loc: geoloc,
+        ));
+  }
 
   void setCurrentLocation(curLatitude, curLongitude) {
     latitude.value = curLatitude.toDouble();

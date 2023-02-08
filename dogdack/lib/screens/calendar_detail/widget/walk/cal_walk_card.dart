@@ -36,7 +36,12 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
     });
 
     _polyline.add(
-      Polyline(polylineId: PolylineId('1'), points: latlng, color: Colors.blue),
+      Polyline(
+          polylineId: PolylineId('1'),
+          points: latlng,
+          width: 3,
+          color: Colors.blue
+      ),
     );
   }
 
@@ -44,8 +49,8 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
     latlng.clear();
     var documentSnapshot = await FirebaseFirestore.instance
         .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
-        .doc(
-            '${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}')
+        // .doc('${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}')
+        .doc('2023_2_7')
         .get();
     // var documentSnapshot = await FirebaseFirestore.instance
     //     .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
