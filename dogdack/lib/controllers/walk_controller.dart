@@ -7,6 +7,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+
 class WalkController extends GetxController {
   // 블루투스 장치 id
   final String serviceUuid = '0000ffe0-0000-1000-8000-00805f9b34fb';
@@ -46,17 +47,21 @@ class WalkController extends GetxController {
   double? distance;
   RxInt goal = 0.obs;
   RxInt tmp_goal = 0.obs;
-  int rec_time = 0;
+  int rectime = 0;
 
   void recommend() async {
     int cnt = 0;
+    int temp = 0;
+    int rec_time = 0;
     await for(var snapshot in FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets').snapshots()){
       for(var messege in snapshot.docs){
         cnt++;
-        rec_time = rec_time + int.parse(messege.data()['recommend']);
+        temp = messege.data()['recommend'];
+        rec_time = rec_time + temp;
       }
+      rec_time = (rec_time / cnt).round();
+      rectime = rec_time;
     }
-    rec_time = (rec_time / cnt) as int;
   }
 
   void addData(lat, lng){

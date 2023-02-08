@@ -21,11 +21,6 @@ class WalkPage extends StatelessWidget {
   final walkController = Get.put(WalkController());
   final mainController = Get.put(MainController());
 
-  @override
-  void initState(){
-    walkController.recommend();
-  }
-
   Widget mapAreaWidget(w, h) {
     return Container(
       height: h * 0.6,
@@ -127,6 +122,7 @@ class WalkPage extends StatelessWidget {
   }
 
   Widget walkTime(w, h, context) {
+    walkController.recommend();
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Opacity(
@@ -150,7 +146,7 @@ class WalkPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text("권장 산책 시간 : ", style: TextStyle(fontSize: 25)),
-                      Text('${walkController.rec_time}', style: TextStyle(fontSize: 25)),
+                      Text('${walkController.rectime} 분', style: TextStyle(fontSize: 25)),
                     ],
                   ),
                   const SizedBox(

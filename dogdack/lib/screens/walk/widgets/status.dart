@@ -93,7 +93,7 @@ class _StatusState extends State<Status> {
                     height: 3,
                   ),
                   Obx(() => Text(
-                    walkController.goal == 0 ? "목표 산책 시간을 입력해 주세요" : '${walkController.goal}',
+                    walkController.goal == 0 ? "목표 산책 시간을 입력해 주세요" : '${walkController.goal} 분',
                     style: Theme.of(context).textTheme.displayMedium,
                     ),
                   )
