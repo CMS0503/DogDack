@@ -112,11 +112,15 @@ class _HomePageState extends State<HomePage> {
                               return CircleAvatar(
                                 radius: size.width * 0.25,
                                 child: ClipOval(
-                                  child: FadeInImage.memoryNetwork(
+                                  child: Container(
+                                    color: Colors.amber,
+                                    width: 50,
+                                    height: 50,
+                                  ) /*FadeInImage.memoryNetwork(
                                     fit: BoxFit.cover,
                                     placeholder: kTransparentImage,
                                     image: snapshot.data!.docs[itemIndex].get('imageUrl'),
-                                  ),
+                                  )*/,
                                 ),
                               );
                             },

@@ -174,10 +174,44 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     }
   }
 
+  // 강아지 분류 선택에 따른 권장 시간 반환
+  int getRecommendTime(String categorie) {
+    int retRecommend = 0;
+
+    switch(categorie) {
+      case '논스포팅' :
+        retRecommend = 60;
+        break;
+      case '시각 하운드' :
+        retRecommend = 30;
+        break;
+      case '후각 하운드' :
+        retRecommend = 60;
+        break;
+      case '테리어' :
+        retRecommend = 40;
+        break;
+      case '허딩' :
+        retRecommend = 90;
+        break;
+      case '토이' :
+        retRecommend = 40;
+        break;
+      case '스포팅' :
+        retRecommend = 90;
+        break;
+      case '워킹' :
+        retRecommend = 120;
+        break;
+    }
+
+    return retRecommend;
+  }
+
   // 강아지 정보 데이터 삭제
   Future<void> _delete([DocumentSnapshot? documentSnapshot]) async {
     // Firebase storage 해당 이미지 제거
-    FirebaseStorage.instance.ref().child('${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${petController.selectedPetImageFileName}').delete();
+    // FirebaseStorage.instance.ref().child('${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${petController.selectedPetImageFileName}').delete();
 
     await petsRef
         .doc(petController.selectedPetID)
@@ -188,44 +222,21 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
 
   // 강아지 정보 데이터 수정
   Future<void> _update([DocumentSnapshot? documentSnapshot]) async {
+    // Strage 사용을 막기 위해 임시로 설정함.
+    isChangeImg = false;
+
     // 편집 모드에서는 이미지 파일을 변경하였을 경우 기존 이미지를 제거하고 새로운 이미지로 갱신
     // 이미지 파일을 변경하지 않았을 경우, Url download 불필요
     if(isChangeImg) {
       // 이미지 파일이 변경되었다면 기존 사진 데이터 제거
-      FirebaseStorage.instance.ref().child('${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${petController.selectedPetImageFileName}').delete();
+      // FirebaseStorage.instance.ref().child('${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${petController.selectedPetImageFileName}').delete();
 
       // 새로 저장할 이미지의 레퍼런스
-      Reference petImgRef = FirebaseStorage.instance.ref().child(
-          '${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${Path.basename(pickedPetImgFile!.path)}');
+      Reference petImgRef = FirebaseStorage.instance.ref().child('${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${Path.basename(pickedPetImgFile!.path)}');
 
       await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
         await petImgRef!.getDownloadURL().then((value) {
-          switch(kategorie) {
-            case '논스포팅' :
-              recommend = 60;
-              break;
-            case '시각 하운드' :
-              recommend = 30;
-              break;
-            case '후각 하운드' :
-              recommend = 60;
-              break;
-            case '테리어' :
-              recommend = 40;
-              break;
-            case '허딩' :
-              recommend = 90;
-              break;
-            case '토이' :
-              recommend = 40;
-              break;
-            case '스포팅' :
-              recommend = 90;
-              break;
-            case '워킹' :
-              recommend = 120;
-              break;
-          }
+          recommend = getRecommendTime(kategorie);
 
           var map = Map<String, dynamic>();
           map["imageUrl"] = value;
@@ -246,32 +257,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
         });
       });
     } else {
-      switch(kategorie) {
-        case '논스포팅' :
-          recommend = 60;
-          break;
-        case '시각 하운드' :
-          recommend = 30;
-          break;
-        case '후각 하운드' :
-          recommend = 60;
-          break;
-        case '테리어' :
-          recommend = 40;
-          break;
-        case '허딩' :
-          recommend = 90;
-          break;
-        case '토이' :
-          recommend = 40;
-          break;
-        case '스포팅' :
-          recommend = 90;
-          break;
-        case '워킹' :
-          recommend = 120;
-          break;
-      }
+      recommend = getRecommendTime(kategorie);
 
       var map = Map<String, dynamic>();
       map["name"] = name;
@@ -293,37 +279,11 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   // 강아지 정보 데이터 추가
   Future<void> _create([DocumentSnapshot? documentSnapshot]) async {
     // 강아지 이미지 파일 저장 경로
-    Reference petImgRef = FirebaseStorage.instance.ref().child(
-        '${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${Path.basename(pickedPetImgFile!.path)}');
+    Reference petImgRef = FirebaseStorage.instance.ref().child('${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${Path.basename(pickedPetImgFile!.path)}');
 
-    await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
+    /*await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
       await petImgRef!.getDownloadURL().then((value) {
-        switch(kategorie) {
-          case '논스포팅' :
-            recommend = 60;
-            break;
-          case '시각 하운드' :
-            recommend = 30;
-            break;
-          case '후각 하운드' :
-            recommend = 60;
-            break;
-          case '테리어' :
-            recommend = 40;
-            break;
-          case '허딩' :
-            recommend = 90;
-            break;
-          case '토이' :
-            recommend = 40;
-            break;
-          case '스포팅' :
-            recommend = 90;
-            break;
-          case '워킹' :
-            recommend = 120;
-            break;
-        }
+        recommend = getRecommendTime(kategorie);
 
         //이미지 경로를 db 에 저장
         petsRef.add(DogData(
@@ -340,7 +300,24 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
         )).then((value) => print('강아지 정보 저장 완료'))
             .catchError((error) => print('강아지 정보 저장 오류! ${petsRef}'));
       });
-    });
+    });*/
+
+    recommend = getRecommendTime(kategorie);
+
+    //이미지 경로를 db 에 저장
+    petsRef.add(DogData(
+      imageUrl: 'https://edu.ssafy.com/edu/main/index.do',
+      imageFileName: Path.basename(pickedPetImgFile!.path),
+      name: name,
+      gender: gender,
+      birth: birth,
+      kategorie: kategorie,
+      breed: breed,
+      weight: weight,
+      recommend: recommend,
+      createdAt: Timestamp.now(),
+    )).then((value) => print('강아지 정보 저장 완료'))
+        .catchError((error) => print('강아지 정보 저장 오류! ${petsRef}'));
   }
 
   // 상태 확인을 위한 boolean 변수
