@@ -18,7 +18,7 @@ class InputController extends GetxController {
   String selectedValue = '';
   String saveName = '';
 
-  void input() {
-    update();
-  }
+  // void input() {
+  //   update();
+  // }
 }

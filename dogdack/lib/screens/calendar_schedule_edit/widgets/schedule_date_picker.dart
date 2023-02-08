@@ -27,7 +27,7 @@ class _DatePickerState extends State<DatePicker> {
 
   // dogname =
 
-  var selectedValue = '';
+  // var selectedValue = '';
   // final Map<String, List<Object>> events = {'': []};
 
   final petsRef = FirebaseFirestore.instance
@@ -49,9 +49,9 @@ class _DatePickerState extends State<DatePicker> {
       '그냥 넘어가야지 뭐';
     } else {
       // 강아지들이 있는데 처음 들어왔을 때 강아지 선택을 안한 상태면
-      if (selectedValue == '') {
+      if (controller.selectedValue == '') {
         // 그냥 처음 강아지로 가져오기
-        selectedValue = dogs[0];
+        controller.selectedValue = dogs[0];
         // var result =
         //     await petsRef.where("name", isEqualTo: selectedValue).get();
         // if (result.docs.isNotEmpty) {
@@ -165,9 +165,9 @@ class _DatePickerState extends State<DatePicker> {
                                 lastDate: DateTime(2100),
                               );
                               // print(newDate);
-                              // setState(() {
-                              controller.date = newDate!;
-                              // });
+                              setState(() {
+                                controller.date = newDate!;
+                              });
 
                               // if (newDate == null) return;
                             },
@@ -176,7 +176,7 @@ class _DatePickerState extends State<DatePicker> {
                             alignment: Alignment.centerLeft,
                             child: Padding(
                               padding: const EdgeInsets.only(top: 10, left: 20),
-                              child: selectedValue.isEmpty
+                              child: controller.selectedValue.isEmpty
                                   ? GestureDetector(
                                       child: const Text('멍멍이를 선택해주세요'),
                                       onTap: () {
@@ -184,7 +184,7 @@ class _DatePickerState extends State<DatePicker> {
                                       },
                                     )
                                   : DropdownButton(
-                                      value: selectedValue,
+                                      value: controller.selectedValue,
                                       items: controller.valueList.map(
                                         (value) {
                                           return DropdownMenuItem(
@@ -195,9 +195,11 @@ class _DatePickerState extends State<DatePicker> {
                                       ).toList(),
                                       onChanged: (value) {
                                         setState(() {
-                                          selectedValue = value.toString();
+                                          controller.selectedValue =
+                                              value.toString();
                                           // getName();
-                                          controller.saveName = selectedValue;
+                                          controller.saveName =
+                                              controller.selectedValue;
                                         });
                                       },
                                     ),

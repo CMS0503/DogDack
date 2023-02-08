@@ -2,10 +2,13 @@ import 'package:dogdack/commons/logo_widget.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar_mark.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/calendar_schedule_edit.dart';
+import 'package:dogdack/screens/calendar_schedule_edit/controller/input_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CalendarMain extends StatefulWidget {
   const CalendarMain({super.key, required this.tabIndex});
+
   final int tabIndex;
 
   @override

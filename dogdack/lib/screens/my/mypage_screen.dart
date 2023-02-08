@@ -1,4 +1,5 @@
 // Widgets
+import 'package:dogdack/screens/calendar_schedule_edit/controller/input_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -143,7 +144,7 @@ class _MyPageState extends State<MyPage> {
                       builder: (context) => const EditDogInfoPage()));
             },
             backgroundColor: const Color(0xff644CAA),
-            child: Icon(Icons.add),
+            child: const Icon(Icons.add),
           ),
         ),
         // 키보드 등장 시 화면 오버플로우가 발생하지 않도록 함.

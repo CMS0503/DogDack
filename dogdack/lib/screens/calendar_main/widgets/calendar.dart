@@ -29,7 +29,7 @@ class Calendar extends StatefulWidget {
 
 class _CalendarState extends State<Calendar> {
   final controller = Get.put(InputController());
-  var selectedValue = '';
+
   // final Map<String, List<Object>> events = {'': []};
 
   final petsRef = FirebaseFirestore.instance
@@ -51,17 +51,19 @@ class _CalendarState extends State<Calendar> {
       '그냥 넘어가야지 뭐';
     } else {
       // 강아지들이 있는데 처음 들어왔을 때 강아지 선택을 안한 상태면
-      if (selectedValue == '') {
+      if (controller.selectedValue == '') {
         // 그냥 처음 강아지로 가져오기
-        selectedValue = dogs[0];
-        var result =
-            await petsRef.where("name", isEqualTo: selectedValue).get();
+        controller.selectedValue = dogs[0];
+        var result = await petsRef
+            .where("name", isEqualTo: controller.selectedValue)
+            .get();
         if (result.docs.isNotEmpty) {
           String dogId = result.docs[0].id;
           final calRef = petsRef.doc(dogId).collection('Calendar');
           var data = await calRef.get();
           for (int i = 0; i < data.docs.length; i++) {
-            Calendar.events['${data.docs[i].reference.id}/$selectedValue'] = [
+            Calendar.events[
+                '${data.docs[i].reference.id}/${controller.selectedValue}'] = [
               data.docs[i]['diary'],
               data.docs[i]['bath'],
               data.docs[i]['beauty'],
@@ -71,19 +73,22 @@ class _CalendarState extends State<Calendar> {
         }
       } else {
         // 그게 아니면 selectedValue로 데이터 가져오기
-        var result =
-            await petsRef.where("name", isEqualTo: selectedValue).get();
+        var result = await petsRef
+            .where("name", isEqualTo: controller.selectedValue)
+            .get();
         if (result.docs.isNotEmpty) {
           String dogId = result.docs[0].id;
           final calRef = petsRef.doc(dogId).collection('Calendar');
           var data = await calRef.get();
           for (int i = 0; i < data.docs.length; i++) {
-            Calendar.events['${data.docs[i].reference.id}/$selectedValue'] = [
+            Calendar.events[
+                '${data.docs[i].reference.id}/${controller.selectedValue}'] = [
               data.docs[i]['isWalk'],
               data.docs[i]['bath'],
               data.docs[i]['beauty'],
             ];
           }
+          print(Calendar.events);
           setState(() {});
           // print(Calendar.events);
         }
@@ -95,18 +100,18 @@ class _CalendarState extends State<Calendar> {
   void initState() {
     super.initState();
     // getData();
-    getName();
+    // getName();
   }
 
   @override
   Widget build(BuildContext context) {
-    // getName();
+    getName();
     Size screenSize = MediaQuery.of(context).size;
     double height = screenSize.height;
 
     List<dynamic> _getEventForDay(DateTime day) {
-      return Calendar
-              .events['${DateFormat('yyMMdd').format(day)}/$selectedValue'] ??
+      return Calendar.events[
+              '${DateFormat('yyMMdd').format(day)}/${controller.selectedValue}'] ??
           [];
     }
 
@@ -123,7 +128,7 @@ class _CalendarState extends State<Calendar> {
           alignment: Alignment.centerLeft,
           child: Padding(
             padding: const EdgeInsets.only(top: 10, left: 20),
-            child: selectedValue.isEmpty
+            child: controller.selectedValue.isEmpty
                 ? GestureDetector(
                     child: const Text('멍멍이를 선택해주세요'),
                     onTap: () {
@@ -131,7 +136,7 @@ class _CalendarState extends State<Calendar> {
                     },
                   )
                 : DropdownButton(
-                    value: selectedValue,
+                    value: controller.selectedValue,
                     items: controller.valueList.map(
                       (value) {
                         return DropdownMenuItem(
@@ -142,7 +147,7 @@ class _CalendarState extends State<Calendar> {
                     ).toList(),
                     onChanged: (value) {
                       setState(() {
-                        selectedValue = value.toString();
+                        controller.selectedValue = value.toString();
                         getName();
                       });
                     },

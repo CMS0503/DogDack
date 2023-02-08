@@ -26,6 +26,8 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
   final controller = Get.put(InputController());
 
   void fbstoreWrite() async {
+    print(controller.selectedValue);
+    controller.saveName = controller.selectedValue;
     final petsRef = FirebaseFirestore.instance.collection(
         'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
     final walkCheck = (int.parse(controller.endTime.seconds.toString()) -
@@ -34,7 +36,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
     if (walkCheck == 0) {
       controller.walkCheck = false;
     }
-
+    print(controller.saveName);
     var result =
         await petsRef.where("name", isEqualTo: controller.saveName).get();
     if (result.docs.isNotEmpty) {
@@ -132,7 +134,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                         MaterialPageRoute(
                             builder: (context) =>
                                 const CalendarMain(tabIndex: 1)));
-                    print(controller.date);
+                    // print(controller.date);
                     // setState(() {});
                     // controller.bath = true;
                     // controller.beauty = true;
