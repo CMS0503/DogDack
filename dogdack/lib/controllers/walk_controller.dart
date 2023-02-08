@@ -12,7 +12,7 @@ class WalkController extends GetxController {
   final String serviceUuid = '0000ffe0-0000-1000-8000-00805f9b34fb';
   final String characteristicUuid = '0000ffe1-0000-1000-8000-00805f9b34fb';
 
-  RxBool isBleConnect = false.obs;
+  RxBool isBleConnect = true.obs;
 
   // 위도, 경도
   RxDouble latitude = 37.500735.obs;
@@ -32,8 +32,11 @@ class WalkController extends GetxController {
   // 산책 정보
   bool isStart = false;
   RxBool isRunning = false.obs;
+  RxBool isDogSelected = false.obs;
   Timer? timer;
   RxInt timeCount = 0.obs;
+
+  RxString ImageURL = "".obs;
 
   List<LatLng> latlng = [];
 
@@ -41,6 +44,20 @@ class WalkController extends GetxController {
   Timestamp? startTime;
   Timestamp? endTime;
   double? distance;
+  RxInt goal = 0.obs;
+  RxInt tmp_goal = 0.obs;
+  int rec_time = 0;
+
+  void recommend() async {
+    int cnt = 0;
+    await for(var snapshot in FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets').snapshots()){
+      for(var messege in snapshot.docs){
+        cnt++;
+        rec_time = rec_time + int.parse(messege.data()['recommend']);
+      }
+    }
+    rec_time = (rec_time / cnt) as int;
+  }
 
   void addData(lat, lng){
     geolist?.add(GeoPoint(lat, lng));
@@ -67,7 +84,7 @@ class WalkController extends GetxController {
           isAuto: true,
           // place: ,
           distance: distance,
-          // goal: ,
+          goal: goal.value,
         ));
   }
 
@@ -107,5 +124,9 @@ class WalkController extends GetxController {
       timer!.cancel();
     }
     super.onClose();
+  }
+
+  void setImageUrl(String url) {
+    ImageURL.value = url;
   }
 }
