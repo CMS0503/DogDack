@@ -1,6 +1,6 @@
+import 'package:dogdack/navigators/home_navigator.dart';
 import 'package:dogdack/controllers/main_controll.dart';
 import 'package:dogdack/navigators/calender_navigator.dart';
-import 'package:dogdack/navigators/home_navigator.dart';
 import 'package:dogdack/navigators/mypage_navigator.dart';
 
 //navigator
