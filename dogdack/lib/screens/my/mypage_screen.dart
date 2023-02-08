@@ -205,6 +205,10 @@ class _MyPageState extends State<MyPage> {
                                 return StreamBuilder(
                                     stream: getTotalWalkCnt(),
                                     builder: (context, snapshot) {
+                                      if(!snapshot.hasData) {
+                                        return Text('0');
+                                      }
+
                                       return Text(snapshot.data.toString());
                                     }
                                 );
@@ -223,6 +227,10 @@ class _MyPageState extends State<MyPage> {
                                 return StreamBuilder(
                                     stream: getTotalWalkMin(),
                                     builder: (context, snapshot) {
+                                      if(!snapshot.hasData) {
+                                        return Text('0');
+                                      }
+
                                       return Text(snapshot.data.toString());
                                     }
                                 );
