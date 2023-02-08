@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -120,6 +121,7 @@ class WalkPage extends StatelessWidget {
                             ),
                             onPressed: () {
                               // 캘린더 화면으로
+                              walkController.endTime = Timestamp.now();
                               walkController.sendDB();
                               mainController.changeTabIndex(1);
                               // 캘린더 상세화면으로 이동해야함

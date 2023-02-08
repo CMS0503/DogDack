@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 import 'package:latlong2/latlong.dart' as ll;
 
 import '../../../controllers/walk_controller.dart';
@@ -102,13 +101,13 @@ class _MapState extends State<myMap> {
                 if (latlng.length > 1) {
                   totalDistance = totalDistance! +
                       calTotalDistance(
-                          ll.LatLng(
-                              latlng.last.latitude, latlng.last.longitude),
-                          ll.LatLng(currentPosition.latitude,
-                              currentPosition.longitude));
+                          ll.LatLng(latlng.last.latitude, latlng.last.longitude),
+                          ll.LatLng(currentPosition.latitude, currentPosition.longitude));
+                  walkController.distance = totalDistance;
                 }
 
                 latlng.add(currentPosition);
+                walkController.addData(currentPosition.latitude, currentPosition.longitude);
                 print('totaldistance: $totalDistance');
                 setState(() {});
               } else if (widget.receiveData[0] == '{') {
@@ -181,10 +180,8 @@ class _MapState extends State<myMap> {
                                 _clickPlayButton();
                               },
                               child: walkController.isRunning.value
-                                  ? Icon(Icons.pause,
-                                      color: Theme.of(context).primaryColor)
-                                  : Icon(Icons.play_arrow,
-                                      color: Theme.of(context).primaryColor)),
+                                  ? Icon(Icons.pause, color: Theme.of(context).primaryColor)
+                                  : Icon(Icons.play_arrow, color: Theme.of(context).primaryColor)),
                         ),
                         // 산책 시간
                         Align(
