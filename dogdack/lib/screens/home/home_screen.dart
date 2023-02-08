@@ -1,13 +1,16 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dogdack/controllers/mypage_controller.dart';
 import 'package:dogdack/screens/home/bar_char.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:dogdack/commons/logo_widget.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '../../models/dog_data.dart';
-import '../../controllers/mypage_controller.dart';
+
 
 class HomePage extends StatefulWidget {
   HomePage({super.key});
@@ -23,7 +26,7 @@ class _HomePageState extends State<HomePage> {
   final petsRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
       .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
 
-  int selectSliderIdx = 0;
+  final sliderController = Get.put(HomePageSliderController());
 
   @override
   Widget build(BuildContext context) {
@@ -61,12 +64,13 @@ class _HomePageState extends State<HomePage> {
                       //오늘 날짜 구하기
                       var _today = DateTime.now();
                       //현재 선택된 반려견 생일 문자열 파싱
-                      String _petBirthYearOrigin = snapshot.data!.docs[selectSliderIdx].get('birth');
+                      String _petBirthYearOrigin = snapshot.data!.docs[sliderController.sliderIdx].get('birth');
                       String _petBirth = '';
                       List<String> birthList = _petBirthYearOrigin.split('.');
                       for(int liIdx = 0; liIdx < birthList.length; liIdx++) {
                         _petBirth += birthList.elementAt(liIdx);
                       }
+                      int displayBirth = int.parse(_today.difference(DateTime.parse(_petBirth)).inDays.toString());
 
                       return Column(
                         children: [
@@ -98,7 +102,7 @@ class _HomePageState extends State<HomePage> {
                               enableInfiniteScroll: true,
                               onPageChanged: (index, reason) {
                                 setState(() {
-                                  selectSliderIdx = index;
+                                  sliderController.sliderIdx = index;
                                 });
                               },
                               autoPlay: true,
@@ -108,11 +112,15 @@ class _HomePageState extends State<HomePage> {
                               return CircleAvatar(
                                 radius: size.width * 0.25,
                                 child: ClipOval(
-                                  child: FadeInImage.memoryNetwork(
+                                  child: Container(
+                                    color: Colors.amber,
+                                    width: 50,
+                                    height: 50,
+                                  ) /*FadeInImage.memoryNetwork(
                                     fit: BoxFit.cover,
                                     placeholder: kTransparentImage,
                                     image: snapshot.data!.docs[itemIndex].get('imageUrl'),
-                                  ),
+                                  )*/,
                                 ),
                               );
                             },
@@ -120,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                           SizedBox(height: size.height * 0.02),
                           Center(
                             child: Text(
-                              snapshot.data!.docs[selectSliderIdx].get('name'),
+                              snapshot.data!.docs[sliderController.sliderIdx].get('name'),
                               style: TextStyle(
                                 color: Color(0xff644CAA),
                               ),
@@ -129,7 +137,7 @@ class _HomePageState extends State<HomePage> {
                           SizedBox(height: size.height * 0.02),
                           Center(
                             child: Text(
-                              '함께한지 ${_petBirth}일',
+                              '함께한지 ${displayBirth}일',
                               style: TextStyle(
                                 color: Color(0xff504E5B),
                               ),
