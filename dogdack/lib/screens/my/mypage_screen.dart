@@ -565,6 +565,9 @@ class _MyPageState extends State<MyPage> {
                     );
                   },
                 ),
+                SizedBox(
+                  height: size.height * 0.05,
+                )
               ],
             ),
           ),

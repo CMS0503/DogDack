@@ -826,6 +826,9 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                   ),
                 ),
               ),
+              SizedBox(
+                height: size.height * 0.05,
+              )
             ],
           ),
         ),

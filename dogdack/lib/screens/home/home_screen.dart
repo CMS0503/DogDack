@@ -67,6 +67,7 @@ class _HomePageState extends State<HomePage> {
                       for(int liIdx = 0; liIdx < birthList.length; liIdx++) {
                         _petBirth += birthList.elementAt(liIdx);
                       }
+                      int displayBirth = int.parse(_today.difference(DateTime.parse(_petBirth)).inDays.toString());
 
                       return Column(
                         children: [
@@ -129,7 +130,7 @@ class _HomePageState extends State<HomePage> {
                           SizedBox(height: size.height * 0.02),
                           Center(
                             child: Text(
-                              '함께한지 ${_petBirth}일',
+                              '함께한지 ${displayBirth}일',
                               style: TextStyle(
                                 color: Color(0xff504E5B),
                               ),
