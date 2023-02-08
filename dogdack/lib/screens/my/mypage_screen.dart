@@ -47,7 +47,6 @@ class _MyPageState extends State<MyPage> {
   // GetX
   final petController = Get.put(PetController()); // 슬라이더에서 선택된 반려견 정보를 위젯간 공유
   final mypageStateController = Get.put(MyPageStateController()); // 현재 mypage 의 상태 표시
-  final userDataController = Get.put(UserDataController());
   final mainController = Get.put(MainController());
 
   // Widget
@@ -86,6 +85,8 @@ class _MyPageState extends State<MyPage> {
         totalWalkMin += _docInWalk.docs[j]['totalTimeMin'];
       }
     }
+
+    totalWalkMin = (totalWalkMin / 60).toInt();
 
     yield totalWalkMin;
   }

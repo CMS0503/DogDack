@@ -42,6 +42,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   // GetX
   final petController = Get.put(PetController());
   final mypageStateController = Get.put(MyPageStateController());
+  final homeSliderController = Get.put(HomePageSliderController());
 
   // 강아지 정보 : (GetX 강아지 정보 관련 변수는 조회 페이지에서 선택한 정보이기 때문에 다르게 관리함)
   final kategorieList = [['논스포팅', '시각 하운드', '후각 하운드', '테리어', '허딩', '토이', '스포팅', '워킹']]; // 견종 카테고리 리스트
@@ -814,11 +815,13 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                                   editingData = true;
                                                 });
 
-                                                await _delete().whenComplete(() {
-                                                  if (Navigator.canPop(context))
-                                                    Navigator.pop(context);
+                                                petController.selectedPetScrollIndex = 0;
+                                                homeSliderController.sliderIdx = 0;
 
-                                                  petController.selectedPetScrollIndex = 0;
+                                                await _delete().whenComplete(() {
+                                                  if (Navigator.canPop(context)) {
+                                                    Navigator.pop(context);
+                                                  }
 
                                                   setState(() {
                                                     editingData = false;
