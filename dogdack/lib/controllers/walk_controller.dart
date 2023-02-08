@@ -35,15 +35,15 @@ class WalkController extends GetxController {
   RxBool isRunning = false.obs;
   Timer? timer;
   RxInt timeCount = 0.obs;
-
+  RxDouble totalDistance = 0.0.obs;
   List<LatLng> latlng = [];
 
   List<GeoPoint>? geolist = [];
   Timestamp? startTime;
   Timestamp? endTime;
-  double? distance;
+  double? distance = 0.0;
 
-  void addData(lat, lng){
+  void addData(lat, lng) {
     geolist?.add(GeoPoint(lat, lng));
     update();
   }
@@ -85,8 +85,13 @@ class WalkController extends GetxController {
   }
 
   void updateWalkingState() {
+    // LCD 초기화
+    if (isStart == false) {
+      initLCD();
+    }
+
     isStart = true;
-    if(timeCount.value == 0) startTime = Timestamp.now();
+    if (timeCount.value == 0) startTime = Timestamp.now();
     isRunning.value = !isRunning.value;
     update();
   }
@@ -110,7 +115,13 @@ class WalkController extends GetxController {
     super.onClose();
   }
 
+  void initLCD() async {
+    sendData('01085382550a');
+    sendData('0:0:0, 0m');
+  }
+
   void sendData(data) async {
+    print('Send Data: ${data.toString()}');
     for (BluetoothService service in services!) {
       if (service.uuid.toString() == serviceUuid) {
         for (BluetoothCharacteristic characteristic
@@ -118,7 +129,6 @@ class WalkController extends GetxController {
           if (characteristic.uuid.toString() == characteristicUuid) {
             await characteristic.write(utf8.encode(data),
                 withoutResponse: true);
-            print('device.mtu: ${device!.mtu.first}');
           }
         }
       }
