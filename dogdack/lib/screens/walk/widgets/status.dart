@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/walk_controller.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
@@ -70,12 +68,6 @@ class _StatusState extends State<Status> {
                   ),
                 ],
               ),
-              TextButton(
-                onPressed: () {
-                  walkController.sendData('01085382550');
-                },
-                child: Text('send data'),
-              )
             ],
           ),
           Column(

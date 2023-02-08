@@ -43,6 +43,16 @@ class WalkController extends GetxController {
   Timestamp? endTime;
   double? distance = 0.0;
 
+  @override
+  void onInit() {
+    ever(timeCount, (_) {
+      if ((timeCount % 6000) % 100 == 0) {
+        sendData(
+            '${timeCount ~/ 360000}:${timeCount ~/ 6000}:${(timeCount % 6000) ~/ 100}, ${distance!.toInt()}m');
+      }
+    });
+  }
+
   void addData(lat, lng) {
     geolist?.add(GeoPoint(lat, lng));
     update();
@@ -88,6 +98,7 @@ class WalkController extends GetxController {
     // LCD 초기화
     if (isStart == false) {
       initLCD();
+      Future.delayed(Duration(seconds: 1));
     }
 
     isStart = true;
@@ -116,11 +127,11 @@ class WalkController extends GetxController {
   }
 
   void initLCD() async {
-    sendData('01085382550a');
-    sendData('0:0:0, 0m');
+    await sendData('01085382550a');
+    await sendData('0:0:0, 0m');
   }
 
-  void sendData(data) async {
+  Future<void> sendData(data) async {
     print('Send Data: ${data.toString()}');
     for (BluetoothService service in services!) {
       if (service.uuid.toString() == serviceUuid) {
