@@ -1,6 +1,5 @@
 import 'package:dogdack/commons/logo_widget.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar.dart';
-import 'package:dogdack/screens/calendar_main/widgets/calendar_drop.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar_mark.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/calendar_schedule_edit.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +37,7 @@ class _CalendarPageState extends State<CalendarMain> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const CalendarDrop(),
+            // const CalendarDrop(),
             SizedBox(
               height: height * 0.01,
             ),

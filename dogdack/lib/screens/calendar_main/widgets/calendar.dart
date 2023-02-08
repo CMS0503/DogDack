@@ -9,7 +9,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class Calendar extends StatefulWidget {
-  static Map<String, List> events = {'': []};
+  static Map<String, List> events = {};
 
   // 선택한 날짜
   final DateTime? selectedDay;
@@ -20,7 +20,6 @@ class Calendar extends StatefulWidget {
   const Calendar({
     super.key,
     this.selectedDay,
-    // this.events,
     required this.focusedDay,
   });
 
@@ -30,68 +29,147 @@ class Calendar extends StatefulWidget {
 
 class _CalendarState extends State<Calendar> {
   final controller = Get.put(InputController());
-  final Map<String, List<Object>> events = {'': []};
+  var selectedValue = '';
+  // final Map<String, List<Object>> events = {'': []};
+
   final petsRef = FirebaseFirestore.instance
       .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');
 
   String docId = '';
-  getData() async {
-    print("geetdata");
-    print('controller.dognames : ${controller.dognames}');
 
-    if (controller.dognames.isNotEmpty) {
-      controller.name = controller.dognames[0];
+  getName() async {
+    var dogDoc = await petsRef.get();
+    List<String> dogs = [];
+    // 자.. 여기다가 등록된 강아지들 다 입력하는거야
+    for (int i = 0; i < dogDoc.docs.length; i++) {
+      dogs.insert(0, dogDoc.docs[i]['name']);
     }
-    // final petsRef = FirebaseFirestore.instance
-    //     .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');
-    print('controller.name : ${controller.name}');
-    var result = await petsRef.where("name", isEqualTo: controller.name).get();
-    print('result : $result');
+    controller.valueList = dogs;
 
-    if (result.docs.isNotEmpty) {
-      String dogId = result.docs[0].id;
-
-      final calRef = petsRef.doc(dogId).collection('Calendar');
-      var data = await calRef.get();
-
-      for (int i = 0; i < result.docs.length; i++) {
-        events[data.docs[i].reference.id] = [
-          data.docs[i]['diary'],
-          data.docs[i]['bath'],
-          data.docs[i]['beauty'],
-        ];
+    // 근데 강아지들이 없으면?
+    if (dogs.isEmpty) {
+      '그냥 넘어가야지 뭐';
+    } else {
+      // 강아지들이 있는데 처음 들어왔을 때 강아지 선택을 안한 상태면
+      if (selectedValue == '') {
+        // 그냥 처음 강아지로 가져오기
+        selectedValue = dogs[0];
+        var result =
+            await petsRef.where("name", isEqualTo: selectedValue).get();
+        if (result.docs.isNotEmpty) {
+          String dogId = result.docs[0].id;
+          final calRef = petsRef.doc(dogId).collection('Calendar');
+          var data = await calRef.get();
+          for (int i = 0; i < data.docs.length; i++) {
+            Calendar.events['${data.docs[i].reference.id}/$selectedValue'] = [
+              data.docs[i]['diary'],
+              data.docs[i]['bath'],
+              data.docs[i]['beauty'],
+            ];
+          }
+          setState(() {});
+        }
+      } else {
+        // 그게 아니면 selectedValue로 데이터 가져오기
+        var result =
+            await petsRef.where("name", isEqualTo: selectedValue).get();
+        if (result.docs.isNotEmpty) {
+          String dogId = result.docs[0].id;
+          final calRef = petsRef.doc(dogId).collection('Calendar');
+          var data = await calRef.get();
+          for (int i = 0; i < data.docs.length; i++) {
+            Calendar.events['${data.docs[i].reference.id}/$selectedValue'] = [
+              data.docs[i]['diary'],
+              data.docs[i]['bath'],
+              data.docs[i]['beauty'],
+            ];
+          }
+          setState(() {});
+          print(Calendar.events);
+        }
       }
-      // setState(() {
-      //   events;
-      // });
-      print('events: $events');
-      // setState(() {});
     }
-    // return events;
-    // } else {
-    //   // return events;
-    // }
   }
+  //   var names = await petsRef.get();
+  //   List<String> dogs = [];
+
+  //   for (int i = 0; i < names.docs.length; i++) {
+  //     dogs.insert(0, names.docs[i]['name']);
+  //   }
+
+  //   controller.valueList = dogs;
+  //   controller.selectedValue = dogs[0];
+  //   print('controller.valueList : ${controller.valueList}');
+  //   // controller.dognames = dogs;
+  //   if (dogs.isNotEmpty) {
+  //     // var result = await petsRef
+  //     //     .where("name", isEqualTo: controller.selectedValue)
+  //     //     .get();
+  //     // if (result.docs.isNotEmpty) {
+  //     //   String dogId = result.docs[0].id;
+
+  //     final calRef =
+  //         petsRef.doc(controller.selectedValue).collection('Calendar');
+  //     var data = await calRef.get();
+
+  //     for (int i = 0; i < data.docs.length; i++) {
+  //       events[data.docs[i].reference.id] = [
+  //         data.docs[i]['diary'],
+  //         data.docs[i]['bath'],
+  //         data.docs[i]['beauty'],
+  //       ];
+  //     }
+  //   }
+  // }
+  // else {
+  //   controller.selectedValue = '멍멍이를 등록해주세요';
+  // }
+
+  // print('여기서 selectedValue ${controller.selectedValue}');
+  // await petsRef.where("name", isEqualTo: controller.selectedValue).get();
+
+  // if (result.docs.isNotEmpty) {
+  //   String dogId = result.docs[0].id;
+
+  //   final calRef = petsRef.doc(dogId).collection('Calendar');
+  //   var data = await calRef.get();
+
+  //   for (int i = 0; i < result.docs.length; i++) {
+  //     events[data.docs[i].reference.id] = [
+  //       data.docs[i]['diary'],
+  //       data.docs[i]['bath'],
+  //       data.docs[i]['beauty'],
+  //     ];
+  //   }
+  // }
+  // print(controller.valueList);
+  // if (controller.dognames.isEmpty) {
+  //   controller.valueList = ['댕댕이를 등록하세요'];
+  //   selectedValue = '댕댕이를 등록하세요';
+  // } else {
+  //   controller.valueList = controller.dognames;
+  //   selectedValue = controller.valueList[0];
+  //   print('controller.valuelist = ${controller.valueList}');
+  // }
+  // setState(() {});
 
   @override
   void initState() {
     super.initState();
     // getData();
+    getName();
   }
 
   @override
   Widget build(BuildContext context) {
-    // if (events.length <= 10) {
-    getData();
-    // }
-    controller;
-    // print(events);
-    print("build");
+    // getName();
     Size screenSize = MediaQuery.of(context).size;
     double height = screenSize.height;
 
     List<dynamic> _getEventForDay(DateTime day) {
-      return events[DateFormat('yyMMdd').format(day)] ?? [];
+      return Calendar
+              .events['${DateFormat('yyMMdd').format(day)}/$selectedValue'] ??
+          [];
     }
 
     var colors = [
@@ -99,165 +177,200 @@ class _CalendarState extends State<Calendar> {
       const Color.fromARGB(255, 191, 172, 224),
       const Color.fromARGB(255, 235, 199, 232),
     ];
-
+// Obx(() {
     // 날짜별 박스 데코
-    return TableCalendar(
-      // 날짜 언어 설정
-      locale: 'ko_KR',
-      // 보여줄 날짜
-      focusedDay: widget.focusedDay,
-      // 달력 처음 날짜
-      firstDay: DateTime(1900),
-      // 달력 마지막 날짜
-      lastDay: DateTime(2100),
-      // 헤더
-      headerStyle: const HeaderStyle(
-        // 주별, 월별 포맷 제거
-        formatButtonVisible: false,
-        headerPadding: EdgeInsets.only(top: 3, bottom: 3),
-        titleCentered: true,
-        titleTextStyle: TextStyle(
-          fontFamily: 'bmjua',
-          // fontWeight: FontWeight.w700,
-          fontSize: 18,
-          color: Colors.white,
-        ),
-        // Chevron
-        leftChevronIcon: Icon(
-          Icons.chevron_left,
-          color: Colors.white,
-        ),
-        rightChevronIcon: Icon(
-          Icons.chevron_right,
-          color: Colors.white,
-        ),
-        decoration: BoxDecoration(
-          color: Color.fromARGB(255, 100, 92, 170),
-        ),
-      ),
-      // 요일 디자인
-      daysOfWeekHeight: height * 0.035,
-      daysOfWeekStyle: const DaysOfWeekStyle(
-        // 평일
-        weekdayStyle: TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.w900,
-        ),
-        // 주일
-        weekendStyle: TextStyle(
-          fontFamily: 'bmjua',
-          color: Colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.w900,
-          // fontWeight: FontWeight.w600,
-        ),
-        decoration: BoxDecoration(
-          color: Color.fromARGB(255, 195, 177, 228),
-        ),
-      ),
-      // 셀 높이
-      rowHeight: height * 0.11,
-      calendarStyle: const CalendarStyle(
-        // 오늘 날짜 표시 X
-        isTodayHighlighted: false,
-
-        // 마커
-        // 마커가 칸 안넘어가게
-        canMarkersOverflow: false,
-        markerDecoration: BoxDecoration(
-          color: Colors.red,
-          shape: BoxShape.circle,
-        ),
-
-        // 테이블 경계선 넣기
-        tableBorder: TableBorder(
-          verticalInside: BorderSide(
-            color: Color.fromARGB(50, 191, 172, 224),
-            width: 2,
-          ),
-          horizontalInside: BorderSide(
-            color: Color.fromARGB(50, 191, 172, 224),
-            width: 2,
+    return Column(
+      children: [
+        Container(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10, left: 20),
+            child: selectedValue.isEmpty
+                ? GestureDetector(
+                    child: const Text('멍멍이를 선택해주세요'),
+                    onTap: () {
+                      setState(() {});
+                    },
+                  )
+                : DropdownButton(
+                    value: selectedValue,
+                    items: controller.valueList.map(
+                      (value) {
+                        return DropdownMenuItem(
+                          value: value,
+                          child: Text(value),
+                        );
+                      },
+                    ).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedValue = value.toString();
+                        getName();
+                      });
+                    },
+                  ),
           ),
         ),
-        // 달력 일자 위치 조정
-        cellAlignment: Alignment.topRight,
-        // 달력 일자 일반일 텍스트 스타일
-        defaultTextStyle: TextStyle(
-          color: Colors.black,
-          fontFamily: 'bmjua',
-          fontWeight: FontWeight.w400,
-        ),
-        // 달력 일자 주말 텍스트 스타일
-        weekendTextStyle: TextStyle(
-          color: Colors.red,
-          fontFamily: 'bmjua',
-          fontWeight: FontWeight.w400,
-        ),
-      ),
-      // firebase 산책 기록 불러오기
-      eventLoader: _getEventForDay,
-      calendarBuilders: CalendarBuilders(
-        // 마커 디자인
-        // 불러온 events 순회하면서
-        markerBuilder: (context, day, events) {
-          // 이벤트 비어 있으면 빈 Box
-          if (events.isEmpty) {
-            return const SizedBox();
-          }
-          return Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: ListView(
-              children: <Widget>[
-                SizedBox(
-                  height: 20,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    elevation: 0,
-                    child: ListTile(
-                      // tileColor: Colors.black,
-                      tileColor: events[0] == true
-                          ? const Color.fromARGB(255, 255, 255, 255)
-                          : colors[0],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    elevation: 0,
-                    child: ListTile(
-                      tileColor: events[1] == true
-                          ? const Color.fromARGB(255, 255, 255, 255)
-                          : colors[1],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    elevation: 0,
-                    child: ListTile(
-                      tileColor: events[2] == true
-                          ? const Color.fromARGB(255, 255, 255, 255)
-                          : colors[2],
-                    ),
-                  ),
-                ),
-              ],
+        TableCalendar(
+          // 날짜 언어 설정
+          locale: 'ko_KR',
+          // 보여줄 날짜
+          focusedDay: widget.focusedDay,
+          // 달력 처음 날짜
+          firstDay: DateTime(1900),
+          // 달력 마지막 날짜
+          lastDay: DateTime(2100),
+          // 헤더
+          headerStyle: const HeaderStyle(
+            // 주별, 월별 포맷 제거
+            formatButtonVisible: false,
+            headerPadding: EdgeInsets.only(top: 3, bottom: 3),
+            titleCentered: true,
+            titleTextStyle: TextStyle(
+              fontFamily: 'bmjua',
+              // fontWeight: FontWeight.w700,
+              fontSize: 18,
+              color: Colors.white,
             ),
-          );
-        },
-      ),
+            // Chevron
+            leftChevronIcon: Icon(
+              Icons.chevron_left,
+              color: Colors.white,
+            ),
+            rightChevronIcon: Icon(
+              Icons.chevron_right,
+              color: Colors.white,
+            ),
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 100, 92, 170),
+            ),
+          ),
+          // 요일 디자인
+          daysOfWeekHeight: height * 0.035,
+          daysOfWeekStyle: const DaysOfWeekStyle(
+            // 평일
+            weekdayStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+            ),
+            // 주일
+            weekendStyle: TextStyle(
+              fontFamily: 'bmjua',
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+              // fontWeight: FontWeight.w600,
+            ),
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 195, 177, 228),
+            ),
+          ),
+          // 셀 높이
+          rowHeight: height * 0.11,
+          calendarStyle: const CalendarStyle(
+            // 오늘 날짜 표시 X
+            isTodayHighlighted: false,
+
+            // 마커
+            // 마커가 칸 안넘어가게
+            canMarkersOverflow: false,
+            markerDecoration: BoxDecoration(
+              color: Colors.red,
+              shape: BoxShape.circle,
+            ),
+
+            // 테이블 경계선 넣기
+            tableBorder: TableBorder(
+              verticalInside: BorderSide(
+                color: Color.fromARGB(50, 191, 172, 224),
+                width: 2,
+              ),
+              horizontalInside: BorderSide(
+                color: Color.fromARGB(50, 191, 172, 224),
+                width: 2,
+              ),
+            ),
+            // 달력 일자 위치 조정
+            cellAlignment: Alignment.topRight,
+            // 달력 일자 일반일 텍스트 스타일
+            defaultTextStyle: TextStyle(
+              color: Colors.black,
+              fontFamily: 'bmjua',
+              fontWeight: FontWeight.w400,
+            ),
+            // 달력 일자 주말 텍스트 스타일
+            weekendTextStyle: TextStyle(
+              color: Colors.red,
+              fontFamily: 'bmjua',
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          // firebase 산책 기록 불러오기
+          eventLoader: _getEventForDay,
+          calendarBuilders: CalendarBuilders(
+            // 마커 디자인
+            // 불러온 events 순회하면서
+            markerBuilder: (context, day, events) {
+              // 이벤트 비어 있으면 빈 Box
+              if (events.isEmpty) {
+                return const SizedBox();
+              }
+
+              return Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: ListView(
+                  children: <Widget>[
+                    SizedBox(
+                      height: 20,
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        elevation: 0,
+                        child: ListTile(
+                          // tileColor: Colors.black,
+                          tileColor: events[0] == true
+                              ? const Color.fromARGB(255, 255, 255, 255)
+                              : colors[0],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        elevation: 0,
+                        child: ListTile(
+                          tileColor: events[1] == true
+                              ? const Color.fromARGB(255, 255, 255, 255)
+                              : colors[1],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        elevation: 0,
+                        child: ListTile(
+                          tileColor: events[2] == true
+                              ? const Color.fromARGB(255, 255, 255, 255)
+                              : colors[2],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

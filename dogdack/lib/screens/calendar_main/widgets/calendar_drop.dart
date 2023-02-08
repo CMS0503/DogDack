@@ -15,29 +15,7 @@ class _CalendarDropState extends State<CalendarDrop> {
   final controller = Get.put(InputController());
   final petsRef = FirebaseFirestore.instance
       .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');
-  // late List<String> valueList = ["짬뽕", "공숙"];
-  // String selectedValue = '안뇽';
-  // final valueList = ['첫 번째', '두 번째', '세 번째', '네 번째'];
-  // var selectedValue = '첫 번째';
-  getName() async {
-    var names = await petsRef.get();
-    print('getName의 names : $names');
-    List<String> dogs = [];
-
-    for (int i = 0; i < names.docs.length; i++) {
-      dogs.insert(0, names.docs[i]['name']);
-    }
-
-    controller.dognames.value = dogs;
-    print('hi');
-    // setState(() {});
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getName();
-  }
+  var selectedValue;
 
   @override
   Widget build(BuildContext context) {
@@ -45,50 +23,38 @@ class _CalendarDropState extends State<CalendarDrop> {
     double width = screenSize.width;
     double height = screenSize.height;
 
-    var valueList = controller.dognames;
-    var selectedValue = '';
-
-    if (valueList.isEmpty) {
-      valueList.value = ['댕댕이를 등록하세요'];
-      selectedValue = '댕댕이를 등록하세요';
-    } else {
-      selectedValue = valueList[0];
-    }
+    var valueList = controller.valueList;
 
     return Row(
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 10, left: 20),
-          child: SizedBox(
-            height: height * 0.05,
-            child: DropdownButton(
-              underline: Container(),
-              value: selectedValue,
-              items: valueList.map(
-                (value) {
-                  return DropdownMenuItem(
-                    value: value,
-                    child: Text(
-                      value,
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 100, 92, 170),
-                        fontFamily: 'bmjua',
-                        fontSize: 20,
-                      ),
-                    ),
-                  );
-                },
-              ).toList(),
-              onChanged: (value) {
-                setState(
-                  () {
-                    selectedValue = value.toString();
+          child: controller.valueList.isEmpty
+              ? GestureDetector(
+                  child: const Text('멍멍이 선택'),
+                  onTap: () {
+                    setState(() {});
                   },
-                );
-              },
-            ),
-          ),
-        ),
+                )
+              : DropdownButton(
+                  value: controller.selectedValue,
+                  items: controller.valueList.map(
+                    (value) {
+                      return DropdownMenuItem(
+                        value: value,
+                        child: Text(value),
+                      );
+                    },
+                  ).toList(),
+                  onChanged: (value) {
+                    setState(
+                      () {
+                        controller.selectedValue = value.toString();
+                      },
+                    );
+                  },
+                ),
+        )
       ],
     );
   }

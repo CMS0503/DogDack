@@ -27,10 +27,12 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
 
   void fbstoreWrite() async {
     final petsRef = FirebaseFirestore.instance.collection(
-        'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/pets');
+        'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
 
     // var dogId = '';
-    var result = await petsRef.where("name", isEqualTo: controller.name).get();
+    print('controller.saveName ${controller.saveName}');
+    var result =
+        await petsRef.where("name", isEqualTo: controller.saveName).get();
 
     if (result.docs.isNotEmpty) {
       String dogId = result.docs[0].id;

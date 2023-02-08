@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dogdack/screens/calendar_main/widgets/calendar.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/controller/input_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DatePicker extends StatefulWidget {
   const DatePicker({super.key});
@@ -25,15 +28,84 @@ class _DatePickerState extends State<DatePicker> {
 
   // dogname =
 
+  var selectedValue = '';
+  // final Map<String, List<Object>> events = {'': []};
+
+  final petsRef = FirebaseFirestore.instance
+      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');
+
+  String docId = '';
+
+  getName() async {
+    var dogDoc = await petsRef.get();
+    List<String> dogs = [];
+    // 자.. 여기다가 등록된 강아지들 다 입력하는거야
+    for (int i = 0; i < dogDoc.docs.length; i++) {
+      dogs.insert(0, dogDoc.docs[i]['name']);
+    }
+    controller.valueList = dogs;
+
+    // 근데 강아지들이 없으면?
+    if (dogs.isEmpty) {
+      '그냥 넘어가야지 뭐';
+    } else {
+      // 강아지들이 있는데 처음 들어왔을 때 강아지 선택을 안한 상태면
+      if (selectedValue == '') {
+        // 그냥 처음 강아지로 가져오기
+        selectedValue = dogs[0];
+        var result =
+            await petsRef.where("name", isEqualTo: selectedValue).get();
+        if (result.docs.isNotEmpty) {
+          String dogId = result.docs[0].id;
+          final calRef = petsRef.doc(dogId).collection('Calendar');
+          var data = await calRef.get();
+          for (int i = 0; i < data.docs.length; i++) {
+            Calendar.events['${data.docs[i].reference.id}/$selectedValue'] = [
+              data.docs[i]['diary'],
+              data.docs[i]['bath'],
+              data.docs[i]['beauty'],
+            ];
+          }
+          setState(() {});
+        }
+      } else {
+        // 그게 아니면 selectedValue로 데이터 가져오기
+        var result =
+            await petsRef.where("name", isEqualTo: selectedValue).get();
+        if (result.docs.isNotEmpty) {
+          String dogId = result.docs[0].id;
+          final calRef = petsRef.doc(dogId).collection('Calendar');
+          var data = await calRef.get();
+          for (int i = 0; i < data.docs.length; i++) {
+            Calendar.events['${data.docs[i].reference.id}/$selectedValue'] = [
+              data.docs[i]['diary'],
+              data.docs[i]['bath'],
+              data.docs[i]['beauty'],
+            ];
+          }
+          setState(() {});
+          print(Calendar.events);
+        }
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getName();
+  }
+
   @override
   Widget build(BuildContext context) {
-    var name = controller.name;
+    // var name = controller.name;
 
-    if (controller.name == '') {
-      name = '댕댕이 없음';
-    } else {
-      name = controller.name;
-    }
+    // if (controller.name == '') {
+    //   name = '댕댕이 없음';
+    // } else {
+    //   name = controller.name;
+    // }
 
     return Column(
       children: [
@@ -97,21 +169,36 @@ class _DatePickerState extends State<DatePicker> {
                               controller.date = date;
                             },
                           ),
-                          Row(
-                            children: [
-                              Text(
-                                name,
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: 'bmjua',
-                                  fontSize: 22,
-                                ),
-                              ),
-                              const Icon(
-                                Icons.expand_more,
-                                color: Colors.black,
-                              ),
-                            ],
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 10, left: 20),
+                              child: selectedValue.isEmpty
+                                  ? GestureDetector(
+                                      child: const Text('멍멍이를 선택해주세요'),
+                                      onTap: () {
+                                        setState(() {});
+                                      },
+                                    )
+                                  : DropdownButton(
+                                      value: selectedValue,
+                                      items: controller.valueList.map(
+                                        (value) {
+                                          return DropdownMenuItem(
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        },
+                                      ).toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedValue = value.toString();
+                                          getName();
+                                          controller.saveName = selectedValue;
+                                        });
+                                      },
+                                    ),
+                            ),
                           ),
                         ],
                       ),

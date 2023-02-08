@@ -12,7 +12,11 @@ class InputController extends GetxController {
   bool beauty = true;
   List<String> imageUrl = [];
   String name = '';
-  RxList<dynamic> dognames = [].obs;
+  List<String> dognames = [];
+  List<String> valueList = [];
+  String selectedValue = '';
+  String saveName = '';
+  // RxMap<dynamic, dynamic> events = {}.obs;
 
   // void input() {
   //   update();
