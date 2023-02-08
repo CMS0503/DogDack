@@ -360,7 +360,7 @@ class _MyPageState extends State<MyPage> {
                             return CircleAvatar(
                               radius: size.width * 0.3,
                               child: ClipOval(
-이                                child: Container() /*FadeInImage.memoryNetwork(
+                                child: Container() /*FadeInImage.memoryNetwork(
                                   fit: BoxFit.cover,
                                   placeholder: kTransparentImage,
                                   image: snapshot.data!.docs[itemIndex].get('imageUrl'),
