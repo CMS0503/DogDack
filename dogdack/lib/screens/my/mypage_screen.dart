@@ -1,6 +1,7 @@
 // Widgets
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:dogdack/models/user_data.dart';
+import 'package:dogdack/screens/my/widgets/mypage_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -40,7 +41,7 @@ class _MyPageState extends State<MyPage> {
       .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
 
   // Firebase : 유저 전화 번호 저장을 위한 참조 값
-  final userRef = FirebaseFirestore.instance.collection('Users')
+  final userRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/UserInfo')
       .withConverter(fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!), toFirestore: (userData, _) => userData.toJson());
 
   // GetX
@@ -181,23 +182,45 @@ class _MyPageState extends State<MyPage> {
                             StreamBuilder(
                               stream: userRef.snapshots(),
                               builder: (userContext, userSnapshot) {
+                                if(!userSnapshot.hasData)
+                                  return CircularProgressIndicator();
+
+                                String phNum = '아직 번호가 등록 되어 있지 않습니다.';
+                                if(userSnapshot.data!.docs.length != 0) {
+                                  phNum = userSnapshot.data!.docs[0].get('phoneNumber');
+                                }
+
                                 return InkWell(
                                   onTap: () {
                                     showTextInputDialog(
                                       context: context,
+                                      title: '전화 번호',
+                                      message: '현재 전화 번호 \n\n ${phNum}',
                                       textFields: [
                                         DialogTextField(
                                           keyboardType: TextInputType.number,
                                           hintText: '전화 번호를 입력하세요',
-                                          initialText: '',
                                         )
                                       ],
                                     ).then((value) {
-                                      var map = Map<String, dynamic>();
-                                      map["phoneNumber"] = value!.elementAt(0).toString();
+                                      if(value == null)
+                                        return;
 
-                                      userRef.doc('${FirebaseAuth.instance.currentUser!.email}').update(map)
-                                          .whenComplete(() => print("변경 완료")).catchError((error) => print(error));
+                                      var map = Map<String, dynamic>();
+                                      map["phoneNumber"] = value.elementAt(0).toString();
+
+                                      if(value.elementAt(0).toString().length == 0) {
+                                        MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.PhoneNumberNotExist);
+                                        return;
+                                      }
+
+                                      if(userSnapshot.data!.docs.length == 0) {
+                                        userRef.doc('number').set(UserData(phoneNumber: value.elementAt(0).toString())).then((value) => print('전화번호 저장 완료'))
+                                            .catchError((error) => print('전화번호 저장 오류! ${error}'));
+                                      } else {
+                                        userRef.doc('number').update(map)
+                                            .whenComplete(() => print("변경 완료")).catchError((error) => print('전화번호 저장 오류! ${error}'));
+                                      }
                                     });
                                   },
                                   child: CircleAvatar(
