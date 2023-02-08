@@ -411,12 +411,21 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     if (mypageStateController.myPageStateType == MyPageStateType.Edit) {
       pickComp = true; // 사진이 골라져있음
 
-      _nameController = TextEditingController(text: petController.selectedPetName); // 이름
-      gender = petController.selectedPetGender; // 성별
-      birth = petController.selectedPetBirth; // 생일
-      kategorie = petController.selectedPetKategorie; // 카테고리
-      _breedController = TextEditingController(text: petController.selectedPetBreed); // 견종
-      weight = petController.selectedPetWeight; // 몸무게
+      // 선택한 강아지로 이름 초기화
+      name = petController.selectedPetName;
+      _nameController = TextEditingController(text: petController.selectedPetName);
+      // 선택한 강아지로 성별 초기화
+      gender = petController.selectedPetGender;
+      // 선택한 강아지로 생일 초기화
+      birth = petController.selectedPetBirth;
+      selectBirth = true;
+      // 선택한 강아지로 카테고리 초기화
+      kategorie = petController.selectedPetKategorie;
+      // 선택한 강아지로 견종 초기화
+      breed = petController.selectedPetBreed;
+      _breedController = TextEditingController(text: petController.selectedPetBreed);
+      // 선택한 강아지로 무게 초기화
+      weight = petController.selectedPetWeight;
     }
 
     for(int i = 1; i <= 200; i++)
@@ -750,6 +759,13 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                                   return;
                                                 }
 
+                                                // 이름이 10글자를 초과할 경우 알림
+                                                if(name.length > 10) {
+                                                  MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameOverflow);
+                                                  uploadingData = false;
+                                                  return;
+                                                }
+
                                                 // 생일을 선택하지 않은 경우
                                                 if (!selectBirth) {
                                                   MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BirthNotExist);
@@ -816,9 +832,11 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                             foregroundColor: MaterialStateProperty.all(Colors.white),
                                           ),
                                 ),
-                              ],
-                            )
-                                  : CircularProgressIndicator(),
+                                      ],
+                                    )
+                                  : Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
                           ],
                         ),
                       ),
