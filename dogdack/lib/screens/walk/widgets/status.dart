@@ -54,29 +54,20 @@ class _StatusState extends State<Status> {
                       true, // setting it true will show initials text above profile picture, default false
                 ),
               ),
-<<<<<<< HEAD
-              const Text('name'),
-              IconButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/Ble');
-                  },
-                  icon: const Icon(Icons.bluetooth_outlined)),
-=======
-              SizedBox(
+              const SizedBox(
                 width: 10,
               ),
               Column(
                 children: [
-                  Text('${name}'),
+                  Text('$name'),
                   IconButton(
                     onPressed: () {
                       Navigator.pushNamed(context, '/Ble');
                     },
-                    icon: Icon(Icons.bluetooth_outlined),
+                    icon: const Icon(Icons.bluetooth_outlined),
                   ),
                 ],
               ),
->>>>>>> eb8daeae3be34c8e71403a4ef1c8ac52e5d4d2d2
             ],
           ),
           Column(

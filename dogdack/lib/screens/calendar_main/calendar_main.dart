@@ -6,9 +6,7 @@ import 'package:dogdack/screens/calendar_schedule_edit/calendar_schedule_edit.da
 import 'package:flutter/material.dart';
 
 class CalendarMain extends StatefulWidget {
-  const CalendarMain({super.key, required this.tabIndex});
-
-  final int tabIndex;
+  const CalendarMain({super.key});
 
   @override
   State<CalendarMain> createState() => _CalendarPageState();

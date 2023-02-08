@@ -12,7 +12,6 @@ class InputController extends GetxController {
   bool bath = true;
   bool beauty = true;
   List<String> imageUrl = [];
-<<<<<<< HEAD:dogdack/lib/screens/calendar_schedule_edit/controller/input_controller.dart
   String name = '';
   List<String> dognames = [];
   List<String> valueList = [];
@@ -22,12 +21,4 @@ class InputController extends GetxController {
   // void input() {
   //   update();
   // }
-=======
-  DateTime today = DateTime.now();
-
-  void setDate(selectedDate) {
-    date = selectedDate;
-    update();
-  }
->>>>>>> eb8daeae3be34c8e71403a4ef1c8ac52e5d4d2d2:dogdack/lib/controllers/input_controller.dart
 }

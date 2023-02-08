@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dogdack/screens/calendar_schedule_edit/controller/input_controller.dart';
-=======
 import 'package:dogdack/controllers/input_controller.dart';
->>>>>>> eb8daeae3be34c8e71403a4ef1c8ac52e5d4d2d2
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
