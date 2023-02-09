@@ -22,8 +22,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   // Firebase : 반려견 테이블 참조 값
-  final petsRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
-      .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
+  final petsRef = FirebaseFirestore.instance
+      .collection('Users/${'imcsh313@naver.com'}/Pets')
+      .withConverter(
+          fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+          toFirestore: (dogData, _) => dogData.toJson());
 
   final sliderController = Get.put(HomePageSliderController());
   final homePageWalkCalculatorController = Get.put(HomePageWalkCalculatorController());
@@ -63,28 +66,53 @@ class _HomePageState extends State<HomePage> {
 
                       //오늘 날짜 구하기
                       var _today = DateTime.now();
-                      //현재 선택된 반려견 생일 문자열 파싱
-                      String _petBirthYearOrigin = petSnapshot.data!.docs[sliderController.sliderIdx].get('birth');
-                      String _petBirth = '';
-                      List<String> birthList = _petBirthYearOrigin.split('.');
-                      for(int liIdx = 0; liIdx < birthList.length; liIdx++) {
-                        _petBirth += birthList.elementAt(liIdx);
+                    //현재 선택된 반려견 생일 문자열 파싱
+                    String _petBirthYearOrigin = petSnapshot
+                        .data!.docs[sliderController.sliderIdx]
+                        .get('birth');
+                    String _petBirth = '';
+                    List<String> birthList = _petBirthYearOrigin.split('.');
+                    for (int liIdx = 0; liIdx < birthList.length; liIdx++) {
+                      _petBirth += birthList.elementAt(liIdx);
+                    }
+                    // int displayBirth = int.parse(_today.difference(DateTime.parse(_petBirth)).inDays.toString());
+
+                    String curDogID =
+                        petSnapshot.data!.docs[sliderController.sliderIdx].id;
+                    CollectionReference refCurDogWalk = FirebaseFirestore
+                        .instance
+                        .collection('Users/${'imcsh313@naver.com'}/Pets/')
+                        .doc(curDogID)
+                        .collection('Walk');
+
+                    var startOfToday = Timestamp.fromDate(DateTime.now()
+                        .subtract(Duration(
+                            hours: DateTime.now().hour,
+                            minutes: DateTime.now().minute,
+                            seconds: DateTime.now().second,
+                            milliseconds: DateTime.now().millisecond,
+                            microseconds: DateTime.now().microsecond)));
+                    var endOfToday = Timestamp.fromDate(DateTime.now().add(
+                        Duration(
+                            days: 1,
+                            hours: -DateTime.now().hour,
+                            minutes: -DateTime.now().minute,
+                            seconds: -DateTime.now().second,
+                            milliseconds: -DateTime.now().millisecond,
+                            microseconds: -DateTime.now().microsecond)));
+
+                    refCurDogWalk
+                        .where("startTime",
+                            isGreaterThanOrEqualTo: startOfToday,
+                            isLessThan: endOfToday)
+                        .get()
+                        .then((QuerySnapshot snapshot) {
+                      num totalGoalTime = 0;
+                      num totalTimeMinute = 0;
+                      for (var document in snapshot.docs) {
+                        totalGoalTime += document.get('goal');
+                        totalTimeMinute += document.get('totalTimeMin');
                       }
-                      // int displayBirth = int.parse(_today.difference(DateTime.parse(_petBirth)).inDays.toString());
-
-                      String curDogID = petSnapshot.data!.docs[sliderController.sliderIdx].id;
-                      CollectionReference refCurDogWalk = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets/').doc(curDogID).collection('Walk');
-
-                      var startOfToday = Timestamp.fromDate(DateTime.now().subtract(Duration(hours: DateTime.now().hour, minutes: DateTime.now().minute, seconds: DateTime.now().second, milliseconds: DateTime.now().millisecond, microseconds: DateTime.now().microsecond)));
-                      var endOfToday = Timestamp.fromDate(DateTime.now().add(Duration(days: 1, hours: -DateTime.now().hour, minutes: -DateTime.now().minute, seconds: -DateTime.now().second, milliseconds: -DateTime.now().millisecond, microseconds: -DateTime.now().microsecond)));
-
-                      refCurDogWalk.where("startTime", isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday).get().then((QuerySnapshot snapshot) {
-                        num totalGoalTime = 0;
-                        num totalTimeMinute = 0;
-                        for (var document in snapshot.docs) {
-                          totalGoalTime += document.get('goal');
-                          totalTimeMinute += document.get('totalTimeMin');
-                        }
 
                         homePageWalkCalculatorController.compPercent = ((totalTimeMinute / totalGoalTime) * 100).toInt();
                         homePageWalkCalculatorController.getTodayWalkPercent();

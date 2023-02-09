@@ -13,7 +13,7 @@ class WalkController extends GetxController {
   final String serviceUuid = '0000ffe0-0000-1000-8000-00805f9b34fb';
   final String characteristicUuid = '0000ffe1-0000-1000-8000-00805f9b34fb';
 
-  RxBool isBleConnect = true.obs;
+  RxBool isBleConnect = false.obs;
 
   // 위도, 경도
   RxDouble latitude = 37.500735.obs;

@@ -27,8 +27,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
 
   void fbstoreWrite() {
     FirebaseFirestore.instance
-        .collection(
-            'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
+        .collection('Users/${'imcsh313@naver.com'}/Pets')
         .doc(DateFormat('yyMMdd').format(controller.date))
         .withConverter(
           fromFirestore: (snapshot, options) =>
@@ -47,8 +46,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
         .catchError((error) => print("Fail to add doc $error"));
 
     FirebaseFirestore.instance
-        .collection(
-            'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Walk')
+        .collection('Users/${'imcsh313@naver.com'}/Walk')
         .doc(DateFormat('yyMMdd').format(controller.date))
         .withConverter(
           fromFirestore: (snapshot, options) =>

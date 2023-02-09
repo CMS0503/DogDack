@@ -21,7 +21,7 @@ class _StatusState extends State<Status> {
   final WalkController walkController = Get.put(WalkController());
   final PetController petController = Get.put(PetController());
 
-  // final petsRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
+  // final petsRef = FirebaseFirestore.instance.collection('Users/${'imcsh313@naver.com'}/Pets')
   //     .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
   String? name = '공숙이';
 
