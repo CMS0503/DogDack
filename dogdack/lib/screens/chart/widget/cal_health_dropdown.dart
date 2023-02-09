@@ -63,7 +63,6 @@ class _CalHealthDropdownWidgetState extends State<CalHealthDropdownWidget> {
             () {
               selectedValue = value!;
               controller.drop_value.value = value;
-              print(selectedValue+"여긴드롭");
 
             },
           );

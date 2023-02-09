@@ -176,38 +176,47 @@ class _ChartMainState extends State<ChartMain> {
 
     var points_result = await day_points.get();
 
+    List<String> date_list = [];
+    // 최신일 -> 두달전
+    for (int i = 0; i < 60; i++) {
+      String temp = DateTime.now().subtract(Duration(days: 59 - i)).toString();
+      date_list.add(temp.substring(0, 10));
+    }
+    List<String> docs_list = [];
     for (int i = 0; i < points_result.docs.length; i++) {
+      docs_list.add((points_result.docs[i]['startTime'])
+          .toDate()
+          .toString()
+          .substring(0, 10));
+    }
 
-      if (i == 0) {
-        day_hour_points[i] = points_result.docs[i]['totalTimeMin'].toDouble();
-        week_hour_points[i] = points_result.docs[i]['totalTimeMin'].toDouble();
-        day_distance_points[i] = points_result.docs[i]['distance'].toDouble();
-        week_distance_points[i] = points_result.docs[i]['distance'].toDouble();
-        day_goal_hour_points[i] = points_result.docs[i]['goal'].toDouble();
-      } else {
-        //이번주
-        if (i < 7) {
-          day_hour_points.add(points_result.docs[i]['totalTimeMin'].toDouble());
-          day_distance_points.add(points_result.docs[i]['distance'].toDouble());
-          day_goal_hour_points.add(points_result.docs[i]['goal'].toDouble());
-        }
-        if (i < 28) {
+    List<double> temp = List<double>.filled(60, 0);
+    day_hour_points = List<double>.filled(7, 0);
+    week_hour_points = List<double>.filled(30, 0);
+    day_distance_points = List<double>.filled(7, 0);
+    week_distance_points =List<double>.filled(30, 0);
+    day_goal_hour_points =  List<double>.filled(7, 0);
+    week_goal_hour_points =  List<double>.filled(30, 0);
 
-          week_hour_points
-              .add(points_result.docs[i]['totalTimeMin'].toDouble());
-          week_distance_points
-              .add(points_result.docs[i]['distance'].toDouble());
-          week_goal_hour_points.add(points_result.docs[i]['goal'].toDouble());
 
+
+    for (int i = 0; i < date_list.length; i++) {
+      for (int j = 0; j < docs_list.length; j++) {
+        if (docs_list[j] == (date_list[i])) {
+          if(i>60-7){
+            day_hour_points[date_list.length-i] = points_result.docs[j]['totalTimeMin'].toDouble();
+            day_distance_points[date_list.length-i] = points_result.docs[j]['distance'].toDouble();
+            day_goal_hour_points[date_list.length-i] = points_result.docs[j]['goal'].toDouble();
+          }
+          if(i>60-30){
+            week_hour_points[date_list.length-i] = points_result.docs[j]['totalTimeMin'].toDouble();
+            week_distance_points[date_list.length-i] = points_result.docs[j]['distance'].toDouble();
+            week_goal_hour_points[date_list.length-i] = points_result.docs[j]['goal'].toDouble();
+          }
         }
       }
-      // if(i>6 && i<14){
-      //   last_day_hour_points.add(points_result.docs[i]['totalTimeMin'].toDouble());
-      // }
-      // if(i>28 && i<56){
-      //   last_week_hour_points.add(points_result.docs[i]['totalTimeMin'].toDouble());
-      // }
     }
+
     return events;
   }
 
@@ -406,3 +415,4 @@ class _ChartMainState extends State<ChartMain> {
     );
   }
 }
+

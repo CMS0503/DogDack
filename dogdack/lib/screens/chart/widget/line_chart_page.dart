@@ -30,7 +30,6 @@ class _ChartPageState extends State<ChartPage> {
                 child:  CustomPaint(
                   size: Size(300, 300),
                   painter: LineChart(
-                    // points: day_points,
                     points: widget.points,
                     pointSize: 5.0,
                     pointColor: widget.graph_coolor,

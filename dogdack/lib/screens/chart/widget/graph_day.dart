@@ -26,10 +26,8 @@ class _DayWidgetState extends State<DayWidget> {
   @override
   Widget build(BuildContext context) {
     for(int i=0;i<7;i++){
-      days.add(DateFormat.E('ko_KR').format(controller.today.subtract(Duration(days: 6-i))));
+      days.add(DateFormat.E('ko_KR').format(DateTime.now().subtract(Duration(days: 6-i))));
     }
-
-    print(DateFormat.E('ko_KR').format(controller.today));
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     int index = 0;
@@ -72,7 +70,7 @@ class WeekWidget extends StatefulWidget {
 }
 
 class _WeekWidgetState extends State<WeekWidget> {
-  List<String> days = ["1주차","2주차","3주차","4주차"];
+  List<String> days = [];
 
   TextStyle style = TextStyle(
       fontSize: 14,
@@ -81,6 +79,14 @@ class _WeekWidgetState extends State<WeekWidget> {
 
   @override
   Widget build(BuildContext context) {
+
+    for(int i=0;i<28;i+=7){
+      days.add( DateFormat('MM/dd').format(DateTime.now().subtract(Duration(days: 28-i))));
+    }
+    days.add(DateFormat('MM/dd').format(DateTime.now()));
+
+
+
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     int index = 0;
@@ -90,6 +96,9 @@ class _WeekWidgetState extends State<WeekWidget> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
+              Container(
+                child: Text("${days[index++]}", style: style),
+              ),
               Container(
                 child: Text("${days[index++]}", style: style),
               ),
