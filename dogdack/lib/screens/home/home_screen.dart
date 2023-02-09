@@ -114,7 +114,12 @@ class _HomePageState extends State<HomePage> {
                         totalTimeMinute += document.get('totalTimeMin');
                       }
 
-                        homePageWalkCalculatorController.compPercent = ((totalTimeMinute / totalGoalTime) * 100).toInt();
+                        if(totalGoalTime == 0) {
+                          homePageWalkCalculatorController.compPercent = 100;
+                        } else {
+                          homePageWalkCalculatorController.compPercent = ((totalTimeMinute / totalGoalTime) * 100).toInt();
+                        }
+
                         homePageWalkCalculatorController.getTodayWalkPercent();
                       });
 
