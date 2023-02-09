@@ -17,8 +17,11 @@ class InputController extends GetxController {
   List<String> valueList = [];
   String selectedValue = '';
   String saveName = '';
+  String time = '';
+  DateTime today = DateTime.now();
 
-  // void input() {
-  //   update();
-  // }
+  void setDate(selectedDate) {
+    date = selectedDate;
+    update();
+  }
 }

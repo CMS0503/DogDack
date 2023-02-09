@@ -55,7 +55,9 @@ class WalkController extends GetxController {
 
   void getList() async {
     String temp = "";
-    await for(var snapshot in FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets').snapshots()) {
+    await for (var snapshot in FirebaseFirestore.instance
+        .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets')
+        .snapshots()) {
       for (var messege in snapshot.docs) {
         temp = messege.data()['name'];
         petList.add(temp);
@@ -65,10 +67,11 @@ class WalkController extends GetxController {
   }
 
   int getCur() {
-    if((timeCount.value ~/ 100) == 0) {
+    if ((timeCount.value ~/ 100) == 0) {
       curGoal.value = 0;
     } else {
-      curGoal.value = (((timeCount.value ~/ 100) / (goal.value * 60)) * 100).round();
+      curGoal.value =
+          (((timeCount.value ~/ 100) / (goal.value * 60)) * 100).round();
     }
     return curGoal.value;
   }
@@ -77,8 +80,9 @@ class WalkController extends GetxController {
     int cnt = 0;
     int temp = 0;
     int recTime = 0;
-    await for (var snapshot in FirebaseFirestore.instance.collection(
-        'Users/${FirebaseAuth.instance.currentUser!.email}/Pets').snapshots()) {
+    await for (var snapshot in FirebaseFirestore.instance
+        .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets')
+        .snapshots()) {
       for (var messege in snapshot.docs) {
         cnt++;
         temp = messege.data()['recommend'];
@@ -88,8 +92,6 @@ class WalkController extends GetxController {
     }
   }
 
-
-
   @override
   void onInit() {
     ever(timeCount, (_) {
@@ -98,7 +100,6 @@ class WalkController extends GetxController {
             '${timeCount ~/ 360000}:${timeCount ~/ 6000}:${(timeCount % 6000) ~/ 100}, ${distance!.toInt()}m');
       }
     });
-
   }
 
   void addData(lat, lng) {
@@ -112,33 +113,35 @@ class WalkController extends GetxController {
     // geolist?.add(GeoPoint(42.213, 142.234125));
     String docId = "";
 
-    CollectionReference petRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');
+    CollectionReference petRef = FirebaseFirestore.instance
+        .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');
 
     final petDoc = petRef.where("name", isEqualTo: curName);
     petDoc.get().then((value) {
       docId = value.docs[0].id;
       // print('$curName의 문서 id : $docId');
 
-      FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets/$docId/Walk')
+      FirebaseFirestore.instance
+          .collection(
+              'Users/${FirebaseAuth.instance.currentUser!.email}/Pets/$docId/Walk')
           .withConverter(
-        fromFirestore: (snapshot, options) => WalkData.fromJson(snapshot.data()!),
-        toFirestore: (value, options) => value.toJson(),
-      )
-      // .doc('${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}')
-      // .set(WalkData(
+            fromFirestore: (snapshot, options) =>
+                WalkData.fromJson(snapshot.data()!),
+            toFirestore: (value, options) => value.toJson(),
+          )
+          // .doc('${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}')
+          // .set(WalkData(
           .add(WalkData(
-        geolist: geolist,
-        startTime: startTime,
-        endTime: endTime,
-        totalTimeMin: timeCount.value ~/ 6000,
-        isAuto: true,
-        // place: ,
-        distance: distance,
-        goal: goal.value,
-      ));
+            geolist: geolist,
+            startTime: startTime,
+            endTime: endTime,
+            totalTimeMin: timeCount.value ~/ 6000,
+            isAuto: true,
+            // place: ,
+            distance: distance,
+            goal: goal.value,
+          ));
     });
-
-
   }
 
   void setCurrentLocation(curLatitude, curLongitude) {
@@ -157,7 +160,7 @@ class WalkController extends GetxController {
     // LCD 초기화
     if (isStart == false) {
       initLCD();
-      Future.delayed(Duration(seconds: 1));
+      Future.delayed(const Duration(seconds: 1));
     }
 
     isStart = true;
@@ -185,7 +188,6 @@ class WalkController extends GetxController {
     super.onClose();
   }
 
-
   void abv() {
     update();
   }
@@ -208,6 +210,5 @@ class WalkController extends GetxController {
         }
       }
     }
-
   }
 }
