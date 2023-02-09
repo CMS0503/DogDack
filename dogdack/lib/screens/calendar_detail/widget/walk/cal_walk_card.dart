@@ -5,6 +5,9 @@ import 'package:dogdack/screens/calendar_detail/widget/walk/cal_walk_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:get/get.dart';
+
+import '../../../../controllers/walk_controller.dart';
 
 class CalWalkCardWidget extends StatefulWidget {
   String place;
@@ -25,37 +28,74 @@ class CalWalkCardWidget extends StatefulWidget {
 class _CalWalkCardWidget extends State<CalWalkCardWidget> {
   Set<Polyline> _polyline = {};
   List<LatLng> latlng = [];
+  var data;
   final Completer<GoogleMapController> _controller = Completer();
+  final walkController = Get.put(WalkController());
+
 
   @override
   void initState() {
     super.initState();
 
     setPoly().then((result) {
-      setState(() {});
+      _polyline.add(
+        Polyline(
+            polylineId: PolylineId('1'),
+            points: latlng,
+            width: 3,
+            color: Colors.blue
+        ),
+      );
+      walkController.abv();
     });
-
-    _polyline.add(
-      Polyline(
-          polylineId: PolylineId('1'),
-          points: latlng,
-          width: 3,
-          color: Colors.blue
-      ),
-    );
   }
 
   Future<void> setPoly() async {
     latlng.clear();
-    var documentSnapshot = await FirebaseFirestore.instance
-        .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
-        .doc('${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}')
-        .get();
-    // var documentSnapshot = await FirebaseFirestore.instance
-    //     .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
-    //     .where('startTime', isEqualTo: )
 
-    var data = await documentSnapshot.data()!['geolist'];
+    String docId = "";
+
+    CollectionReference petRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');
+
+    // 현재 강아지 walkController.curName  ->  walkController 가서 수정할것
+    final petDoc = petRef.where("name", isEqualTo: walkController.curName);
+    await petDoc.get().then((value) async {
+      docId = value.docs[0].id;
+
+      // print('${walkController.curName}의 문서 id : $docId');
+
+
+      final firestore = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets/$docId/Walk');
+      // selectedDay : 캘린더에서 선택한 날짜  -> controller에서 받아올것
+      var selectedDay = DateTime(2023, 2, 9);
+
+      var startOfToday = Timestamp.fromDate(selectedDay);
+      var endOfToday = Timestamp.fromDate(selectedDay.add(Duration(days: 1)));
+      // var startOfToday = Timestamp.fromDate(selectedDay.subtract(Duration(hours: selectedDay.hour, minutes: selectedDay.minute, seconds: selectedDay.second, milliseconds: selectedDay.millisecond, microseconds: selectedDay.microsecond)));
+      // var endOfToday = Timestamp.fromDate(selectedDay.subtract(Duration(hours: selectedDay.hour, minutes: selectedDay.minute, seconds: selectedDay.second, milliseconds: selectedDay.millisecond, microseconds: selectedDay.microsecond)));
+
+      await firestore.where("startTime", isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday).orderBy("startTime", descending: true).get().then((QuerySnapshot snapshot) async {
+        // print("Document ID: ${snapshot.docs[0].id}, Data: ${snapshot.docs[0].data()}");
+        data = snapshot.docs[0]['geolist'];
+        addPloy(data);
+      });
+    });
+
+    // var documentSnapshot = await FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
+    //     // .doc('${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}')
+    //     .doc('2023_2_7')
+    //     .get();
+    // // var documentSnapshot = await FirebaseFirestore.instance
+    // //     .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
+    // //     .where('startTime', isEqualTo: )
+    //
+    // var data = await documentSnapshot.data()!['geolist'];
+    // for (int i = 0; i < data.length; i++) {
+    //   latlng.add(LatLng(data[i].latitude, data[i].longitude));
+    // }
+  }
+
+  Future<void> addPloy(data) async {
     for (int i = 0; i < data.length; i++) {
       latlng.add(LatLng(data[i].latitude, data[i].longitude));
     }
@@ -88,16 +128,19 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
                   // child: Image.asset("${widget.imageUrl}")
                   child: Stack(
                     children: [
-                      GoogleMap(
-                        initialCameraPosition: CameraPosition(
-                          target: LatLng(37.5012428, 127.039585),
-                          zoom: 15,
-                        ),
-                        onMapCreated: (mapController) {
-                          _controller.complete(mapController);
-                        },
-                        polylines: _polyline,
-                      ),
+                      GetBuilder<WalkController>(builder: (_) {
+                        return GoogleMap(
+                          initialCameraPosition: const CameraPosition(
+                            target: LatLng(37.5012428, 127.039585),
+                            zoom: 15,
+                          ),
+                          onMapCreated: (mapController) {
+                            _controller.complete(mapController);
+                          },
+                          polylines: _polyline,
+                        );
+                      })
+                      ,
                     ],
                   )),
 

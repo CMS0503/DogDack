@@ -15,9 +15,6 @@ import '../../controllers/main_controll.dart';
 class WalkPage extends StatelessWidget {
   WalkPage({super.key});
 
-  final petsRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
-      .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
-
   final walkController = Get.put(WalkController());
   final mainController = Get.put(MainController());
 
@@ -70,58 +67,18 @@ class WalkPage extends StatelessWidget {
   Widget choiceDogModal(w, h, context) {
     return Opacity(
       opacity: 0.7,
-      child: Container(
-          decoration: const BoxDecoration(color: Colors.grey),
-          height: h * 0.6,
-          width: w,
-          child: Align(
-            alignment: Alignment.center,
-            child: Container(
-              height: 200,
-              width: w * 0.9,
-              decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(15)
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  StreamBuilder(
-                      stream: petsRef.snapshots(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return Center(child: CircularProgressIndicator());
-                        }
+      child: CarouselSlider(
+        options: CarouselOptions(
 
-                        // 불러온 데이터가 없을 경우 등록 안내
-                        if (snapshot.data!.docs.length == 0) {
-                          return Center(
-                            child: Text('댕댕이를 등록해주세요!'),
-                          );
-                        }
+        ),
+        items: [
 
-                        return Row(
-                          children: <Widget> [
-                            InkWell(
-                              onTap: () {
-                                walkController.setImageUrl(snapshot.data!.docs[0].get('imageUrl'));
-                                print(walkController.ImageURL);
-                                },
-                              child: Text("text"),
-                              // Expanded(child: Image.network(snapshot.data!.docs[0].get('imageUrl'), fit: BoxFit.scaleDown,)),
-                            )
-                          ],
-                        );
-                      }
-                  )
-                ],
-              ),
-            ),
-          )
+        ],
       ),
     );
   }
 
-  Widget walkTime(w, h, context) {
+  Widget walkTimeModal(w, h, context) {
     walkController.recommend();
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
@@ -294,7 +251,7 @@ class WalkPage extends StatelessWidget {
                         children: [
                           mapAreaWidget(screenWidth, screenHeight),
                           walkController.goal.value == 0
-                            ? walkTime(screenWidth, screenHeight, context)
+                            ? walkTimeModal(screenWidth, screenHeight, context)
                             : (walkController.isRunning.value == walkController.isStart)
                               ? Container()
                               : endWalkModal(screenWidth, screenHeight, context),
