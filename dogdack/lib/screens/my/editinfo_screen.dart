@@ -81,6 +81,23 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     );
   }
 
+  bool isSameName(String inputName) {
+    final petRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
+
+    if(mypageStateController.myPageStateType == MyPageStateType.Edit && inputName == petController.selectedPetName) {
+      // 편집하는 경우
+      return false;
+    }
+
+    for(int i = 0; i < petController.petNameList.length; i++) {
+      if(petController.petNameList.elementAt(i).compareTo(inputName) == 0) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   // 견종 카테고리 선택
   showPickerKategorieArray(BuildContext context) {
     new Picker(
@@ -726,6 +743,13 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                       return;
                                     }
 
+                                    // 이름 중복 검사
+                                    if(isSameName(name)) {
+                                      MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameAlreadyExist);
+                                      uploadingData = false;
+                                      return;
+                                    }
+
                                     // 생일을 선택하지 않은 경우 알림
                                     if(!selectBirth) {
                                       MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BirthNotExist);
@@ -806,6 +830,13 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                                 // 이름이 10글자를 초과할 경우 알림
                                                 if(name.length > 10) {
                                                   MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameOverflow);
+                                                  uploadingData = false;
+                                                  return;
+                                                }
+
+                                                // 이름 중복 검사
+                                                if(isSameName(name)) {
+                                                  MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameAlreadyExist);
                                                   uploadingData = false;
                                                   return;
                                                 }

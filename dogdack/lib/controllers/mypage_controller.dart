@@ -35,6 +35,8 @@ class PetController extends GetxController {
   num selectedPetRecommend = 0;
   int selectedPetScrollIndex = 0; // 해당 반려견의 슬라이더 인덱스
 
+  List<String> petNameList = [];
+
   // 슬라이더 인덱스로 선택한 반려견의 정보를 갱신
   updateSelectedPetInfo(AsyncSnapshot<QuerySnapshot<DogData>> snapshot, PetController petController, int index) {
     petController.selectedPetID = snapshot.data!.docs[index].id;

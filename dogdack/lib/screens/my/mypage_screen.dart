@@ -127,7 +127,7 @@ class _MyPageState extends State<MyPage> {
     final double petInfoHeight = size.height * 0.45;
 
     // 스크린 상태 갱신 : 정보 조회 화면
-    mypageStateController.myPageStateType = MyPageStateType.View;
+    // mypageStateController.myPageStateType = MyPageStateType.View;
 
     //총 산책 시간, 총 산책 횟수 계산
     getTotalWalkMin();
@@ -339,6 +339,11 @@ class _MyPageState extends State<MyPage> {
                     // 마지막으로 저장된 스크롤 인덱스에 맞춰 정보 갱신함
                     // 인덱스는 0번 부터 시작하며 초기 값은 0
                     PetController().updateSelectedPetInfo(snapshot, petController, petController.selectedPetScrollIndex);
+
+                    petController.petNameList.clear();
+                    for(int petIdx = 0; petIdx < snapshot.data!.docs.length; petIdx++) {
+                      petController.petNameList.add(snapshot.data!.docs[petIdx].get('name'));
+                    }
 
                     return Column(
                       children: [
