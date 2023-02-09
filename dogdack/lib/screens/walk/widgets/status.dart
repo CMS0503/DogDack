@@ -38,7 +38,7 @@ class _StatusState extends State<Status> {
   //
   // Future<void> setImageUrl () async {
   //   var documentSnapshot = await FirebaseFirestore.instance
-  //       .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets')
+  //       .collection('Users/${'imcsh313@naver.com'}/Pets')
   //
   //
   //   imageurl = walkController.ImageURL.toString();

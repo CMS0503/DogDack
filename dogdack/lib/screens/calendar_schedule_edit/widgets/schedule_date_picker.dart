@@ -21,7 +21,7 @@ class _DatePickerState extends State<DatePicker> {
 
   // 강아지 이름 불러오기 추가
   // final dogRef = FirebaseFirestore.instance
-  //     .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Calendar')
+  //     .collection('Users/${'imcsh313@naver.com'}/Calendar')
   //     .withConverter(
   //         fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
   //         toFirestore: (dogData, _) => dogData.toJson());
@@ -32,7 +32,7 @@ class _DatePickerState extends State<DatePicker> {
   // final Map<String, List<Object>> events = {'': []};
 
   final petsRef = FirebaseFirestore.instance
-      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');
+      .collection('Users/${'imcsh313@naver.com'}/Pets');
 
   String docId = '';
 

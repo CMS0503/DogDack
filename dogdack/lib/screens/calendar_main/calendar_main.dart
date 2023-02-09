@@ -19,8 +19,7 @@ class CalendarMain extends StatefulWidget {
 
 class _CalendarPageState extends State<CalendarMain> {
   final userRef = FirebaseFirestore.instance
-      .collection(
-          'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
+      .collection('Users/${'imcsh313@naver.com'.toString()}/Pets')
       .withConverter(
           fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
           toFirestore: (dogData, _) => dogData.toJson());

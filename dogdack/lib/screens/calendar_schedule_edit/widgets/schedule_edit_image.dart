@@ -85,7 +85,7 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
         .collection(
           'Users',
         )
-        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .doc('${'imcsh313@naver.com'}')
         .collection('Calendar')
         .doc(DateFormat('yyMMdd').format(controller.date))
         .get();

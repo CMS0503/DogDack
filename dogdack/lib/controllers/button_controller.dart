@@ -18,7 +18,7 @@ class ButtonController extends GetxController {
   getName() async {
     final controller = Get.put(InputController());
     final petsRef = FirebaseFirestore.instance
-        .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');
+        .collection('Users/${'imcsh313@naver.com'}/Pets');
     var dogDoc = await petsRef.get();
     List<String> dogs = [];
     // 자.. 여기다가 등록된 강아지들 다 입력하는거야

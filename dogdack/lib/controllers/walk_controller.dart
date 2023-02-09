@@ -56,7 +56,7 @@ class WalkController extends GetxController {
   void getList() async {
     String temp = "";
     await for (var snapshot in FirebaseFirestore.instance
-        .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets')
+        .collection('Users/${'imcsh313@naver.com'}/Pets')
         .snapshots()) {
       for (var messege in snapshot.docs) {
         temp = messege.data()['name'];
@@ -81,7 +81,7 @@ class WalkController extends GetxController {
     int temp = 0;
     int recTime = 0;
     await for (var snapshot in FirebaseFirestore.instance
-        .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets')
+        .collection('Users/${'imcsh313@naver.com'}/Pets')
         .snapshots()) {
       for (var messege in snapshot.docs) {
         cnt++;
@@ -114,7 +114,7 @@ class WalkController extends GetxController {
     String docId = "";
 
     CollectionReference petRef = FirebaseFirestore.instance
-        .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');
+        .collection('Users/${'imcsh313@naver.com'}/Pets');
 
     final petDoc = petRef.where("name", isEqualTo: curName);
     petDoc.get().then((value) {
@@ -122,8 +122,7 @@ class WalkController extends GetxController {
       // print('$curName의 문서 id : $docId');
 
       FirebaseFirestore.instance
-          .collection(
-              'Users/${FirebaseAuth.instance.currentUser!.email}/Pets/$docId/Walk')
+          .collection('Users/${'imcsh313@naver.com'}/Pets/$docId/Walk')
           .withConverter(
             fromFirestore: (snapshot, options) =>
                 WalkData.fromJson(snapshot.data()!),

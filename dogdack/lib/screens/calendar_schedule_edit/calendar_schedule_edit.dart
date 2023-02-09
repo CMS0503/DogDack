@@ -30,8 +30,8 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
   void fbstoreWrite() async {
     print(controller.selectedValue);
     controller.saveName = controller.selectedValue;
-    final petsRef = FirebaseFirestore.instance.collection(
-        'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
+    final petsRef = FirebaseFirestore.instance
+        .collection('Users/${'imcsh313@naver.com'.toString()}/Pets');
     final walkCheck = (int.parse(controller.endTime.seconds.toString()) -
             int.parse(controller.startTime.seconds.toString())) /
         60;
