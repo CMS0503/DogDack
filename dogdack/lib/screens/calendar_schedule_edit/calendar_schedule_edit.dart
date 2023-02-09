@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dogdack/controllers/button_controller.dart';
 import 'package:dogdack/models/calender_data.dart';
 import 'package:dogdack/models/walk_data.dart';
-import 'package:dogdack/screens/calendar_main/calendar_main.dart';
 import 'package:dogdack/controllers/input_controller.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_date_picker.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_diary_text.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_edit_bollean.dart';
-import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_edit_image.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_edit_walk.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +23,7 @@ class CalendarScheduleEdit extends StatefulWidget {
 class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
   final inputController = TextEditingController();
   final controller = Get.put(InputController());
+  final buttonController = Get.put(ButtonController());
 
   void fbstoreWrite() async {
     print(controller.selectedValue);
@@ -120,19 +120,22 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                 height: 30,
               ),
               const ScheduleEditBollean(),
-              const ScheduleEditImage(),
+              // const ScheduleEditImage(),
               const ScheduleDiaryText(),
               SizedBox(
                 width: width * 0.8,
                 child: ElevatedButton(
                   onPressed: () {
+                    buttonController.changeButtonIndex();
                     // setState(() {});
                     fbstoreWrite();
-                    // Navigator.pop(context);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const CalendarMain()));
+
+                    Navigator.pop(context);
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => const CalendarMain()));
+
                     // print(controller.date);
                     // setState(() {});
                     // controller.bath = true;

@@ -1,8 +1,11 @@
 import 'package:dogdack/commons/logo_widget.dart';
+import 'package:dogdack/controllers/main_controll.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar_mark.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/calendar_schedule_edit.dart';
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CalendarMain extends StatefulWidget {
   const CalendarMain({super.key});
@@ -33,19 +36,23 @@ class _CalendarPageState extends State<CalendarMain> {
         child: const LogoWidget(),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // const CalendarDrop(),
-            SizedBox(
-              height: height * 0.01,
-            ),
-            Calendar(focusedDay: focusedDay),
-            SizedBox(
-              height: height * 0.01,
-            ),
-            const CalendarMark(),
-          ],
+        child: GetBuilder<MainController>(
+          builder: (_) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // const CalendarDrop(),
+                SizedBox(
+                  height: height * 0.01,
+                ),
+                Calendar(focusedDay: focusedDay),
+                SizedBox(
+                  height: height * 0.01,
+                ),
+                const CalendarMark(),
+              ],
+            );
+          },
         ),
       ),
       // CalendarScheduleEdit으로 가는 floating button

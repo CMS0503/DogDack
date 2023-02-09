@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dogdack/controllers/main_controll.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../controllers/input_controller.dart';
@@ -70,7 +72,7 @@ class _CalendarState extends State<Calendar> {
               data.docs[i]['beauty'],
             ];
           }
-          setState(() {});
+          // setState(() {});
         }
       } else {
         // 그게 아니면 selectedValue로 데이터 가져오기
@@ -90,7 +92,7 @@ class _CalendarState extends State<Calendar> {
             ];
           }
           print(Calendar.events);
-          setState(() {});
+          // setState(() {});
           // print(Calendar.events);
         }
       }
@@ -101,12 +103,12 @@ class _CalendarState extends State<Calendar> {
   void initState() {
     super.initState();
     // getData();
-    // getName();
+    getName();
   }
 
   @override
   Widget build(BuildContext context) {
-    getName();
+    // getName();
     Size screenSize = MediaQuery.of(context).size;
     double height = screenSize.height;
 
@@ -128,32 +130,37 @@ class _CalendarState extends State<Calendar> {
         Container(
           alignment: Alignment.centerLeft,
           child: Padding(
-            padding: const EdgeInsets.only(top: 10, left: 20),
-            child: controller.selectedValue.isEmpty
-                ? GestureDetector(
-                    child: const Text('멍멍이를 선택해주세요'),
-                    onTap: () {
-                      setState(() {});
-                    },
-                  )
-                : DropdownButton(
-                    value: controller.selectedValue,
-                    items: controller.valueList.map(
-                      (value) {
-                        return DropdownMenuItem(
-                          value: value,
-                          child: Text(value),
+              padding: const EdgeInsets.only(top: 10, left: 20),
+              child: controller.selectedValue.isEmpty
+                  ? GestureDetector(
+                      child: const Text('멍멍이 기록'),
+                      onTap: () {
+                        getName();
+                        setState(() {});
+                      },
+                    )
+                  : GetBuilder<MainController>(
+                      builder: (_) {
+                        getName();
+                        return DropdownButton(
+                          value: controller.selectedValue,
+                          items: controller.valueList.map(
+                            (value) {
+                              return DropdownMenuItem(
+                                value: value,
+                                child: Text(value),
+                              );
+                            },
+                          ).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              controller.selectedValue = value.toString();
+                              getName();
+                            });
+                          },
                         );
                       },
-                    ).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        controller.selectedValue = value.toString();
-                        getName();
-                      });
-                    },
-                  ),
-          ),
+                    )),
         ),
         TableCalendar(
           // 날짜 언어 설정
@@ -314,6 +321,7 @@ class _CalendarState extends State<Calendar> {
             },
           ),
         ),
+        // }),
       ],
     );
   }

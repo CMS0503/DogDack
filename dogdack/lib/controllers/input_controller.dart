@@ -21,10 +21,4 @@ class InputController extends GetxController {
   // void input() {
   //   update();
   // }
-  DateTime today = DateTime.now();
-
-  void setDate(selectedDate) {
-    date = selectedDate;
-    update();
-  }
 }

@@ -12,14 +12,19 @@ packages:
     dependency: "direct main"
     description:
       name: adaptive_dialog
-      url: "https://pub.dartlang.org"
+
+      sha256: "5dea5b051a217d127b57587686990131488f964a9d2ea1142401f101e18795df"
+      url: "https://pub.dev"
+
     source: hosted
     version: "1.8.2"
   animations:
     dependency: transitive
     description:
       name: animations
-      url: "https://pub.dartlang.org"
+
+      sha256: fe8a6bdca435f718bb1dc8a11661b2c22504c6da40ef934cee8327ed77934164
+      url: "https://pub.dev"
     source: hosted
     version: "2.0.7"
   async:
@@ -152,9 +157,12 @@ packages:
     dependency: transitive
     description:
       name: dynamic_color
-      url: "https://pub.dartlang.org"
+
+      sha256: c4a508284b14ec4dda5adba2c28b2cdd34fbae1afead7e8c52cad87d51c5405b
+      url: "https://pub.dev"
     source: hosted
-    version: "1.5.4"
+    version: "1.6.2"
+
   equatable:
     dependency: transitive
     description:
@@ -489,7 +497,9 @@ packages:
     dependency: transitive
     description:
       name: intersperse
-      url: "https://pub.dartlang.org"
+
+      sha256: "2f8a905c96f6cbba978644a3d5b31b8d86ddc44917662df7d27a61f3df66a576"
+      url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
   intl:
@@ -524,7 +534,9 @@ packages:
     dependency: transitive
     description:
       name: macos_ui
-      url: "https://pub.dartlang.org"
+
+      sha256: "2b31858b56d44e807cf192c58cf6660b584c997f4746496d4892a903c1c27a49"
+      url: "https://pub.dev"
     source: hosted
     version: "1.9.1"
   matcher:
@@ -869,5 +881,7 @@ packages:
     source: hosted
     version: "0.2.0+3"
 sdks:
-  dart: ">=2.18.5 <3.0.0"
-  flutter: ">=3.3.0"
+
+  dart: ">=2.19.0 <3.0.0"
+  flutter: ">=3.4.0-17.0.pre"
+

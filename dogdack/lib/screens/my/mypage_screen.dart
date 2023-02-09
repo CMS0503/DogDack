@@ -5,7 +5,6 @@ import 'package:dogdack/models/user_data.dart';
 import 'package:dogdack/screens/my/widgets/mypage_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
 // Firebase
@@ -54,7 +53,6 @@ class _MyPageState extends State<MyPage> {
 
   // GetX
   final petController = Get.put(PetController()); // 슬라이더에서 선택된 반려견 정보를 위젯간 공유
-
   final mypageStateController =
       Get.put(MyPageStateController()); // 현재 mypage 의 상태 표시
   final mainController = Get.put(MainController());
@@ -84,7 +82,6 @@ class _MyPageState extends State<MyPage> {
   // 총 산책 시간 계산
   Stream<num> getTotalWalkMin() async* {
     num totalWalkMin = 0; // 총 산책 시간
-
     CollectionReference petRef = FirebaseFirestore.instance.collection(
         'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
     QuerySnapshot docInPets = await petRef.get();
@@ -195,7 +192,6 @@ class _MyPageState extends State<MyPage> {
                         Column(
                           children: [
                             // 사용자 계정 이미지
-
                             StreamBuilder(
                                 stream: userRef.snapshots(),
                                 builder: (userContext, userSnapshot) {
@@ -407,7 +403,10 @@ class _MyPageState extends State<MyPage> {
                                     Container() /*FadeInImage.memoryNetwork(
                                   fit: BoxFit.cover,
                                   placeholder: kTransparentImage,
+<<<<<<< HEAD
 
+=======
+>>>>>>> c38d610ff8802c3a112af26882aa65cea3fa9257
                                   image: snapshot.data!.docs[itemIndex].get('imageUrl'),
                                 )*/
                                 ,
