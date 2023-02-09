@@ -70,7 +70,7 @@ class _HomePageState extends State<HomePage> {
                       for(int liIdx = 0; liIdx < birthList.length; liIdx++) {
                         _petBirth += birthList.elementAt(liIdx);
                       }
-                      int displayBirth = int.parse(_today.difference(DateTime.parse(_petBirth)).inDays.toString());
+                      // int displayBirth = int.parse(_today.difference(DateTime.parse(_petBirth)).inDays.toString());
 
                       String curDogID = petSnapshot.data!.docs[sliderController.sliderIdx].id;
                       CollectionReference refCurDogWalk = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets/').doc(curDogID).collection('Walk');
@@ -157,13 +157,13 @@ class _HomePageState extends State<HomePage> {
                           SizedBox(height: size.height * 0.02),
                           Center(
                             child:
-                            // Container()
-                            Text(
-                              '함께한지 ${displayBirth}일',
-                              style: TextStyle(
-                                color: Color(0xff504E5B),
-                              ),
-                            ),
+                            Container()
+                            // Text(
+                            //   '함께한지 ${displayBirth}일',
+                            //   style: TextStyle(
+                            //     color: Color(0xff504E5B),
+                            //   ),
+                            // ),
                           )
                         ],
                       );

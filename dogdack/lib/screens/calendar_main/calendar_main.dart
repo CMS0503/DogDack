@@ -30,7 +30,8 @@ class _CalendarPageState extends State<CalendarMain> {
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     double height = screenSize.height;
-    return Scaffold(
+    return
+      Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(height * 0.09),
         child: const LogoWidget(),
