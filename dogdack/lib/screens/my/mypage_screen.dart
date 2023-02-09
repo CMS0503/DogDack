@@ -226,8 +226,8 @@ class _MyPageState extends State<MyPage> {
                                   child: CircleAvatar(
                                     backgroundColor: Colors.white,
                                     radius: size.width * 0.10,
-                                    backgroundImage: NetworkImage(FirebaseAuth.instance.currentUser!.photoURL.toString()),
-                                    child: Align(
+                                    // backgroundImage: NetworkImage(FirebaseAuth.instance.currentUser!.photoURL.toString()),
+                                      child: Align(
                                       alignment: Alignment.bottomRight,
                                       child: CircleAvatar(
                                         backgroundColor: Color(0xff504E5B),
@@ -358,13 +358,13 @@ class _MyPageState extends State<MyPage> {
                           itemBuilder: (context, itemIndex, pageViewIndex) {
                             return CircleAvatar(
                               radius: size.width * 0.3,
-                              child: ClipOval(
-                                child: FadeInImage.memoryNetwork(
-                                  fit: BoxFit.cover,
-                                  placeholder: kTransparentImage,
-                                  image: snapshot.data!.docs[itemIndex].get('imageUrl'),
-                                ),
-                              ),
+                              // child: ClipOval(
+                              //   child: FadeInImage.memoryNetwork(
+                              //     fit: BoxFit.cover,
+                              //     placeholder: kTransparentImage,
+                              //     image: snapshot.data!.docs[itemIndex].get('imageUrl'),
+                              //   ),
+                              // ),
                             );
                           },
                         ),

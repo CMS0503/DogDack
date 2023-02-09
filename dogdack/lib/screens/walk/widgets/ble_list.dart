@@ -142,7 +142,7 @@ class _BleState extends State<BleList> {
         walkController.services = await widget.device.discoverServices();
         walkController.connectBle(r.device);
 
-        // await r.device.requestMtu(247);
+        await r.device.requestMtu(247);
 
         print('end discovor service');
 

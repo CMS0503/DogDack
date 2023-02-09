@@ -18,7 +18,7 @@ class LogoWidget extends StatelessWidget with PreferredSizeWidget {
       title: Column(
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.only(top: height * 0.05, right: width * 0.5),
+            padding: EdgeInsets.only(right: width * 0.5),
             child: const Text(
               'DOG DACK',
               style: TextStyle(

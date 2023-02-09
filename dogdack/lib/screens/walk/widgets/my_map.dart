@@ -64,49 +64,57 @@ class _MapState extends State<myMap> {
 
             characteristic.value.listen((value) {
               String stringValue = utf8.decode(value).toString();
+              print('value: ${value}');
               widget.receiveData += stringValue;
+              print('receiveData: ${widget.receiveData}');
               // 한번 갱신 될 때마다
               if (!walkController.isRunning.value) {
                 // 시작 전
                 widget.receiveData = '';
               } else if (widget.receiveData[0] == '{' &&
-                  widget.receiveData[widget.receiveData.length - 1] == '}') {
+                  widget.receiveData[widget.receiveData.length - 1] == '}' &&
+                  !widget.receiveData.contains('{', 1)) {
                 // 받은 데이터 포맷이 올바를 때
-                widget.location = jsonDecode(widget.receiveData);
-                walkController.setCurrentLocation(
-                    widget.location!['lat'], widget.location!["lon"]);
-                print(
-                    'walkController location: ${walkController.lat} ${walkController.lon}');
-                widget.receiveData = '';
-                LatLng currentPosition = LatLng(
-                  walkController.lat,
-                  walkController.lon,
-                );
-                googleMapController.animateCamera(
-                  CameraUpdate.newCameraPosition(
-                    CameraPosition(
-                      zoom: 17,
-                      target: currentPosition,
+                try {
+                  widget.location = jsonDecode(widget.receiveData);
+                  walkController.setCurrentLocation(
+                      widget.location!['lat'], widget.location!["lon"]);
+                  print(
+                      'walkController location: ${walkController
+                          .lat} ${walkController.lon}');
+                  widget.receiveData = '';
+                  LatLng currentPosition = LatLng(
+                    walkController.lat,
+                    walkController.lon,
+                  );
+                  googleMapController.animateCamera(
+                    CameraUpdate.newCameraPosition(
+                      CameraPosition(
+                        zoom: 17,
+                        target: currentPosition,
+                      ),
                     ),
-                  ),
-                );
+                  );
+                  if (latlng.length > 1) {
+                    totalDistance = totalDistance! +
+                        calTotalDistance(
+                            ll.LatLng(
+                                latlng.last.latitude, latlng.last.longitude),
+                            ll.LatLng(currentPosition.latitude,
+                                currentPosition.longitude));
+                    walkController.distance = totalDistance;
+                  }
 
-                if (latlng.length > 1) {
-                  totalDistance = totalDistance! +
-                      calTotalDistance(
-                          ll.LatLng(
-                              latlng.last.latitude, latlng.last.longitude),
-                          ll.LatLng(currentPosition.latitude,
-                              currentPosition.longitude));
-                  walkController.distance = totalDistance;
+                  latlng.add(currentPosition);
+                  walkController.addData(
+                      currentPosition.latitude, currentPosition.longitude);
+                  print('totaldistance: $totalDistance');
+                  setState(() {});
+                } catch (e) {
+                  print('error in updatePosition with${e}');
                 }
-
-                latlng.add(currentPosition);
-                walkController.addData(
-                    currentPosition.latitude, currentPosition.longitude);
-                print('totaldistance: $totalDistance');
-                setState(() {});
               } else if (widget.receiveData[0] == '{') {
+                if (widget.receiveData.length)
               } else {
                 widget.receiveData = '';
               }
