@@ -59,21 +59,24 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
 
     CollectionReference petRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');
 
-    // 현재 강아지 walkController.curName  ->  walkController 가서 수정할것
+    // ★★★ 현재 강아지 walkController.curName  ->  walkController 가서 수정할것
     final petDoc = petRef.where("name", isEqualTo: walkController.curName);
     await petDoc.get().then((value) async {
       docId = value.docs[0].id;
 
       // print('${walkController.curName}의 문서 id : $docId');
 
+      // 산책한 강아지의 AutoId의 Walk 컬렉션
       final firestore = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets/$docId/Walk');
 
+      // 달력에서 선택한 날짜
       var selectedDay = inputController.date;
       var startOfToday = Timestamp.fromDate(selectedDay);
       var endOfToday = Timestamp.fromDate(selectedDay.add(Duration(days: 1)));
       // var startOfToday = Timestamp.fromDate(selectedDay.subtract(Duration(hours: selectedDay.hour, minutes: selectedDay.minute, seconds: selectedDay.second, milliseconds: selectedDay.millisecond, microseconds: selectedDay.microsecond)));
       // var endOfToday = Timestamp.fromDate(selectedDay.subtract(Duration(hours: selectedDay.hour, minutes: selectedDay.minute, seconds: selectedDay.second, milliseconds: selectedDay.millisecond, microseconds: selectedDay.microsecond)));
 
+      // 선택한 날짜의 산책 데이터를 내림차순 정렬(최신 데이터가 위로 오게)
       await firestore.where("startTime", isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday).orderBy("startTime", descending: true).get().then((QuerySnapshot snapshot) async {
         // print("Document ID: ${snapshot.docs[0].id}, Data: ${snapshot.docs[0].data()}");
         data = snapshot.docs[0]['geolist'];
