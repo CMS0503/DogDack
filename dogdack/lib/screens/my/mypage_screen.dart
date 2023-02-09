@@ -37,12 +37,18 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends State<MyPage> {
   // Firebase : 반려견 테이블 참조 값
-  final petsRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
-      .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
+  final petsRef = FirebaseFirestore.instance
+      .collection('Users/${'imcsh313@naver.com'}/Pets')
+      .withConverter(
+          fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+          toFirestore: (dogData, _) => dogData.toJson());
 
   // Firebase : 유저 전화 번호 저장을 위한 참조 값
-  final userRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/UserInfo')
-      .withConverter(fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!), toFirestore: (userData, _) => userData.toJson());
+  final userRef = FirebaseFirestore.instance
+      .collection('Users/${'imcsh313@naver.com'}/UserInfo')
+      .withConverter(
+          fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
+          toFirestore: (userData, _) => userData.toJson());
 
   // GetX
   final petController = Get.put(PetController()); // 슬라이더에서 선택된 반려견 정보를 위젯간 공유
@@ -75,11 +81,13 @@ class _MyPageState extends State<MyPage> {
   Stream<num> getTotalWalkMin() async* {
     num totalWalkMin = 0; // 총 산책 시간
     CollectionReference petRef = FirebaseFirestore.instance
-        .collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
+        .collection('Users/${'imcsh313@naver.com'}/Pets');
     QuerySnapshot _docInPets = await petRef.get();
     for (int i = 0; i < _docInPets.docs.length; i++) {
-      String _docInPetsID = _docInPets.docs[i].id; // Pets Collection 아래 문서 이름 (반려견 이름)
-      CollectionReference walkRef = petsRef.doc('${_docInPetsID}').collection('Walk');
+      String _docInPetsID =
+          _docInPets.docs[i].id; // Pets Collection 아래 문서 이름 (반려견 이름)
+      CollectionReference walkRef =
+          petsRef.doc('${_docInPetsID}').collection('Walk');
       QuerySnapshot _docInWalk = await walkRef.get();
       for (int j = 0; j < _docInWalk.docs.length; j++) {
         totalWalkMin += _docInWalk.docs[j]['totalTimeMin'];
@@ -94,14 +102,14 @@ class _MyPageState extends State<MyPage> {
   // 총 산책 횟수 계산
   Stream<num> getTotalWalkCnt() async* {
     num totalWalkCnt = 0; // 총 산책 횟수
-    CollectionReference petRef = FirebaseFirestore.instance.collection(
-        'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
+    CollectionReference petRef = FirebaseFirestore.instance
+        .collection('Users/${'imcsh313@naver.com'}/Pets');
     QuerySnapshot _docInPets = await petRef.get();
     for (int i = 0; i < _docInPets.docs.length; i++) {
-      String _docInPetsID = _docInPets.docs[i]
-          .id; // Pets Collection 아래 문서 이름 (반려견 이름)
-      CollectionReference walkRef = petsRef.doc('${_docInPetsID}').collection(
-          'Walk');
+      String _docInPetsID =
+          _docInPets.docs[i].id; // Pets Collection 아래 문서 이름 (반려견 이름)
+      CollectionReference walkRef =
+          petsRef.doc('${_docInPetsID}').collection('Walk');
       QuerySnapshot _docInWalk = await walkRef.get();
       totalWalkCnt += _docInWalk.docs.length;
     }

@@ -28,8 +28,6 @@ class AppColors {
   static const Color contentColorCyan = Color(0xFF50E4FF);
 }
 
-
-
 class BarChartSample1 extends StatefulWidget {
   BarChartSample1({super.key});
 
@@ -65,46 +63,11 @@ class BarChartSample1State extends State<BarChartSample1> {
       aspectRatio: 1,
       child: Stack(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                const Text(
-                  'Mingguan',
-                  style: TextStyle(
-                    color: AppColors.contentColorGreen,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  'Grafik konsumsi kalori',
-                  style: TextStyle(
-                    color: AppColors.contentColorGreen,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(
-                  height: 38,
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: BarChart(
-                      isPlaying ? randomData() : mainBarData(),
-                      swapAnimationDuration: animDuration,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-              ],
+          Container(
+            height: 100,
+            child: BarChart(
+              isPlaying ? randomData() : mainBarData(),
+              swapAnimationDuration: animDuration,
             ),
           ),
           Padding(
@@ -269,45 +232,25 @@ class BarChartSample1State extends State<BarChartSample1> {
         ),
       ),
       borderData: FlBorderData(
-        show: false,
+        show: true,
       ),
       barGroups: showingGroups(),
       gridData: FlGridData(show: false),
     );
   }
 
+  // 하단 타이틀 명 : 6시 12시 6시
   Widget getTitles(double value, TitleMeta meta) {
     const style = TextStyle(
-      color: Colors.white,
-      fontWeight: FontWeight.bold,
+      color: Color(0xff504E5B),
       fontSize: 14,
     );
     Widget text;
     switch (value.toInt()) {
-      case 0:
-        text = const Text('M', style: style);
-        break;
-      case 1:
-        text = const Text('T', style: style);
-        break;
-      case 2:
-        text = const Text('W', style: style);
-        break;
-      case 3:
-        text = const Text('T', style: style);
-        break;
-      case 4:
-        text = const Text('F', style: style);
-        break;
-      case 5:
-        text = const Text('S', style: style);
-        break;
-      case 6:
-        text = const Text('S', style: style);
-        break;
-      default:
-        text = const Text('', style: style);
-        break;
+      case 6: text = const Text('6am', style: style); break;
+      case 12: text = const Text('12pm', style: style); break;
+      case 18: text = const Text('6pm', style: style); break;
+      default: text = const Text('', style: style); break;
     }
     return SideTitleWidget(
       axisSide: meta.axisSide,
@@ -318,16 +261,18 @@ class BarChartSample1State extends State<BarChartSample1> {
 
   BarChartData randomData() {
     return BarChartData(
+      //그래프를 터치했을 때 데이터가 나오지 않도록 함
       barTouchData: BarTouchData(
         enabled: false,
       ),
+      //그래프 하단에 데이터 정보가 나오도록 함
       titlesData: FlTitlesData(
         show: true,
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
             getTitlesWidget: getTitles,
-            reservedSize: 38,
+            reservedSize: 50,
           ),
         ),
         leftTitles: AxisTitles(
@@ -346,10 +291,11 @@ class BarChartSample1State extends State<BarChartSample1> {
           ),
         ),
       ),
+      //테두리가 없도록 함
       borderData: FlBorderData(
         show: false,
       ),
-      barGroups: List.generate(7, (i) {
+      barGroups: List.generate(8, (i) {
         switch (i) {
           case 0:
             return makeGroupData(
@@ -396,6 +342,13 @@ class BarChartSample1State extends State<BarChartSample1> {
           case 6:
             return makeGroupData(
               6,
+              Random().nextInt(15).toDouble() + 6,
+              barColor: widget.availableColors[
+              Random().nextInt(widget.availableColors.length)],
+            );
+          case 7:
+            return makeGroupData(
+              7,
               Random().nextInt(15).toDouble() + 6,
               barColor: widget.availableColors[
               Random().nextInt(widget.availableColors.length)],

@@ -163,7 +163,7 @@ class _ChartMainState extends State<ChartMain> {
   Future<Map<String, List<Object>>> getData() async {
     // 두달 산책 시간 포인트 불러오기
     final day_points = FirebaseFirestore.instance
-        .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets')
+        .collection('Users/${'imcsh313@naver.com'}/Pets')
         .doc(docId)
         .collection('Walk')
         .where('startTime', isLessThan: DateTime.now())
