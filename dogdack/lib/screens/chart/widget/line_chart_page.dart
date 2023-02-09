@@ -1,4 +1,4 @@
-import 'package:dogdack/screens/calendar_detail/widget/health/line_chart.dart';
+import 'package:dogdack/screens/chart/widget/line_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -30,7 +30,6 @@ class _ChartPageState extends State<ChartPage> {
                 child:  CustomPaint(
                   size: Size(300, 300),
                   painter: LineChart(
-                    // points: day_points,
                     points: widget.points,
                     pointSize: 5.0,
                     pointColor: widget.graph_coolor,

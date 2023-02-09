@@ -1,4 +1,4 @@
-import 'package:dogdack/screens/calendar_detail/widget/health/progress_graph.dart';
+import 'package:dogdack/screens/chart/widget/progress_graph.dart';
 import 'package:flutter/material.dart';
 
 

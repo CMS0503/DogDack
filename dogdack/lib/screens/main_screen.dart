@@ -1,7 +1,7 @@
 import 'package:dogdack/navigators/home_navigator.dart';
 import 'package:dogdack/controllers/main_controll.dart';
 import 'package:dogdack/navigators/calender_navigator.dart';
-import 'package:dogdack/navigators/mypage_navigator.dart';
+import 'package:dogdack/navigators/chart_navigator.dart';
 
 //navigator
 
@@ -31,14 +31,18 @@ class MainPage extends StatelessWidget {
             ),
             Offstage(
               offstage: mainController.tabindex != 1,
-              child: const CalenderNavigator(),
-            ),
-            Offstage(
-              offstage: mainController.tabindex != 2,
               child: WalkNavigator(),
             ),
             Offstage(
+              offstage: mainController.tabindex != 2,
+              child: const CalenderNavigator(),
+            ),
+            Offstage(
               offstage: mainController.tabindex != 3,
+              child: const ChartNavigator(),
+            ),
+            Offstage(
+              offstage: mainController.tabindex != 4,
               child: const MyPageNavigator(),
             ),
           ]),
@@ -46,19 +50,23 @@ class MainPage extends StatelessWidget {
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
-                label: '홈',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.calendar_today),
-                label: '캘린더',
+                label: ""
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.pets_outlined),
-                label: '산책',
+                label: ""
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.calendar_today),
+                label: ""
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.bar_chart),
+                  label: ""
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),
-                label: '마이',
+                label: ""
               ),
             ],
             selectedItemColor: const Color.fromARGB(255, 100, 92, 170),
