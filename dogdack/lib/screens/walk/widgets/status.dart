@@ -1,10 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:dogdack/controllers/walk_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 
-import '../../my/controller/mypage_controller.dart';
+import '../../../controllers/mypage_controller.dart';
 import '../../../models/dog_data.dart';
 
 class Status extends StatefulWidget {
@@ -18,6 +17,11 @@ class Status extends StatefulWidget {
 
 class _StatusState extends State<Status> {
   final PetController petController = Get.put(PetController());
+  final WalkController walkController = Get.put(WalkController());
+
+  // final petsRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
+  //     .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
+  String? name = '공숙이';
 
   @override
   Widget build(BuildContext context) {
@@ -50,12 +54,20 @@ class _StatusState extends State<Status> {
                       true, // setting it true will show initials text above profile picture, default false
                 ),
               ),
-              const Text('name'),
-              IconButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/Ble');
-                  },
-                  icon: const Icon(Icons.bluetooth_outlined)),
+              const SizedBox(
+                width: 10,
+              ),
+              Column(
+                children: [
+                  Text('$name'),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/Ble');
+                    },
+                    icon: const Icon(Icons.bluetooth_outlined),
+                  ),
+                ],
+              ),
             ],
           ),
           Column(

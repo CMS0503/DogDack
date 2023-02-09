@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/models/calender_data.dart';
 import 'package:dogdack/models/walk_data.dart';
 import 'package:dogdack/screens/calendar_main/calendar_main.dart';
-import 'package:dogdack/screens/calendar_schedule_edit/controller/input_controller.dart';
+import 'package:dogdack/controllers/input_controller.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_date_picker.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_diary_text.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_edit_bollean.dart';
@@ -132,8 +132,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                const CalendarMain(tabIndex: 1)));
+                            builder: (context) => const CalendarMain()));
                     // print(controller.date);
                     // setState(() {});
                     // controller.bath = true;

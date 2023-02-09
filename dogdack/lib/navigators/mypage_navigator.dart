@@ -4,13 +4,11 @@ import 'package:flutter/material.dart';
 import '../screens/my/mypage_screen.dart';
 
 class MyPageNavigator extends StatelessWidget {
-  const MyPageNavigator({super.key, required this.tabIndex});
-  final int tabIndex;
+  const MyPageNavigator({super.key});
+
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      "/": (context) => MyPage(
-        tabIndex: tabIndex,
-      ),
+      "/": (context) => MyPage(),
     };
   }
 

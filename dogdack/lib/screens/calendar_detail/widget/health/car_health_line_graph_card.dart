@@ -6,7 +6,7 @@ class CalHealthCardWidget extends StatefulWidget {
   Color color;
   String title;
   String message;
-  String this_data;
+  int this_data;
   int last_data;
   String date_text;
   String unit;
@@ -49,7 +49,7 @@ class _CalHealthCardWidget extends State<CalHealthCardWidget> {
             width: width * 0.9,
             height: height * 0.28,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              // crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

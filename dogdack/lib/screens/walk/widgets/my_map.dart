@@ -5,10 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 import 'package:latlong2/latlong.dart' as ll;
 
-import '../controller/walk_controller.dart';
+import '../../../controllers/walk_controller.dart';
 
 class myMap extends StatefulWidget {
   late final String title;
@@ -54,7 +53,6 @@ class _MapState extends State<myMap> {
   }
 
   void updatePosition() async {
-    print('call updatePision');
     GoogleMapController googleMapController = await _controller.future;
     for (BluetoothService service in walkController.services!) {
       if (service.uuid.toString() == walkController.serviceUuid) {
@@ -62,13 +60,7 @@ class _MapState extends State<myMap> {
             in service.characteristics) {
           if (characteristic.uuid.toString() ==
               walkController.characteristicUuid) {
-            // var sendData = '01085382550';
-            // print(utf8.encode(sendData));
-            // characteristic.write(utf8.encode(sendData), withoutResponse: true);
-
-            await Future.delayed(Duration(milliseconds: 10));
-
-            characteristic.setNotifyValue(true);
+            await characteristic.setNotifyValue(true);
 
             characteristic.value.listen((value) {
               String stringValue = utf8.decode(value).toString();
@@ -106,9 +98,12 @@ class _MapState extends State<myMap> {
                               latlng.last.latitude, latlng.last.longitude),
                           ll.LatLng(currentPosition.latitude,
                               currentPosition.longitude));
+                  walkController.distance = totalDistance;
                 }
 
                 latlng.add(currentPosition);
+                walkController.addData(
+                    currentPosition.latitude, currentPosition.longitude);
                 print('totaldistance: $totalDistance');
                 setState(() {});
               } else if (widget.receiveData[0] == '{') {
@@ -130,96 +125,99 @@ class _MapState extends State<myMap> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Obx(
-        () => Stack(
-          children: [
-            GoogleMap(
-                // liteModeEnabled: true,
-                zoomControlsEnabled: false,
-                initialCameraPosition: _initialPosition!,
-                mapType: MapType.normal,
-                onMapCreated: (mapController) {
+      body: Stack(
+        children: [
+          GoogleMap(
+              // liteModeEnabled: true,
+              zoomControlsEnabled: false,
+              initialCameraPosition: _initialPosition!,
+              mapType: MapType.normal,
+              onMapCreated: (mapController) {
+                if (_controller.isCompleted == false) {
                   _controller.complete(mapController);
-                },
-                markers: markers.toSet(),
-                polylines: {
-                  Polyline(
-                    polylineId: const PolylineId('route'),
-                    visible: true,
-                    width: 5,
-                    points: latlng,
-                    color: Colors.blue,
-                  ),
-                }),
-            Padding(
-              padding: EdgeInsets.fromLTRB(size.height * 0.01,
-                  size.height * 0.53, size.height * 0.01, 0),
+                }
+              },
+              markers: markers.toSet(),
+              polylines: {
+                Polyline(
+                  polylineId: const PolylineId('route'),
+                  visible: true,
+                  width: 5,
+                  points: latlng,
+                  color: Colors.blue,
+                ),
+              }),
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+                size.height * 0.01, size.height * 0.53, size.height * 0.01, 0),
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                      color: Theme.of(context).primaryColor, width: 3.0)),
               child: Container(
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                        color: Theme.of(context).primaryColor, width: 3.0)),
-                child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    height: size.height * 0.1,
-                    // color: Colors.white,
-                    child: Stack(
-                      children: <Widget>[
-                        // 재생버튼
-                        Align(
-                          alignment: Alignment(
-                            Alignment.center.x,
-                            Alignment.center.y,
-                          ),
-                          child: OutlineCircleButton(
-                              radius: 50.0,
-                              borderSize: 5.0,
-                              onTap: () async {
-                                _clickPlayButton();
-                              },
-                              child: walkController.isRunning.value
-                                  ? Icon(Icons.pause,
-                                      color: Theme.of(context).primaryColor)
-                                  : Icon(Icons.play_arrow,
-                                      color: Theme.of(context).primaryColor)),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                height: size.height * 0.1,
+                // color: Colors.white,
+                child: Obx(
+                  () => Stack(
+                    children: <Widget>[
+                      // 재생버튼
+                      Align(
+                        alignment: Alignment(
+                          Alignment.center.x,
+                          Alignment.center.y,
                         ),
-                        // 산책 시간
-                        Align(
-                          alignment: Alignment(
-                            Alignment.centerLeft.x + size.width * 0.0005,
-                            Alignment.center.y,
-                          ),
-                          child: Text(
-                            '${walkController.timeCount ~/ 360000} : ${walkController.timeCount ~/ 6000} : ${(walkController.timeCount % 6000) ~/ 100}',
-                            // (_timeCount ~/ 100).toString() + ' 초',
-                            style: const TextStyle(
-                                fontSize: 30,
-                                color: Color.fromARGB(255, 80, 78, 91)),
-                          ),
+                        child: OutlineCircleButton(
+                            radius: 50.0,
+                            borderSize: 5.0,
+                            onTap: () async {
+                              _clickPlayButton();
+                            },
+                            child: walkController.isRunning.value
+                                ? Icon(Icons.pause,
+                                    color: Theme.of(context).primaryColor)
+                                : Icon(Icons.play_arrow,
+                                    color: Theme.of(context).primaryColor)),
+                      ),
+                      // 산책 시간
+                      Align(
+                        alignment: Alignment(
+                          Alignment.centerLeft.x + size.width * 0.0005,
+                          Alignment.center.y,
                         ),
-                        // 산책 거리
-                        Align(
-                          alignment: Alignment(
-                            Alignment.centerRight.x - size.width * 0.0005,
-                            Alignment.center.y,
-                          ),
-                          child: Text(
-                            '$totalDistance m',
-                            // 'data',
-                            style: const TextStyle(
-                                fontSize: 30,
-                                color: Color.fromARGB(255, 80, 78, 91)),
-                          ),
+                        child: Text(
+                          '${walkController.timeCount ~/ 360000} : ${walkController.timeCount ~/ 6000} : ${(walkController.timeCount % 6000) ~/ 100}',
+                          // (_timeCount ~/ 100).toString() + ' 초',
+                          style: const TextStyle(
+                              fontSize: 30,
+                              color: Color.fromARGB(255, 80, 78, 91)),
                         ),
-                      ],
-                    )),
+                      ),
+                      // 산책 거리
+                      Align(
+                        alignment: Alignment(
+                          Alignment.centerRight.x - size.width * 0.0005,
+                          Alignment.center.y,
+                        ),
+                        child: Text(
+                          '$totalDistance m',
+                          // 'data',
+                          style: const TextStyle(
+                              fontSize: 30,
+                              color: Color.fromARGB(255, 80, 78, 91)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }
