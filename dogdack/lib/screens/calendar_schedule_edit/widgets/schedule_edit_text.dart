@@ -63,6 +63,8 @@ class _ScheduleEditTextState extends State<ScheduleEditText> {
               onChanged: (value) {
                 if (widget.name == '장소') {
                   controller.place = value;
+                } else if (widget.name == '시간') {
+                  controller.time = value;
                 } else {
                   controller.distance = value;
                 }

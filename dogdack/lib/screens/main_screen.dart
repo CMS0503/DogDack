@@ -1,9 +1,10 @@
-import 'package:dogdack/navigators/home_navigator.dart';
 import 'package:dogdack/controllers/main_controll.dart';
 import 'package:dogdack/navigators/calender_navigator.dart';
 import 'package:dogdack/navigators/chart_navigator.dart';
 
 //navigator
+import 'package:dogdack/navigators/home_navigator.dart';
+import 'package:dogdack/navigators/mypage_navigator.dart';
 
 import 'package:dogdack/navigators/walk_navigator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,7 +17,7 @@ class MainPage extends StatelessWidget {
 
   final mainController = Get.put(MainController());
 
-  final int _currentTabIndex = 0;
+  int _currentTabIndex = 0;
 
   // void _tabSelect(int tabIndex) {
   @override

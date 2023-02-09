@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
 class MainController extends GetxController {
-  final RxInt _tabIndex = 0.obs;
+  RxInt _tabIndex = 0.obs;
 
   int get tabindex => _tabIndex.value;
 

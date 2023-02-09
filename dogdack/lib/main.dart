@@ -65,7 +65,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   void callDelay() async {
     // await Timer(const Duration(seconds: 3), () {});
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(Duration(seconds: 3));
 
     widget.isFinish = true;
     setState(() {});
@@ -84,9 +84,7 @@ class _MyAppState extends State<MyApp> {
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return widget.isFinish == true
-                  ? MainPage()
-                  : const LoginAfterPage();
+              return widget.isFinish == true ? MainPage() : LoginAfterPage();
             } else {
               return const LoginPage();
             }

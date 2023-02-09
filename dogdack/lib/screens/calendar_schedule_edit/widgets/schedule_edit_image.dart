@@ -39,7 +39,7 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
       }
 
       final String fileName = path.basename(pickedImage.path);
-      // print('pickedImage.path : ${pickedImage.path}');
+      print('pickedImage.path : ${pickedImage.path}');
       File imageFile = File(pickedImage.path);
 
       try {
@@ -93,7 +93,7 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
     await Future.forEach<Reference>(allFiles, (file) async {
       final String fileUrl = await file.getDownloadURL();
       final FullMetadata fileMeta = await file.getMetadata();
-      // print('$fileUrl, ${file.fullPath}');
+      print('$fileUrl, ${file.fullPath}');
       if (controller.imageUrl.contains(fileUrl)) {
         files.add({
           "url": fileUrl,

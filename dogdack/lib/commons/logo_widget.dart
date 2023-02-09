@@ -10,7 +10,6 @@ class LogoWidget extends StatelessWidget with PreferredSizeWidget {
     double height = screenSize.height;
 
     return AppBar(
-      automaticallyImplyLeading: false,
       toolbarHeight: height * 0.12,
       elevation: 0,
       // foregroundColor: const Color.fromARGB(255, 80, 78, 91),
@@ -19,7 +18,7 @@ class LogoWidget extends StatelessWidget with PreferredSizeWidget {
       title: Column(
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.only(top: height * 0.02, right: width * 0.5),
+            padding: EdgeInsets.only(top: height * 0.05, right: width * 0.5),
             child: const Text(
               'DOG DACK',
               style: TextStyle(

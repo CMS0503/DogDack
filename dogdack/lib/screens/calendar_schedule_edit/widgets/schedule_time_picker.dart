@@ -1,11 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/input_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ScheduleTimePicker extends StatefulWidget {
-  var start_end;
-  ScheduleTimePicker({super.key, required this.start_end});
+  const ScheduleTimePicker({super.key});
 
   @override
   State<ScheduleTimePicker> createState() => _ScheduleTimePickerState();
@@ -37,14 +35,14 @@ class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
                 color: const Color.fromARGB(255, 100, 92, 170),
               ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
+            child: const Padding(
+              padding: EdgeInsets.symmetric(
                 horizontal: 20,
                 vertical: 7,
               ),
               child: Text(
-                '${widget.start_end}',
-                style: const TextStyle(
+                '시간',
+                style: TextStyle(
                   fontFamily: 'bmjua',
                   fontSize: 20,
                   color: Color.fromARGB(255, 100, 92, 170),
@@ -61,32 +59,18 @@ class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
               onTap: () async {
                 FocusManager.instance.primaryFocus?.unfocus();
                 var time = await showTimePicker(
-                  context: context,
-                  initialTime: TimeOfDay.now(),
-                );
+                    context: context, initialTime: TimeOfDay.now());
                 if (!mounted) return;
                 if (time == null) {
                   return;
                 }
                 timeController.text = time.format(context);
-                // controller.time = time.format(context);
-                var dateTime = DateTime(
-                  controller.date.year,
-                  controller.date.month,
-                  controller.date.day,
-                  time.hour,
-                  time.minute,
-                );
-                if (widget.start_end == '시작') {
-                  controller.startTime = Timestamp.fromDate(dateTime);
-                  print('hihihihihihihihihihihihihi');
-                  print(controller.startTime);
-                } else {
-                  controller.endTime = Timestamp.fromDate(dateTime);
-                }
+                controller.time = time.format(context);
               },
               // maxLength: 20,
-
+              onChanged: (value) {
+                controller.time = value;
+              },
               controller: timeController,
               cursorColor: Colors.grey,
               decoration: InputDecoration(
@@ -106,9 +90,9 @@ class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
                 ),
                 filled: true,
                 fillColor: const Color.fromARGB(255, 229, 229, 230),
-                label: Text(
-                  "${widget.start_end} 시간",
-                  style: const TextStyle(
+                label: const Text(
+                  "산책 시간",
+                  style: TextStyle(
                     color: Color.fromARGB(255, 121, 119, 129),
                   ),
                 ),
