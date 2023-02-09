@@ -43,6 +43,7 @@ class _StatusState extends State<Status> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    walkController.getCur();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
@@ -106,16 +107,17 @@ class _StatusState extends State<Status> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '목표 산책 달성량',
+                    '목표 산책 달성률',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(
                     height: 3,
                   ),
-                  Text(
-                    '80%',
-                    style: Theme.of(context).textTheme.displayMedium,
-                  ),
+                  Obx(() => Text(
+                      '${walkController.getCur()} %',
+                      style: Theme.of(context).textTheme.displayMedium,
+                    ),
+                  )
                 ],
               )
             ],

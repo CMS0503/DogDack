@@ -126,7 +126,7 @@ class WalkPage extends StatelessWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Opacity(
-        opacity: 0.7,
+        opacity: 0.8,
         child: Container(
           decoration: const BoxDecoration(color: Colors.grey),
           height: h * 0.6,
@@ -272,7 +272,6 @@ class WalkPage extends StatelessWidget {
   }
 
 
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -292,25 +291,31 @@ class WalkPage extends StatelessWidget {
                 walkController.isBleConnect.value == false
                     ? requestBluetoothConnectWidget(screenWidth, screenHeight, context)
                     : Stack(
-                  children: [
-                    walkTime(screenWidth, screenHeight, context),
-                  ],
-                )
+                        children: [
+                          mapAreaWidget(screenWidth, screenHeight),
+                          walkController.goal.value == 0
+                            ? walkTime(screenWidth, screenHeight, context)
+                            : (walkController.isRunning.value == walkController.isStart)
+                              ? Container()
+                              : endWalkModal(screenWidth, screenHeight, context),
+                        ],
+                      )
               ],
-          // children: [
-          //   const Status(),
-          //   const SizedBox(height: 10),
-          //   walkController.isBleConnect.value == false
-          //       ? requestBluetoothConnectWidget(screenWidth, screenHeight, context)
-          //       :Stack(
-          //           children: [
-          //             mapAreaWidget(screenWidth, screenHeight),
-          //             (walkController.isRunning.value == walkController.isStart)
-          //                 ? Container()
-          //                 : endWalkModal(screenWidth, screenHeight, context),
-          //           ],
-          //         ),
-          // ],
+
+              // children: [
+              //   const Status(),
+              //   const SizedBox(height: 10),
+              //   walkController.isBleConnect.value == false
+              //       ? requestBluetoothConnectWidget(screenWidth, screenHeight, context)
+              //       :Stack(
+              //           children: [
+              //             mapAreaWidget(screenWidth, screenHeight),
+              //             (walkController.isRunning.value == walkController.isStart)
+              //                 ? Container()
+              //                 : endWalkModal(screenWidth, screenHeight, context),
+              //           ],
+              //         ),
+              // ],
         ),
       ),
     );
