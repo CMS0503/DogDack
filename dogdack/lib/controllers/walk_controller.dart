@@ -77,14 +77,16 @@ class WalkController extends GetxController {
     int cnt = 0;
     int temp = 0;
     int recTime = 0;
-    await for(var snapshot in FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets').snapshots()){
-      for(var messege in snapshot.docs){
+    await for (var snapshot in FirebaseFirestore.instance.collection(
+        'Users/${FirebaseAuth.instance.currentUser!.email}/Pets').snapshots()) {
+      for (var messege in snapshot.docs) {
         cnt++;
         temp = messege.data()['recommend'];
         recTime = recTime + temp;
       }
       rectime = (recTime / cnt).round();
     }
+  }
 
 
 
@@ -186,6 +188,7 @@ class WalkController extends GetxController {
 
   void abv() {
     update();
+  }
 
   void initLCD() async {
     await sendData('01085382550a');

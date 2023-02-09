@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../controllers/HomePageController.dart';
 import '../../controllers/walk_controller.dart';
 import '../../models/dog_data.dart';
 import './widgets/my_map.dart';

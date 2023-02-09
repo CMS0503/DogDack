@@ -20,7 +20,6 @@ class Status extends StatefulWidget {
 class _StatusState extends State<Status> {
   final WalkController walkController = Get.put(WalkController());
   final PetController petController = Get.put(PetController());
-  final WalkController walkController = Get.put(WalkController());
 
   // final petsRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
   //     .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
