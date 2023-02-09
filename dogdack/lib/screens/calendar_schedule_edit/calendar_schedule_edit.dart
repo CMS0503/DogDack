@@ -3,6 +3,8 @@ import 'package:dogdack/controllers/button_controller.dart';
 import 'package:dogdack/models/calender_data.dart';
 import 'package:dogdack/models/walk_data.dart';
 import 'package:dogdack/controllers/input_controller.dart';
+import 'package:dogdack/screens/calendar_main/calendar_main.dart';
+import 'package:dogdack/screens/calendar_schedule_edit/widgets/calendar_snackbar.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_date_picker.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_diary_text.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_edit_bollean.dart';
@@ -113,7 +115,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 20),
+              // const SizedBox(height: 20),
               const DatePicker(),
               const ScheduleEditWalk(),
               const SizedBox(
@@ -126,15 +128,39 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                 width: width * 0.8,
                 child: ElevatedButton(
                   onPressed: () {
-                    buttonController.changeButtonIndex();
                     // setState(() {});
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    if (controller.selectedValue == '') {
+                      CalendarSnackBar().notfoundCalendarData(
+                          context, CalendarSnackBarErrorType.NoDog);
+                      return;
+                    }
+                    if (int.parse(controller.startTime.seconds.toString()) >
+                        int.parse(controller.endTime.seconds.toString())) {
+                      CalendarSnackBar().notfoundCalendarData(
+                          context, CalendarSnackBarErrorType.TimeError);
+                      return;
+                    }
+                    if (controller.startTime.seconds != '0' &&
+                        controller.endTime.seconds == '0') {
+                      CalendarSnackBar().notfoundCalendarData(
+                          context, CalendarSnackBarErrorType.TimeError);
+                    }
+                    if (controller.startTime.seconds == '0' &&
+                        controller.endTime.seconds != '0') {
+                      CalendarSnackBar().notfoundCalendarData(
+                          context, CalendarSnackBarErrorType.TimeError);
+                    }
                     fbstoreWrite();
 
                     Navigator.pop(context);
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => const CalendarMain()));
+                    // buttonController.btn += 1;
+                    // buttonController.changeButtonIndex(buttonController.btn);
+                    setState(() {});
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const CalendarMain()));
 
                     // print(controller.date);
                     // setState(() {});

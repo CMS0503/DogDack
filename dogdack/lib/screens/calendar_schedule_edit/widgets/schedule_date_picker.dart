@@ -100,20 +100,8 @@ class _DatePickerState extends State<DatePicker> {
 
   @override
   Widget build(BuildContext context) {
-    // var name = controller.name;
-
-    // if (controller.name == '') {
-    //   name = '댕댕이 없음';
-    // } else {
-    //   name = controller.name;
-    // }
-
     return Column(
       children: [
-        // appbar로 교체해야함
-        // const SizedBox(
-        //   height: 100,
-        // ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5),
           child: Row(
@@ -185,12 +173,25 @@ class _DatePickerState extends State<DatePicker> {
                                       },
                                     )
                                   : DropdownButton(
+                                      icon: const Icon(
+                                        Icons.expand_more,
+                                        color: Colors.black,
+                                        size: 28,
+                                      ),
+                                      underline: Container(),
                                       value: controller.selectedValue,
                                       items: controller.valueList.map(
                                         (value) {
                                           return DropdownMenuItem(
                                             value: value,
-                                            child: Text(value),
+                                            child: Text(
+                                              value,
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: 'bmjua',
+                                                fontSize: 22,
+                                              ),
+                                            ),
                                           );
                                         },
                                       ).toList(),

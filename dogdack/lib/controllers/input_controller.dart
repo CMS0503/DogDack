@@ -6,7 +6,7 @@ class InputController extends GetxController {
   String place = '';
   Timestamp startTime = Timestamp.now();
   Timestamp endTime = Timestamp.now();
-  String distance = '';
+  String distance = '0';
   String diary = '';
   bool walkCheck = true;
   bool bath = true;

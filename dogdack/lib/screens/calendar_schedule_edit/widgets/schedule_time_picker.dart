@@ -79,6 +79,7 @@ class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
                 );
                 if (widget.start_end == '시작') {
                   controller.startTime = Timestamp.fromDate(dateTime);
+                  print('hihihihihihihihihihihihihi');
                   print(controller.startTime);
                 } else {
                   controller.endTime = Timestamp.fromDate(dateTime);

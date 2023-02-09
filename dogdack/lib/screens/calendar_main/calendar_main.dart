@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/commons/logo_widget.dart';
-import 'package:dogdack/controllers/main_controll.dart';
+import 'package:dogdack/controllers/button_controller.dart';
+import 'package:dogdack/models/dog_data.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar_mark.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/calendar_schedule_edit.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,6 +18,12 @@ class CalendarMain extends StatefulWidget {
 }
 
 class _CalendarPageState extends State<CalendarMain> {
+  final userRef = FirebaseFirestore.instance
+      .collection(
+          'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
+      .withConverter(
+          fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+          toFirestore: (dogData, _) => dogData.toJson());
   // 선택한 날짜 초기화
   DateTime selectedDay = DateTime.utc(
     DateTime.now().year,
@@ -27,35 +36,39 @@ class _CalendarPageState extends State<CalendarMain> {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(ButtonController());
     Size screenSize = MediaQuery.of(context).size;
     double height = screenSize.height;
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(height * 0.09),
+        preferredSize: Size.fromHeight(height * 0.12),
         child: const LogoWidget(),
       ),
       body: SingleChildScrollView(
-        child: GetBuilder<MainController>(
-          builder: (_) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // const CalendarDrop(),
-                SizedBox(
-                  height: height * 0.01,
-                ),
-                Calendar(focusedDay: focusedDay),
-                SizedBox(
-                  height: height * 0.01,
-                ),
-                const CalendarMark(),
-              ],
-            );
-          },
-        ),
+        child: StreamBuilder(
+            stream: userRef.snapshots(),
+            builder: (petContext, petSnapshot) {
+              // if (!petSnapshot.hasData) {
+              //   return const Center(child: CircularProgressIndicator());
+              // }
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // const CalendarDrop(),
+                  SizedBox(
+                    height: height * 0.01,
+                  ),
+                  Calendar(focusedDay: focusedDay),
+
+                  SizedBox(
+                    height: height * 0.01,
+                  ),
+                  const CalendarMark(),
+                ],
+              );
+            }),
       ),
-      // CalendarScheduleEdit으로 가는 floating button
       floatingActionButton: renderFloatingActionButton(),
     );
   }

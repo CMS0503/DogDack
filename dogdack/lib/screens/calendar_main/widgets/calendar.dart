@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dogdack/controllers/button_controller.dart';
 import 'package:dogdack/controllers/main_controll.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:intl/intl.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:table_calendar/table_calendar.dart';
 
@@ -35,12 +36,12 @@ class _CalendarState extends State<Calendar> {
 
   // final Map<String, List<Object>> events = {'': []};
 
-  final petsRef = FirebaseFirestore.instance
-      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');
-
   String docId = '';
 
   getName() async {
+    final controller = Get.put(InputController());
+    final petsRef = FirebaseFirestore.instance
+        .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');
     var dogDoc = await petsRef.get();
     List<String> dogs = [];
     // 자.. 여기다가 등록된 강아지들 다 입력하는거야
@@ -67,7 +68,7 @@ class _CalendarState extends State<Calendar> {
           for (int i = 0; i < data.docs.length; i++) {
             Calendar.events[
                 '${data.docs[i].reference.id}/${controller.selectedValue}'] = [
-              data.docs[i]['diary'],
+              data.docs[i]['isWalk'],
               data.docs[i]['bath'],
               data.docs[i]['beauty'],
             ];
@@ -92,7 +93,8 @@ class _CalendarState extends State<Calendar> {
             ];
           }
           print(Calendar.events);
-          // setState(() {});
+          print('hi');
+          setState(() {});
           // print(Calendar.events);
         }
       }
@@ -103,12 +105,16 @@ class _CalendarState extends State<Calendar> {
   void initState() {
     super.initState();
     // getData();
-    getName();
+
+    setState(() {
+      getName();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     // getName();
+    ButtonController().getName();
     Size screenSize = MediaQuery.of(context).size;
     double height = screenSize.height;
 
@@ -128,40 +134,73 @@ class _CalendarState extends State<Calendar> {
     return Column(
       children: [
         Container(
+          height: height * 0.05,
           alignment: Alignment.centerLeft,
           child: Padding(
-              padding: const EdgeInsets.only(top: 10, left: 20),
-              child: controller.selectedValue.isEmpty
-                  ? GestureDetector(
-                      child: const Text('멍멍이 기록'),
-                      onTap: () {
-                        getName();
-                        setState(() {});
-                      },
-                    )
-                  : GetBuilder<MainController>(
-                      builder: (_) {
-                        getName();
-                        return DropdownButton(
-                          value: controller.selectedValue,
-                          items: controller.valueList.map(
-                            (value) {
-                              return DropdownMenuItem(
-                                value: value,
-                                child: Text(value),
-                              );
-                            },
-                          ).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              controller.selectedValue = value.toString();
-                              getName();
-                            });
+            padding: const EdgeInsets.only(left: 20),
+            child: GetBuilder<MainController>(
+              builder: (_) {
+                // getName();
+
+                return controller.valueList.isEmpty
+                    ? DropdownButton(
+                        underline: Container(),
+                        elevation: 0,
+                        value: '댕댕이를 등록해 주세요',
+                        items: ['댕댕이를 등록해 주세요'].map(
+                          (value) {
+                            return DropdownMenuItem(
+                              value: value,
+                              child: Text(value),
+                            );
                           },
-                        );
-                      },
-                    )),
+                        ).toList(),
+                        onChanged: (value) {
+                          controller.selectedValue = value.toString();
+                          setState(() {
+                            getName();
+                          });
+                          // ButtonController.getName();
+                        },
+                      )
+                    : DropdownButton(
+                        icon: const Icon(
+                          Icons.expand_more,
+                          color: Color.fromARGB(255, 100, 92, 170),
+                          size: 28,
+                        ),
+                        underline: Container(),
+                        elevation: 0,
+                        value: controller.selectedValue,
+                        items: controller.valueList.map(
+                          (value) {
+                            return DropdownMenuItem(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 100, 92, 170),
+                                  fontFamily: 'bmjua',
+                                  fontSize: 24,
+                                ),
+                              ),
+                            );
+                          },
+                        ).toList(),
+                        onChanged: (value) {
+                          controller.selectedValue = value.toString();
+                          setState(() {
+                            getName();
+                          });
+                          // ButtonController.getName();
+                        },
+                      );
+              },
+            ),
+          ),
         ),
+        // GetBuilder<ButtonController>(builder: (_) {
+        //   return
         TableCalendar(
           // 날짜 언어 설정
           locale: 'ko_KR',
@@ -281,6 +320,10 @@ class _CalendarState extends State<Calendar> {
                         elevation: 0,
                         child: ListTile(
                           // tileColor: Colors.black,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                            Radius.circular(3),
+                          )),
                           tileColor: events[0] == true
                               ? colors[0]
                               : const Color.fromARGB(255, 255, 255, 255),
@@ -290,11 +333,15 @@ class _CalendarState extends State<Calendar> {
                     SizedBox(
                       height: 20,
                       child: Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
+                        // shape: RoundedRectangleBorder(
+                        //   borderRadius: BorderRadius.circular(100.0),
+                        // ),
                         elevation: 0,
                         child: ListTile(
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                            Radius.circular(3),
+                          )),
                           tileColor: events[1] == true
                               ? colors[1]
                               : const Color.fromARGB(255, 255, 255, 255),
@@ -309,6 +356,10 @@ class _CalendarState extends State<Calendar> {
                         ),
                         elevation: 0,
                         child: ListTile(
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                            Radius.circular(3),
+                          )),
                           tileColor: events[2] == true
                               ? colors[2]
                               : const Color.fromARGB(255, 255, 255, 255),
@@ -321,7 +372,6 @@ class _CalendarState extends State<Calendar> {
             },
           ),
         ),
-        // }),
       ],
     );
   }
