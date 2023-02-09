@@ -20,6 +20,11 @@ class Status extends StatefulWidget {
 class _StatusState extends State<Status> {
   final WalkController walkController = Get.put(WalkController());
   final PetController petController = Get.put(PetController());
+  final WalkController walkController = Get.put(WalkController());
+
+  // final petsRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
+  //     .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
+  String? name = '공숙이';
 
   // String imageurl = "";
   //
@@ -72,12 +77,20 @@ class _StatusState extends State<Status> {
                       true, // setting it true will show initials text above profile picture, default false
                 ),
               ),
-              Text('name'),
-              IconButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/Ble');
-                  },
-                  icon: Icon(Icons.bluetooth_outlined)),
+              SizedBox(
+                width: 10,
+              ),
+              Column(
+                children: [
+                  Text('${name}'),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/Ble');
+                    },
+                    icon: Icon(Icons.bluetooth_outlined),
+                  ),
+                ],
+              ),
             ],
           ),
           Column(

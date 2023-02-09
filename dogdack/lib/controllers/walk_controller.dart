@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/models/walk_data.dart';
@@ -36,7 +37,7 @@ class WalkController extends GetxController {
   Timer? timer;
   RxInt timeCount = 0.obs;
 
-  RxString ImageURL = "".obs;
+  RxDouble totalDistance = 0.0.obs;
 
   List<LatLng> latlng = [];
 
@@ -44,7 +45,8 @@ class WalkController extends GetxController {
   List<String> petList = [];
   Timestamp? startTime;
   Timestamp? endTime;
-  double? distance;
+
+  double? distance = 0.0;
   int rectime = 0;
   RxInt goal = 0.obs;
   RxInt tmp_goal = 0.obs;
@@ -83,9 +85,21 @@ class WalkController extends GetxController {
       }
       rectime = (recTime / cnt).round();
     }
+
+
+
+  @override
+  void onInit() {
+    ever(timeCount, (_) {
+      if ((timeCount % 6000) % 100 == 0) {
+        sendData(
+            '${timeCount ~/ 360000}:${timeCount ~/ 6000}:${(timeCount % 6000) ~/ 100}, ${distance!.toInt()}m');
+      }
+    });
+
   }
 
-  void addData(lat, lng){
+  void addData(lat, lng) {
     geolist?.add(GeoPoint(lat, lng));
     update();
   }
@@ -138,8 +152,14 @@ class WalkController extends GetxController {
   }
 
   void updateWalkingState() {
+    // LCD 초기화
+    if (isStart == false) {
+      initLCD();
+      Future.delayed(Duration(seconds: 1));
+    }
+
     isStart = true;
-    if(timeCount.value == 0) startTime = Timestamp.now();
+    if (timeCount.value == 0) startTime = Timestamp.now();
     isRunning.value = !isRunning.value;
     update();
   }
@@ -163,11 +183,28 @@ class WalkController extends GetxController {
     super.onClose();
   }
 
-  void setImageUrl(String url) {
-    ImageURL.value = url;
-  }
 
   void abv() {
     update();
+
+  void initLCD() async {
+    await sendData('01085382550a');
+    await sendData('0:0:0, 0m');
+  }
+
+  Future<void> sendData(data) async {
+    print('Send Data: ${data.toString()}');
+    for (BluetoothService service in services!) {
+      if (service.uuid.toString() == serviceUuid) {
+        for (BluetoothCharacteristic characteristic
+            in service.characteristics) {
+          if (characteristic.uuid.toString() == characteristicUuid) {
+            await characteristic.write(utf8.encode(data),
+                withoutResponse: true);
+          }
+        }
+      }
+    }
+
   }
 }

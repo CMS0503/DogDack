@@ -12,8 +12,8 @@ import '../../../../controllers/walk_controller.dart';
 
 class CalWalkCardWidget extends StatefulWidget {
   String place;
-  num distance;
-  num totalTimeMin;
+  String distance;
+  String totalTimeMin;
   String imageUrl;
 
   CalWalkCardWidget(
