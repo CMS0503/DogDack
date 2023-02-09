@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dogdack/controllers/input_controller.dart';
 import 'package:dogdack/screens/calendar_detail/widget/walk/cal_walk_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
   var data;
   final Completer<GoogleMapController> _controller = Completer();
   final walkController = Get.put(WalkController());
+  final inputController = Get.put(InputController());
 
 
   @override
@@ -64,11 +66,9 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
 
       // print('${walkController.curName}의 문서 id : $docId');
 
-
       final firestore = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets/$docId/Walk');
-      // selectedDay : 캘린더에서 선택한 날짜  -> controller에서 받아올것
-      var selectedDay = DateTime(2023, 2, 9);
 
+      var selectedDay = inputController.date;
       var startOfToday = Timestamp.fromDate(selectedDay);
       var endOfToday = Timestamp.fromDate(selectedDay.add(Duration(days: 1)));
       // var startOfToday = Timestamp.fromDate(selectedDay.subtract(Duration(hours: selectedDay.hour, minutes: selectedDay.minute, seconds: selectedDay.second, milliseconds: selectedDay.millisecond, microseconds: selectedDay.microsecond)));
