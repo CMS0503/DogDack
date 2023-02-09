@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:dogdack/commons/logo_widget.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 import '../../models/dog_data.dart';
 
@@ -27,6 +26,7 @@ class _HomePageState extends State<HomePage> {
       .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
 
   final sliderController = Get.put(HomePageSliderController());
+  final homePageWalkCalculatorController = Get.put(HomePageWalkCalculatorController());
 
   @override
   Widget build(BuildContext context) {
@@ -46,14 +46,14 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   StreamBuilder(
                     stream: petsRef.orderBy('createdAt').snapshots(),
-                    builder: (context, snapshot) {
+                    builder: (petContext, petSnapshot) {
                       // 데이터를 아직 불러오지 못했으면 로딩
-                      if (!snapshot.hasData) {
+                      if (!petSnapshot.hasData) {
                         return Center(child: CircularProgressIndicator());
                       }
 
                       // 불러온 데이터가 없을 경우 등록 안내
-                      if (snapshot.data!.docs.length == 0) {
+                      if (petSnapshot.data!.docs.length == 0) {
                         return Center(
                           child: Text('마이 페이지에서 댕댕이를 등록해주세요!'),
                         );
@@ -64,13 +64,31 @@ class _HomePageState extends State<HomePage> {
                       //오늘 날짜 구하기
                       var _today = DateTime.now();
                       //현재 선택된 반려견 생일 문자열 파싱
-                      String _petBirthYearOrigin = snapshot.data!.docs[sliderController.sliderIdx].get('birth');
+                      String _petBirthYearOrigin = petSnapshot.data!.docs[sliderController.sliderIdx].get('birth');
                       String _petBirth = '';
                       List<String> birthList = _petBirthYearOrigin.split('.');
                       for(int liIdx = 0; liIdx < birthList.length; liIdx++) {
                         _petBirth += birthList.elementAt(liIdx);
                       }
                       int displayBirth = int.parse(_today.difference(DateTime.parse(_petBirth)).inDays.toString());
+
+                      String curDogID = petSnapshot.data!.docs[sliderController.sliderIdx].id;
+                      CollectionReference refCurDogWalk = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets/').doc(curDogID).collection('Walk');
+
+                      var startOfToday = Timestamp.fromDate(DateTime.now().subtract(Duration(hours: DateTime.now().hour, minutes: DateTime.now().minute, seconds: DateTime.now().second, milliseconds: DateTime.now().millisecond, microseconds: DateTime.now().microsecond)));
+                      var endOfToday = Timestamp.fromDate(DateTime.now().add(Duration(days: 1, hours: -DateTime.now().hour, minutes: -DateTime.now().minute, seconds: -DateTime.now().second, milliseconds: -DateTime.now().millisecond, microseconds: -DateTime.now().microsecond)));
+
+                      refCurDogWalk.where("startTime", isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday).get().then((QuerySnapshot snapshot) {
+                        num totalGoalTime = 0;
+                        num totalTimeMinute = 0;
+                        for (var document in snapshot.docs) {
+                          totalGoalTime += document.get('goal');
+                          totalTimeMinute += document.get('totalTimeMin');
+                        }
+
+                        homePageWalkCalculatorController.compPercent = ((totalTimeMinute / totalGoalTime) * 100).toInt();
+                        homePageWalkCalculatorController.getTodayWalkPercent();
+                      });
 
                       return Column(
                         children: [
@@ -83,13 +101,15 @@ class _HomePageState extends State<HomePage> {
                           SizedBox(
                             height: height * 0.02,
                           ),
-                          Text(
-                            '%',
-                            style: TextStyle(
-                              color: Color(0xff644CAA),
-                              fontSize: width * 0.07
-                            ),
-                          ),
+                          GetBuilder<HomePageWalkCalculatorController>(builder: (_) {
+                            return Text(
+                              '${homePageWalkCalculatorController.compPercent}%',
+                              style: TextStyle(
+                                  color: Color(0xff644CAA),
+                                  fontSize: width * 0.07
+                              ),
+                            );
+                          }),
                           SizedBox(
                             height: height * 0.01,
                           ),
@@ -107,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                               },
                               autoPlay: true,
                             ),
-                            itemCount: snapshot.data!.docs.length,
+                            itemCount: petSnapshot.data!.docs.length,
                             itemBuilder: (context, itemIndex, pageViewIndex) {
                               return CircleAvatar(
                                 radius: size.width * 0.25,
@@ -128,7 +148,7 @@ class _HomePageState extends State<HomePage> {
                           SizedBox(height: size.height * 0.02),
                           Center(
                             child: Text(
-                              snapshot.data!.docs[sliderController.sliderIdx].get('name'),
+                              petSnapshot.data!.docs[sliderController.sliderIdx].get('name'),
                               style: TextStyle(
                                 color: Color(0xff644CAA),
                               ),
@@ -149,9 +169,9 @@ class _HomePageState extends State<HomePage> {
                       );
                     },
                   ),
-                  Container(
+                  /*Container(
                     child: BarChartSample1(),
-                  ),
+                  ),*/
                 ],
               ),
             ),

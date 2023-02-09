@@ -57,3 +57,10 @@ class HomePageSliderController extends GetxController {
   int sliderIdx = 0;
 }
 
+class HomePageWalkCalculatorController extends GetxController {
+  int compPercent = 0;
+
+  getTodayWalkPercent() {
+      update();
+  }
+}
