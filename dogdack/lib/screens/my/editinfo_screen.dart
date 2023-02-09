@@ -538,7 +538,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                           ? ClipOval(child: mypageStateController.myPageStateType == MyPageStateType.Create
                             ? Image(image: FileImage(pickedPetImgFile))
                             : !isChangeImg
-                              ? Image.network(petController.selectedPetImageUrl)
+                              ? /*Image.network(petController.selectedPetImageUrl)*/ Container(color: Colors.amber)
                               : Image(image: FileImage(pickedPetImgFile)))
                           : Icon(Icons.add, size: size.width * 0.2, color: Colors.white),
                     ),

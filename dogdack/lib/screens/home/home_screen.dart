@@ -167,9 +167,9 @@ class _HomePageState extends State<HomePage> {
                       );
                     },
                   ),
-                  Container(
+                  /*Container(
                     child: BarChartSample1(),
-                  ),
+                  ),*/
                 ],
               ),
             ),
