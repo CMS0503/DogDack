@@ -190,13 +190,13 @@ class _ChartMainState extends State<ChartMain> {
           .substring(0, 10));
     }
 
-    List<double> temp = List<double>.filled(60, 0);
-    day_hour_points = List<double>.filled(7, 0);
-    week_hour_points = List<double>.filled(30, 0);
-    day_distance_points = List<double>.filled(7, 0);
-    week_distance_points =List<double>.filled(30, 0);
-    day_goal_hour_points =  List<double>.filled(7, 0);
-    week_goal_hour_points =  List<double>.filled(30, 0);
+    List<double> temp = List<double>.filled(60, 1);
+    day_hour_points = List<double>.filled(7, 1);
+    week_hour_points = List<double>.filled(30, 1);
+    day_distance_points = List<double>.filled(7, 1);
+    week_distance_points =List<double>.filled(30, 1);
+    day_goal_hour_points =  List<double>.filled(7, 1);
+    week_goal_hour_points =  List<double>.filled(30, 1);
 
 
 
