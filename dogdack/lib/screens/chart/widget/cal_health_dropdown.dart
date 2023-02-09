@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
-import '../../calender_detail.dart';
-import '../../controller/calendar_detail_controller.dart';
+import '../../calendar_detail/calender_detail.dart';
+import '../../calendar_detail/controller/calendar_detail_controller.dart';
 
 class CalHealthDropdownWidget extends StatefulWidget {
 

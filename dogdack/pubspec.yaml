@@ -63,6 +63,7 @@ dependencies:
   fl_chart: ^0.60.0
   adaptive_dialog: ^1.8.2
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

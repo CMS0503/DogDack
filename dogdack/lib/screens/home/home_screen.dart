@@ -136,7 +136,9 @@ class _HomePageState extends State<HomePage> {
                           ),
                           SizedBox(height: size.height * 0.02),
                           Center(
-                            child: Text(
+                            child:
+                            // Container()
+                            Text(
                               '함께한지 ${displayBirth}일',
                               style: TextStyle(
                                 color: Color(0xff504E5B),

@@ -1,4 +1,4 @@
-import 'package:dogdack/screens/calendar_detail/widget/health/line_chart.dart';
+import 'package:dogdack/screens/chart/widget/line_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:intl/intl.dart';
+
+import '../../../../controllers/input_controller.dart';
 
 class DayWidget extends StatefulWidget {
   @override
@@ -6,7 +11,12 @@ class DayWidget extends StatefulWidget {
 }
 
 class _DayWidgetState extends State<DayWidget> {
-  List<String> days = ["월", "화", "수", "목", "금", "토", "일"];
+
+  final controller = Get.put(InputController());
+
+
+  List<String> days = [];
+
 
   TextStyle style = TextStyle(
       fontSize: 14,
@@ -15,6 +25,11 @@ class _DayWidgetState extends State<DayWidget> {
 
   @override
   Widget build(BuildContext context) {
+    for(int i=0;i<7;i++){
+      days.add(DateFormat.E('ko_KR').format(controller.today.subtract(Duration(days: 6-i))));
+    }
+
+    print(DateFormat.E('ko_KR').format(controller.today));
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     int index = 0;
