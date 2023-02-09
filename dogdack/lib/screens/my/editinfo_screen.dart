@@ -81,6 +81,23 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     );
   }
 
+  bool isSameName(String inputName) {
+    final petRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
+
+    if(mypageStateController.myPageStateType == MyPageStateType.Edit && inputName == petController.selectedPetName) {
+      // 편집하는 경우
+      return false;
+    }
+
+    for(int i = 0; i < petController.petNameList.length; i++) {
+      if(petController.petNameList.elementAt(i).compareTo(inputName) == 0) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   // 견종 카테고리 선택
   showPickerKategorieArray(BuildContext context) {
     new Picker(
@@ -126,14 +143,80 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     ).showDialog(context);
   }
 
+  void selectCameraOrGallery(BuildContext context, Size size) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            height: size.height * 0.15,
+            child: Column(
+              children: [
+                Container(
+                  height: size.height * 0.075,
+                  child: ListTile(
+                    leading: Icon(Icons.camera_alt_outlined),
+                    title: Text('촬영하기'),
+                    onTap: () {
+                      chooseImageInCamera();
+                      Navigator.pop(context);
+                      },
+                  ),
+                ),
+                Container(
+                  height: size.height * 0.075,
+                  child: ListTile(
+                    leading: Icon(Icons.photo_camera_back),
+                    title: Text('앨범보기'),
+                    onTap: () {
+                      chooseImageInGallery();
+                      Navigator.pop(context);
+                      },
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
   // 강아지 이미지 선택
   File pickedPetImgFile = File(''); // 강아지 이미지 파일
   final picker = ImagePicker(); // 갤러리에서 가져오기 위한 ImagePicker
   bool pickComp = false; // 사진 선택 완료 여부 확인. 사진 추가 이미지를 선택한 이미지로 변경하기 위함
 
-  chooseImage() async {
+  chooseImageInGallery() async {
     // 갤러리에서 사진을 가져옴
     final pickedFile = await picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
+    if (pickedFile == null) return;
+
+    // 가져온 사진을 원형으로 잘라냄
+    var file = await ImageCropper().cropImage(
+      compressFormat: ImageCompressFormat.jpg,
+      compressQuality: 100,
+      sourcePath: pickedFile.path,
+      aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+      cropStyle: CropStyle.circle,
+    );
+
+    if (file == null) {
+      return;
+    }
+
+    //선택 완료
+    setState(() => pickedPetImgFile = File(file.path));
+    if (file.path == null) retrieveLostData();
+    if (pickedPetImgFile != null) {
+      pickComp = true;
+      // 수정 모드일 경우, 기존 이미지 파일 제거 필요함. 플래그 변수를 활용하여 업데이트 할 때 파일을 삭제
+      if(mypageStateController.myPageStateType == MyPageStateType.Edit) {
+        isChangeImg = true;
+      }
+    }
+  }
+
+  chooseImageInCamera() async {
+    // 갤러리에서 사진을 가져옴
+    final pickedFile = await picker.pickImage(source: ImageSource.camera, imageQuality: 50);
     if (pickedFile == null) return;
 
     // 가져온 사진을 원형으로 잘라냄
@@ -465,7 +548,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                   // 키보드 해제
                   FocusManager.instance.primaryFocus?.unfocus();
                   // 연속 클릭 방지
-                  !uploadingImg ? chooseImage() : null;
+                  !uploadingImg ? selectCameraOrGallery(context, size) : null;
                 },
               ),
               SizedBox(height: size.height * 0.01),
@@ -660,6 +743,13 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                       return;
                                     }
 
+                                    // 이름 중복 검사
+                                    if(isSameName(name)) {
+                                      MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameAlreadyExist);
+                                      uploadingData = false;
+                                      return;
+                                    }
+
                                     // 생일을 선택하지 않은 경우 알림
                                     if(!selectBirth) {
                                       MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BirthNotExist);
@@ -740,6 +830,13 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                                 // 이름이 10글자를 초과할 경우 알림
                                                 if(name.length > 10) {
                                                   MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameOverflow);
+                                                  uploadingData = false;
+                                                  return;
+                                                }
+
+                                                // 이름 중복 검사
+                                                if(isSameName(name)) {
+                                                  MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameAlreadyExist);
                                                   uploadingData = false;
                                                   return;
                                                 }
