@@ -12,7 +12,6 @@ import '../../controllers/mypage_controller.dart';
 
 class CalenderDetail extends StatefulWidget {
 
-
   @override
   State<CalenderDetail> createState() => _CalenderDetailState();
 }
@@ -31,7 +30,6 @@ class _CalenderDetailState extends State<CalenderDetail> {
 
   ////////////////////////////////////파이어 베이스 연결 끝/////////////////////////////////////////////////////
 
-
   @override
   Widget build(BuildContext context) {
     Color grey = Color.fromARGB(255, 80, 78, 91);
@@ -44,15 +42,14 @@ class _CalenderDetailState extends State<CalenderDetail> {
     }else{
       hair_color = grey;
     }
-    if(controller.bath == true){
-      bath_color = violet;
-    }else{
-      bath_color = grey;
+    if (controller.bath == true) {
+      bathColor = violet;
+    } else {
+      bathColor = grey;
     }
-    if(controller.imageUrl.length!=0){
+    if (controller.imageUrl.isNotEmpty) {
       imageUrl = controller.imageUrl[0];
     }
-
 
     return Scaffold(
       appBar: AppBar(
@@ -82,7 +79,7 @@ class _CalenderDetailState extends State<CalenderDetail> {
                 ]),
             //날짜
             Padding(
-              padding: EdgeInsets.only(left: 18, bottom: 15),
+              padding: const EdgeInsets.only(left: 18, bottom: 15),
               child: Column(
                 children: [
                   // 등록한 날짜가 나와야 함
@@ -102,7 +99,7 @@ class _CalenderDetailState extends State<CalenderDetail> {
                 place: controller.place,
                 totalTimeMin: controller.time),
             CalDetailTitleWidget(name: "짬뽕이", title: "뷰티도장"),
-            BeautyWidget(hair_color: hair_color, bath_color: bath_color),
+            BeautyWidget(hair_color: hairColor, bath_color: bathColor),
             CalDetailTitleWidget(name: "짬뽕이", title: "오늘의 일기"),
             DiaryWidget(diary_image: imageUrl, diary_text: controller.diary),
           ],
