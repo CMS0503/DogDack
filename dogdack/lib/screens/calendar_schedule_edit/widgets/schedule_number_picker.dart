@@ -96,7 +96,7 @@ class _ScheduleNumberPickerState extends State<ScheduleNumberPicker> {
               },
               // maxLength: 20,
               onChanged: (value) {
-                controller.time = value;
+                // controller.time = value;
                 setState(() {});
               },
               controller: distanceController,
@@ -119,7 +119,7 @@ class _ScheduleNumberPickerState extends State<ScheduleNumberPicker> {
                 filled: true,
                 fillColor: const Color.fromARGB(255, 229, 229, 230),
                 label: const Text(
-                  "산책 시간",
+                  "산책 거리",
                   style: TextStyle(
                     color: Color.fromARGB(255, 121, 119, 129),
                   ),
