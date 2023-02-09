@@ -179,7 +179,7 @@ class _CalendarState extends State<Calendar> {
         // 불러온 events 순회하면서
         markerBuilder: (context, day, events) {
           // 이벤트 비어 있으면 빈 Box
-          if (events.isEmpty)
+          if (events.isEmpty) {
             return ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
                 onPressed: () {
@@ -192,6 +192,7 @@ class _CalendarState extends State<Calendar> {
                   );
                 },
                 child: const SizedBox());
+          }
           return ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
             onPressed: () {
