@@ -8,8 +8,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class CalWalkCardWidget extends StatefulWidget {
   String place;
-  num distance;
-  num totalTimeMin;
+  String distance;
+  String totalTimeMin;
   String imageUrl;
 
   CalWalkCardWidget(

@@ -188,9 +188,7 @@ class _CalendarState extends State<Calendar> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => CalenderDetail(
-                              today: day,
-                            )),
+                        builder: (context) => CalenderDetail()),
                   );
                 },
                 child: const SizedBox());
