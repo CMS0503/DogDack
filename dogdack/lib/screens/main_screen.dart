@@ -17,7 +17,7 @@ class MainPage extends StatelessWidget {
 
   final mainController = Get.put(MainController());
 
-  int _currentTabIndex = 0;
+  final int _currentTabIndex = 0;
 
   // void _tabSelect(int tabIndex) {
   @override
@@ -49,26 +49,13 @@ class MainPage extends StatelessWidget {
           ]),
           bottomNavigationBar: BottomNavigationBar(
             items: const [
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: ""),
               BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: ""
-              ),
+                  icon: Icon(Icons.pets_outlined), label: ""),
               BottomNavigationBarItem(
-                icon: Icon(Icons.pets_outlined),
-                label: ""
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.calendar_today),
-                label: ""
-              ),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.bar_chart),
-                  label: ""
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: ""
-              ),
+                  icon: Icon(Icons.calendar_today), label: ""),
+              BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: ""),
+              BottomNavigationBarItem(icon: Icon(Icons.person), label: ""),
             ],
             selectedItemColor: const Color.fromARGB(255, 100, 92, 170),
             type: BottomNavigationBarType.fixed,
