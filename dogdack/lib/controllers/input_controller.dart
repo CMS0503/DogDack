@@ -19,7 +19,9 @@ class InputController extends GetxController {
   String saveName = '';
   String time = '';
   DateTime today = DateTime.now();
-
+  /////////////////////////여기 한줄 영우 추가/////////////////////
+  Map dog_names = {};
+  String selected_id = '';
   void setDate(selectedDate) {
     date = selectedDate;
     update();
