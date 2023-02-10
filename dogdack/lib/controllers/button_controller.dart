@@ -69,8 +69,7 @@ class ButtonController extends GetxController {
               data.docs[i]['beauty'],
             ];
           }
-          print(Calendar.events);
-          print('hi');
+
           // setState(() {});
           // print(Calendar.events);
         }

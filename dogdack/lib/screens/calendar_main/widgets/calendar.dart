@@ -46,11 +46,19 @@ class _CalendarState extends State<Calendar> {
         .collection('Users/${'imcsh313@naver.com'}/Pets');
     var dogDoc = await petsRef.get();
     List<String> dogs = [];
+
+    Map dog_names = controller.dog_names;
+
+
     // 자.. 여기다가 등록된 강아지들 다 입력하는거야
     for (int i = 0; i < dogDoc.docs.length; i++) {
+      /////////////////여기 한줄 영우 추가/////////////////////////////
+      dog_names[ dogDoc.docs[i]['name'].toString()] =dogDoc.docs[i].id.toString();
       dogs.insert(0, dogDoc.docs[i]['name']);
     }
     controller.valueList = dogs;
+    controller.dog_names = dog_names;
+
 
     // 근데 강아지들이 없으면?
     if (dogs.isEmpty) {
@@ -60,6 +68,8 @@ class _CalendarState extends State<Calendar> {
       if (controller.selectedValue == '') {
         // 그냥 처음 강아지로 가져오기
         controller.selectedValue = dogs[0];
+        controller.selected_id = dog_names.values.toList()[0];
+
         var result = await petsRef
             .where("name", isEqualTo: controller.selectedValue)
             .get();
@@ -94,8 +104,7 @@ class _CalendarState extends State<Calendar> {
               data.docs[i]['beauty'],
             ];
           }
-          print(Calendar.events);
-          print('hi');
+
           setState(() {});
           // print(Calendar.events);
         }
