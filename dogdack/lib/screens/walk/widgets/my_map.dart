@@ -55,60 +55,72 @@ class _MapState extends State<myMap> {
   void updatePosition() async {
     GoogleMapController googleMapController = await _controller.future;
     for (BluetoothService service in walkController.services!) {
-      if (service.uuid.toString() == walkController.serviceUuid) {
+      if (service.uuid.toString() == walkController.serviceUUID) {
         for (BluetoothCharacteristic characteristic
             in service.characteristics) {
           if (characteristic.uuid.toString() ==
-              walkController.characteristicUuid) {
+              walkController.characteristicUUID) {
             await characteristic.setNotifyValue(true);
-
+            String stringValue = '';
             characteristic.value.listen((value) {
-              String stringValue = utf8.decode(value).toString();
+              print('listen: ${value}');
+              try {
+                stringValue = utf8.decode(value).toString();
+              } catch (e) {
+                print('Error in decoding(my_map.dart): $e');
+              }
+
               widget.receiveData += stringValue;
               // 한번 갱신 될 때마다
+              // 시작 전
               if (!walkController.isRunning.value) {
-                // 시작 전
                 widget.receiveData = '';
-              } else if (widget.receiveData[0] == '{' &&
-                  widget.receiveData[widget.receiveData.length - 1] == '}') {
-                // 받은 데이터 포맷이 올바를 때
-                widget.location = jsonDecode(widget.receiveData);
-                walkController.setCurrentLocation(
-                    widget.location!['lat'], widget.location!["lon"]);
-                print(
-                    'walkController location: ${walkController.lat} ${walkController.lon}');
-                widget.receiveData = '';
-                LatLng currentPosition = LatLng(
-                  walkController.lat,
-                  walkController.lon,
-                );
-                googleMapController.animateCamera(
-                  CameraUpdate.newCameraPosition(
-                    CameraPosition(
-                      zoom: 17,
-                      target: currentPosition,
+              } else if (widget.receiveData.contains('{') &&
+                  widget.receiveData.contains('}')) {
+                // 시작 후
+                try {
+                  int start = widget.receiveData.indexOf('{');
+                  int end = widget.receiveData.indexOf('}') + 1;
+
+                  widget.receiveData = widget.receiveData.substring(start, end);
+
+                  widget.location = jsonDecode(widget.receiveData);
+                  walkController.setCurrentLocation(
+                      widget.location!['lat'], widget.location!["lon"]);
+                  print(
+                      'walkController location: ${walkController.lat} ${walkController.lon}');
+                  widget.receiveData = '';
+                  LatLng currentPosition = LatLng(
+                    walkController.lat,
+                    walkController.lon,
+                  );
+                  googleMapController.animateCamera(
+                    CameraUpdate.newCameraPosition(
+                      CameraPosition(
+                        zoom: 17,
+                        target: currentPosition,
+                      ),
                     ),
-                  ),
-                );
+                  );
 
-                if (latlng.length > 1) {
-                  totalDistance = totalDistance! +
-                      calTotalDistance(
-                          ll.LatLng(
-                              latlng.last.latitude, latlng.last.longitude),
-                          ll.LatLng(currentPosition.latitude,
-                              currentPosition.longitude));
-                  walkController.distance = totalDistance;
+                  if (latlng.length > 1) {
+                    totalDistance = totalDistance! +
+                        calTotalDistance(
+                            ll.LatLng(
+                                latlng.last.latitude, latlng.last.longitude),
+                            ll.LatLng(currentPosition.latitude,
+                                currentPosition.longitude));
+                    walkController.distance = totalDistance;
+                  }
+
+                  latlng.add(currentPosition);
+                  walkController.addData(
+                      currentPosition.latitude, currentPosition.longitude);
+                  print('totaldistance: $totalDistance');
+                  setState(() {});
+                } catch (e) {
+                  print('Error in set position - $e');
                 }
-
-                latlng.add(currentPosition);
-                walkController.addData(
-                    currentPosition.latitude, currentPosition.longitude);
-                print('totaldistance: $totalDistance');
-                setState(() {});
-              } else if (widget.receiveData[0] == '{') {
-              } else {
-                widget.receiveData = '';
               }
             });
           }
