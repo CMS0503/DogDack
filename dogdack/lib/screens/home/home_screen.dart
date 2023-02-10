@@ -1,13 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/mypage_controller.dart';
-import 'package:dogdack/screens/home/bar_char.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:dogdack/screens/home/widget/bar_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:dogdack/commons/logo_widget.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
+import '../../controllers/home_controller.dart';
 import '../../models/dog_data.dart';
 
 
@@ -27,6 +28,7 @@ class _HomePageState extends State<HomePage> {
 
   final sliderController = Get.put(HomePageSliderController());
   final homePageWalkCalculatorController = Get.put(HomePageWalkCalculatorController());
+  final homePageBarChartController = Get.put(HomePageBarChartController());
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +63,7 @@ class _HomePageState extends State<HomePage> {
 
                     // 여기서 부터는 등록된 반려견이 1마리 이상 존재함.
 
+                    // 함께 한 날짜 구하기
                     //오늘 날짜 구하기
                     var _today = DateTime.now();
                     //현재 선택된 반려견 생일 문자열 파싱
@@ -72,6 +75,7 @@ class _HomePageState extends State<HomePage> {
                     }
                     int displayBirth = int.parse(_today.difference(DateTime.parse(_petBirth)).inDays.toString());
 
+                    // 산책 달성률 구하기
                     String curDogID = petSnapshot.data!.docs[sliderController.sliderIdx].id;
                     CollectionReference refCurDogWalk = FirebaseFirestore.instance.collection('Users/imcsh313@naver.com/Pets/').doc(curDogID).collection('Walk');
 
@@ -94,6 +98,9 @@ class _HomePageState extends State<HomePage> {
 
                       homePageWalkCalculatorController.getTodayWalkPercent();
                     });
+
+                    //그래프 데이터 계산
+                    homePageBarChartController.calculatorHomeChartData(curDogID, refCurDogWalk);
 
                     return Column(
                       children: [
@@ -128,24 +135,23 @@ class _HomePageState extends State<HomePage> {
                             onPageChanged: (index, reason) {
                               setState(() {
                                 sliderController.sliderIdx = index;
+                                //그래프 데이터 계산
+                                homePageBarChartController.calculatorHomeChartData(curDogID, refCurDogWalk);
                               });
                             },
                             autoPlay: true,
+                            autoPlayInterval: Duration(seconds: 7),
                           ),
                           itemCount: petSnapshot.data!.docs.length,
                           itemBuilder: (context, itemIndex, pageViewIndex) {
                             return CircleAvatar(
                               radius: size.width * 0.25,
                               child: ClipOval(
-                                child: Container(
-                                  color: Colors.amber,
-                                  width: 50,
-                                  height: 50,
-                                ) /*FadeInImage.memoryNetwork(
-                                    fit: BoxFit.cover,
-                                    placeholder: kTransparentImage,
-                                    image: snapshot.data!.docs[itemIndex].get('imageUrl'),
-                                  )*/,
+                                child: CachedNetworkImage(
+                                  imageUrl: petSnapshot.data!.docs[itemIndex].get('imageUrl'),
+                                  progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) => Icon(Icons.error),
+                                ),
                               ),
                             );
                           },
@@ -167,14 +173,15 @@ class _HomePageState extends State<HomePage> {
                               color: Color(0xff504E5B),
                             ),
                           ),
-                        )
+                        ),
+                        SizedBox(height: size.height * 0.02),
                       ],
                     );
                   },
                 ),
-                /*Container(
-                    child: BarChartSample1(),
-                  ),*/
+                Container(
+                  child: HomePageBarChart(),
+                ),
               ],
             ),
           ),
