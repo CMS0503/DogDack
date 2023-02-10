@@ -33,15 +33,13 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
+  // input과 walk controller 불러오기
   final controller = Get.put(InputController());
   final walkController = Get.put(WalkController());
 
-  // final Map<String, List<Object>> events = {'': []};
-
-  String docId = '';
-
+  // 강아지 정보 불러오기
   getName() async {
-    final controller = Get.put(InputController());
+    // final controller = Get.put(InputController());
     final petsRef = FirebaseFirestore.instance
         .collection('Users/${'imcsh313@naver.com'}/Pets');
     var dogDoc = await petsRef.get();
