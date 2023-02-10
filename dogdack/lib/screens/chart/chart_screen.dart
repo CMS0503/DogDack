@@ -124,17 +124,17 @@ class _ChartMainState extends State<ChartMain> {
   // 한달 산책 시간 그래프 포인트
   late List<double> week_distance_points = [1];
 
-  // 이번주 일주일 평균 산책 거리
-  int sum_day_walk_distance = 1;
-
-  // 저번주 일주일 평균 산책 거리
-  int lase_sum_day_walk_distance = 1;
-
-  // 이번달 평균 산책 거리
-  int sum_week_walk_distance = 1;
-
-  // 저번달 평균 산책 거리
-  int last_sum_week_walk_distance = 1;
+  // // 이번주 일주일 평균 산책 거리
+  // int sum_day_walk_distance = 1;
+  //
+  // // 저번주 일주일 평균 산책 거리
+  // int lase_sum_day_walk_distance = 1;
+  //
+  // // 이번달 평균 산책 거리
+  // int sum_week_walk_distance = 1;
+  //
+  // // 저번달 평균 산책 거리
+  // int last_sum_week_walk_distance = 1;
 
   late String imageUrl = 'images/login/login_image.png';
 
@@ -192,6 +192,7 @@ class _ChartMainState extends State<ChartMain> {
 
     last_day_hour_points= List<double>.filled(7, 0);
     last_week_hour_points = List<double>.filled(30, 0);
+
 
     day_distance_points = List<double>.filled(7, 0);
     week_distance_points = List<double>.filled(30, 0);
@@ -254,6 +255,12 @@ class _ChartMainState extends State<ChartMain> {
     Color grey = Color.fromARGB(255, 80, 78, 91);
     Color violet = Color.fromARGB(255, 100, 92, 170);
     Color violet2 = Color.fromARGB(255, 160, 132, 202);
+
+    // 이번주 일주일 평균 산책 거리
+    int sum_day_walk_distance = 0;
+
+    // 이번달 평균 산책 거리
+    int sum_week_walk_distance = 0;
 
     // 일주일 동안 실제 산책한 평균 시간
     for (int i = 0; i < day_hour_points.length; i++) {
