@@ -46,6 +46,7 @@ class _CalendarState extends State<Calendar> {
     List<String> dogs = [];
     // 자.. 여기다가 등록된 강아지들 다 입력하는거야
     for (int i = 0; i < dogDoc.docs.length; i++) {
+      controller.dog_names[ dogDoc.docs[i]['name']] = dogDoc.docs[i]['name'];
       dogs.insert(0, dogDoc.docs[i]['name']);
     }
     controller.valueList = dogs;
@@ -154,6 +155,7 @@ class _CalendarState extends State<Calendar> {
                         ).toList(),
                         onChanged: (value) {
                           controller.selectedValue = value.toString();
+                          controller.selected_id = controller.dog_names[value.toString()];
                           setState(() {
                             getName();
                           });
@@ -187,6 +189,7 @@ class _CalendarState extends State<Calendar> {
                         ).toList(),
                         onChanged: (value) {
                           controller.selectedValue = value.toString();
+                          controller.selected_id = controller.dog_names[value.toString()];
                           setState(() {
                             getName();
                           });

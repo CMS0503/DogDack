@@ -151,26 +151,30 @@ class _ChartMainState extends State<ChartMain> {
   String walk_distance_plus = "증가했어요!";
   String walk_distance_minus = "감소했어요!";
 
+
+  /// 바뀔 강아지 이름
+
+  Map dog_names = {};
+
   Future<Map<String, List<Object>>> getData() async {
+
     // 두달 산책 시간 포인트 불러오기
 
     final find_name = FirebaseFirestore.instance
         .collection('Users/${'imcsh313@naver.com'}/Pets');
 
     var docId = await find_name.get();
-    Map dog_names = {};
+
 
     for (int i = 0; i < docId.docs.length; i++) {
       dog_names[docId.docs[i]['name'].toString()] = docId.docs[i].id.toString();
     }
 
-    print("herere");
-    print(controller.dog_names);
 
     //////// 강아지 아이디 고정값으로 박아 놓음. 바꿔야 됨.
     final day_points = FirebaseFirestore.instance
         .collection('Users/${'imcsh313@naver.com'}/Pets')
-        .doc(dog_names["공숙이"])
+        .doc(controller.selected_id)
         .collection('Walk')
         .where('startTime', isLessThan: DateTime.now())
         .where('startTime',
@@ -252,6 +256,8 @@ class _ChartMainState extends State<ChartMain> {
 
   @override
   Widget build(BuildContext context) {
+
+
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     double height = screenSize.height;
@@ -318,6 +324,7 @@ class _ChartMainState extends State<ChartMain> {
       walk_distance_increment_text = walk_distance_minus;
     }
 
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(height * 0.09),
@@ -342,16 +349,13 @@ class _ChartMainState extends State<ChartMain> {
                               return DropdownMenuItem(
                                 value: value,
                                 child: Text(value),
-                                //vhilf
-                                //vhilf
-
-
-
                               );
                             },
                           ).toList(),
                           onChanged: (value) {
                             controller.selectedValue = value.toString();
+                            controller.selected_id = controller.dog_names[value.toString()];
+
                             setState(() {
                               getData();
                             });
@@ -385,6 +389,7 @@ class _ChartMainState extends State<ChartMain> {
                           ).toList(),
                           onChanged: (value) {
                             controller.selectedValue = value.toString();
+                            controller.selected_id = dog_names[value.toString()];
                             setState(() {
                               getData();
                             });
@@ -509,108 +514,6 @@ class _ChartMainState extends State<ChartMain> {
                   );
                 }),
 
-            //
-            // Row(
-            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //     children: <Widget>[
-            //       CalDetailTitleWidget(name: "짬뽕이", title: "건강 지수"),
-            //       // CalHealthDropdownWidget(),
-            //       // 날짜 바꾸는 드롭다운
-            //       Padding(
-            //         padding: const EdgeInsets.all(3.0),
-            //         child: Center(
-            //             child: DropdownButton(
-            //           elevation: 0,
-            //           focusColor: Color.fromARGB(255, 100, 92, 170),
-            //           borderRadius: BorderRadius.circular(10),
-            //           value: _selectedValue,
-            //           items: _valueList.map((value) {
-            //             return DropdownMenuItem(
-            //               value: value,
-            //               child: Container(
-            //                 width: width * 0.2,
-            //                 decoration: BoxDecoration(
-            //                     borderRadius: BorderRadius.circular(10),
-            //                     border: Border.all(
-            //                       width: 2,
-            //                       color: Color.fromARGB(255, 100, 92, 170),
-            //                     )),
-            //                 child: Text(
-            //                   value,
-            //                   style: TextStyle(
-            //                       fontSize: 20,
-            //                       fontFamily: 'bmjua',
-            //                       color: Color.fromARGB(255, 80, 78, 91)),
-            //                   textAlign: TextAlign.center,
-            //                 ),
-            //               ),
-            //             );
-            //           }).toList(),
-            //           onChanged: (value) {
-            //             setState(
-            //               () {
-            //                 _selectedValue = value!;
-            //                 if (_selectedValue == '일주일') {
-            //                   hour_points = day_hour_points;
-            //                   walk_hour_data = sum_day_walk_hour;
-            //                   last_walk_hour_data = last_sum_day_walk_hour;
-            //                   walk_distance_data = sum_day_walk_distance;
-            //                   distance_points = day_distance_points;
-            //                   //   last_avg_distance = last_day_avg_distance;
-            //                   date_text = "주";
-            //                   x_value = x_value_day;
-            //                   hour_goal_data = day_goal_hour;
-            //
-            //                 } else {
-            //                   hour_points = week_hour_points;
-            //                   walk_hour_data = sum_week_walk_hour;
-            //                   last_walk_hour_data = last_sum_week_walk_hour;
-            //                   walk_distance_data = sum_week_walk_distance;
-            //                   distance_points = week_distance_points;
-            //                   date_text = "달";
-            //                   x_value = x_value_week;
-            //                   hour_goal_data = week_goal_hour;
-            //
-            //                 }
-            //               },
-            //             );
-            //           },
-            //         )),
-            //       ),
-            //     ]),
-            // // Obx(() => Text('${drop_controller.drop_value.value}'),
-            // // drop_controller.drop_value.value == '월'
-            // // ? hour_points = week_hour_points : hour_points = week_hour_points;
-            // //
-            // // )
-            // //건강지수 카드
-            // CalHealthProgressCardWidget(
-            //     last_data: walk_goal_increment.abs(),
-            //     this_data: walk_goal_data,
-            //     message: walk_goal_increment_text,
-            //     date_text: date_text),
-            // CalHealthCardWidget(
-            //   color: violet2,
-            //   message: "${walk_hour_increment_text}",
-            //   title: "평균 산책 시간",
-            //   points: hour_points,
-            //   last_data: hour_increment.abs(),
-            //   this_data: walk_hour_data,
-            //   date_text: date_text,
-            //   unit: "분",
-            //   x_value: x_value,
-            // ),
-            // CalHealthCardWidget(
-            //   color: violet,
-            //   message: "${walk_distance_increment_text}",
-            //   title: "평균 산책거리",
-            //   points: distance_points,
-            //   last_data: distance_increment.abs(),
-            //   this_data: walk_distance_data,
-            //   date_text: date_text,
-            //   unit: "미터",
-            //   x_value: x_value,
-            // ),
           ],
         ),
       ),
