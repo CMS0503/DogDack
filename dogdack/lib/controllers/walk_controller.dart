@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/models/walk_data.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -12,7 +14,7 @@ class WalkController extends GetxController {
   final String serviceUuid = '0000ffe0-0000-1000-8000-00805f9b34fb';
   final String characteristicUuid = '0000ffe1-0000-1000-8000-00805f9b34fb';
 
-  RxBool isBleConnect = false.obs;
+  RxBool isBleConnect = true.obs;
 
   // 위도, 경도
   RxDouble latitude = 37.500735.obs;
@@ -51,6 +53,9 @@ class WalkController extends GetxController {
   RxInt tmp_goal = 0.obs;
   RxInt curGoal = 0.obs;
   String curName = "";
+  RxBool toggle = false.obs;
+  List selDogs = [];
+
 
   void getList() async {
     String temp = "";

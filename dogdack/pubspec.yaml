@@ -90,6 +90,7 @@ flutter:
   assets:
     - images/loading/
     - images/login/
+    - assets/check.png
 
   fonts:
     - family: bmjua
