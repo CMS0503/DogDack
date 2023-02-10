@@ -94,10 +94,7 @@ class _CalendarState extends State<Calendar> {
               data.docs[i]['beauty'],
             ];
           }
-          print(Calendar.events);
-          print('hi');
           setState(() {});
-          // print(Calendar.events);
         }
       }
     }
@@ -106,8 +103,6 @@ class _CalendarState extends State<Calendar> {
   @override
   void initState() {
     super.initState();
-    // getData();
-
     setState(() {
       getName();
     });
@@ -142,9 +137,9 @@ class _CalendarState extends State<Calendar> {
             padding: const EdgeInsets.only(left: 20),
             child: GetBuilder<MainController>(
               builder: (_) {
-                // getName();
-
+                // 등록한 강아지가 없으면
                 return controller.valueList.isEmpty
+                    // 강아지를 등록해달라는 dropbar
                     ? DropdownButton(
                         underline: Container(),
                         elevation: 0,
@@ -163,9 +158,9 @@ class _CalendarState extends State<Calendar> {
                           setState(() {
                             getName();
                           });
-                          // ButtonController.getName();
                         },
                       )
+                    // 등록된 강아지가 있으면 강아지 목록으로 dropdown
                     : DropdownButton(
                         icon: const Icon(
                           Icons.expand_more,
@@ -196,15 +191,12 @@ class _CalendarState extends State<Calendar> {
                           setState(() {
                             getName();
                           });
-                          // ButtonController.getName();
                         },
                       );
               },
             ),
           ),
         ),
-        // GetBuilder<ButtonController>(builder: (_) {
-        //   return
         TableCalendar(
           // 날짜 언어 설정
           locale: 'ko_KR',
@@ -308,60 +300,53 @@ class _CalendarState extends State<Calendar> {
             markerBuilder: (context, day, events) {
               // 이벤트 비어 있으면 빈 Box
               if (events.isEmpty) {
-                return ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.white),
-                    onPressed: () {
-                      controller.setDate(day);
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const CalenderDetail()),
-                      );
-                    },
-                    child: const SizedBox());
+                return const SizedBox();
               }
-              return ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-                onPressed: () {
-                  controller.setDate(day);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 20),
+              return Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: GestureDetector(
+                  onTap: () {
+                    controller.setDate(day);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CalenderDetail(),
+                      ),
+                    );
+                  },
                   child: ListView(
                     children: <Widget>[
                       SizedBox(
                         height: 20,
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          elevation: 0,
-                          child: ListTile(
-                            // tileColor: Colors.black,
-                            shape: const RoundedRectangleBorder(
+                        child: Container(
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            elevation: 0,
+                            child: ListTile(
+                              shape: const RoundedRectangleBorder(
                                 borderRadius: BorderRadius.all(
-                              Radius.circular(3),
-                            )),
-                            tileColor: events[0] == true
-                                ? colors[0]
-                                : const Color.fromARGB(255, 255, 255, 255),
+                                  Radius.circular(3),
+                                ),
+                              ),
+                              tileColor: events[0] == true
+                                  ? colors[0]
+                                  : const Color.fromARGB(255, 255, 255, 255),
+                            ),
                           ),
                         ),
                       ),
                       SizedBox(
                         height: 20,
                         child: Card(
-                          // shape: RoundedRectangleBorder(
-                          //   borderRadius: BorderRadius.circular(100.0),
-                          // ),
                           elevation: 0,
                           child: ListTile(
                             shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                              Radius.circular(3),
-                            )),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(3),
+                              ),
+                            ),
                             tileColor: events[1] == true
                                 ? colors[1]
                                 : const Color.fromARGB(255, 255, 255, 255),
@@ -377,9 +362,10 @@ class _CalendarState extends State<Calendar> {
                           elevation: 0,
                           child: ListTile(
                             shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                              Radius.circular(3),
-                            )),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(3),
+                              ),
+                            ),
                             tileColor: events[2] == true
                                 ? colors[2]
                                 : const Color.fromARGB(255, 255, 255, 255),
