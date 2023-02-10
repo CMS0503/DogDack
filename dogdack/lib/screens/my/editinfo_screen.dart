@@ -9,7 +9,7 @@ import 'package:flutter_picker/picker.dart';
 // GetX
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'controller/mypage_controller.dart';
+import '../../controllers/mypage_controller.dart';
 
 // Model
 import '../../models/dog_data.dart';
@@ -36,12 +36,16 @@ class EditDogInfoPage extends StatefulWidget {
 
 class _EditDogInfoPageState extends State<EditDogInfoPage> {
   // Firebase : 반려견 테이블 참조 값
-  final petsRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
-      .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
+  final petsRef = FirebaseFirestore.instance
+      .collection('Users/${'imcsh313@naver.com'}/Pets')
+      .withConverter(
+          fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+          toFirestore: (dogData, _) => dogData.toJson());
 
   // GetX
   final petController = Get.put(PetController());
   final mypageStateController = Get.put(MyPageStateController());
+  final homeSliderController = Get.put(HomePageSliderController());
 
   // 강아지 정보 : (GetX 강아지 정보 관련 변수는 조회 페이지에서 선택한 정보이기 때문에 다르게 관리함)
   final kategorieList = [['논스포팅', '시각 하운드', '후각 하운드', '테리어', '허딩', '토이', '스포팅', '워킹']]; // 견종 카테고리 리스트
@@ -78,6 +82,25 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
             : Icon(Icons.female, color: Colors.pink,),
       ],
     );
+  }
+
+  bool isSameName(String inputName) {
+    final petRef = FirebaseFirestore.instance
+        .collection('Users/${'imcsh313@naver.com'}/Pets');
+
+    if (mypageStateController.myPageStateType == MyPageStateType.Edit &&
+        inputName == petController.selectedPetName) {
+      // 편집하는 경우
+      return false;
+    }
+
+    for (int i = 0; i < petController.petNameList.length; i++) {
+      if (petController.petNameList.elementAt(i).compareTo(inputName) == 0) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   // 견종 카테고리 선택
@@ -125,14 +148,80 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     ).showDialog(context);
   }
 
+  void selectCameraOrGallery(BuildContext context, Size size) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            height: size.height * 0.15,
+            child: Column(
+              children: [
+                Container(
+                  height: size.height * 0.075,
+                  child: ListTile(
+                    leading: Icon(Icons.camera_alt_outlined),
+                    title: Text('촬영하기'),
+                    onTap: () {
+                      chooseImageInCamera();
+                      Navigator.pop(context);
+                      },
+                  ),
+                ),
+                Container(
+                  height: size.height * 0.075,
+                  child: ListTile(
+                    leading: Icon(Icons.photo_camera_back),
+                    title: Text('앨범보기'),
+                    onTap: () {
+                      chooseImageInGallery();
+                      Navigator.pop(context);
+                      },
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
   // 강아지 이미지 선택
   File pickedPetImgFile = File(''); // 강아지 이미지 파일
   final picker = ImagePicker(); // 갤러리에서 가져오기 위한 ImagePicker
   bool pickComp = false; // 사진 선택 완료 여부 확인. 사진 추가 이미지를 선택한 이미지로 변경하기 위함
 
-  chooseImage() async {
+  chooseImageInGallery() async {
     // 갤러리에서 사진을 가져옴
     final pickedFile = await picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
+    if (pickedFile == null) return;
+
+    // 가져온 사진을 원형으로 잘라냄
+    var file = await ImageCropper().cropImage(
+      compressFormat: ImageCompressFormat.jpg,
+      compressQuality: 100,
+      sourcePath: pickedFile.path,
+      aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+      cropStyle: CropStyle.circle,
+    );
+
+    if (file == null) {
+      return;
+    }
+
+    //선택 완료
+    setState(() => pickedPetImgFile = File(file.path));
+    if (file.path == null) retrieveLostData();
+    if (pickedPetImgFile != null) {
+      pickComp = true;
+      // 수정 모드일 경우, 기존 이미지 파일 제거 필요함. 플래그 변수를 활용하여 업데이트 할 때 파일을 삭제
+      if(mypageStateController.myPageStateType == MyPageStateType.Edit) {
+        isChangeImg = true;
+      }
+    }
+  }
+
+  chooseImageInCamera() async {
+    // 갤러리에서 사진을 가져옴
+    final pickedFile = await picker.pickImage(source: ImageSource.camera, imageQuality: 50);
     if (pickedFile == null) return;
 
     // 가져온 사진을 원형으로 잘라냄
@@ -173,10 +262,44 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     }
   }
 
+  // 강아지 분류 선택에 따른 권장 시간 반환
+  int getRecommendTime(String categorie) {
+    int retRecommend = 0;
+
+    switch(categorie) {
+      case '논스포팅' :
+        retRecommend = 60;
+        break;
+      case '시각 하운드' :
+        retRecommend = 30;
+        break;
+      case '후각 하운드' :
+        retRecommend = 60;
+        break;
+      case '테리어' :
+        retRecommend = 40;
+        break;
+      case '허딩' :
+        retRecommend = 90;
+        break;
+      case '토이' :
+        retRecommend = 40;
+        break;
+      case '스포팅' :
+        retRecommend = 90;
+        break;
+      case '워킹' :
+        retRecommend = 120;
+        break;
+    }
+
+    return retRecommend;
+  }
+
   // 강아지 정보 데이터 삭제
   Future<void> _delete([DocumentSnapshot? documentSnapshot]) async {
     // Firebase storage 해당 이미지 제거
-    FirebaseStorage.instance.ref().child('${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${petController.selectedPetImageFileName}').delete();
+    // FirebaseStorage.instance.ref().child('${'imcsh313@naver.com'}/dogs/${petController.selectedPetImageFileName}').delete();
 
     await petsRef
         .doc(petController.selectedPetID)
@@ -187,97 +310,70 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
 
   // 강아지 정보 데이터 수정
   Future<void> _update([DocumentSnapshot? documentSnapshot]) async {
+    // Strage 사용을 막기 위해 임시로 설정함.
+    isChangeImg = false;
+
+    // 편집 모드에서는 이미지 파일을 변경하였을 경우 기존 이미지를 제거하고 새로운 이미지로 갱신
+    // 이미지 파일을 변경하지 않았을 경우, Url download 불필요
     if(isChangeImg) {
       // 이미지 파일이 변경되었다면 기존 사진 데이터 제거
-      FirebaseStorage.instance.ref().child('${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${petController.selectedPetImageFileName}').delete();
-    }
+      // FirebaseStorage.instance.ref().child('${'imcsh313@naver.com'}/dogs/${petController.selectedPetImageFileName}').delete();
 
-    Reference petImgRef = FirebaseStorage.instance.ref().child(
-        '${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${Path.basename(pickedPetImgFile!.path)}');
+      // 새로 저장할 이미지의 레퍼런스
+      Reference petImgRef = FirebaseStorage.instance.ref().child(
+          '${'imcsh313@naver.com'}/dogs/${Path.basename(pickedPetImgFile!.path)}');
 
-    await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
-      await petImgRef!.getDownloadURL().then((value) {
-        switch(kategorie) {
-          case '논스포팅' :
-            recommend = 60;
-            break;
-          case '시각 하운드' :
-            recommend = 30;
-            break;
-          case '후각 하운드' :
-            recommend = 60;
-            break;
-          case '테리어' :
-            recommend = 40;
-            break;
-          case '허딩' :
-            recommend = 90;
-            break;
-          case '토이' :
-            recommend = 40;
-            break;
-          case '스포팅' :
-            recommend = 90;
-            break;
-          case '워킹' :
-            recommend = 120;
-            break;
-        }
+      await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
+        await petImgRef!.getDownloadURL().then((value) {
+          recommend = getRecommendTime(kategorie);
 
-        var map = Map<String, dynamic>();
-        map["imageUrl"] = value;
-        map["imageFileName"] = Path.basename(pickedPetImgFile!.path);
-        map["name"] = name;
-        map["gender"] = gender;
-        map["birth"] = birth;
-        map["kategorie"] = kategorie;
-        map["breed"] = breed;
-        map["weight"] = weight;
-        map["recommend"] = recommend;
+          var map = Map<String, dynamic>();
+          map["imageUrl"] = value;
+          map["imageFileName"] = Path.basename(pickedPetImgFile!.path);
+          map["name"] = name;
+          map["gender"] = gender;
+          map["birth"] = birth;
+          map["kategorie"] = kategorie;
+          map["breed"] = breed;
+          map["weight"] = weight;
+          map["recommend"] = recommend;
 
-        petsRef
-            .doc(petController.selectedPetID)
-            .update(map)
-            .whenComplete(() => print("변경 완료"))
-            .catchError((error) => print(error));
+          petsRef
+              .doc(petController.selectedPetID)
+              .update(map)
+              .whenComplete(() => print("변경 완료"))
+              .catchError((error) => print(error));
+        });
       });
-    });
+    } else {
+      recommend = getRecommendTime(kategorie);
+
+      var map = Map<String, dynamic>();
+      map["name"] = name;
+      map["gender"] = gender;
+      map["birth"] = birth;
+      map["kategorie"] = kategorie;
+      map["breed"] = breed;
+      map["weight"] = weight;
+      map["recommend"] = recommend;
+
+      petsRef
+          .doc(petController.selectedPetID)
+          .update(map)
+          .whenComplete(() => print("변경 완료"))
+          .catchError((error) => print(error));
+    }
   }
 
   // 강아지 정보 데이터 추가
   Future<void> _create([DocumentSnapshot? documentSnapshot]) async {
     // 강아지 이미지 파일 저장 경로
     Reference petImgRef = FirebaseStorage.instance.ref().child(
-        '${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${Path.basename(pickedPetImgFile!.path)}');
+        '${'imcsh313@naver.com'}/dogs/${Path.basename(pickedPetImgFile!.path)}');
 
-    await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
+    /*await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
       await petImgRef!.getDownloadURL().then((value) {
-        switch(kategorie) {
-          case '논스포팅' :
-            recommend = 60;
-            break;
-          case '시각 하운드' :
-            recommend = 30;
-            break;
-          case '후각 하운드' :
-            recommend = 60;
-            break;
-          case '테리어' :
-            recommend = 40;
-            break;
-          case '허딩' :
-            recommend = 90;
-            break;
-          case '토이' :
-            recommend = 40;
-            break;
-          case '스포팅' :
-            recommend = 90;
-            break;
-          case '워킹' :
-            recommend = 120;
-            break;
-        }
+        recommend = getRecommendTime(kategorie);
 
         //이미지 경로를 db 에 저장
         petsRef.add(DogData(
@@ -294,7 +390,24 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
         )).then((value) => print('강아지 정보 저장 완료'))
             .catchError((error) => print('강아지 정보 저장 오류! ${petsRef}'));
       });
-    });
+    });*/
+
+    recommend = getRecommendTime(kategorie);
+
+    //이미지 경로를 db 에 저장
+    petsRef.add(DogData(
+      imageUrl: 'https://edu.ssafy.com/edu/main/index.do',
+      imageFileName: Path.basename(pickedPetImgFile!.path),
+      name: name,
+      gender: gender,
+      birth: birth,
+      kategorie: kategorie,
+      breed: breed,
+      weight: weight,
+      recommend: recommend,
+      createdAt: Timestamp.now(),
+    )).then((value) => print('강아지 정보 저장 완료'))
+        .catchError((error) => print('강아지 정보 저장 오류! ${petsRef}'));
   }
 
   // 상태 확인을 위한 boolean 변수
@@ -320,7 +433,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
         String month = (DateFormat.M()).format(selected);
         String day = (DateFormat.d()).format(selected);
 
-        birth = '${year}.${month}.${day}';
+        birth = '${year}.${month.padLeft(2, '0')}.${day.padLeft(2, '0')}';
         selectBirth = true;
       });
     }
@@ -366,12 +479,21 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     if (mypageStateController.myPageStateType == MyPageStateType.Edit) {
       pickComp = true; // 사진이 골라져있음
 
-      _nameController = TextEditingController(text: petController.selectedPetName); // 이름
-      gender = petController.selectedPetGender; // 성별
-      birth = petController.selectedPetBirth; // 생일
-      kategorie = petController.selectedPetKategorie; // 카테고리
-      _breedController = TextEditingController(text: petController.selectedPetBreed); // 견종
-      weight = petController.selectedPetWeight; // 몸무게
+      // 선택한 강아지로 이름 초기화
+      name = petController.selectedPetName;
+      _nameController = TextEditingController(text: petController.selectedPetName);
+      // 선택한 강아지로 성별 초기화
+      gender = petController.selectedPetGender;
+      // 선택한 강아지로 생일 초기화
+      birth = petController.selectedPetBirth;
+      selectBirth = true;
+      // 선택한 강아지로 카테고리 초기화
+      kategorie = petController.selectedPetKategorie;
+      // 선택한 강아지로 견종 초기화
+      breed = petController.selectedPetBreed;
+      _breedController = TextEditingController(text: petController.selectedPetBreed);
+      // 선택한 강아지로 무게 초기화
+      weight = petController.selectedPetWeight;
     }
 
     for(int i = 1; i <= 200; i++)
@@ -423,7 +545,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                           ? ClipOval(child: mypageStateController.myPageStateType == MyPageStateType.Create
                             ? Image(image: FileImage(pickedPetImgFile))
                             : !isChangeImg
-                              ? Image.network(petController.selectedPetImageUrl)
+                              ? /*Image.network(petController.selectedPetImageUrl)*/ Container(color: Colors.amber)
                               : Image(image: FileImage(pickedPetImgFile)))
                           : Icon(Icons.add, size: size.width * 0.2, color: Colors.white),
                     ),
@@ -433,7 +555,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                   // 키보드 해제
                   FocusManager.instance.primaryFocus?.unfocus();
                   // 연속 클릭 방지
-                  !uploadingImg ? chooseImage() : null;
+                  !uploadingImg ? selectCameraOrGallery(context, size) : null;
                 },
               ),
               SizedBox(height: size.height * 0.01),
@@ -628,6 +750,13 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                       return;
                                     }
 
+                                    // 이름 중복 검사
+                                    if(isSameName(name)) {
+                                      MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameAlreadyExist);
+                                      uploadingData = false;
+                                      return;
+                                    }
+
                                     // 생일을 선택하지 않은 경우 알림
                                     if(!selectBirth) {
                                       MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BirthNotExist);
@@ -705,6 +834,20 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                                   return;
                                                 }
 
+                                                // 이름이 10글자를 초과할 경우 알림
+                                                if(name.length > 10) {
+                                                  MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameOverflow);
+                                                  uploadingData = false;
+                                                  return;
+                                                }
+
+                                                // 이름 중복 검사
+                                                if(isSameName(name)) {
+                                                  MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameAlreadyExist);
+                                                  uploadingData = false;
+                                                  return;
+                                                }
+
                                                 // 생일을 선택하지 않은 경우
                                                 if (!selectBirth) {
                                                   MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BirthNotExist);
@@ -753,11 +896,13 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                                   editingData = true;
                                                 });
 
-                                                await _delete().whenComplete(() {
-                                                  if (Navigator.canPop(context))
-                                                    Navigator.pop(context);
+                                                petController.selectedPetScrollIndex = 0;
+                                                homeSliderController.sliderIdx = 0;
 
-                                                  petController.selectedPetScrollIndex = 0;
+                                                await _delete().whenComplete(() {
+                                                  if (Navigator.canPop(context)) {
+                                                    Navigator.pop(context);
+                                                  }
 
                                                   setState(() {
                                                     editingData = false;
@@ -771,9 +916,11 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                             foregroundColor: MaterialStateProperty.all(Colors.white),
                                           ),
                                 ),
-                              ],
-                            )
-                                  : CircularProgressIndicator(),
+                                      ],
+                                    )
+                                  : Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
                           ],
                         ),
                       ),
@@ -781,6 +928,9 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                   ),
                 ),
               ),
+              SizedBox(
+                height: size.height * 0.05,
+              )
             ],
           ),
         ),

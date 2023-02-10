@@ -1,4 +1,4 @@
-import 'package:dogdack/screens/calendar_schedule_edit/controller/input_controller.dart';
+import 'package:dogdack/controllers/input_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -72,7 +72,7 @@ class ScheduleEditBollean extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          const BolleanBtn(name: '목욕'),
+          const BolleanBtn(name: '미용'),
           const SizedBox(
             height: 10,
           ),

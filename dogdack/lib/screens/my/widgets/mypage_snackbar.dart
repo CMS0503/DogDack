@@ -9,6 +9,8 @@ enum SnackBarErrorType {
   KategorieNotExist, // 반려견 카테고리가 입력되지 않음
   NameOverflow, // 반려견 이름이 제한 글자(10글자) 를 초과함
   BreedOverflow, // 반려견 견종이 제한 글자(20글자) 를 초과함
+  PhoneNumberNotExist, // 전화번호가 입력되지 않았을 경우
+  NameAlreadyExist, // 반려견 이름이 이미 존재하는 경우
 }
 
 class MyPageSnackBar {
@@ -46,6 +48,12 @@ class MyPageSnackBar {
         break;
       case SnackBarErrorType.BreedOverflow:
         msg = '견종은 20글자 까지 입력 가능해요!';
+        break;
+      case SnackBarErrorType.PhoneNumberNotExist:
+        msg = '전화 번호를 입력하지 않았어요!';
+        break;
+      case SnackBarErrorType.NameAlreadyExist:
+        msg = '같은 이름의 댕댕이가 이미 있어요!\n다른 이름으로 입력하세요!';
         break;
     }
 

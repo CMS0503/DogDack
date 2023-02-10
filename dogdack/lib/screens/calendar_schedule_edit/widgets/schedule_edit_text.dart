@@ -1,4 +1,4 @@
-import 'package:dogdack/screens/calendar_schedule_edit/controller/input_controller.dart';
+import 'package:dogdack/controllers/input_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -59,11 +59,10 @@ class _ScheduleEditTextState extends State<ScheduleEditText> {
           SizedBox(
             width: width * 0.65,
             child: TextField(
+              // maxLength: 20,
               onChanged: (value) {
                 if (widget.name == '장소') {
                   controller.place = value;
-                } else if (widget.name == '시간') {
-                  controller.time = value;
                 } else {
                   controller.distance = value;
                 }

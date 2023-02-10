@@ -4,18 +4,16 @@ import 'package:dogdack/screens/walk/widgets/ble_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../screens/walk/controller/walk_controller.dart';
+import '../controllers/walk_controller.dart';
 
 class WalkNavigator extends StatelessWidget {
-  WalkNavigator({super.key, required this.tabIndex});
+  WalkNavigator({super.key});
 
-  final int tabIndex;
   final walkController = Get.put(WalkController());
 
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
       "/": (context) => WalkPage(
-            tabIndex: tabIndex,
           ),
       "/Ble": (context) => BleList(),
     };

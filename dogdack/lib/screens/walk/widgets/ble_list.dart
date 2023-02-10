@@ -4,17 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 
-import '../controller/walk_controller.dart';
+import '../../../controllers/walk_controller.dart';
 
 class BleList extends StatefulWidget {
   BleList({Key? key}) : super(key: key);
 
   // 장치 정보 전달 받기
   late BluetoothDevice device;
-  // final String serviceUuid = '0000ffe0-0000-1000-8000-00805f9b34fb';
-  // final String characteristicUuid = '0000ffe1-0000-1000-8000-00805f9b34fb';
-  // late String receiveData = '';
-  // Map? location;
+
   bool isConnected = false;
 
   @override
@@ -144,7 +141,11 @@ class _BleState extends State<BleList> {
 
         walkController.services = await widget.device.discoverServices();
         walkController.connectBle(r.device);
+
+        // await r.device.requestMtu(247);
+
         print('end discovor service');
+
         returnValue = Future.value(true);
       }
     });
@@ -205,7 +206,10 @@ class _BleState extends State<BleList> {
             height: 28,
             child: OutlinedButton(
               child: Text('Connect'),
-              onPressed: () => {connect(r), setState(() {})},
+              onPressed: () async {
+                connect(r);
+                setState(() {});
+              },
             ),
           );
   }

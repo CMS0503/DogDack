@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class LogoWidget extends StatelessWidget with PreferredSizeWidget{
+class LogoWidget extends StatelessWidget with PreferredSizeWidget {
   const LogoWidget({super.key});
 
   @override
@@ -10,36 +10,39 @@ class LogoWidget extends StatelessWidget with PreferredSizeWidget{
     double height = screenSize.height;
 
     return AppBar(
-          toolbarHeight: height * 0.12,
-          elevation: 0,
-          foregroundColor: Color.fromARGB(255, 80, 78, 91),
-          backgroundColor: Colors.white,
-          centerTitle: false,
-          title: Column(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(top: height*0.05, right: width * 0.5),
-                child: Text(
-                  'DOG DACK',
-                  style: TextStyle(
-                      fontFamily: 'bmjua',
-                      fontWeight: FontWeight.w600,
-                      color: Color.fromARGB(255, 80, 78, 91),
-                      fontSize: 28),
-                ),
+      toolbarHeight: height * 0.12,
+      elevation: 0,
+      // foregroundColor: const Color.fromARGB(255, 80, 78, 91),
+      backgroundColor: Colors.white,
+      centerTitle: false,
+      title: Column(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(top: height * 0.05, right: width * 0.5),
+            child: const Text(
+              'DOG DACK',
+              style: TextStyle(
+                fontFamily: 'bmjua',
+                fontWeight: FontWeight.w600,
+                color: Color.fromARGB(255, 80, 78, 91),
+                fontSize: 28,
               ),
-              Center(
-                  child: Container(
-                width: width * 0.9,
-                child: Divider(
-                  color: Color.fromARGB(255, 80, 78, 91),
-                  thickness: 1,
-                ),
-              ))
-            ],
-          ));
-
+            ),
+          ),
+          Center(
+            child: SizedBox(
+              width: width * 0.9,
+              child: const Divider(
+                color: Color.fromARGB(255, 80, 78, 91),
+                thickness: 1,
+              ),
+            ),
+          )
+        ],
+      ),
+    );
   }
+
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

@@ -1,7 +1,18 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 
 class DogData {
-  DogData({this.imageUrl, this.imageFileName, this.name, this.gender, this.birth, this.kategorie, this.breed, this.weight, this.recommend, this.createdAt});
+  DogData({
+    this.imageUrl,
+    this.imageFileName,
+    this.name,
+    this.gender,
+    this.birth,
+    this.kategorie,
+    this.breed,
+    this.weight,
+    this.recommend,
+    this.createdAt,
+  });
 
   final String? imageUrl; // 반려견 사진 Download URL
   final String? imageFileName; // Firebase Storage 에 저장된 반려견 사진 파일명
@@ -18,7 +29,7 @@ class DogData {
       : this(
     imageUrl: json['imageUrl']! as String,
     imageFileName: json['imageFileName'] as String,
-    name: json['name']! as String,
+    name: json['name'] as String,
     gender: json['gender']! as String,
     birth: json['birth']! as String,
     kategorie: json['kategorie']! as String,

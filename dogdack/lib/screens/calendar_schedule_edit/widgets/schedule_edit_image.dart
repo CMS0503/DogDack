@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dogdack/screens/calendar_schedule_edit/controller/input_controller.dart';
+import 'package:dogdack/controllers/input_controller.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +39,7 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
       }
 
       final String fileName = path.basename(pickedImage.path);
-      print('pickedImage.path : ${pickedImage.path}');
+      // print('pickedImage.path : ${pickedImage.path}');
       File imageFile = File(pickedImage.path);
 
       try {
@@ -85,7 +85,7 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
         .collection(
           'Users',
         )
-        .doc('${FirebaseAuth.instance.currentUser!.email}')
+        .doc('${'imcsh313@naver.com'}')
         .collection('Calendar')
         .doc(DateFormat('yyMMdd').format(controller.date))
         .get();
@@ -93,7 +93,7 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
     await Future.forEach<Reference>(allFiles, (file) async {
       final String fileUrl = await file.getDownloadURL();
       final FullMetadata fileMeta = await file.getMetadata();
-      print('$fileUrl, ${file.fullPath}');
+      // print('$fileUrl, ${file.fullPath}');
       if (controller.imageUrl.contains(fileUrl)) {
         files.add({
           "url": fileUrl,

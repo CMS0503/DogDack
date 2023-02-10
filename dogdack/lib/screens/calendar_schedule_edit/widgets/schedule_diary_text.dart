@@ -1,4 +1,4 @@
-import 'package:dogdack/screens/calendar_schedule_edit/controller/input_controller.dart';
+import 'package:dogdack/controllers/input_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -29,6 +29,7 @@ class ScheduleDiaryText extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: TextField(
+              maxLength: 20,
               onChanged: (value) {
                 controller.diary = value;
               },

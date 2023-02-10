@@ -1,19 +1,17 @@
+import 'package:dogdack/screens/calendar_main/calendar_main.dart';
+import 'package:dogdack/screens/chart/chart_screen.dart';
 import 'package:flutter/material.dart';
 
-import '../screens/home/a_screen.dart';
-import '../screens/home/b_screen.dart';
+import '../screens/calendar_detail/calender_detail.dart';
 
-class PersonNavigator extends StatelessWidget {
-  const PersonNavigator({super.key, required this.tabIndex});
-  final int tabIndex;
+//screen
+
+class ChartNavigator extends StatelessWidget {
+  const ChartNavigator({super.key});
+
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      "/": (context) => ScreenA(
-        tabIndex: tabIndex,
-      ),
-      "/ScreenB": (context) => ScreenB(
-        tabIndex: tabIndex,
-      ),
+      "/": (context) => ChartMain(),
     };
   }
 
