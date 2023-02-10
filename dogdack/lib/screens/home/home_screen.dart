@@ -1,8 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/mypage_controller.dart';
-import 'package:dogdack/screens/home/bar_char.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:dogdack/commons/logo_widget.dart';
 import 'package:get/get.dart';
@@ -137,15 +136,11 @@ class _HomePageState extends State<HomePage> {
                             return CircleAvatar(
                               radius: size.width * 0.25,
                               child: ClipOval(
-                                child: Container(
-                                  color: Colors.amber,
-                                  width: 50,
-                                  height: 50,
-                                ) /*FadeInImage.memoryNetwork(
-                                    fit: BoxFit.cover,
-                                    placeholder: kTransparentImage,
-                                    image: snapshot.data!.docs[itemIndex].get('imageUrl'),
-                                  )*/,
+                                child: CachedNetworkImage(
+                                  imageUrl: petSnapshot.data!.docs[itemIndex].get('imageUrl'),
+                                  progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) => Icon(Icons.error),
+                                ),
                               ),
                             );
                           },
