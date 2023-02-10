@@ -85,8 +85,8 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
           .orderBy("startTime", descending: true)
           .get()
           .then((QuerySnapshot snapshot) async {
-        // print("Document ID: ${snapshot.docs[0].id}, Data: ${snapshot.docs[0].data()}");
         data = snapshot.docs[0]['geolist'];
+
         addPloy(data);
       });
     });

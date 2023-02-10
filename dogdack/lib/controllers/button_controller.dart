@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/input_controller.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar.dart';
 import 'package:get/get.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class ButtonController extends GetxController {
   final RxInt _buttonIndex = 0.obs;
@@ -69,7 +68,6 @@ class ButtonController extends GetxController {
               data.docs[i]['beauty'],
             ];
           }
-
           // setState(() {});
           // print(Calendar.events);
         }
