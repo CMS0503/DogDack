@@ -10,12 +10,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class WalkController extends GetxController {
   // 블루투스 장치 id
-  final String writeServiceUuid = '0000ffe0-0000-1000-8000-00805f9b34fb';
-  final String writeCharacteristicUuid = '0000ffe1-0000-1000-8000-00805f9b34fb';
-  final String readServiceUuid = '0000fee7-0000-1000-8000-00805f9b34fb';
-  final String readCharacteristicUuid = '0000fec9-0000-1000-8000-00805f9b34fb';
-
-  // final String characteristicUuid = '0000fec7-0000-1000-8000-00805f9b34fb';
+  final String serviceUUID = '0000ffe0-0000-1000-8000-00805f9b34fb';
+  final String characteristicUUID = '0000ffe1-0000-1000-8000-00805f9b34fb';
 
   RxBool isBleConnect = false.obs;
 
@@ -213,10 +209,10 @@ class WalkController extends GetxController {
     String json = jsonEncode(data) + '\n';
 
     for (BluetoothService service in services!) {
-      if (service.uuid.toString() == writeServiceUuid) {
+      if (service.uuid.toString() == serviceUUID) {
         for (BluetoothCharacteristic characteristic
             in service.characteristics) {
-          if (characteristic.uuid.toString() == writeCharacteristicUuid) {
+          if (characteristic.uuid.toString() == characteristicUUID) {
             await characteristic.write(utf8.encode(json),
                 withoutResponse: true);
             print('Send Data: $json');

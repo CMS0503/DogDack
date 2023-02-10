@@ -113,8 +113,9 @@ class _HomePageState extends State<HomePage> {
                         totalGoalTime += document.get('goal');
                         totalTimeMinute += document.get('totalTimeMin');
                       }
-                      homePageWalkCalculatorController.compPercent = 100;
-                      // homePageWalkCalculatorController.compPercent = ((totalTimeMinute / totalGoalTime) * 100).toInt();
+
+                      homePageWalkCalculatorController.compPercent =
+                          ((totalTimeMinute / totalGoalTime) * 100).toInt();
                       homePageWalkCalculatorController.getTodayWalkPercent();
                     });
 
@@ -128,17 +129,17 @@ class _HomePageState extends State<HomePage> {
                         ),
                         SizedBox(
                           height: height * 0.02,
-                          ),
-                          GetBuilder<HomePageWalkCalculatorController>(builder: (_) {
-                            return Text(
-                              '${homePageWalkCalculatorController.compPercent}%',
-                              style: TextStyle(
-                                  color: Color(0xff644CAA),
-                                  fontSize: width * 0.07
-                              ),
-                            );
-                          }),
-                          SizedBox(
+                        ),
+                        GetBuilder<HomePageWalkCalculatorController>(
+                            builder: (_) {
+                          return Text(
+                            '${homePageWalkCalculatorController.compPercent}%',
+                            style: TextStyle(
+                                color: Color(0xff644CAA),
+                                fontSize: width * 0.07),
+                          );
+                        }),
+                        SizedBox(
                             height: height * 0.01,
                           ),
                           // 좌우 스크롤 슬라이더

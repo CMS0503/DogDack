@@ -55,13 +55,12 @@ class _MapState extends State<myMap> {
   void updatePosition() async {
     GoogleMapController googleMapController = await _controller.future;
     for (BluetoothService service in walkController.services!) {
-      if (service.uuid.toString() == walkController.readServiceUuid) {
+      if (service.uuid.toString() == walkController.serviceUUID) {
         for (BluetoothCharacteristic characteristic
             in service.characteristics) {
           if (characteristic.uuid.toString() ==
-              walkController.readCharacteristicUuid) {
-            // await characteristic.setNotifyValue(true);
-            characteristic.properties.indicate = true;
+              walkController.characteristicUUID) {
+            await characteristic.setNotifyValue(true);
             String stringValue = '';
             characteristic.value.listen((value) {
               print('listen: ${value}');
