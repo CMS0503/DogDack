@@ -187,24 +187,24 @@ class _ChartMainState extends State<ChartMain> {
           .substring(0, 10));
     }
 
-    day_hour_points = List<double>.filled(7, 0);
-    week_hour_points = List<double>.filled(30, 0);
+    day_hour_points = List<double>.filled(7, 1);
+    week_hour_points = List<double>.filled(30, 1);
 
-    last_day_hour_points= List<double>.filled(7, 0);
-    last_week_hour_points = List<double>.filled(30, 0);
-
-
-    day_distance_points = List<double>.filled(7, 0);
-    week_distance_points = List<double>.filled(30, 0);
-
-    day_goal_hour_points = List<double>.filled(7, 0);
-    week_goal_hour_points = List<double>.filled(30, 0);
+    last_day_hour_points= List<double>.filled(7, 1);
+    last_week_hour_points = List<double>.filled(30, 1);
 
 
+    day_distance_points = List<double>.filled(7, 1);
+    week_distance_points = List<double>.filled(30, 1);
 
-    List<double> two_month_hour = List<double>.filled(60, 0);
-    List<double> two_month_distance = List<double>.filled(60, 0);
-    List<double> two_month_goal = List<double>.filled(60, 0);
+    day_goal_hour_points = List<double>.filled(7, 1);
+    week_goal_hour_points = List<double>.filled(30, 1);
+
+
+
+    List<double> two_month_hour = List<double>.filled(60, 1);
+    List<double> two_month_distance = List<double>.filled(60, 1);
+    List<double> two_month_goal = List<double>.filled(60, 1);
 
     for (int i = 0; i < date_list.length; i++) {
       for (int j = 0; j < docs_list.length; j++) {

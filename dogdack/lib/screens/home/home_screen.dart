@@ -22,7 +22,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   // Firebase : 반려견 테이블 참조 값
-  final petsRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
+  final petsRef = FirebaseFirestore.instance.collection('Users/imcsh313@naver.com/Pets')
       .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
 
   final sliderController = Get.put(HomePageSliderController());
@@ -73,7 +73,7 @@ class _HomePageState extends State<HomePage> {
                     int displayBirth = int.parse(_today.difference(DateTime.parse(_petBirth)).inDays.toString());
 
                     String curDogID = petSnapshot.data!.docs[sliderController.sliderIdx].id;
-                    CollectionReference refCurDogWalk = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets/').doc(curDogID).collection('Walk');
+                    CollectionReference refCurDogWalk = FirebaseFirestore.instance.collection('Users/imcsh313@naver.com/Pets/').doc(curDogID).collection('Walk');
 
                     var startOfToday = Timestamp.fromDate(DateTime.now().subtract(Duration(hours: DateTime.now().hour, minutes: DateTime.now().minute, seconds: DateTime.now().second, milliseconds: DateTime.now().millisecond, microseconds: DateTime.now().microsecond)));
                     var endOfToday = Timestamp.fromDate(DateTime.now().add(Duration(days: 1, hours: -DateTime.now().hour, minutes: -DateTime.now().minute, seconds: -DateTime.now().second, milliseconds: -DateTime.now().millisecond, microseconds: -DateTime.now().microsecond)));
