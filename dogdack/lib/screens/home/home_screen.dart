@@ -113,21 +113,21 @@ class _HomePageState extends State<HomePage> {
                         totalGoalTime += document.get('goal');
                         totalTimeMinute += document.get('totalTimeMin');
                       }
+                      homePageWalkCalculatorController.compPercent = 100;
+                      // homePageWalkCalculatorController.compPercent = ((totalTimeMinute / totalGoalTime) * 100).toInt();
+                      homePageWalkCalculatorController.getTodayWalkPercent();
+                    });
 
-                        homePageWalkCalculatorController.compPercent = ((totalTimeMinute / totalGoalTime) * 100).toInt();
-                        homePageWalkCalculatorController.getTodayWalkPercent();
-                      });
-
-                      return Column(
-                        children: [
-                          Text(
-                            '오늘 목표 산책 달성량',
-                            style: TextStyle(
-                              color: Color(0xff504E5B),
-                            ),
+                    return Column(
+                      children: [
+                        Text(
+                          '오늘 목표 산책 달성량',
+                          style: TextStyle(
+                            color: Color(0xff504E5B),
                           ),
-                          SizedBox(
-                            height: height * 0.02,
+                        ),
+                        SizedBox(
+                          height: height * 0.02,
                           ),
                           GetBuilder<HomePageWalkCalculatorController>(builder: (_) {
                             return Text(
