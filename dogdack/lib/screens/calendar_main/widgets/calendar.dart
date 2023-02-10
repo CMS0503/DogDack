@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/button_controller.dart';
 import 'package:dogdack/controllers/main_controll.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:dogdack/controllers/walk_controller.dart';
+import 'package:dogdack/screens/calendar_detail/calender_detail.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -33,6 +34,7 @@ class Calendar extends StatefulWidget {
 
 class _CalendarState extends State<Calendar> {
   final controller = Get.put(InputController());
+  final walkController = Get.put(WalkController());
 
   // final Map<String, List<Object>> events = {'': []};
 
@@ -149,6 +151,7 @@ class _CalendarState extends State<Calendar> {
                         value: '댕댕이를 등록해 주세요',
                         items: ['댕댕이를 등록해 주세요'].map(
                           (value) {
+                            walkController.curName = value;
                             return DropdownMenuItem(
                               value: value,
                               child: Text(value),
@@ -174,6 +177,7 @@ class _CalendarState extends State<Calendar> {
                         value: controller.selectedValue,
                         items: controller.valueList.map(
                           (value) {
+                            walkController.curName = value;
                             return DropdownMenuItem(
                               value: value,
                               child: Text(
@@ -304,69 +308,86 @@ class _CalendarState extends State<Calendar> {
             markerBuilder: (context, day, events) {
               // 이벤트 비어 있으면 빈 Box
               if (events.isEmpty) {
-                return const SizedBox();
-              }
+                return ElevatedButton(
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.white),
+                    onPressed: () {
+                      controller.setDate(day);
 
-              return Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: ListView(
-                  children: <Widget>[
-                    SizedBox(
-                      height: 20,
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        elevation: 0,
-                        child: ListTile(
-                          // tileColor: Colors.black,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                            Radius.circular(3),
-                          )),
-                          tileColor: events[0] == true
-                              ? colors[0]
-                              : const Color.fromARGB(255, 255, 255, 255),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                      child: Card(
-                        // shape: RoundedRectangleBorder(
-                        //   borderRadius: BorderRadius.circular(100.0),
-                        // ),
-                        elevation: 0,
-                        child: ListTile(
-                          shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                            Radius.circular(3),
-                          )),
-                          tileColor: events[1] == true
-                              ? colors[1]
-                              : const Color.fromARGB(255, 255, 255, 255),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const CalenderDetail()),
+                      );
+                    },
+                    child: const SizedBox());
+              }
+              return ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+                onPressed: () {
+                  controller.setDate(day);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: ListView(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 20,
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          elevation: 0,
+                          child: ListTile(
+                            // tileColor: Colors.black,
+                            shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                              Radius.circular(3),
+                            )),
+                            tileColor: events[0] == true
+                                ? colors[0]
+                                : const Color.fromARGB(255, 255, 255, 255),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        elevation: 0,
-                        child: ListTile(
-                          shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                            Radius.circular(3),
-                          )),
-                          tileColor: events[2] == true
-                              ? colors[2]
-                              : const Color.fromARGB(255, 255, 255, 255),
+                      SizedBox(
+                        height: 20,
+                        child: Card(
+                          // shape: RoundedRectangleBorder(
+                          //   borderRadius: BorderRadius.circular(100.0),
+                          // ),
+                          elevation: 0,
+                          child: ListTile(
+                            shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                              Radius.circular(3),
+                            )),
+                            tileColor: events[1] == true
+                                ? colors[1]
+                                : const Color.fromARGB(255, 255, 255, 255),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      SizedBox(
+                        height: 20,
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          elevation: 0,
+                          child: ListTile(
+                            shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                              Radius.circular(3),
+                            )),
+                            tileColor: events[2] == true
+                                ? colors[2]
+                                : const Color.fromARGB(255, 255, 255, 255),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },

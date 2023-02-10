@@ -1,3 +1,4 @@
+import 'package:dogdack/controllers/walk_controller.dart';
 import 'package:dogdack/screens/calendar_detail/widget/beauty/beauty_icon.dart';
 import 'package:dogdack/screens/calendar_detail/widget/diary/diary_widget.dart';
 import 'package:dogdack/screens/calendar_detail/widget/cal_detail_date.dart';
@@ -6,12 +7,11 @@ import 'package:dogdack/screens/calendar_detail/widget/cal_edit_button.dart';
 import 'package:dogdack/screens/calendar_detail/widget/walk/cal_walk_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import '../../controllers/input_controller.dart';
 import '../../controllers/mypage_controller.dart';
 
 class CalenderDetail extends StatefulWidget {
-
+  const CalenderDetail({super.key});
 
   @override
   State<CalenderDetail> createState() => _CalenderDetailState();
@@ -20,7 +20,7 @@ class CalenderDetail extends StatefulWidget {
 class _CalenderDetailState extends State<CalenderDetail> {
   final controller = Get.put(InputController());
   final mypageStateController = Get.put(MyPageStateController());
-
+  final walkController = Get.put(WalkController());
 
 // 캘린더에서 받아온 데이터
   String docId = '짬뽕';
@@ -31,28 +31,26 @@ class _CalenderDetailState extends State<CalenderDetail> {
 
   ////////////////////////////////////파이어 베이스 연결 끝/////////////////////////////////////////////////////
 
-
   @override
   Widget build(BuildContext context) {
-    Color grey = Color.fromARGB(255, 80, 78, 91);
-    Color violet = Color.fromARGB(255, 100, 92, 170);
-    late Color hair_color = grey;
-    late Color bath_color = grey;
+    Color grey = const Color.fromARGB(255, 80, 78, 91);
+    Color violet = const Color.fromARGB(255, 100, 92, 170);
+    late Color hairColor = grey;
+    late Color bathColor = grey;
 
-    if(controller.beauty == true){
-      hair_color = violet;
-    }else{
-      hair_color = grey;
+    if (controller.beauty == true) {
+      hairColor = violet;
+    } else {
+      hairColor = grey;
     }
-    if(controller.bath == true){
-      bath_color = violet;
-    }else{
-      bath_color = grey;
+    if (controller.bath == true) {
+      bathColor = violet;
+    } else {
+      bathColor = grey;
     }
-    if(controller.imageUrl.length!=0){
+    if (controller.imageUrl.isNotEmpty) {
       imageUrl = controller.imageUrl[0];
     }
-
 
     return Scaffold(
       appBar: AppBar(
@@ -77,12 +75,13 @@ class _CalenderDetailState extends State<CalenderDetail> {
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  CalDetailTitleWidget(name: "짬뽕이", title: "산책"),
+                  CalDetailTitleWidget(
+                      name: walkController.curName, title: "산책"),
                   CalEditButtonWidget(),
                 ]),
             //날짜
             Padding(
-              padding: EdgeInsets.only(left: 18, bottom: 15),
+              padding: const EdgeInsets.only(left: 18, bottom: 15),
               child: Column(
                 children: [
                   // 등록한 날짜가 나와야 함
@@ -101,9 +100,9 @@ class _CalenderDetailState extends State<CalenderDetail> {
                 imageUrl: imageUrl,
                 place: controller.place,
                 totalTimeMin: controller.time),
-            CalDetailTitleWidget(name: "짬뽕이", title: "뷰티도장"),
-            BeautyWidget(hair_color: hair_color, bath_color: bath_color),
-            CalDetailTitleWidget(name: "짬뽕이", title: "오늘의 일기"),
+            CalDetailTitleWidget(name: walkController.curName, title: "뷰티도장"),
+            BeautyWidget(hair_color: hairColor, bath_color: bathColor),
+            CalDetailTitleWidget(name: walkController.curName, title: "오늘의 일기"),
             DiaryWidget(diary_image: imageUrl, diary_text: controller.diary),
           ],
         ),
