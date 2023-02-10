@@ -1,10 +1,10 @@
 // Widgets
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dogdack/models/user_data.dart';
 import 'package:dogdack/screens/my/widgets/mypage_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
 // Firebase
@@ -235,7 +235,7 @@ class _MyPageState extends State<MyPage> {
                                   child: CircleAvatar(
                                     backgroundColor: Colors.white,
                                     radius: size.width * 0.10,
-                                    backgroundImage: NetworkImage(FirebaseAuth.instance.currentUser!.photoURL.toString()),
+                                    backgroundImage: CachedNetworkImageProvider(FirebaseAuth.instance.currentUser!.photoURL.toString()),
                                     child: Align(
                                       alignment: Alignment.bottomRight,
                                       child: CircleAvatar(
@@ -373,11 +373,11 @@ class _MyPageState extends State<MyPage> {
                             return CircleAvatar(
                               radius: size.width * 0.3,
                               child: ClipOval(
-                                child: Container() /*FadeInImage.memoryNetwork(
-                                  fit: BoxFit.cover,
-                                  placeholder: kTransparentImage,
-                                  image: snapshot.data!.docs[itemIndex].get('imageUrl'),
-                                )*/,
+                                child: CachedNetworkImage(
+                                  imageUrl: snapshot.data!.docs[itemIndex].get('imageUrl'),
+                                  progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) => Icon(Icons.error),
+                                ),
                               ),
                             );
                           },

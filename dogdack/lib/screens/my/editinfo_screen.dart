@@ -1,8 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 // firebase
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_picker/picker.dart';
 
@@ -197,7 +197,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     // 가져온 사진을 원형으로 잘라냄
     var file = await ImageCropper().cropImage(
       compressFormat: ImageCompressFormat.jpg,
-      compressQuality: 100,
+      compressQuality: 50,
       sourcePath: pickedFile.path,
       aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
       cropStyle: CropStyle.circle,
@@ -227,7 +227,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     // 가져온 사진을 원형으로 잘라냄
     var file = await ImageCropper().cropImage(
       compressFormat: ImageCompressFormat.jpg,
-      compressQuality: 100,
+      compressQuality: 50,
       sourcePath: pickedFile.path,
       aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
       cropStyle: CropStyle.circle,
@@ -299,7 +299,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   // 강아지 정보 데이터 삭제
   Future<void> _delete([DocumentSnapshot? documentSnapshot]) async {
     // Firebase storage 해당 이미지 제거
-    // FirebaseStorage.instance.ref().child('${'imcsh313@naver.com'}/dogs/${petController.selectedPetImageFileName}').delete();
+    FirebaseStorage.instance.ref().child('${'imcsh313@naver.com'}/dogs/${petController.selectedPetImageFileName}').delete();
 
     await petsRef
         .doc(petController.selectedPetID)
@@ -310,18 +310,15 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
 
   // 강아지 정보 데이터 수정
   Future<void> _update([DocumentSnapshot? documentSnapshot]) async {
-    // Strage 사용을 막기 위해 임시로 설정함.
-    isChangeImg = false;
-
     // 편집 모드에서는 이미지 파일을 변경하였을 경우 기존 이미지를 제거하고 새로운 이미지로 갱신
     // 이미지 파일을 변경하지 않았을 경우, Url download 불필요
     if(isChangeImg) {
       // 이미지 파일이 변경되었다면 기존 사진 데이터 제거
-      // FirebaseStorage.instance.ref().child('${'imcsh313@naver.com'}/dogs/${petController.selectedPetImageFileName}').delete();
+      FirebaseStorage.instance.ref().child('${'imcsh313@naver.com'}/dogs/${petController.selectedPetImageFileName}').delete();
 
       // 새로 저장할 이미지의 레퍼런스
-      Reference petImgRef = FirebaseStorage.instance.ref().child(
-          '${'imcsh313@naver.com'}/dogs/${Path.basename(pickedPetImgFile!.path)}');
+      Reference petImgRef = FirebaseStorage.instance.ref()
+          .child('${'imcsh313@naver.com'}/dogs/${Path.basename(pickedPetImgFile!.path)}');
 
       await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
         await petImgRef!.getDownloadURL().then((value) {
@@ -368,10 +365,10 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   // 강아지 정보 데이터 추가
   Future<void> _create([DocumentSnapshot? documentSnapshot]) async {
     // 강아지 이미지 파일 저장 경로
-    Reference petImgRef = FirebaseStorage.instance.ref().child(
-        '${'imcsh313@naver.com'}/dogs/${Path.basename(pickedPetImgFile!.path)}');
+    Reference petImgRef = FirebaseStorage.instance.ref()
+        .child('${'imcsh313@naver.com'}/dogs/${Path.basename(pickedPetImgFile!.path)}');
 
-    /*await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
+    await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
       await petImgRef!.getDownloadURL().then((value) {
         recommend = getRecommendTime(kategorie);
 
@@ -390,24 +387,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
         )).then((value) => print('강아지 정보 저장 완료'))
             .catchError((error) => print('강아지 정보 저장 오류! ${petsRef}'));
       });
-    });*/
-
-    recommend = getRecommendTime(kategorie);
-
-    //이미지 경로를 db 에 저장
-    petsRef.add(DogData(
-      imageUrl: 'https://edu.ssafy.com/edu/main/index.do',
-      imageFileName: Path.basename(pickedPetImgFile!.path),
-      name: name,
-      gender: gender,
-      birth: birth,
-      kategorie: kategorie,
-      breed: breed,
-      weight: weight,
-      recommend: recommend,
-      createdAt: Timestamp.now(),
-    )).then((value) => print('강아지 정보 저장 완료'))
-        .catchError((error) => print('강아지 정보 저장 오류! ${petsRef}'));
+    });
   }
 
   // 상태 확인을 위한 boolean 변수
@@ -545,7 +525,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                           ? ClipOval(child: mypageStateController.myPageStateType == MyPageStateType.Create
                             ? Image(image: FileImage(pickedPetImgFile))
                             : !isChangeImg
-                              ? /*Image.network(petController.selectedPetImageUrl)*/ Container(color: Colors.amber)
+                              ? Image(image: CachedNetworkImageProvider(petController.selectedPetImageUrl))
                               : Image(image: FileImage(pickedPetImgFile)))
                           : Icon(Icons.add, size: size.width * 0.2, color: Colors.white),
                     ),
