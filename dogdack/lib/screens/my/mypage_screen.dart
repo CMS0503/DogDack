@@ -59,7 +59,7 @@ class _MyPageState extends State<MyPage> {
   // 정보 화면 타이틀 위젯
   Container infoTitleBox(double cardWith, double cardHeight, String title) {
     return Container(
-      width: cardWith * 0.48,
+      width: cardWith * 0.44,
       height: cardHeight * 0.08,
       decoration: BoxDecoration(
         border: Border.all(color: Color(0xff644CAA), width: 2),
@@ -409,7 +409,7 @@ class _MyPageState extends State<MyPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '이름'),
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '이    름'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
@@ -429,7 +429,7 @@ class _MyPageState extends State<MyPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '성별'),
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '성    별'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
@@ -447,7 +447,7 @@ class _MyPageState extends State<MyPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '생일'),
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '생    일'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
@@ -467,7 +467,7 @@ class _MyPageState extends State<MyPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '분류'),
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '분    류'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
@@ -487,7 +487,7 @@ class _MyPageState extends State<MyPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '견종'),
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '견    종'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
@@ -514,7 +514,7 @@ class _MyPageState extends State<MyPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '무게'),
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '무    게'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
@@ -536,7 +536,7 @@ class _MyPageState extends State<MyPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '하루 권장 산책 시간'),
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '권장 산책 시간'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
