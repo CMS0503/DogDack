@@ -120,6 +120,7 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
+    print('hi');
     // getName();
     ButtonController().getName();
     Size screenSize = MediaQuery.of(context).size;
@@ -199,12 +200,9 @@ class _CalendarState extends State<Calendar> {
                           },
                         ).toList(),
                         onChanged: (value) {
-                          print('뭐하는놈인가');
                           controller.selectedValue = value.toString();
-                          print('미친놈아니야!');
                           // controller.selected_id =
                           // controller.dog_names[value.toString()];
-                          print('안녕 못한다네');
                           setState(() {
                             print('안녕하신가');
                             getName();
