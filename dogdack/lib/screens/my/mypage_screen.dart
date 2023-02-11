@@ -189,63 +189,6 @@ class _MyPageState extends State<MyPage> {
                           children: [
                             // 사용자 계정 이미지
                             StreamBuilder(
-                              stream: userRef.snapshots(),
-                              builder: (userContext, userSnapshot) {
-                                if(!userSnapshot.hasData)
-                                  return CircularProgressIndicator();
-
-                                String phNum = '아직 번호가 등록 되어 있지 않습니다.';
-                                if(userSnapshot.data!.docs.length != 0) {
-                                  phNum = userSnapshot.data!.docs[0].get('phoneNumber');
-                                }
-
-                                return InkWell(
-                                  onTap: () {
-                                    showTextInputDialog(
-                                      context: context,
-                                      title: '전화 번호',
-                                      message: '현재 전화 번호 \n\n ${phNum}',
-                                      textFields: [
-                                        DialogTextField(
-                                          keyboardType: TextInputType.number,
-                                          hintText: '전화 번호를 입력하세요',
-                                        )
-                                      ],
-                                    ).then((value) {
-                                      if(value == null)
-                                        return;
-
-                                      var map = Map<String, dynamic>();
-                                      map["phoneNumber"] = value.elementAt(0).toString();
-
-                                      if(value.elementAt(0).toString().length == 0) {
-                                        MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.PhoneNumberNotExist);
-                                        return;
-                                      }
-
-                                      if(userSnapshot.data!.docs.length == 0) {
-                                        userRef.doc('number').set(UserData(phoneNumber: value.elementAt(0).toString())).then((value) => print('전화번호 저장 완료'))
-                                            .catchError((error) => print('전화번호 저장 오류! ${error}'));
-                                      } else {
-                                        userRef.doc('number').update(map)
-                                            .whenComplete(() => print("변경 완료")).catchError((error) => print('전화번호 저장 오류! ${error}'));
-                                      }
-                                    });
-                                  },
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.white,
-                                    radius: size.width * 0.10,
-                                    // backgroundImage: NetworkImage(FirebaseAuth.instance.currentUser!.photoURL.toString()),
-                                      child: Align(
-                                      alignment: Alignment.bottomRight,
-                                      child: CircleAvatar(
-                                        backgroundColor: Color(0xff504E5B),
-                                        radius: petInfoWidth * 0.05,
-                                        child: Icon(
-                                          Icons.phone,
-                                          size: petInfoWidth * 0.05,
-                                          color: Colors.white,
-=======
                                 stream: userRef.snapshots(),
                                 builder: (userContext, userSnapshot) {
                                   if(!userSnapshot.hasData)

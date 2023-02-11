@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/models/walk_data.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
@@ -52,7 +53,6 @@ class WalkController extends GetxController {
 
   // 강아지 정보
   QuerySnapshot? _docInPets;
-  List<DogData>? petList;
   String name = "asd";
   String? imgUrl;
 
