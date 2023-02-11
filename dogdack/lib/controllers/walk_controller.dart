@@ -9,8 +9,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class WalkController extends GetxController {
   // 블루투스 장치 id
-  final String serviceUuid = '0000ffe0-0000-1000-8000-00805f9b34fb';
-  final String characteristicUuid = '0000ffe1-0000-1000-8000-00805f9b34fb';
+  final String serviceUUID = '0000ffe0-0000-1000-8000-00805f9b34fb';
+  final String characteristicUUID = '0000ffe1-0000-1000-8000-00805f9b34fb';
 
   RxBool isBleConnect = false.obs;
 
@@ -95,8 +95,14 @@ class WalkController extends GetxController {
   void onInit() {
     ever(timeCount, (_) {
       if ((timeCount % 6000) % 100 == 0) {
-        sendData(
-            '${timeCount ~/ 360000}:${timeCount ~/ 6000}:${(timeCount % 6000) ~/ 100}, ${distance!.toInt()}m');
+        String pn = '01085382550';
+        String timer =
+            '${timeCount ~/ 360000}:${timeCount ~/ 6000}:${(timeCount % 6000) ~/ 100}';
+        String dist = '${distance!.toInt()}m';
+        String isLed = '0';
+
+        Data data = Data(pn, timer, dist, isLed);
+        sendDataToArduino(data);
       }
     });
   }
@@ -191,22 +197,43 @@ class WalkController extends GetxController {
   }
 
   void initLCD() async {
-    await sendData('01085382550a');
-    await sendData('0:0:0, 0m');
+    Data data = Data('01085382550', '00:00:00', '123m', '0');
+
+    String json = jsonEncode(data);
+
+    sendDataToArduino(json);
   }
 
-  Future<void> sendData(data) async {
-    print('Send Data: ${data.toString()}');
+  Future<void> sendDataToArduino(data) async {
+    String json = jsonEncode(data) + '\n';
+
     for (BluetoothService service in services!) {
-      if (service.uuid.toString() == serviceUuid) {
+      if (service.uuid.toString() == serviceUUID) {
         for (BluetoothCharacteristic characteristic
             in service.characteristics) {
-          if (characteristic.uuid.toString() == characteristicUuid) {
-            await characteristic.write(utf8.encode(data),
+          if (characteristic.uuid.toString() == characteristicUUID) {
+            await characteristic.write(utf8.encode(json),
                 withoutResponse: true);
+            print('Send Data: $json');
           }
         }
       }
     }
   }
+}
+
+class Data {
+  final String phoneNumber;
+  final String timer;
+  final String isLedOn;
+  final String distance;
+
+  Data(this.phoneNumber, this.timer, this.isLedOn, this.distance);
+
+  Map<String, dynamic> toJson() => {
+        'phoneNumber': phoneNumber,
+        'timer': timer,
+        'distance': distance,
+        'isLedOn': isLedOn,
+      };
 }

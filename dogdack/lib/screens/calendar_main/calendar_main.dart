@@ -5,7 +5,6 @@ import 'package:dogdack/models/dog_data.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar_mark.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/calendar_schedule_edit.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -48,9 +47,6 @@ class _CalendarPageState extends State<CalendarMain> {
         child: StreamBuilder(
             stream: userRef.snapshots(),
             builder: (petContext, petSnapshot) {
-              // if (!petSnapshot.hasData) {
-              //   return const Center(child: CircularProgressIndicator());
-              // }
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
