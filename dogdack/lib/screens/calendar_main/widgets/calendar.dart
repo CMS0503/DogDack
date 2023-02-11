@@ -52,7 +52,7 @@ class _CalendarState extends State<Calendar> {
     List<String> dogs = [];
     // 자.. 여기다가 등록된 강아지들 다 입력하는거야
     for (int i = 0; i < dogDoc.docs.length; i++) {
-      controller.dog_names[dogDoc.docs[i]['name']] = dogDoc.docs[i]['name'];
+      // controller.dog_names[dogDoc.docs[i]['name']] = dogDoc.docs[i]['name'];
       dogs.insert(0, dogDoc.docs[i]['name']);
     }
     controller.valueList = dogs;
@@ -111,9 +111,10 @@ class _CalendarState extends State<Calendar> {
   @override
   void initState() {
     super.initState();
-    // setState(() {
-    btnController.getName().then((value) {
-      setState(() {});
+    setState(() {
+      btnController.getName().then((value) {
+        setState(() {});
+      });
     });
   }
 
@@ -136,7 +137,6 @@ class _CalendarState extends State<Calendar> {
       const Color.fromARGB(255, 235, 199, 232),
     ];
 // Obx(() {
-    // 날짜별 박스 데코
     return Column(
       children: [
         Container(
@@ -165,8 +165,8 @@ class _CalendarState extends State<Calendar> {
                         ).toList(),
                         onChanged: (value) {
                           controller.selectedValue = value.toString();
-                          controller.selected_id =
-                              controller.dog_names[value.toString()];
+                          // controller.selected_id =
+                          // controller.dog_names[value.toString()];
                           setState(() {
                             getName();
                           });
@@ -199,10 +199,14 @@ class _CalendarState extends State<Calendar> {
                           },
                         ).toList(),
                         onChanged: (value) {
+                          print('뭐하는놈인가');
                           controller.selectedValue = value.toString();
-                          controller.selected_id =
-                              controller.dog_names[value.toString()];
+                          print('미친놈아니야!');
+                          // controller.selected_id =
+                          // controller.dog_names[value.toString()];
+                          print('안녕 못한다네');
                           setState(() {
+                            print('안녕하신가');
                             getName();
                           });
                         },
