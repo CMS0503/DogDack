@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 
 import '../../../controllers/mypage_controller.dart';
-import '../../../models/dog_data.dart';
 
 class Status extends StatefulWidget {
   const Status({
@@ -23,7 +22,6 @@ class _StatusState extends State<Status> {
 
   // final petsRef = FirebaseFirestore.instance.collection('Users/${'imcsh313@naver.com'}/Pets')
   //     .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
-  String? name = '공숙이';
 
   // String imageurl = "";
   //
@@ -55,39 +53,51 @@ class _StatusState extends State<Status> {
         children: [
           Row(
             children: [
-              Container(
-                width: size.width * 0.25,
-                height: size.width * 0.25,
-                child: CircularProfileAvatar(
-                  'https://firebasestorage.googleapis.com/v0/b/dogdack-4bcfe.appspot.com/o/tyms0503%40gmail.com%2Fdogs%2F20221215_192126%20(1).jpg?alt=media&token=9efee092-a080-45d5-8c6b-48fdeb30783e',
-                  //sets image path, it should be a URL string. default value is empty string, if path is empty it will display only initials
-                  radius: 100,
-                  // sets radius, default 50.0
-                  backgroundColor: Colors.transparent,
-                  // sets background color, default Colors.white
-                  borderWidth: 4,
-                  // sets initials text, set your own style, default Text('')
-                  borderColor: Theme.of(context).primaryColor,
-                  // sets border color, default Colors.white
-                  elevation: 5.0,
-                  //sets foreground colour, it works if showInitialTextAbovePicture = true , default Colors.transparent
-                  cacheImage: true,
-                  showInitialTextAbovePicture:
-                      true, // setting it true will show initials text above profile picture, default false
-                ),
+              Column(
+                children: [
+                  Container(
+                    width: size.width * 0.2,
+                    height: size.width * 0.2,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: AssetImage('assets/dog.jpg'),
+                        ),
+                        Positioned(
+                          bottom: 37,
+                          right: 40,
+                          child: IconButton(
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.lightbulb_outline,
+                              color: Colors.yellow,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
               ),
               SizedBox(
                 width: 10,
               ),
               Column(
                 children: [
-                  Text('${name}'),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/Ble');
-                    },
-                    icon: Icon(Icons.bluetooth_outlined),
-                  ),
+                  walkController.isBleConnect == true
+                      ? IconButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/Ble');
+                          },
+                          icon: Icon(Icons.bluetooth_connected))
+                      : IconButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/Ble');
+                          },
+                          icon: Icon(Icons.bluetooth_outlined),
+                        ),
+                  Text('${walkController.name}'),
                 ],
               ),
             ],

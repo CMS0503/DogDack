@@ -71,6 +71,7 @@ class _MapState extends State<myMap> {
               }
 
               widget.receiveData += stringValue;
+              print('receiveData: ${widget.receiveData}');
               // 한번 갱신 될 때마다
               // 시작 전
               if (!walkController.isRunning.value) {

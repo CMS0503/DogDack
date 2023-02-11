@@ -7,6 +7,8 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../models/dog_data.dart';
+
 class WalkController extends GetxController {
   // 블루투스 장치 id
   final String serviceUUID = '0000ffe0-0000-1000-8000-00805f9b34fb';
@@ -46,6 +48,14 @@ class WalkController extends GetxController {
   Timestamp? endTime;
 
   double? distance = 0.0;
+  int light = 0;
+
+  // 강아지 정보
+  QuerySnapshot? _docInPets;
+  List<DogData>? petList;
+  String name = "asd";
+  String? imgUrl;
+
   int rectime = 0;
   RxInt goal = 0.obs;
   RxInt tmp_goal = 0.obs;
@@ -93,6 +103,8 @@ class WalkController extends GetxController {
 
   @override
   void onInit() {
+    getData();
+    // LCD 타이머
     ever(timeCount, (_) {
       if ((timeCount % 6000) % 100 == 0) {
         String pn = '01085382550';
@@ -105,6 +117,27 @@ class WalkController extends GetxController {
         sendDataToArduino(data);
       }
     });
+  }
+
+  void getData() async {
+    final petsRef = FirebaseFirestore.instance
+        .collection(
+            'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
+        .withConverter(
+            fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+            toFirestore: (dogData, _) => dogData.toJson());
+
+    CollectionReference petRef = FirebaseFirestore.instance.collection(
+        'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
+
+    QuerySnapshot _docInPets = await petRef.get();
+
+    name = (await petsRef.doc(_docInPets.docs.first.id.toString()).get())
+        .data()!
+        .name!;
+    imgUrl = (await petsRef.doc(_docInPets.docs.first.id.toString()).get())
+        .data()!
+        .imageUrl!;
   }
 
   void addData(lat, lng) {
