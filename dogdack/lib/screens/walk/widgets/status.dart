@@ -68,7 +68,9 @@ class _StatusState extends State<Status> {
                           bottom: 37,
                           right: 40,
                           child: IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              walkController.ledSig = !walkController.ledSig;
+                            },
                             icon: Icon(
                               Icons.lightbulb_outline,
                               color: Colors.yellow,
@@ -115,9 +117,12 @@ class _StatusState extends State<Status> {
                   const SizedBox(
                     height: 3,
                   ),
-                  Obx(() => Text(
-                    walkController.goal == 0 ? "목표 산책 시간을 입력해 주세요" : '${walkController.goal} 분',
-                    style: Theme.of(context).textTheme.displayMedium,
+                  Obx(
+                    () => Text(
+                      walkController.goal == 0
+                          ? "목표 산책 시간을 입력해 주세요"
+                          : '${walkController.goal} 분',
+                      style: Theme.of(context).textTheme.displayMedium,
                     ),
                   )
                 ],
@@ -135,7 +140,8 @@ class _StatusState extends State<Status> {
                   const SizedBox(
                     height: 3,
                   ),
-                  Obx(() => Text(
+                  Obx(
+                    () => Text(
                       '${walkController.getCur()} %',
                       style: Theme.of(context).textTheme.displayMedium,
                     ),
