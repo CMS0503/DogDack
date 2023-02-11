@@ -40,7 +40,7 @@ class _CalendarPageState extends State<CalendarMain> {
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(height * 0.12),
+        preferredSize: Size.fromHeight(height * 0.1),
         child: const LogoWidget(),
       ),
       body: SingleChildScrollView(

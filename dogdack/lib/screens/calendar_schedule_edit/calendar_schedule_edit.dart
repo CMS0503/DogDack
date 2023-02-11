@@ -8,6 +8,7 @@ import 'package:dogdack/screens/calendar_schedule_edit/widgets/calendar_snackbar
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_date_picker.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_diary_text.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_edit_bollean.dart';
+import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_edit_image.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_edit_walk.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -139,7 +140,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                 height: 30,
               ),
               const ScheduleEditBollean(),
-              // const ScheduleEditImage(),
+              const ScheduleEditImage(),
               const ScheduleDiaryText(),
               SizedBox(
                 width: width * 0.8,

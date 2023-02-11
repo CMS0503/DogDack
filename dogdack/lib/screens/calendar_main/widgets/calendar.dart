@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/button_controller.dart';
-import 'package:dogdack/controllers/main_controll.dart';
 import 'package:dogdack/controllers/walk_controller.dart';
+import 'package:dogdack/models/dog_data.dart';
 import 'package:dogdack/screens/calendar_detail/calender_detail.dart';
 
 import 'package:flutter/material.dart';
@@ -33,8 +33,14 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
+  final userRef = FirebaseFirestore.instance
+      .collection('Users/${'imcsh313@naver.com'.toString()}/Pets')
+      .withConverter(
+          fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+          toFirestore: (dogData, _) => dogData.toJson());
   // input과 walk controller 불러오기
   final controller = Get.put(InputController());
+  final btnController = Get.put(ButtonController());
   final walkController = Get.put(WalkController());
 
   // 강아지 정보 불러오기
@@ -46,7 +52,7 @@ class _CalendarState extends State<Calendar> {
     List<String> dogs = [];
     // 자.. 여기다가 등록된 강아지들 다 입력하는거야
     for (int i = 0; i < dogDoc.docs.length; i++) {
-      controller.dog_names[ dogDoc.docs[i]['name']] = dogDoc.docs[i]['name'];
+      // controller.dog_names[dogDoc.docs[i]['name']] = dogDoc.docs[i]['name'];
       dogs.insert(0, dogDoc.docs[i]['name']);
     }
     controller.valueList = dogs;
@@ -93,18 +99,22 @@ class _CalendarState extends State<Calendar> {
               data.docs[i]['beauty'],
             ];
           }
-          setState(() {});
         }
       }
     }
+    print('얼마나 불러오는지 확인해보자');
+    setState(() {});
   }
+
   int a = 0;
 
   @override
   void initState() {
     super.initState();
     setState(() {
-      getName();
+      btnController.getName().then((value) {
+        setState(() {});
+      });
     });
   }
 
@@ -127,7 +137,6 @@ class _CalendarState extends State<Calendar> {
       const Color.fromARGB(255, 235, 199, 232),
     ];
 // Obx(() {
-    // 날짜별 박스 데코
     return Column(
       children: [
         Container(
@@ -135,8 +144,9 @@ class _CalendarState extends State<Calendar> {
           alignment: Alignment.centerLeft,
           child: Padding(
             padding: const EdgeInsets.only(left: 20),
-            child: GetBuilder<MainController>(
-              builder: (_) {
+            child: StreamBuilder(
+              stream: userRef.snapshots(),
+              builder: (petContext, petSnapshot) {
                 // 등록한 강아지가 없으면
                 return controller.valueList.isEmpty
                     // 강아지를 등록해달라는 dropbar
@@ -155,7 +165,8 @@ class _CalendarState extends State<Calendar> {
                         ).toList(),
                         onChanged: (value) {
                           controller.selectedValue = value.toString();
-                          controller.selected_id = controller.dog_names[value.toString()];
+                          // controller.selected_id =
+                          // controller.dog_names[value.toString()];
                           setState(() {
                             getName();
                           });
@@ -188,9 +199,14 @@ class _CalendarState extends State<Calendar> {
                           },
                         ).toList(),
                         onChanged: (value) {
+                          print('뭐하는놈인가');
                           controller.selectedValue = value.toString();
-                          controller.selected_id = controller.dog_names[value.toString()];
+                          print('미친놈아니야!');
+                          // controller.selected_id =
+                          // controller.dog_names[value.toString()];
+                          print('안녕 못한다네');
                           setState(() {
+                            print('안녕하신가');
                             getName();
                           });
                         },

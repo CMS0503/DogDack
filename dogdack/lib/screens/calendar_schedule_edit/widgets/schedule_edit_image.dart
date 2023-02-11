@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 
@@ -31,7 +30,7 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
         source:
             inputSource == 'camera' ? ImageSource.camera : ImageSource.gallery,
         maxWidth: 1920,
-        // imageQuality: 50,
+        imageQuality: 50,
       );
 
       if (pickedImage == null) {
@@ -44,7 +43,11 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
 
       try {
         // Uploading the selected image with some custom meta data
-        final result = await storage.ref(fileName).putFile(
+        final result = await storage
+            .ref()
+            .child(
+                '${'imcsh313@naver.com'}/dogs/${controller.selectedValue}/${controller.date}/$fileName')
+            .putFile(
               imageFile,
               SettableMetadata(
                 customMetadata: {
@@ -78,14 +81,18 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
   Future<List<Map<String, dynamic>>> _loadImages() async {
     List<Map<String, dynamic>> files = [];
 
-    final ListResult result = await storage.ref().list();
+    final ListResult result = await storage
+        .ref()
+        .child(
+            '${'imcsh313@naver.com'}/dogs/${controller.selectedValue}/${controller.date}')
+        .list();
     final List<Reference> allFiles = result.items;
 
     final snapshot = await FirebaseFirestore.instance
         .collection(
           'Users',
         )
-        .doc('${'imcsh313@naver.com'}')
+        .doc('imcsh313@naver.com')
         .collection('Calendar')
         .doc(DateFormat('yyMMdd').format(controller.date))
         .get();

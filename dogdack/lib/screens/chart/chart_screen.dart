@@ -3,11 +3,9 @@ import 'package:dogdack/screens/chart/widget/car_health_line_graph_card.dart';
 import 'package:dogdack/screens/calendar_detail/widget/cal_detail_title.dart';
 import 'package:dogdack/screens/chart/widget/car_health_progress_card.dart';
 import 'package:dogdack/screens/chart/widget/graph_day.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 import '../../commons/logo_widget.dart';
 import '../../controllers/input_controller.dart';
@@ -17,6 +15,8 @@ import '../../models/dog_data.dart';
 
 class ChartMain extends StatefulWidget {
   static Map<String, List> events = {'': []};
+
+  const ChartMain({super.key});
 
   @override
   State<ChartMain> createState() => _ChartMainState();
@@ -151,51 +151,48 @@ class _ChartMainState extends State<ChartMain> {
   String walk_distance_plus = "증가했어요!";
   String walk_distance_minus = "감소했어요!";
 
-
   /// 바뀔 강아지 이름
 
   Map dog_names = {};
 
   Future<Map<String, List<Object>>> getData() async {
-
     // 두달 산책 시간 포인트 불러오기
 
-    final find_name = FirebaseFirestore.instance
+    final findName = FirebaseFirestore.instance
         .collection('Users/${'imcsh313@naver.com'}/Pets');
 
-    var docId = await find_name.get();
-
+    var docId = await findName.get();
 
     for (int i = 0; i < docId.docs.length; i++) {
       dog_names[docId.docs[i]['name'].toString()] = docId.docs[i].id.toString();
     }
-
-
-
-
-
+    print(dog_names);
+    print(dog_names.values.toList()[0]);
+    if (controller.selected_id.isEmpty && dog_names.values.isNotEmpty) {
+      controller.selected_id = dog_names.values.toList()[0];
+    }
 
     //////// 강아지 아이디 고정값으로 박아 놓음. 바꿔야 됨.
-    final day_points = FirebaseFirestore.instance
+    final dayPoints = FirebaseFirestore.instance
         .collection('Users/${'imcsh313@naver.com'}/Pets')
         .doc(controller.selected_id)
         .collection('Walk')
         .where('startTime', isLessThan: DateTime.now())
         .where('startTime',
-            isGreaterThan: DateTime.now().subtract(Duration(days: 60)))
+            isGreaterThan: DateTime.now().subtract(const Duration(days: 60)))
         .orderBy('startTime', descending: false);
 
-    var points_result = await day_points.get();
+    var pointsResult = await dayPoints.get();
 
-    List<String> date_list = [];
+    List<String> dateList = [];
     // 최신일 -> 두달전
     for (int i = 0; i < 60; i++) {
       String temp = DateTime.now().subtract(Duration(days: 59 - i)).toString();
-      date_list.add(temp.substring(0, 10));
+      dateList.add(temp.substring(0, 10));
     }
-    List<String> docs_list = [];
-    for (int i = 0; i < points_result.docs.length; i++) {
-      docs_list.add((points_result.docs[i]['startTime'])
+    List<String> docsList = [];
+    for (int i = 0; i < pointsResult.docs.length; i++) {
+      docsList.add((pointsResult.docs[i]['startTime'])
           .toDate()
           .toString()
           .substring(0, 10));
@@ -213,39 +210,39 @@ class _ChartMainState extends State<ChartMain> {
     day_goal_hour_points = List<double>.filled(7, 1);
     week_goal_hour_points = List<double>.filled(30, 1);
 
-    List<double> two_month_hour = List<double>.filled(60, 1);
-    List<double> two_month_distance = List<double>.filled(60, 1);
-    List<double> two_month_goal = List<double>.filled(60, 1);
+    List<double> twoMonthHour = List<double>.filled(60, 1);
+    List<double> twoMonthDistance = List<double>.filled(60, 1);
+    List<double> twoMonthGoal = List<double>.filled(60, 1);
 
-    for (int i = 0; i < date_list.length; i++) {
-      for (int j = 0; j < docs_list.length; j++) {
-        if (docs_list[j] == (date_list[i])) {
-          two_month_hour[i] = points_result.docs[j]['totalTimeMin'].toDouble();
-          two_month_distance[i] = points_result.docs[j]['distance'].toDouble();
-          two_month_goal[i] = points_result.docs[j]['goal'].toDouble();
+    for (int i = 0; i < dateList.length; i++) {
+      for (int j = 0; j < docsList.length; j++) {
+        if (docsList[j] == (dateList[i])) {
+          twoMonthHour[i] = pointsResult.docs[j]['totalTimeMin'].toDouble();
+          twoMonthDistance[i] = pointsResult.docs[j]['distance'].toDouble();
+          twoMonthGoal[i] = pointsResult.docs[j]['goal'].toDouble();
         }
       }
     }
 
-    day_hour_points = two_month_hour.sublist(
-        two_month_hour.length - 7, two_month_hour.length);
-    week_hour_points = two_month_hour.sublist(
-        two_month_hour.length - 30, two_month_hour.length);
+    day_hour_points =
+        twoMonthHour.sublist(twoMonthHour.length - 7, twoMonthHour.length);
+    week_hour_points =
+        twoMonthHour.sublist(twoMonthHour.length - 30, twoMonthHour.length);
 
-    last_day_hour_points = two_month_hour.sublist(
-        two_month_distance.length - 14, two_month_distance.length - 7);
+    last_day_hour_points = twoMonthHour.sublist(
+        twoMonthDistance.length - 14, twoMonthDistance.length - 7);
     last_week_hour_points =
-        two_month_hour.sublist(0, two_month_distance.length - 30);
+        twoMonthHour.sublist(0, twoMonthDistance.length - 30);
 
-    day_distance_points = two_month_distance.sublist(
-        two_month_distance.length - 7, two_month_distance.length);
-    week_distance_points = two_month_distance.sublist(
-        two_month_distance.length - 30, two_month_distance.length);
+    day_distance_points = twoMonthDistance.sublist(
+        twoMonthDistance.length - 7, twoMonthDistance.length);
+    week_distance_points = twoMonthDistance.sublist(
+        twoMonthDistance.length - 30, twoMonthDistance.length);
 
-    day_goal_hour_points = two_month_goal.sublist(
-        two_month_goal.length - 7, two_month_goal.length);
-    week_goal_hour_points = two_month_goal.sublist(
-        two_month_goal.length - 30, two_month_goal.length);
+    day_goal_hour_points =
+        twoMonthGoal.sublist(twoMonthGoal.length - 7, twoMonthGoal.length);
+    week_goal_hour_points =
+        twoMonthGoal.sublist(twoMonthGoal.length - 30, twoMonthGoal.length);
 
     return events;
   }
@@ -260,74 +257,69 @@ class _ChartMainState extends State<ChartMain> {
 
   @override
   Widget build(BuildContext context) {
-
-
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     double height = screenSize.height;
-    Color grey = Color.fromARGB(255, 80, 78, 91);
-    Color violet = Color.fromARGB(255, 100, 92, 170);
-    Color violet2 = Color.fromARGB(255, 160, 132, 202);
+    Color grey = const Color.fromARGB(255, 80, 78, 91);
+    Color violet = const Color.fromARGB(255, 100, 92, 170);
+    Color violet2 = const Color.fromARGB(255, 160, 132, 202);
 
     // 이번주 일주일 평균 산책 거리
-    int sum_day_walk_distance = 0;
+    int sumDayWalkDistance = 0;
 
     // 이번달 평균 산책 거리
-    int sum_week_walk_distance = 0;
+    int sumWeekWalkDistance = 0;
 
     // 일주일 동안 실제 산책한 평균 시간
     for (int i = 0; i < day_hour_points.length; i++) {
       sum_day_walk_hour += day_hour_points[i].toInt();
       last_sum_day_walk_hour += last_day_hour_points[i].toInt();
-      sum_day_walk_distance += day_distance_points[i].toInt();
+      sumDayWalkDistance += day_distance_points[i].toInt();
       day_goal_hour += day_goal_hour_points[i].toInt();
     }
-    sum_day_walk_hour = (sum_day_walk_hour / day_hour_points.length).toInt();
+    sum_day_walk_hour = sum_day_walk_hour ~/ day_hour_points.length;
     last_sum_day_walk_hour =
-        (last_sum_day_walk_hour / last_day_hour_points.length).toInt();
-    sum_day_walk_distance =
-        (sum_day_walk_distance / day_distance_points.length).toInt();
-    day_goal_hour = (day_goal_hour / day_goal_hour_points.length).toInt();
+        last_sum_day_walk_hour ~/ last_day_hour_points.length;
+    sumDayWalkDistance = sumDayWalkDistance ~/ day_distance_points.length;
+    day_goal_hour = day_goal_hour ~/ day_goal_hour_points.length;
 
     // 한달 동안 실제 산책한 평균 시간
     for (int i = 0; i < week_hour_points.length; i++) {
       sum_week_walk_hour += week_hour_points[i].toInt();
       last_sum_week_walk_hour += last_week_hour_points[i].toInt();
-      sum_week_walk_distance += week_distance_points[i].toInt();
+      sumWeekWalkDistance += week_distance_points[i].toInt();
       week_goal_hour += week_goal_hour_points[i].toInt();
     }
-    sum_week_walk_hour = (sum_week_walk_hour / week_hour_points.length).toInt();
+    sum_week_walk_hour = sum_week_walk_hour ~/ week_hour_points.length;
     last_sum_week_walk_hour =
-        (last_sum_week_walk_hour / last_week_hour_points.length).toInt();
-    sum_week_walk_distance =
-        (sum_week_walk_distance / week_distance_points.length).toInt();
-    week_goal_hour = (week_goal_hour / week_distance_points.length).toInt();
+        last_sum_week_walk_hour ~/ last_week_hour_points.length;
+    sumWeekWalkDistance = sumWeekWalkDistance ~/ week_distance_points.length;
+    week_goal_hour = week_goal_hour ~/ week_distance_points.length;
 
     //산책 시간 증감
-    int hour_increment = walk_hour_data - last_walk_hour_data;
-    int distance_increment = walk_distance_data - last_walk_distance_data;
-    int walk_goal_data = ((walk_hour_data / hour_goal_data) * 100).toInt();
-    int walk_goal_increment = (walk_goal_data - last_walk_goal_data).toInt();
+    int hourIncrement = walk_hour_data - last_walk_hour_data;
+    int distanceIncrement = walk_distance_data - last_walk_distance_data;
+    int walkGoalData = ((walk_hour_data / hour_goal_data) * 100).toInt();
+    int walkGoalIncrement = (walkGoalData - last_walk_goal_data).toInt();
 
     // 각각 증감 텍스트 변경
-    if (walk_goal_increment > 0) {
+    if (walkGoalIncrement > 0) {
       walk_goal_increment_text = walk_goal_plus;
     } else {
       walk_goal_increment_text = walk_goal_minus;
     }
 
-    if (hour_increment > 0) {
+    if (hourIncrement > 0) {
       walk_hour_increment_text = walk_hour_plus;
     } else {
       walk_hour_increment_text = walk_hour_minus;
     }
 
-    if (distance_increment > 0) {
+    if (distanceIncrement > 0) {
       walk_distance_increment_text = walk_distance_plus;
     } else {
       walk_distance_increment_text = walk_distance_minus;
     }
-
 
     return Scaffold(
       appBar: PreferredSize(
@@ -358,7 +350,8 @@ class _ChartMainState extends State<ChartMain> {
                           ).toList(),
                           onChanged: (value) {
                             controller.selectedValue = value.toString();
-                            controller.selected_id = controller.dog_names[value.toString()];
+                            controller.selected_id =
+                                controller.dog_names[value.toString()];
 
                             setState(() {
                               getData();
@@ -393,8 +386,9 @@ class _ChartMainState extends State<ChartMain> {
                           ).toList(),
                           onChanged: (value) {
                             controller.selectedValue = value.toString();
-                            controller.selected_id = dog_names[value.toString()];
-                            print( controller.selected_id);
+                            controller.selected_id =
+                                dog_names[value.toString()];
+                            print(controller.selected_id);
                             // controller.selected_id = controller.dog_names[value.toString()];
 
                             setState(() {
@@ -422,7 +416,8 @@ class _ChartMainState extends State<ChartMain> {
                               child: Center(
                                   child: DropdownButton(
                                 elevation: 0,
-                                focusColor: Color.fromARGB(255, 100, 92, 170),
+                                focusColor:
+                                    const Color.fromARGB(255, 100, 92, 170),
                                 borderRadius: BorderRadius.circular(10),
                                 value: _selectedValue,
                                 items: _valueList.map((value) {
@@ -435,12 +430,12 @@ class _ChartMainState extends State<ChartMain> {
                                               BorderRadius.circular(10),
                                           border: Border.all(
                                             width: 2,
-                                            color: Color.fromARGB(
+                                            color: const Color.fromARGB(
                                                 255, 100, 92, 170),
                                           )),
                                       child: Text(
                                         value,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 20,
                                             fontFamily: 'bmjua',
                                             color: Color.fromARGB(
@@ -459,8 +454,7 @@ class _ChartMainState extends State<ChartMain> {
                                         walk_hour_data = sum_day_walk_hour;
                                         last_walk_hour_data =
                                             last_sum_day_walk_hour;
-                                        walk_distance_data =
-                                            sum_day_walk_distance;
+                                        walk_distance_data = sumDayWalkDistance;
                                         distance_points = day_distance_points;
                                         //   last_avg_distance = last_day_avg_distance;
                                         date_text = "주";
@@ -472,7 +466,7 @@ class _ChartMainState extends State<ChartMain> {
                                         last_walk_hour_data =
                                             last_sum_week_walk_hour;
                                         walk_distance_data =
-                                            sum_week_walk_distance;
+                                            sumWeekWalkDistance;
                                         distance_points = week_distance_points;
                                         date_text = "달";
                                         x_value = x_value_week;
@@ -491,16 +485,16 @@ class _ChartMainState extends State<ChartMain> {
                       // )
                       //건강지수 카드
                       CalHealthProgressCardWidget(
-                          last_data: walk_goal_increment.abs(),
-                          this_data: walk_goal_data,
+                          last_data: walkGoalIncrement.abs(),
+                          this_data: walkGoalData,
                           message: walk_goal_increment_text,
                           date_text: date_text),
                       CalHealthCardWidget(
                         color: violet2,
-                        message: "${walk_hour_increment_text}",
+                        message: walk_hour_increment_text,
                         title: "평균 산책 시간",
                         points: hour_points,
-                        last_data: hour_increment.abs(),
+                        last_data: hourIncrement.abs(),
                         this_data: walk_hour_data,
                         date_text: date_text,
                         unit: "분",
@@ -508,10 +502,10 @@ class _ChartMainState extends State<ChartMain> {
                       ),
                       CalHealthCardWidget(
                         color: violet,
-                        message: "${walk_distance_increment_text}",
+                        message: walk_distance_increment_text,
                         title: "평균 산책거리",
                         points: distance_points,
-                        last_data: distance_increment.abs(),
+                        last_data: distanceIncrement.abs(),
                         this_data: walk_distance_data,
                         date_text: date_text,
                         unit: "미터",
