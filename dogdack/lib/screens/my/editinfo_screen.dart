@@ -523,17 +523,10 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                       radius: size.width * 0.2,
                       child: pickComp
                           ? ClipOval(child: mypageStateController.myPageStateType == MyPageStateType.Create
-<<<<<<< dogdack/lib/screens/my/editinfo_screen.dart
                           ? Image(image: FileImage(pickedPetImgFile))
                           : !isChangeImg
                           ? Image(image: CachedNetworkImageProvider(petController.selectedPetImageUrl))
                           : Image(image: FileImage(pickedPetImgFile)))
-=======
-                            ? Image(image: FileImage(pickedPetImgFile))
-                            : !isChangeImg
-                              ? Image(image: CachedNetworkImageProvider(petController.selectedPetImageUrl))
-                              : Image(image: FileImage(pickedPetImgFile)))
->>>>>>> dogdack/lib/screens/my/editinfo_screen.dart
                           : Icon(Icons.add, size: size.width * 0.2, color: Colors.white),
                     ),
                   ],
