@@ -18,12 +18,7 @@ class HomePageBarChartController extends GetxController {
       var _startTimeStamp = docWalkData.docs[i]['startTime'];
       DateTime _selele = _startTimeStamp.toDate();
       int sdfasefase = int.parse(DateFormat.H().format(_selele).toString());
-      //int _hour = int.parse(DateFormat.H().format(_timeStamp).toString());
-      print('!@#!@#!@@!!@! : ${sdfasefase}');
-/*      DateTime _dateTime = DateTime.parse(startTimeStamp);
-      print("QWERQWERQWERQWERQWERQWE : ${_dateTime.hour}");*/
-
-      timeWalkCntListRealCnt.insert(sdfasefase, timeWalkCntListRealCnt.elementAt(sdfasefase) + 1);
+      timeWalkCntListRealCnt[sdfasefase]++;
     }
 
     int maxCnt = 0;
@@ -34,14 +29,12 @@ class HomePageBarChartController extends GetxController {
       }
     }
 
-    print('sdfasdfasdfasdf : ${maxCnt}');
-
     if(maxCnt == 0) {
       timeWalkCntList = List.filled(25, 0);
     } else {
       for(int i = 0; i < 25; i++) {
         double inputDate = timeWalkCntListRealCnt.elementAt(i) / maxCnt;
-        timeWalkCntList.insert(i, inputDate * 100);
+        timeWalkCntList[i] = inputDate * 100;
       }
     }
 

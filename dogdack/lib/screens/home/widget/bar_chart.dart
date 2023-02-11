@@ -1,19 +1,17 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../../controllers/home_controller.dart';
 
 class HomePageBarChart extends StatefulWidget {
-  const HomePageBarChart({Key? key}) : super(key: key);
+  HomePageBarChart({super.key});
 
   @override
   State<HomePageBarChart> createState() => _HomePageBarChartState();
 }
 
 class _HomePageBarChartState extends State<HomePageBarChart> {
-  //Duration
-  final Duration animDuration = const Duration(microseconds: 100);
+  final Duration animDuration = const Duration(milliseconds: 500);
 
   //GetXController
   final homeChartController = Get.put(HomePageBarChartController());
@@ -88,11 +86,8 @@ class _HomePageBarChartState extends State<HomePageBarChart> {
       barRods: [
         BarChartRodData(
           toY: isTouched ? y + 1 : y,
-          color: isTouched ? Colors.blueAccent : Colors.black26,
+          color: Color(0xff644CAA),
           width: width,
-          borderSide: isTouched
-              ? BorderSide(color: Colors.green)
-              : const BorderSide(color: Colors.white, width: 0),
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
             toY: 20,
@@ -104,55 +99,42 @@ class _HomePageBarChartState extends State<HomePageBarChart> {
     );
   }
 
-  // 데이터 리스트
-  List<BarChartGroupData> showingGroups() => List.generate(25, (i) {
-    switch (i) {
-      case 0: return makeGroupData(0, homeChartController.timeWalkCntList.elementAt(0));
-      case 1: return makeGroupData(1, homeChartController.timeWalkCntList.elementAt(1));
-      case 2: return makeGroupData(2, homeChartController.timeWalkCntList.elementAt(2));
-      case 3: return makeGroupData(3, homeChartController.timeWalkCntList.elementAt(3));
-      case 4: return makeGroupData(4, homeChartController.timeWalkCntList.elementAt(4));
-      case 5: return makeGroupData(5, homeChartController.timeWalkCntList.elementAt(5));
-      case 6: return makeGroupData(6, homeChartController.timeWalkCntList.elementAt(6));
-      case 7: return makeGroupData(7, homeChartController.timeWalkCntList.elementAt(7));
-      case 8: return makeGroupData(8, homeChartController.timeWalkCntList.elementAt(8));
-      case 9: return makeGroupData(9, homeChartController.timeWalkCntList.elementAt(9));
-      case 10: return makeGroupData(10, homeChartController.timeWalkCntList.elementAt(10));
-      case 11: return makeGroupData(11, homeChartController.timeWalkCntList.elementAt(11));
-      case 12: return makeGroupData(12, homeChartController.timeWalkCntList.elementAt(12));
-      case 13: return makeGroupData(13, homeChartController.timeWalkCntList.elementAt(13));
-      case 14: return makeGroupData(14, homeChartController.timeWalkCntList.elementAt(14));
-      case 15: return makeGroupData(15, homeChartController.timeWalkCntList.elementAt(15));
-      case 16: return makeGroupData(16, homeChartController.timeWalkCntList.elementAt(16));
-      case 17: return makeGroupData(17, homeChartController.timeWalkCntList.elementAt(17));
-      case 18: return makeGroupData(18, homeChartController.timeWalkCntList.elementAt(18));
-      case 19: return makeGroupData(19, homeChartController.timeWalkCntList.elementAt(19));
-      case 20: return makeGroupData(20, homeChartController.timeWalkCntList.elementAt(20));
-      case 21: return makeGroupData(21, homeChartController.timeWalkCntList.elementAt(21));
-      case 22: return makeGroupData(22, homeChartController.timeWalkCntList.elementAt(22));
-      case 23: return makeGroupData(23, homeChartController.timeWalkCntList.elementAt(23));
-      case 24: return makeGroupData(24, homeChartController.timeWalkCntList.elementAt(24));
-      default: return throw Error();
+  //막대 그래프 y 축 데이터
+  List<BarChartGroupData> showingGroups() {
+    //반환할 리스트
+    List<BarChartGroupData> retList = [];
+
+    //y축 데이터가 0일 때 기본으로 보여줄 막대 그래프의 길이를 정의
+    double initYAxisData = 5.0;
+    //실제로 보여줄 막대 그래프 y축 데이터의 길이
+    List<double> yList = List.filled(25, initYAxisData);
+    for(int i = 0; i < 25; i++) {
+      yList[i] += homeChartController.timeWalkCntList.elementAt(i);
     }
-  });
+
+    //반환할 리스트 업데이트
+    for(int i = 0; i < 25; i++) {
+      retList.add(makeGroupData(i, yList.elementAt(i)));
+    }
+
+    return retList;
+  }
 
   // 새로고침
   Future<dynamic> refreshState() async {
     setState(() {});
-    await Future<dynamic>.delayed(animDuration);
+    await Future<dynamic>.delayed(animDuration + const Duration(milliseconds: 100));
     await refreshState();
   }
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    refreshState();
     return Container(
-      height: 100,
-      child: GetBuilder<HomePageBarChartController> (
-        builder: (_) {
-          print('00000000000000000000000000 : ${homeChartController.timeWalkCntList.elementAt(0)}');
-          return BarChart(walkData(), swapAnimationDuration: animDuration);
-        },
-      ),
+      height: size.height * 0.12,
+      child: BarChart(walkData(), swapAnimationDuration: animDuration),
     );
   }
 }

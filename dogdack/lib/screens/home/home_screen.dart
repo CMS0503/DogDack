@@ -135,8 +135,6 @@ class _HomePageState extends State<HomePage> {
                             onPageChanged: (index, reason) {
                               setState(() {
                                 sliderController.sliderIdx = index;
-                                //그래프 데이터 계산
-                                homePageBarChartController.calculatorHomeChartData(curDogID, refCurDogWalk);
                               });
                             },
                             autoPlay: true,
