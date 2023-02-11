@@ -3,6 +3,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dogdack/models/user_data.dart';
 import 'package:dogdack/screens/my/widgets/mypage_snackbar.dart';
+import 'package:dogdack/screens/my/widgets/share_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -152,7 +153,7 @@ class _MyPageState extends State<MyPage> {
           child: const LogoWidget(),
         ),
         floatingActionButton: Container(
-          padding: EdgeInsets.fromLTRB(0, 0, size.width * 0.05, size.width * 0.05),
+          padding: EdgeInsets.fromLTRB(0, 0, size.width * 0.01, size.width * 0.03),
           child: FloatingActionButton(
             heroTag: 'petAdd',
             onPressed: () {
@@ -371,7 +372,7 @@ class _MyPageState extends State<MyPage> {
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (context, itemIndex, pageViewIndex) {
                             return CircleAvatar(
-                              radius: size.width * 0.3,
+                              radius: size.width * 0.25,
                               child: ClipOval(
                                 child: CachedNetworkImage(
                                   imageUrl: snapshot.data!.docs[itemIndex].get('imageUrl'),
@@ -579,6 +580,10 @@ class _MyPageState extends State<MyPage> {
                     );
                   },
                 ),
+                SizedBox(
+                  height: size.height * 0.02,
+                ),
+                ShareManager(),
                 SizedBox(
                   height: size.height * 0.05,
                 )
