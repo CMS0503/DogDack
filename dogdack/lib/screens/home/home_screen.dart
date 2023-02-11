@@ -111,19 +111,19 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         SizedBox(
-                          height: height * 0.02,
+                          height: height * 0.01,
                         ),
                         GetBuilder<HomePageWalkCalculatorController>(builder: (_) {
                           return Text(
                             '${homePageWalkCalculatorController.compPercent}%',
                             style: TextStyle(
                                 color: Color(0xff644CAA),
-                                fontSize: width * 0.07
+                                fontSize: width * 0.06
                             ),
                           );
                         }),
                         SizedBox(
-                          height: height * 0.01,
+                          height: height * 0.001,
                         ),
                         // 좌우 스크롤 슬라이더
                         CarouselSlider.builder(
@@ -143,7 +143,7 @@ class _HomePageState extends State<HomePage> {
                           itemCount: petSnapshot.data!.docs.length,
                           itemBuilder: (context, itemIndex, pageViewIndex) {
                             return CircleAvatar(
-                              radius: size.width * 0.25,
+                              radius: size.width * 0.23,
                               child: ClipOval(
                                 child: CachedNetworkImage(
                                   imageUrl: petSnapshot.data!.docs[itemIndex].get('imageUrl'),
@@ -154,7 +154,6 @@ class _HomePageState extends State<HomePage> {
                             );
                           },
                         ),
-                        SizedBox(height: size.height * 0.02),
                         Center(
                           child: Text(
                             petSnapshot.data!.docs[sliderController.sliderIdx].get('name'),
@@ -172,13 +171,28 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                         ),
-                        SizedBox(height: size.height * 0.02),
+                        SizedBox(height: size.height * 0.04),
+                        Text(
+                          '${petSnapshot.data!.docs[sliderController.sliderIdx]['name']}의 최애 산책 시간',
+                          style: TextStyle(color: Color(0xaa504E5B)),
+                        ),
+                        SizedBox(height: size.height * 0.01),
+                        HomePageBarChart(),
+                        SizedBox(height: size.height * 0.01),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(size.width * 0.1, 0, size.width * 0.1, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Icon(Icons.ac_unit),
+                              Text('2022년 1월 1주차'),
+                              Icon(Icons.ac_unit),
+                            ],
+                          ),
+                        )
                       ],
                     );
                   },
-                ),
-                Container(
-                  child: HomePageBarChart(),
                 ),
               ],
             ),
