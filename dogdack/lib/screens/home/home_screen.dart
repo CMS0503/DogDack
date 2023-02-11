@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(height * 0.12),
+          preferredSize: Size.fromHeight(height * 0.09),
           child: const LogoWidget(),
         ),
         body: SingleChildScrollView(

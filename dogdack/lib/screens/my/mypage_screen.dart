@@ -148,7 +148,7 @@ class _MyPageState extends State<MyPage> {
       },
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(size.height * 0.12),
+          preferredSize: Size.fromHeight(size.height * 0.09),
           child: const LogoWidget(),
         ),
         floatingActionButton: Container(
