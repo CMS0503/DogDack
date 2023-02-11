@@ -98,10 +98,11 @@ class _CalendarState extends State<Calendar> {
               data.docs[i]['beauty'],
             ];
           }
-          setState(() {});
         }
       }
     }
+    print('얼마나 불러오는지 확인해보자');
+    setState(() {});
   }
 
   int a = 0;
