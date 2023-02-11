@@ -40,15 +40,15 @@ class _MyPageState extends State<MyPage> {
   final petsRef = FirebaseFirestore.instance
       .collection('Users/${'imcsh313@naver.com'}/Pets')
       .withConverter(
-          fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
-          toFirestore: (dogData, _) => dogData.toJson());
+      fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+      toFirestore: (dogData, _) => dogData.toJson());
 
   // Firebase : 유저 전화 번호 저장을 위한 참조 값
   final userRef = FirebaseFirestore.instance
       .collection('Users/${'imcsh313@naver.com'}/UserInfo')
       .withConverter(
-          fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
-          toFirestore: (userData, _) => userData.toJson());
+      fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
+      toFirestore: (userData, _) => userData.toJson());
 
   // GetX
   final petController = Get.put(PetController()); // 슬라이더에서 선택된 반려견 정보를 위젯간 공유
@@ -87,7 +87,7 @@ class _MyPageState extends State<MyPage> {
       String _docInPetsID =
           _docInPets.docs[i].id; // Pets Collection 아래 문서 이름 (반려견 이름)
       CollectionReference walkRef =
-          petsRef.doc('${_docInPetsID}').collection('Walk');
+      petsRef.doc('${_docInPetsID}').collection('Walk');
       QuerySnapshot _docInWalk = await walkRef.get();
       for (int j = 0; j < _docInWalk.docs.length; j++) {
         totalWalkMin += _docInWalk.docs[j]['totalTimeMin'];
@@ -109,7 +109,7 @@ class _MyPageState extends State<MyPage> {
       String _docInPetsID =
           _docInPets.docs[i].id; // Pets Collection 아래 문서 이름 (반려견 이름)
       CollectionReference walkRef =
-          petsRef.doc('${_docInPetsID}').collection('Walk');
+      petsRef.doc('${_docInPetsID}').collection('Walk');
       QuerySnapshot _docInWalk = await walkRef.get();
       totalWalkCnt += _docInWalk.docs.length;
     }
@@ -189,6 +189,65 @@ class _MyPageState extends State<MyPage> {
                           children: [
                             // 사용자 계정 이미지
                             StreamBuilder(
+<<<<<<< dogdack/lib/screens/my/mypage_screen.dart
+                                stream: userRef.snapshots(),
+                                builder: (userContext, userSnapshot) {
+                                  if(!userSnapshot.hasData)
+                                    return CircularProgressIndicator();
+
+                                  String phNum = '아직 번호가 등록 되어 있지 않습니다.';
+                                  if(userSnapshot.data!.docs.length != 0) {
+                                    phNum = userSnapshot.data!.docs[0].get('phoneNumber');
+                                  }
+
+                                  return InkWell(
+                                    onTap: () {
+                                      showTextInputDialog(
+                                        context: context,
+                                        title: '전화 번호',
+                                        message: '현재 전화 번호 \n\n ${phNum}',
+                                        textFields: [
+                                          DialogTextField(
+                                            keyboardType: TextInputType.number,
+                                            hintText: '전화 번호를 입력하세요',
+                                          )
+                                        ],
+                                      ).then((value) {
+                                        if(value == null)
+                                          return;
+
+                                        var map = Map<String, dynamic>();
+                                        map["phoneNumber"] = value.elementAt(0).toString();
+
+                                        if(value.elementAt(0).toString().length == 0) {
+                                          MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.PhoneNumberNotExist);
+                                          return;
+                                        }
+
+                                        if(userSnapshot.data!.docs.length == 0) {
+                                          userRef.doc('number').set(UserData(phoneNumber: value.elementAt(0).toString())).then((value) => print('전화번호 저장 완료'))
+                                              .catchError((error) => print('전화번호 저장 오류! ${error}'));
+                                        } else {
+                                          userRef.doc('number').update(map)
+                                              .whenComplete(() => print("변경 완료")).catchError((error) => print('전화번호 저장 오류! ${error}'));
+                                        }
+                                      });
+                                    },
+                                    child: CircleAvatar(
+                                      backgroundColor: Colors.white,
+                                      radius: size.width * 0.10,
+                                      backgroundImage: CachedNetworkImageProvider(FirebaseAuth.instance.currentUser!.photoURL.toString()),
+                                      child: Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: CircleAvatar(
+                                          backgroundColor: Color(0xff504E5B),
+                                          radius: petInfoWidth * 0.05,
+                                          child: Icon(
+                                            Icons.phone,
+                                            size: petInfoWidth * 0.05,
+                                            color: Colors.white,
+                                          ),
+=======
                               stream: userRef.snapshots(),
                               builder: (userContext, userSnapshot) {
                                 if(!userSnapshot.hasData)
@@ -245,12 +304,12 @@ class _MyPageState extends State<MyPage> {
                                           Icons.phone,
                                           size: petInfoWidth * 0.05,
                                           color: Colors.white,
+>>>>>>> dogdack/lib/screens/my/mypage_screen.dart
                                         ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              }
+                                  );
+                                }
                             ),
                             SizedBox(
                               height: size.height * 0.01,
