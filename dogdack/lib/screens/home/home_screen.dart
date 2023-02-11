@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/mypage_controller.dart';
 import 'package:dogdack/screens/home/widget/bar_chart.dart';
+import 'package:dogdack/screens/home/widget/calendar_list.dart';
 import 'package:flutter/material.dart';
 import 'package:dogdack/commons/logo_widget.dart';
 import 'package:get/get.dart';
@@ -29,6 +30,7 @@ class _HomePageState extends State<HomePage> {
   final sliderController = Get.put(HomePageSliderController());
   final homePageWalkCalculatorController = Get.put(HomePageWalkCalculatorController());
   final homePageBarChartController = Get.put(HomePageBarChartController());
+  final homePageCalendarController = Get.put(HomePageCalendarController());
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +104,9 @@ class _HomePageState extends State<HomePage> {
                     //그래프 데이터 계산
                     homePageBarChartController.calculatorHomeChartData(curDogID, refCurDogWalk);
 
+                    //홈화면 캘린더 매핑
+                    homePageCalendarController.queryDocumentSnapshotDog = petSnapshot.data!.docs[sliderController.sliderIdx];
+
                     return Column(
                       children: [
                         Text(
@@ -126,34 +131,36 @@ class _HomePageState extends State<HomePage> {
                           height: height * 0.001,
                         ),
                         // 좌우 스크롤 슬라이더
-                        CarouselSlider.builder(
-                          options: CarouselOptions(
-                            viewportFraction: 0.5,
-                            enlargeCenterPage : true,
-                            enlargeFactor : 0.4,
-                            enableInfiniteScroll: true,
-                            onPageChanged: (index, reason) {
-                              setState(() {
-                                sliderController.sliderIdx = index;
-                              });
-                            },
-                            autoPlay: true,
-                            autoPlayInterval: Duration(seconds: 7),
-                          ),
-                          itemCount: petSnapshot.data!.docs.length,
-                          itemBuilder: (context, itemIndex, pageViewIndex) {
-                            return CircleAvatar(
-                              radius: size.width * 0.23,
-                              child: ClipOval(
-                                child: CachedNetworkImage(
-                                  imageUrl: petSnapshot.data!.docs[itemIndex].get('imageUrl'),
-                                  progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(),
-                                  errorWidget: (context, url, error) => Icon(Icons.error),
+                        GetBuilder<HomePageCalendarController>(builder: (_) {
+                          return CarouselSlider.builder(
+                            options: CarouselOptions(
+                              viewportFraction: 0.5,
+                              enlargeCenterPage : true,
+                              enlargeFactor : 0.4,
+                              enableInfiniteScroll: true,
+                              onPageChanged: (index, reason) {
+                                setState(() {
+                                  sliderController.sliderIdx = index;
+                                });
+                              },
+                              autoPlay: homePageCalendarController.isAutoFlag,
+                              autoPlayInterval: Duration(seconds: 7),
+                            ),
+                            itemCount: petSnapshot.data!.docs.length,
+                            itemBuilder: (context, itemIndex, pageViewIndex) {
+                              return CircleAvatar(
+                                radius: size.width * 0.23,
+                                child: ClipOval(
+                                  child: CachedNetworkImage(
+                                    imageUrl: petSnapshot.data!.docs[itemIndex].get('imageUrl'),
+                                    progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) => Icon(Icons.error),
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
+                              );
+                            },
+                          );
+                        }),
                         Center(
                           child: Text(
                             petSnapshot.data!.docs[sliderController.sliderIdx].get('name'),
@@ -179,17 +186,7 @@ class _HomePageState extends State<HomePage> {
                         SizedBox(height: size.height * 0.01),
                         HomePageBarChart(),
                         SizedBox(height: size.height * 0.01),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(size.width * 0.1, 0, size.width * 0.1, 0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Icon(Icons.ac_unit),
-                              Text('2022년 1월 1주차'),
-                              Icon(Icons.ac_unit),
-                            ],
-                          ),
-                        )
+                        CalenderListView(),
                       ],
                     );
                   },
