@@ -40,6 +40,7 @@ class _CalendarState extends State<Calendar> {
           toFirestore: (dogData, _) => dogData.toJson());
   // input과 walk controller 불러오기
   final controller = Get.put(InputController());
+  final btnController = Get.put(ButtonController());
   final walkController = Get.put(WalkController());
 
   // 강아지 정보 불러오기
@@ -111,8 +112,9 @@ class _CalendarState extends State<Calendar> {
   void initState() {
     super.initState();
     // setState(() {
-    getName();
-    // });
+    btnController.getName().then((value) {
+      setState(() {});
+    });
   }
 
   @override
