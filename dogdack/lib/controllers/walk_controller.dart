@@ -100,7 +100,6 @@ class WalkController extends GetxController {
       rectime = (recTime / cnt).round();
     }
   }
->>>>>>> dogdack/lib/controllers/walk_controller.dart
 
   @override
   void onInit() {
@@ -238,24 +237,6 @@ class WalkController extends GetxController {
     sendDataToArduino(json);
   }
 
-<<<<<<< dogdack/lib/controllers/walk_controller.dart
-  void clickLedBtn() async {
-    await sendData('${light}');
-  }
-
-  Future<void> sendData(data) async {
-    // print('try sendData');
-    for (BluetoothService service in services!) {
-      if (service.uuid.toString() == serviceUuid) {
-        // print('find service ok');
-        for (BluetoothCharacteristic characteristic
-            in service.characteristics) {
-          if (characteristic.uuid.toString() == characteristicUuid) {
-            // print('find chara ok');
-            await characteristic.write(utf8.encode(data),
-                withoutResponse: true);
-            print('Send Data: ${data.toString()}');
-=======
   Future<void> sendDataToArduino(data) async {
     String json = jsonEncode(data) + '\n';
 
@@ -267,7 +248,6 @@ class WalkController extends GetxController {
             await characteristic.write(utf8.encode(json),
                 withoutResponse: true);
             print('Send Data: $json');
->>>>>>> dogdack/lib/controllers/walk_controller.dart
           }
         }
       }

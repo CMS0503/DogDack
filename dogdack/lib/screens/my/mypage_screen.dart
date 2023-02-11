@@ -189,7 +189,6 @@ class _MyPageState extends State<MyPage> {
                           children: [
                             // 사용자 계정 이미지
                             StreamBuilder(
-<<<<<<< dogdack/lib/screens/my/mypage_screen.dart
                               stream: userRef.snapshots(),
                               builder: (userContext, userSnapshot) {
                                 if(!userSnapshot.hasData)
@@ -304,7 +303,6 @@ class _MyPageState extends State<MyPage> {
                                             size: petInfoWidth * 0.05,
                                             color: Colors.white,
                                           ),
->>>>>>> dogdack/lib/screens/my/mypage_screen.dart
                                         ),
                                       ),
                                     ),
@@ -431,15 +429,6 @@ class _MyPageState extends State<MyPage> {
                           itemBuilder: (context, itemIndex, pageViewIndex) {
                             return CircleAvatar(
                               radius: size.width * 0.3,
-<<<<<<< dogdack/lib/screens/my/mypage_screen.dart
-                              // child: ClipOval(
-                              //   child: FadeInImage.memoryNetwork(
-                              //     fit: BoxFit.cover,
-                              //     placeholder: kTransparentImage,
-                              //     image: snapshot.data!.docs[itemIndex].get('imageUrl'),
-                              //   ),
-                              // ),
-=======
                               child: ClipOval(
                                 child: CachedNetworkImage(
                                   imageUrl: snapshot.data!.docs[itemIndex].get('imageUrl'),
@@ -447,7 +436,6 @@ class _MyPageState extends State<MyPage> {
                                   errorWidget: (context, url, error) => Icon(Icons.error),
                                 ),
                               ),
->>>>>>> dogdack/lib/screens/my/mypage_screen.dart
                             );
                           },
                         ),

@@ -26,11 +26,11 @@ class MainPage extends StatelessWidget {
 
     return Obx(() => Scaffold(
           body: Stack(children: [
-            // Offstage(
-            //   offstage: mainController.tabindex != 0,
-            //   child: HomeNavigator(),
-            // ),
-            /*Offstage(
+            Offstage(
+              offstage: mainController.tabindex != 0,
+              child: HomeNavigator(),
+            ),
+            Offstage(
               offstage: mainController.tabindex != 1,
               child: WalkNavigator(),
             ),
