@@ -1,10 +1,10 @@
 // Widgets
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dogdack/models/user_data.dart';
 import 'package:dogdack/screens/my/widgets/mypage_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
 // Firebase
@@ -37,17 +37,22 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends State<MyPage> {
   // Firebase : 반려견 테이블 참조 값
-  final petsRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
-      .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
+  final petsRef = FirebaseFirestore.instance
+      .collection('Users/${'imcsh313@naver.com'}/Pets')
+      .withConverter(
+      fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+      toFirestore: (dogData, _) => dogData.toJson());
 
   // Firebase : 유저 전화 번호 저장을 위한 참조 값
-  final userRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/UserInfo')
-      .withConverter(fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!), toFirestore: (userData, _) => userData.toJson());
+  final userRef = FirebaseFirestore.instance
+      .collection('Users/${'imcsh313@naver.com'}/UserInfo')
+      .withConverter(
+      fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
+      toFirestore: (userData, _) => userData.toJson());
 
   // GetX
   final petController = Get.put(PetController()); // 슬라이더에서 선택된 반려견 정보를 위젯간 공유
   final mypageStateController = Get.put(MyPageStateController()); // 현재 mypage 의 상태 표시
-  final userDataController = Get.put(UserDataController());
   final mainController = Get.put(MainController());
 
   // Widget
@@ -76,16 +81,20 @@ class _MyPageState extends State<MyPage> {
   Stream<num> getTotalWalkMin() async* {
     num totalWalkMin = 0; // 총 산책 시간
     CollectionReference petRef = FirebaseFirestore.instance
-        .collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
+        .collection('Users/${'imcsh313@naver.com'}/Pets');
     QuerySnapshot _docInPets = await petRef.get();
     for (int i = 0; i < _docInPets.docs.length; i++) {
-      String _docInPetsID = _docInPets.docs[i].id; // Pets Collection 아래 문서 이름 (반려견 이름)
-      CollectionReference walkRef = petsRef.doc('${_docInPetsID}').collection('Walk');
+      String _docInPetsID =
+          _docInPets.docs[i].id; // Pets Collection 아래 문서 이름 (반려견 이름)
+      CollectionReference walkRef =
+      petsRef.doc('${_docInPetsID}').collection('Walk');
       QuerySnapshot _docInWalk = await walkRef.get();
       for (int j = 0; j < _docInWalk.docs.length; j++) {
         totalWalkMin += _docInWalk.docs[j]['totalTimeMin'];
       }
     }
+
+    totalWalkMin = (totalWalkMin / 60).toInt();
 
     yield totalWalkMin;
   }
@@ -93,14 +102,14 @@ class _MyPageState extends State<MyPage> {
   // 총 산책 횟수 계산
   Stream<num> getTotalWalkCnt() async* {
     num totalWalkCnt = 0; // 총 산책 횟수
-    CollectionReference petRef = FirebaseFirestore.instance.collection(
-        'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
+    CollectionReference petRef = FirebaseFirestore.instance
+        .collection('Users/${'imcsh313@naver.com'}/Pets');
     QuerySnapshot _docInPets = await petRef.get();
     for (int i = 0; i < _docInPets.docs.length; i++) {
-      String _docInPetsID = _docInPets.docs[i]
-          .id; // Pets Collection 아래 문서 이름 (반려견 이름)
-      CollectionReference walkRef = petsRef.doc('${_docInPetsID}').collection(
-          'Walk');
+      String _docInPetsID =
+          _docInPets.docs[i].id; // Pets Collection 아래 문서 이름 (반려견 이름)
+      CollectionReference walkRef =
+      petsRef.doc('${_docInPetsID}').collection('Walk');
       QuerySnapshot _docInWalk = await walkRef.get();
       totalWalkCnt += _docInWalk.docs.length;
     }
@@ -126,7 +135,7 @@ class _MyPageState extends State<MyPage> {
     final double petInfoHeight = size.height * 0.45;
 
     // 스크린 상태 갱신 : 정보 조회 화면
-    mypageStateController.myPageStateType = MyPageStateType.View;
+    // mypageStateController.myPageStateType = MyPageStateType.View;
 
     //총 산책 시간, 총 산책 횟수 계산
     getTotalWalkMin();
@@ -180,6 +189,7 @@ class _MyPageState extends State<MyPage> {
                           children: [
                             // 사용자 계정 이미지
                             StreamBuilder(
+<<<<<<< dogdack/lib/screens/my/mypage_screen.dart
                               stream: userRef.snapshots(),
                               builder: (userContext, userSnapshot) {
                                 if(!userSnapshot.hasData)
@@ -236,12 +246,70 @@ class _MyPageState extends State<MyPage> {
                                           Icons.phone,
                                           size: petInfoWidth * 0.05,
                                           color: Colors.white,
+=======
+                                stream: userRef.snapshots(),
+                                builder: (userContext, userSnapshot) {
+                                  if(!userSnapshot.hasData)
+                                    return CircularProgressIndicator();
+
+                                  String phNum = '아직 번호가 등록 되어 있지 않습니다.';
+                                  if(userSnapshot.data!.docs.length != 0) {
+                                    phNum = userSnapshot.data!.docs[0].get('phoneNumber');
+                                  }
+
+                                  return InkWell(
+                                    onTap: () {
+                                      showTextInputDialog(
+                                        context: context,
+                                        title: '전화 번호',
+                                        message: '현재 전화 번호 \n\n ${phNum}',
+                                        textFields: [
+                                          DialogTextField(
+                                            keyboardType: TextInputType.number,
+                                            hintText: '전화 번호를 입력하세요',
+                                          )
+                                        ],
+                                      ).then((value) {
+                                        if(value == null)
+                                          return;
+
+                                        var map = Map<String, dynamic>();
+                                        map["phoneNumber"] = value.elementAt(0).toString();
+
+                                        if(value.elementAt(0).toString().length == 0) {
+                                          MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.PhoneNumberNotExist);
+                                          return;
+                                        }
+
+                                        if(userSnapshot.data!.docs.length == 0) {
+                                          userRef.doc('number').set(UserData(phoneNumber: value.elementAt(0).toString())).then((value) => print('전화번호 저장 완료'))
+                                              .catchError((error) => print('전화번호 저장 오류! ${error}'));
+                                        } else {
+                                          userRef.doc('number').update(map)
+                                              .whenComplete(() => print("변경 완료")).catchError((error) => print('전화번호 저장 오류! ${error}'));
+                                        }
+                                      });
+                                    },
+                                    child: CircleAvatar(
+                                      backgroundColor: Colors.white,
+                                      radius: size.width * 0.10,
+                                      backgroundImage: CachedNetworkImageProvider(FirebaseAuth.instance.currentUser!.photoURL.toString()),
+                                      child: Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: CircleAvatar(
+                                          backgroundColor: Color(0xff504E5B),
+                                          radius: petInfoWidth * 0.05,
+                                          child: Icon(
+                                            Icons.phone,
+                                            size: petInfoWidth * 0.05,
+                                            color: Colors.white,
+                                          ),
+>>>>>>> dogdack/lib/screens/my/mypage_screen.dart
                                         ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              }
+                                  );
+                                }
                             ),
                             SizedBox(
                               height: size.height * 0.01,
@@ -339,6 +407,11 @@ class _MyPageState extends State<MyPage> {
                     // 인덱스는 0번 부터 시작하며 초기 값은 0
                     PetController().updateSelectedPetInfo(snapshot, petController, petController.selectedPetScrollIndex);
 
+                    petController.petNameList.clear();
+                    for(int petIdx = 0; petIdx < snapshot.data!.docs.length; petIdx++) {
+                      petController.petNameList.add(snapshot.data!.docs[petIdx].get('name'));
+                    }
+
                     return Column(
                       children: [
                         // 좌우 스크롤 슬라이더
@@ -358,6 +431,7 @@ class _MyPageState extends State<MyPage> {
                           itemBuilder: (context, itemIndex, pageViewIndex) {
                             return CircleAvatar(
                               radius: size.width * 0.3,
+<<<<<<< dogdack/lib/screens/my/mypage_screen.dart
                               // child: ClipOval(
                               //   child: FadeInImage.memoryNetwork(
                               //     fit: BoxFit.cover,
@@ -365,6 +439,15 @@ class _MyPageState extends State<MyPage> {
                               //     image: snapshot.data!.docs[itemIndex].get('imageUrl'),
                               //   ),
                               // ),
+=======
+                              child: ClipOval(
+                                child: CachedNetworkImage(
+                                  imageUrl: snapshot.data!.docs[itemIndex].get('imageUrl'),
+                                  progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) => Icon(Icons.error),
+                                ),
+                              ),
+>>>>>>> dogdack/lib/screens/my/mypage_screen.dart
                             );
                           },
                         ),
@@ -565,6 +648,9 @@ class _MyPageState extends State<MyPage> {
                     );
                   },
                 ),
+                SizedBox(
+                  height: size.height * 0.05,
+                )
               ],
             ),
           ),

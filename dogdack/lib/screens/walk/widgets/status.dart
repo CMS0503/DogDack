@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/walk_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
@@ -15,15 +17,35 @@ class Status extends StatefulWidget {
 }
 
 class _StatusState extends State<Status> {
-  final PetController petController = Get.put(PetController());
   final WalkController walkController = Get.put(WalkController());
+  final PetController petController = Get.put(PetController());
 
-  // final petsRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
+  // final petsRef = FirebaseFirestore.instance.collection('Users/${'imcsh313@naver.com'}/Pets')
   //     .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
+
+  // String imageurl = "";
+  //
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   setUrl().then((result) {
+  //     setState(() {});
+  //   });
+  // }
+  //
+  // Future<void> setImageUrl () async {
+  //   var documentSnapshot = await FirebaseFirestore.instance
+  //       .collection('Users/${'imcsh313@naver.com'}/Pets')
+  //
+  //
+  //   imageurl = walkController.ImageURL.toString();
+  // }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    walkController.getCur();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
@@ -87,35 +109,37 @@ class _StatusState extends State<Status> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '권장 산책 시간',
+                    '목표 산책 시간',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 3,
                   ),
-                  Text(
-                    '1시간',
+                  Obx(() => Text(
+                    walkController.goal == 0 ? "목표 산책 시간을 입력해 주세요" : '${walkController.goal} 분',
                     style: Theme.of(context).textTheme.displayMedium,
-                  ),
+                    ),
+                  )
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 8,
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '목표 산책 달성량',
+                    '목표 산책 달성률',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 3,
                   ),
-                  Text(
-                    '80%',
-                    style: Theme.of(context).textTheme.displayMedium,
-                  ),
+                  Obx(() => Text(
+                      '${walkController.getCur()} %',
+                      style: Theme.of(context).textTheme.displayMedium,
+                    ),
+                  )
                 ],
               )
             ],

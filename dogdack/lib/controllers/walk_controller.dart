@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/models/walk_data.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -12,8 +11,8 @@ import '../models/dog_data.dart';
 
 class WalkController extends GetxController {
   // 블루투스 장치 id
-  final String serviceUuid = '0000ffe0-0000-1000-8000-00805f9b34fb';
-  final String characteristicUuid = '0000ffe1-0000-1000-8000-00805f9b34fb';
+  final String serviceUUID = '0000ffe0-0000-1000-8000-00805f9b34fb';
+  final String characteristicUUID = '0000ffe1-0000-1000-8000-00805f9b34fb';
 
   RxBool isBleConnect = false.obs;
 
@@ -35,14 +34,19 @@ class WalkController extends GetxController {
   // 산책 정보
   bool isStart = false;
   RxBool isRunning = false.obs;
+  RxBool isDogSelected = false.obs;
   Timer? timer;
   RxInt timeCount = 0.obs;
+
   RxDouble totalDistance = 0.0.obs;
+
   List<LatLng> latlng = [];
 
   List<GeoPoint>? geolist = [];
+  List<String> petList = [];
   Timestamp? startTime;
   Timestamp? endTime;
+
   double? distance = 0.0;
   int light = 0;
 
@@ -52,14 +56,66 @@ class WalkController extends GetxController {
   String name = "asd";
   String? imgUrl;
 
+  int rectime = 0;
+  RxInt goal = 0.obs;
+  RxInt tmp_goal = 0.obs;
+  RxInt curGoal = 0.obs;
+  String curName = "";
+
+  void getList() async {
+    String temp = "";
+    await for (var snapshot in FirebaseFirestore.instance
+        .collection('Users/${'imcsh313@naver.com'}/Pets')
+        .snapshots()) {
+      for (var messege in snapshot.docs) {
+        temp = messege.data()['name'];
+        petList.add(temp);
+      }
+      print(petList);
+    }
+  }
+
+  int getCur() {
+    if ((timeCount.value ~/ 100) == 0) {
+      curGoal.value = 0;
+    } else {
+      curGoal.value =
+          (((timeCount.value ~/ 100) / (goal.value * 60)) * 100).round();
+    }
+    return curGoal.value;
+  }
+
+  void recommend() async {
+    int cnt = 0;
+    int temp = 0;
+    int recTime = 0;
+    await for (var snapshot in FirebaseFirestore.instance
+        .collection('Users/${'imcsh313@naver.com'}/Pets')
+        .snapshots()) {
+      for (var messege in snapshot.docs) {
+        cnt++;
+        temp = messege.data()['recommend'];
+        recTime = recTime + temp;
+      }
+      rectime = (recTime / cnt).round();
+    }
+  }
+>>>>>>> dogdack/lib/controllers/walk_controller.dart
+
   @override
   void onInit() {
     getData();
     // LCD 타이머
     ever(timeCount, (_) {
       if ((timeCount % 6000) % 100 == 0) {
-        sendData(
-            '${timeCount ~/ 360000}:${timeCount ~/ 6000}:${(timeCount % 6000) ~/ 100}, ${distance!.toInt()}m');
+        String pn = '01085382550';
+        String timer =
+            '${timeCount ~/ 360000}:${timeCount ~/ 6000}:${(timeCount % 6000) ~/ 100}';
+        String dist = '${distance!.toInt()}m';
+        String isLed = '0';
+
+        Data data = Data(pn, timer, dist, isLed);
+        sendDataToArduino(data);
       }
     });
   }
@@ -94,24 +150,36 @@ class WalkController extends GetxController {
     print("-----------send to DB-------------");
     // geolist?.add(GeoPoint(23.412, 125.234125));
     // geolist?.add(GeoPoint(42.213, 142.234125));
+    String docId = "";
 
-    FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/Walk')
-        .withConverter(
-          fromFirestore: (snapshot, options) => WalkData.fromJson(snapshot.data()!),
-          toFirestore: (value, options) => value.toJson(),
-        )
-        // .doc('${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}')
-        // .set(WalkData(
-        .add(WalkData(
-          geolist: geolist,
-          startTime: startTime,
-          endTime: endTime,
-          totalTimeMin: timeCount.value ~/ 6000,
-          isAuto: true,
-          // place: ,
-          distance: distance,
-          // goal: ,
-        ));
+    CollectionReference petRef = FirebaseFirestore.instance
+        .collection('Users/${'imcsh313@naver.com'}/Pets');
+
+    final petDoc = petRef.where("name", isEqualTo: curName);
+    petDoc.get().then((value) {
+      docId = value.docs[0].id;
+      // print('$curName의 문서 id : $docId');
+
+      FirebaseFirestore.instance
+          .collection('Users/${'imcsh313@naver.com'}/Pets/$docId/Walk')
+          .withConverter(
+            fromFirestore: (snapshot, options) =>
+                WalkData.fromJson(snapshot.data()!),
+            toFirestore: (value, options) => value.toJson(),
+          )
+          // .doc('${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}')
+          // .set(WalkData(
+          .add(WalkData(
+            geolist: geolist,
+            startTime: startTime,
+            endTime: endTime,
+            totalTimeMin: timeCount.value ~/ 6000,
+            isAuto: true,
+            // place: ,
+            distance: distance,
+            goal: goal.value,
+          ));
+    });
   }
 
   void setCurrentLocation(curLatitude, curLongitude) {
@@ -130,7 +198,7 @@ class WalkController extends GetxController {
     // LCD 초기화
     if (isStart == false) {
       initLCD();
-      Future.delayed(Duration(seconds: 1));
+      Future.delayed(const Duration(seconds: 1));
     }
 
     isStart = true;
@@ -158,11 +226,19 @@ class WalkController extends GetxController {
     super.onClose();
   }
 
-  void initLCD() async {
-    await sendData('01085382550a');
-    await sendData('0:0:0, 0m');
+  void abv() {
+    update();
   }
 
+  void initLCD() async {
+    Data data = Data('01085382550', '00:00:00', '123m', '0');
+
+    String json = jsonEncode(data);
+
+    sendDataToArduino(json);
+  }
+
+<<<<<<< dogdack/lib/controllers/walk_controller.dart
   void clickLedBtn() async {
     await sendData('${light}');
   }
@@ -179,9 +255,38 @@ class WalkController extends GetxController {
             await characteristic.write(utf8.encode(data),
                 withoutResponse: true);
             print('Send Data: ${data.toString()}');
+=======
+  Future<void> sendDataToArduino(data) async {
+    String json = jsonEncode(data) + '\n';
+
+    for (BluetoothService service in services!) {
+      if (service.uuid.toString() == serviceUUID) {
+        for (BluetoothCharacteristic characteristic
+            in service.characteristics) {
+          if (characteristic.uuid.toString() == characteristicUUID) {
+            await characteristic.write(utf8.encode(json),
+                withoutResponse: true);
+            print('Send Data: $json');
+>>>>>>> dogdack/lib/controllers/walk_controller.dart
           }
         }
       }
     }
   }
+}
+
+class Data {
+  final String phoneNumber;
+  final String timer;
+  final String isLedOn;
+  final String distance;
+
+  Data(this.phoneNumber, this.timer, this.isLedOn, this.distance);
+
+  Map<String, dynamic> toJson() => {
+        'phoneNumber': phoneNumber,
+        'timer': timer,
+        'distance': distance,
+        'isLedOn': isLedOn,
+      };
 }

@@ -1,5 +1,6 @@
 import 'package:dogdack/controllers/main_controll.dart';
 import 'package:dogdack/navigators/calender_navigator.dart';
+import 'package:dogdack/navigators/chart_navigator.dart';
 
 //navigator
 import 'package:dogdack/navigators/home_navigator.dart';
@@ -16,7 +17,7 @@ class MainPage extends StatelessWidget {
 
   final mainController = Get.put(MainController());
 
-  int _currentTabIndex = 0;
+  final int _currentTabIndex = 0;
 
   // void _tabSelect(int tabIndex) {
   @override
@@ -31,35 +32,30 @@ class MainPage extends StatelessWidget {
             // ),
             /*Offstage(
               offstage: mainController.tabindex != 1,
-              child: const CalenderNavigator(),
-            ),*/
-            Offstage(
-              offstage: mainController.tabindex != 2,
               child: WalkNavigator(),
             ),
             Offstage(
+              offstage: mainController.tabindex != 2,
+              child: const CalenderNavigator(),
+            ),
+            Offstage(
               offstage: mainController.tabindex != 3,
+              child: const ChartNavigator(),
+            ),
+            Offstage(
+              offstage: mainController.tabindex != 4,
               child: const MyPageNavigator(),
             ),
           ]),
           bottomNavigationBar: BottomNavigationBar(
             items: const [
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: ""),
               BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: '홈',
-              ),
+                  icon: Icon(Icons.pets_outlined), label: ""),
               BottomNavigationBarItem(
-                icon: Icon(Icons.calendar_today),
-                label: '캘린더',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.pets_outlined),
-                label: '산책',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: '마이',
-              ),
+                  icon: Icon(Icons.calendar_today), label: ""),
+              BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: ""),
+              BottomNavigationBarItem(icon: Icon(Icons.person), label: ""),
             ],
             selectedItemColor: const Color.fromARGB(255, 100, 92, 170),
             type: BottomNavigationBarType.fixed,

@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:intl/intl.dart';
+
+import '../../../../controllers/input_controller.dart';
 
 class DayWidget extends StatefulWidget {
   @override
@@ -6,7 +11,12 @@ class DayWidget extends StatefulWidget {
 }
 
 class _DayWidgetState extends State<DayWidget> {
-  List<String> days = ["월", "화", "수", "목", "금", "토", "일"];
+
+  final controller = Get.put(InputController());
+
+
+  List<String> days = [];
+
 
   TextStyle style = TextStyle(
       fontSize: 14,
@@ -15,6 +25,9 @@ class _DayWidgetState extends State<DayWidget> {
 
   @override
   Widget build(BuildContext context) {
+    for(int i=0;i<7;i++){
+      days.add(DateFormat.E('ko_KR').format(DateTime.now().subtract(Duration(days: 6-i))));
+    }
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     int index = 0;
@@ -57,7 +70,7 @@ class WeekWidget extends StatefulWidget {
 }
 
 class _WeekWidgetState extends State<WeekWidget> {
-  List<String> days = ["1주차","2주차","3주차","4주차"];
+  List<String> days = [];
 
   TextStyle style = TextStyle(
       fontSize: 14,
@@ -66,6 +79,14 @@ class _WeekWidgetState extends State<WeekWidget> {
 
   @override
   Widget build(BuildContext context) {
+
+    for(int i=0;i<28;i+=7){
+      days.add( DateFormat('MM/dd').format(DateTime.now().subtract(Duration(days: 28-i))));
+    }
+    days.add(DateFormat('MM/dd').format(DateTime.now()));
+
+
+
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     int index = 0;
@@ -75,6 +96,9 @@ class _WeekWidgetState extends State<WeekWidget> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
+              Container(
+                child: Text("${days[index++]}", style: style),
+              ),
               Container(
                 child: Text("${days[index++]}", style: style),
               ),
