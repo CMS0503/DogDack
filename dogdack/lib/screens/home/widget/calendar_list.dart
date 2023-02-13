@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../../controllers/mypage_controller.dart';
+import '../../../controllers/user_controller.dart';
 
 class CalenderListView extends StatefulWidget {
   CalenderListView({super.key});
@@ -16,10 +17,9 @@ class CalenderListView extends StatefulWidget {
 }
 
 class _CalenderListViewState extends State<CalenderListView> {
-  CollectionReference dogRef = FirebaseFirestore.instance.collection('Users/${'imcsh313@naver.com'.toString()}/Pets');
-
   //GetXController
   final homeCalendarController = Get.put(HomePageCalendarController());
+  final userController = Get.put(UserController());
 
   //현재 확인 중인 주가 오늘이 속해있는 주라면 오른쪽(미래) 이동 버튼을 비활성화 하기 위해 다음 플래그 변수를 사용함.
   //endOfWeek == true(초기 상태) : 오늘이 속한 주를 확인 중 이므로 오른쪽 이동 버튼 비활성화

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/main_controll.dart';
 import 'package:dogdack/navigators/calender_navigator.dart';
 import 'package:dogdack/navigators/chart_navigator.dart';
@@ -12,17 +13,44 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
+import '../controllers/user_controller.dart';
+import '../models/user_data.dart';
+
 class MainPage extends StatelessWidget {
   MainPage({Key? key}) : super(key: key);
 
   final mainController = Get.put(MainController());
+  final userController = Get.put(UserController());
 
-  final int _currentTabIndex = 0;
+  void initUserDB() async {
+    final userInfoRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/UserInfo');
+    QuerySnapshot _userInfoDoc = await userInfoRef.get();
+    if(_userInfoDoc.docs.length == 0) {
+      userInfoRef.get().then((value) {
+        userInfoRef.doc('information').set(UserData(isHost: false, ).toJson());
+      });
+    } else {
+      userInfoRef.get().then((value) {
+        userController.isHost = value.docs[0]['isHost'];
+        if(userController.isHost == true) {
+          // 호스트 계정으로 설정
+          userController.loginEmail = value.docs[0]['hostEmail'];
+        } else {
+          // 접속한 계정으로 설정
+          userController.loginEmail = FirebaseAuth.instance.currentUser!.email.toString();
+        }
+      });
+    }
+  }
 
   // void _tabSelect(int tabIndex) {
   @override
   Widget build(BuildContext context) {
-    FirebaseAuth.instance.currentUser;
+    if(userController.initFlag == false) {
+      //여기서 유저 데이터 DB 초기화
+      initUserDB();
+      userController.initFlag = true;
+    }
 
     return Obx(() => Scaffold(
           body: Stack(children: [
