@@ -116,6 +116,13 @@ class _MyPageState extends State<MyPage> {
   void initState() {
     super.initState();
 
+    // 총 산책 시간과 총 산책 횟수 계산
+    getTotalWalkMin();
+    getTotalWalkCnt();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     petsRef = FirebaseFirestore.instance
         .collection('Users/${userController.loginEmail}/Pets')
         .withConverter(
@@ -128,13 +135,6 @@ class _MyPageState extends State<MyPage> {
         fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
         toFirestore: (userData, _) => userData.toJson());
 
-    // 총 산책 시간과 총 산책 횟수 계산
-    getTotalWalkMin();
-    getTotalWalkCnt();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     // 디바이스 사이즈 크기 정의
     final Size size = MediaQuery.of(context).size;
 
@@ -226,20 +226,14 @@ class _MyPageState extends State<MyPage> {
                                         var map = Map<String, dynamic>();
                                         map["phoneNumber"] = value.elementAt(0).toString();
 
-                                        // 여기 변경 중....
-
                                         if(value.elementAt(0).toString().length == 0) {
                                           MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.PhoneNumberNotExist);
                                           return;
                                         }
 
-                                        if(userSnapshot.data!.docs.length == 0) {
-                                          userRef.doc('number').set(UserData(phoneNumber: value.elementAt(0).toString())).then((value) => print('전화번호 저장 완료'))
-                                              .catchError((error) => print('전화번호 저장 오류! ${error}'));
-                                        } else {
-                                          userRef.doc('number').update(map)
-                                              .whenComplete(() => print("변경 완료")).catchError((error) => print('전화번호 저장 오류! ${error}'));
-                                        }
+                                        userRef.doc('information').update(map)
+                                            .whenComplete(() => print('변경 완료'))
+                                            .catchError((error) => print('전화번호 저장 오류! ${error}'));
                                       });
                                     },
                                     child: CircleAvatar(
