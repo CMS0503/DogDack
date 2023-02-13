@@ -4,12 +4,13 @@ import 'package:dogdack/screens/chart/widget/car_health_progress_card.dart';
 import 'package:dogdack/screens/chart/widget/graph_day.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 import '../../commons/logo_widget.dart';
 import '../../controllers/chart_controller.dart';
 
 class Chart extends StatefulWidget {
+  const Chart({super.key});
+
   @override
   State<Chart> createState() => _ChartState();
 }
@@ -129,7 +130,6 @@ class _ChartState extends State<Chart> {
   // 산책 이번달 달성률 증감 표시 텍스트
   String week_achievement_increment_text = "";
 
-
   Widget x_value = DayWidget();
   Widget x_value_day = DayWidget();
   Widget x_value_week = WeekWidget();
@@ -224,60 +224,52 @@ class _ChartState extends State<Chart> {
       }
 
       day_hour_increment = day_hour_data - last_day_hour_data;
-      if(day_hour_increment>0){
+      if (day_hour_increment > 0) {
         day_hour_increment_text = "늘었어요!";
-      }else{
+      } else {
         day_hour_increment_text = "즐었어요!";
       }
 
-
-
       week_hour_increment = week_hour_data - last_week_hour_data;
-      if(week_hour_increment>0){
+      if (week_hour_increment > 0) {
         week_hour_increment_text = "늘었어요!";
-      }else{
+      } else {
         week_hour_increment_text = "즐었어요!";
       }
       day_distance_increment = day_distance_data - last_day_distance_data;
-      if(day_distance_increment>0){
+      if (day_distance_increment > 0) {
         day_distance_increment_text = "증가했어요";
-      }else{
+      } else {
         day_distance_increment_text = "감소했어요";
       }
       week_distance_increment = week_distance_data - last_week_distance_data;
-      if(week_distance_increment>0){
+      if (week_distance_increment > 0) {
         week_distance_increment_text = "증가했어요";
-      }else{
+      } else {
         week_distance_increment_text = "감소했어요";
       }
 
       day_achievement_rate_increment =
           day_achievement_rate - last_day_achievement_rate;
-      if(day_achievement_rate_increment>0){
+      if (day_achievement_rate_increment > 0) {
         day_achievement_increment_text = "올랐어요!";
-      }else{
-        day_achievement_increment_text= "떨어졌어요!";
+      } else {
+        day_achievement_increment_text = "떨어졌어요!";
       }
       week_achievement_rate_increment =
           week_achievement_rate - last_week_achievement_rate;
-      if(week_achievement_rate_increment>0){
+      if (week_achievement_rate_increment > 0) {
         week_achievement_increment_text = "올랐어요!";
-      }else{
-        week_achievement_increment_text="떨어졌어요!";
+      } else {
+        week_achievement_increment_text = "떨어졌어요!";
       }
-
-
-
-
     }
-
-
 
     // 위젯 선언
 
-    Color grey = Color.fromARGB(255, 80, 78, 91);
-    Color violet = Color.fromARGB(255, 100, 92, 170);
-    Color violet2 = Color.fromARGB(255, 160, 132, 202);
+    Color grey = const Color.fromARGB(255, 80, 78, 91);
+    Color violet = const Color.fromARGB(255, 100, 92, 170);
+    Color violet2 = const Color.fromARGB(255, 160, 132, 202);
 
     Widget achiveWidget = CalHealthProgressCardWidget(
         last_data: day_achievement_rate_increment.toInt(),
@@ -349,7 +341,7 @@ class _ChartState extends State<Chart> {
           message: week_distance_increment_text,
           title: "평균 산책거리",
           points: week_distance_points,
-          last_data:week_distance_increment.toInt().abs() ,
+          last_data: week_distance_increment.toInt().abs(),
           this_data: week_distance_data.toInt(),
           date_text: date_text,
           unit: "미터",
@@ -394,41 +386,41 @@ class _ChartState extends State<Chart> {
                 children: [
                   chartController.dogNames.keys.isEmpty
                       ? Container(
-                    child: Text('강아지를 등록해주세요'),
-                  )
+                          child: const Text('강아지를 등록해주세요'),
+                        )
                       : DropdownButton(
-                    icon: const Icon(
-                      Icons.expand_more,
-                      color: Color.fromARGB(255, 100, 92, 170),
-                      size: 28,
-                    ),
-                    underline: Container(),
-                    elevation: 0,
-                    value: chartController.chartSelectedName.value!,
-                    items: chartController.dogNames.keys.toList().map(
-                          (value) {
-                        // chartController.chartSelectedName.value = value!;
-                        return DropdownMenuItem(
-                          value: value,
-                          child: Text(
-                            value,
-                            style: const TextStyle(
-                              color: Color.fromARGB(255, 100, 92, 170),
-                              fontFamily: 'bmjua',
-                              fontSize: 24,
-                            ),
+                          icon: const Icon(
+                            Icons.expand_more,
+                            color: Color.fromARGB(255, 100, 92, 170),
+                            size: 28,
                           ),
-                        );
-                      },
-                    ).toList(),
-                    onChanged: (value) {
-                      chartController.chartSelectedName.value =
-                          value.toString();
-                      chartController.chartSelectedId.value =
-                      chartController.dogNames[value.toString()];
-                      setState(() {});
-                    },
-                  ),
+                          underline: Container(),
+                          elevation: 0,
+                          value: chartController.chartSelectedName.value,
+                          items: chartController.dogNames.keys.toList().map(
+                            (value) {
+                              // chartController.chartSelectedName.value = value!;
+                              return DropdownMenuItem(
+                                value: value,
+                                child: Text(
+                                  value,
+                                  style: const TextStyle(
+                                    color: Color.fromARGB(255, 100, 92, 170),
+                                    fontFamily: 'bmjua',
+                                    fontSize: 24,
+                                  ),
+                                ),
+                              );
+                            },
+                          ).toList(),
+                          onChanged: (value) {
+                            chartController.chartSelectedName.value =
+                                value.toString();
+                            chartController.chartSelectedId.value =
+                                chartController.dogNames[value.toString()];
+                            setState(() {});
+                          },
+                        ),
                 ],
               ),
             ),
@@ -446,37 +438,38 @@ class _ChartState extends State<Chart> {
                         padding: const EdgeInsets.all(3.0),
                         child: Center(
                             child: DropdownButton(
-                              elevation: 0,
-                              focusColor: Color.fromARGB(255, 100, 92, 170),
-                              borderRadius: BorderRadius.circular(10),
-                              value: chartController.selectedDateValue.value,
-                              items: _valueList.map((value) {
-                                return DropdownMenuItem(
-                                  value: value,
-                                  child: Container(
-                                    width: width * 0.2,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(
-                                          width: 2,
-                                          color: Color.fromARGB(255, 100, 92, 170),
-                                        )),
-                                    child: Text(
-                                      value,
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontFamily: 'bmjua',
-                                          color: Color.fromARGB(255, 80, 78, 91)),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                chartController.selectedDateValue.value = value!;
-                                setState(() {});
-                              },
-                            )),
+                          elevation: 0,
+                          focusColor: const Color.fromARGB(255, 100, 92, 170),
+                          borderRadius: BorderRadius.circular(10),
+                          value: chartController.selectedDateValue.value,
+                          items: _valueList.map((value) {
+                            return DropdownMenuItem(
+                              value: value,
+                              child: Container(
+                                width: width * 0.2,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      width: 2,
+                                      color: const Color.fromARGB(
+                                          255, 100, 92, 170),
+                                    )),
+                                child: Text(
+                                  value,
+                                  style: const TextStyle(
+                                      fontSize: 20,
+                                      fontFamily: 'bmjua',
+                                      color: Color.fromARGB(255, 80, 78, 91)),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            chartController.selectedDateValue.value = value!;
+                            setState(() {});
+                          },
+                        )),
                       ),
                     ]),
                 achiveWidget,

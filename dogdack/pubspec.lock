@@ -173,7 +173,7 @@ packages:
     dependency: transitive
     description:
       name: dynamic_color
-      sha256: "37a15576f5a0bfd5555b613cf20ea3bd379607cf88d457374a16032f4e942174"
+      sha256: c4a508284b14ec4dda5adba2c28b2cdd34fbae1afead7e8c52cad87d51c5405b
       url: "https://pub.dev"
     source: hosted
     version: "1.6.2"
@@ -285,7 +285,7 @@ packages:
     dependency: transitive
     description:
       name: fixnum
-      sha256: "04be3e934c52e082558cc9ee21f42f5c1cd7a1262f4c63cd0357c08d5bba81ec"
+      sha256: "25517a4deb0c03aa0f32fd12db525856438902d9c16536311e76cdc57b31d7d1"
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
@@ -998,5 +998,5 @@ packages:
     source: hosted
     version: "1.0.0"
 sdks:
-  dart: ">=2.18.5 <3.0.0"
-  flutter: ">=3.3.0"
+  dart: ">=2.19.0 <3.0.0"
+  flutter: ">=3.4.0-17.0.pre"
