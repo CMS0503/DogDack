@@ -2,10 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dogdack/models/user_data.dart';
 import 'package:dogdack/models/walk_data.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import '../models/dog_data.dart';
 
 class WalkController extends GetxController {
   // 블루투스 장치 id
@@ -46,11 +50,24 @@ class WalkController extends GetxController {
   Timestamp? endTime;
 
   double? distance = 0.0;
+  int light = 0;
+
+  // 강아지 정보
+  QuerySnapshot? _docInPets;
+  String name = "asd";
+  String? imgUrl;
+
   int rectime = 0;
   RxInt goal = 0.obs;
   RxInt tmp_goal = 0.obs;
   RxInt curGoal = 0.obs;
   String curName = "";
+
+  // LCD data
+  String? phoneNumber;
+  String? walkTimer;
+  String dist = '0';
+  String ledSig = '1';
 
   void getList() async {
     String temp = "";
@@ -93,18 +110,51 @@ class WalkController extends GetxController {
 
   @override
   void onInit() {
-    ever(timeCount, (_) {
-      if ((timeCount % 6000) % 100 == 0) {
-        String pn = '01085382550';
-        String timer =
-            '${timeCount ~/ 360000}:${timeCount ~/ 6000}:${(timeCount % 6000) ~/ 100}';
-        String dist = '${distance!.toInt()}m';
-        String isLed = '0';
+    getData();
+    // LCD 타이머
 
-        Data data = Data(pn, timer, dist, isLed);
-        sendDataToArduino(data);
-      }
+    ever(timeCount, (_) {
+      // 1초마다 보냄
+      String pn = phoneNumber!;
+      String timer =
+          '${timeCount ~/ 3600}:${timeCount ~/ 60}:${timeCount % 60}';
+      String dist = '${distance!.toInt()}m';
+      String isLed = ledSig;
+
+      Data data = Data(pn, timer, dist, isLed);
+      sendDataToArduino(data);
     });
+  }
+
+  void getData() async {
+    final petsRef = FirebaseFirestore.instance
+        .collection(
+            'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
+        .withConverter(
+            fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+            toFirestore: (dogData, _) => dogData.toJson());
+
+    // Firebase : 유저 전화 번호 저장을 위한 참조 값
+    final userRef = FirebaseFirestore.instance
+        .collection('Users/${'imcsh313@naver.com'}/UserInfo')
+        .withConverter(
+            fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
+            toFirestore: (userData, _) => userData.toJson());
+
+    CollectionReference petRef = FirebaseFirestore.instance.collection(
+        'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
+
+    QuerySnapshot _docInPets = await petRef.get();
+
+    name = (await petsRef.doc(_docInPets.docs.first.id.toString()).get())
+        .data()!
+        .name!;
+    imgUrl = (await petsRef.doc(_docInPets.docs.first.id.toString()).get())
+        .data()!
+        .imageUrl!;
+
+    // phoneNumber = (await userRef.doc('number').get()).data()!.phoneNumber;
+    phoneNumber = "0101010";
   }
 
   void addData(lat, lng) {
@@ -174,7 +224,7 @@ class WalkController extends GetxController {
   }
 
   void startTimer() {
-    timer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       timeCount++;
     });
     update();
@@ -197,7 +247,7 @@ class WalkController extends GetxController {
   }
 
   void initLCD() async {
-    Data data = Data('01085382550', '00:00:00', '123m', '0');
+    Data data = Data('00000000000', '00:00:00', '0m', "1");
 
     String json = jsonEncode(data);
 
@@ -225,10 +275,15 @@ class WalkController extends GetxController {
 class Data {
   final String phoneNumber;
   final String timer;
-  final String isLedOn;
   final String distance;
+  final String isLedOn;
 
-  Data(this.phoneNumber, this.timer, this.isLedOn, this.distance);
+  Data(
+    this.phoneNumber,
+    this.timer,
+    this.distance,
+    this.isLedOn,
+  );
 
   Map<String, dynamic> toJson() => {
         'phoneNumber': phoneNumber,

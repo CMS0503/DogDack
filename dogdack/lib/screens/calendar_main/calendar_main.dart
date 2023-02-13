@@ -40,8 +40,9 @@ class _CalendarPageState extends State<CalendarMain> {
     double height = screenSize.height;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(height * 0.1),
+        preferredSize: Size.fromHeight(height * 0.08),
         child: const LogoWidget(),
       ),
       body: SingleChildScrollView(
