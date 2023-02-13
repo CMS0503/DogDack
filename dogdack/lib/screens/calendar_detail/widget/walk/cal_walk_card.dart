@@ -52,12 +52,11 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
 
   Future<void> setPoly() async {
     latlng.clear();
-    String docId = inputController.selected_id;
+    String docId = inputController.selected_id.toString();
     // String docId = "";
 /////////////////////////수정한 부분//////////////////////////////////////
     CollectionReference petRef = FirebaseFirestore.instance
         .collection('Users/${'imcsh313@naver.com'}/Pets/$docId/Walk');
-
 
     ////////////////////원래 송빈님 코드////////////////////////////////////////////////////
     // // ★★★ 현재 강아지 walkController.curName  ->  walkController 가서 수정할것
@@ -66,11 +65,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
     //   // print('${walkController.curName}의 문서 id : $docId');
     //
     //   // 산책한 강아지의 AutoId의 Walk 컬렉션
-    //   final firestore = FirebaseFirestore.instance
-    //       .collection('Users/${'imcsh313@naver.com'}/Pets/$docId/Walk');
-
-
-      await petRef.get().then((value) async {
+    await petRef.get().then((value) async {
       // 달력에서 선택한 날짜
       var selectedDay = inputController.date;
       var startOfToday = Timestamp.fromDate(selectedDay);
@@ -80,7 +75,9 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
       // var endOfToday = Timestamp.fromDate(selectedDay.subtract(Duration(hours: selectedDay.hour, minutes: selectedDay.minute, seconds: selectedDay.second, milliseconds: selectedDay.millisecond, microseconds: selectedDay.microsecond)));
 
       // 선택한 날짜의 산책 데이터를 내림차순 정렬(최신 데이터가 위로 오게)
-      await petRef.where("startTime",
+
+      petRef
+          .where("startTime",
               isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday)
           .orderBy("startTime", descending: true)
           .get()

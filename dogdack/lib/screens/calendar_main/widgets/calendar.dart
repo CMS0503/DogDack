@@ -97,12 +97,12 @@ class _CalendarState extends State<Calendar> {
               data.docs[i]['isWalk'],
               data.docs[i]['bath'],
               data.docs[i]['beauty'],
+              data.docs[i]['distance'],
             ];
           }
         }
       }
     }
-    print('얼마나 불러오는지 확인해보자');
     setState(() {});
   }
 
@@ -323,6 +323,8 @@ class _CalendarState extends State<Calendar> {
                 child: GestureDetector(
                   onTap: () {
                     controller.setDate(day);
+                    controller.distance = Calendar.events[3].toString();
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
