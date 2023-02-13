@@ -237,7 +237,7 @@ class WalkPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(screenHeight * 0.12),
+        preferredSize: Size.fromHeight(screenHeight * 0.08),
         child: const LogoWidget(),
       ),
       body: Obx(

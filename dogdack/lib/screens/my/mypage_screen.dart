@@ -150,7 +150,7 @@ class _MyPageState extends State<MyPage> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(size.height * 0.09),
+          preferredSize: Size.fromHeight(size.height * 0.08),
           child: const LogoWidget(),
         ),
         floatingActionButton: Container(
