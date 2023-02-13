@@ -18,18 +18,6 @@ class _DatePickerState extends State<DatePicker> {
 
   DateTime date = DateTime.now();
 
-  // 강아지 이름 불러오기 추가
-  // final dogRef = FirebaseFirestore.instance
-  //     .collection('Users/${'imcsh313@naver.com'}/Calendar')
-  //     .withConverter(
-  //         fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
-  //         toFirestore: (dogData, _) => dogData.toJson());
-
-  // dogname =
-
-  // var selectedValue = '';
-  // final Map<String, List<Object>> events = {'': []};
-
   final petsRef = FirebaseFirestore.instance
       .collection('Users/${'imcsh313@naver.com'}/Pets');
 
@@ -126,7 +114,7 @@ class _DatePickerState extends State<DatePicker> {
                                 controller.date = newDate!;
                               });
 
-                              // if (newDate == null) return;
+                              if (newDate == null) return;
                             },
                           ),
                           Container(
