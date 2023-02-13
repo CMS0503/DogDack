@@ -101,6 +101,7 @@ class _CalendarState extends State<Calendar> {
               data.docs[i]['isWalk'],
               data.docs[i]['bath'],
               data.docs[i]['beauty'],
+              data.docs[i]['distance'],
             ];
           }
         }
@@ -323,6 +324,8 @@ class _CalendarState extends State<Calendar> {
                 child: GestureDetector(
                   onTap: () {
                     controller.setDate(day);
+                    controller.distance = Calendar.events[3].toString();
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
