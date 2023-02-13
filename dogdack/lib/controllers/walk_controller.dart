@@ -154,7 +154,8 @@ class WalkController extends GetxController {
         .data()!
         .imageUrl!;
 
-    phoneNumber = (await userRef.doc('number').get()).data()!.phoneNumber;
+    // phoneNumber = (await userRef.doc('number').get()).data()!.phoneNumber;
+    phoneNumber = "0101010";
   }
 
   void addData(lat, lng) {
