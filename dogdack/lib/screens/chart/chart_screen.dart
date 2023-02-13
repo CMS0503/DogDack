@@ -4,7 +4,6 @@ import 'package:dogdack/screens/chart/widget/car_health_progress_card.dart';
 import 'package:dogdack/screens/chart/widget/graph_day.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 import '../../commons/logo_widget.dart';
 import '../../controllers/chart_controller.dart';
