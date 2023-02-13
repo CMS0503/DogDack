@@ -73,6 +73,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
             beauty: controller.beauty,
             isWalk: controller.walkCheck,
             imageUrl: controller.imageUrl,
+            // distance: controller.distance,
           ))
           .then((value) => print("document added"))
           .catchError((error) => print("Fail to add doc $error"));

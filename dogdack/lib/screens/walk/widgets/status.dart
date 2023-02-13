@@ -21,28 +21,6 @@ class _StatusState extends State<Status> {
   final WalkController walkController = Get.put(WalkController());
   final PetController petController = Get.put(PetController());
 
-  // final petsRef = FirebaseFirestore.instance.collection('Users/${'imcsh313@naver.com'}/Pets')
-  //     .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
-
-  // String imageurl = "";
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  //
-  //   setUrl().then((result) {
-  //     setState(() {});
-  //   });
-  // }
-  //
-  // Future<void> setImageUrl () async {
-  //   var documentSnapshot = await FirebaseFirestore.instance
-  //       .collection('Users/${'imcsh313@naver.com'}/Pets')
-  //
-  //
-  //   imageurl = walkController.ImageURL.toString();
-  // }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -76,9 +54,16 @@ class _StatusState extends State<Status> {
                             right: 40,
                             child: IconButton(
                               onPressed: () {
-                                walkController.ledSig = !walkController.ledSig;
+                                walkController.ledSig == '1'
+                                  ? walkController.ledSig = '0'
+                                  : walkController.ledSig = '1';
                               },
-                              icon: Icon(
+                              icon: walkController.ledSig == '1'
+                                ? const Icon(
+                                    Icons.lightbulb_outline,
+                                    color: Colors.yellow,
+                                  )
+                                : const Icon(
                                 Icons.lightbulb_outline,
                                 color: Colors.yellow,
                               ),
@@ -89,24 +74,26 @@ class _StatusState extends State<Status> {
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 Column(
                   children: [
-                    walkController.isBleConnect == true
+                    walkController.isBleConnect.value == true
                         ? IconButton(
                             onPressed: () {
                               Navigator.pushNamed(context, '/Ble');
                             },
-                            icon: Icon(Icons.bluetooth_connected))
+                            icon: const Icon(
+                            Icons.bluetooth_outlined,
+                            color: Colors.blue,))
                         : IconButton(
                             onPressed: () {
                               Navigator.pushNamed(context, '/Ble');
                             },
-                            icon: Icon(Icons.bluetooth_outlined),
+                            icon: const Icon(Icons.bluetooth_outlined),
                           ),
-                    Text('${walkController.name}'),
+                    Text(walkController.name),
                   ],
                 ),
               ],
@@ -140,7 +127,7 @@ class _StatusState extends State<Status> {
                       () => Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 7),
                         child: Text(
-                          walkController.goal == 0
+                          walkController.goal.value == 0
                               ? "0 분"
                               : '${walkController.goal} 분',
                           style: Theme.of(context).textTheme.displayMedium,
