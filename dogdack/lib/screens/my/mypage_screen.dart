@@ -148,12 +148,14 @@ class _MyPageState extends State<MyPage> {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(size.height * 0.09),
           child: const LogoWidget(),
         ),
         floatingActionButton: Container(
-          padding: EdgeInsets.fromLTRB(0, 0, size.width * 0.01, size.width * 0.03),
+          padding:
+              EdgeInsets.fromLTRB(0, 0, size.width * 0.01, size.width * 0.03),
           child: FloatingActionButton(
             heroTag: 'petAdd',
             onPressed: () {

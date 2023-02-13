@@ -40,6 +40,7 @@ class _CalendarPageState extends State<CalendarMain> {
     double height = screenSize.height;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(height * 0.1),
         child: const LogoWidget(),
