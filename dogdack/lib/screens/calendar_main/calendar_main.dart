@@ -5,9 +5,12 @@ import 'package:dogdack/models/dog_data.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar_mark.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/calendar_schedule_edit.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../controllers/user_controller.dart';
 
 class CalendarMain extends StatefulWidget {
   const CalendarMain({super.key});
@@ -17,11 +20,14 @@ class CalendarMain extends StatefulWidget {
 }
 
 class _CalendarPageState extends State<CalendarMain> {
-  final userRef = FirebaseFirestore.instance
-      .collection('Users/${'imcsh313@naver.com'.toString()}/Pets')
+  final userController = Get.put(UserController());
+
+  var userRef = FirebaseFirestore.instance
+      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets')
       .withConverter(
           fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
           toFirestore: (dogData, _) => dogData.toJson());
+
   // 선택한 날짜 초기화
   DateTime selectedDay = DateTime.utc(
     DateTime.now().year,
@@ -32,6 +38,15 @@ class _CalendarPageState extends State<CalendarMain> {
   // 보여줄 월
   DateTime focusedDay = DateTime.now();
 
+  @override
+  void initState() {
+    super.initState();
+    userRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets')
+        .withConverter(
+        fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+        toFirestore: (dogData, _) => dogData.toJson());
+  }
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(ButtonController());

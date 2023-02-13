@@ -4,12 +4,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/mypage_controller.dart';
 import 'package:dogdack/screens/home/widget/bar_chart.dart';
 import 'package:dogdack/screens/home/widget/calendar_list.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:dogdack/commons/logo_widget.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 import '../../controllers/home_controller.dart';
+import '../../controllers/user_controller.dart';
 import '../../models/dog_data.dart';
 
 
@@ -23,8 +25,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final userController = Get.put(UserController());
+
   // Firebase : 반려견 테이블 참조 값
-  final petsRef = FirebaseFirestore.instance.collection('Users/imcsh313@naver.com/Pets')
+  var petsRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets')
       .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
 
   final sliderController = Get.put(HomePageSliderController());
@@ -32,6 +36,13 @@ class _HomePageState extends State<HomePage> {
   final homePageBarChartController = Get.put(HomePageBarChartController());
   final homePageCalendarController = Get.put(HomePageCalendarController());
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    petsRef = FirebaseFirestore.instance.collection('Users/${userController.loginEmail}/Pets')
+        .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
+  }
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -79,7 +90,7 @@ class _HomePageState extends State<HomePage> {
 
                     // 산책 달성률 구하기
                     String curDogID = petSnapshot.data!.docs[sliderController.sliderIdx].id;
-                    CollectionReference refCurDogWalk = FirebaseFirestore.instance.collection('Users/imcsh313@naver.com/Pets/').doc(curDogID).collection('Walk');
+                    CollectionReference refCurDogWalk = FirebaseFirestore.instance.collection('Users/${userController.loginEmail}/Pets/').doc(curDogID).collection('Walk');
 
                     var startOfToday = Timestamp.fromDate(DateTime.now().subtract(Duration(hours: DateTime.now().hour, minutes: DateTime.now().minute, seconds: DateTime.now().second, milliseconds: DateTime.now().millisecond, microseconds: DateTime.now().microsecond)));
                     var endOfToday = Timestamp.fromDate(DateTime.now().add(Duration(days: 1, hours: -DateTime.now().hour, minutes: -DateTime.now().minute, seconds: -DateTime.now().second, milliseconds: -DateTime.now().millisecond, microseconds: -DateTime.now().microsecond)));

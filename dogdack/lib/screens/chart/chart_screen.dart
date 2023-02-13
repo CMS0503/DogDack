@@ -3,6 +3,7 @@ import 'package:dogdack/screens/chart/widget/car_health_line_graph_card.dart';
 import 'package:dogdack/screens/calendar_detail/widget/cal_detail_title.dart';
 import 'package:dogdack/screens/chart/widget/car_health_progress_card.dart';
 import 'package:dogdack/screens/chart/widget/graph_day.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
@@ -11,6 +12,7 @@ import '../../commons/logo_widget.dart';
 import '../../controllers/input_controller.dart';
 import '../../controllers/main_controll.dart';
 import '../../controllers/mypage_controller.dart';
+import '../../controllers/user_controller.dart';
 import '../../models/dog_data.dart';
 
 class ChartMain extends StatefulWidget {
@@ -23,8 +25,10 @@ class ChartMain extends StatefulWidget {
 }
 
 class _ChartMainState extends State<ChartMain> {
-  final userRef = FirebaseFirestore.instance
-      .collection('Users/${'imcsh313@naver.com'.toString()}/Pets')
+  final userController = Get.put(UserController());
+
+  var userRef = FirebaseFirestore.instance
+      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets')
       .withConverter(
           fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
           toFirestore: (dogData, _) => dogData.toJson());
@@ -159,7 +163,7 @@ class _ChartMainState extends State<ChartMain> {
     // 두달 산책 시간 포인트 불러오기
 
     final findName = FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/Pets');
+        .collection('Users/${userController.loginEmail}/Pets');
 
     var docId = await findName.get();
 
@@ -174,7 +178,7 @@ class _ChartMainState extends State<ChartMain> {
 
     //////// 강아지 아이디 고정값으로 박아 놓음. 바꿔야 됨.
     final dayPoints = FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/Pets')
+        .collection('Users/${userController.loginEmail}/Pets')
         .doc(controller.selected_id)
         .collection('Walk')
         .where('startTime', isLessThan: DateTime.now())
@@ -250,6 +254,11 @@ class _ChartMainState extends State<ChartMain> {
   @override
   void initState() {
     super.initState();
+    userRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets')
+        .withConverter(
+        fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+        toFirestore: (dogData, _) => dogData.toJson());
     getData();
   }
 

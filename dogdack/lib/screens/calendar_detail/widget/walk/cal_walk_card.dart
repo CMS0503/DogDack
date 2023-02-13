@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
 
+import '../../../../controllers/user_controller.dart';
 import '../../../../controllers/walk_controller.dart';
 
 class CalWalkCardWidget extends StatefulWidget {
@@ -33,6 +34,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
   final Completer<GoogleMapController> _controller = Completer();
   final walkController = Get.put(WalkController());
   final inputController = Get.put(InputController());
+  final userController = Get.put(UserController());
 
   @override
   void initState() {
@@ -56,7 +58,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
     // String docId = "";
 /////////////////////////수정한 부분//////////////////////////////////////
     CollectionReference petRef = FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/Pets/$docId/Walk');
+        .collection('Users/${userController.loginEmail}/Pets/$docId/Walk');
 
 
     ////////////////////원래 송빈님 코드////////////////////////////////////////////////////
@@ -67,7 +69,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
     //
     //   // 산책한 강아지의 AutoId의 Walk 컬렉션
     //   final firestore = FirebaseFirestore.instance
-    //       .collection('Users/${'imcsh313@naver.com'}/Pets/$docId/Walk');
+    //       .collection('Users/${userController.loginEmail}/Pets/$docId/Walk');
 
 
       await petRef.get().then((value) async {
@@ -91,12 +93,12 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
       });
     });
 
-    // var documentSnapshot = await FirebaseFirestore.instance.collection('Users/${'imcsh313@naver.com'}/Walk')
+    // var documentSnapshot = await FirebaseFirestore.instance.collection('Users/${userController.loginEmail}/Walk')
     //     // .doc('${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}')
     //     .doc('2023_2_7')
     //     .get();
     // // var documentSnapshot = await FirebaseFirestore.instance
-    // //     .collection('Users/${'imcsh313@naver.com'}/Walk')
+    // //     .collection('Users/${userController.loginEmail}/Walk')
     // //     .where('startTime', isEqualTo: )
     //
     // var data = await documentSnapshot.data()!['geolist'];

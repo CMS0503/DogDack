@@ -31,7 +31,7 @@ class MainPage extends StatelessWidget {
   final int _currentTabIndex = 0;
 
   void initUserDB() async {
-    final userInfoRef = FirebaseFirestore.instance.collection('Users/${'yihe4728@gmail.com'}/UserInfo');
+    final userInfoRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/UserInfo');
     QuerySnapshot _userInfoDoc = await userInfoRef.get();
     if(_userInfoDoc.docs.length == 0) {
       userInfoRef.get().then((value) {

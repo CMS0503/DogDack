@@ -25,6 +25,7 @@ import '../../controllers/mypage_controller.dart';
 import 'package:dogdack/models/dog_data.dart';
 
 // Screen
+import '../../controllers/user_controller.dart';
 import 'editinfo_screen.dart';
 
 class MyPage extends StatefulWidget {
@@ -37,24 +38,25 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
+  // GetX
+  final petController = Get.put(PetController()); // 슬라이더에서 선택된 반려견 정보를 위젯간 공유
+  final mypageStateController = Get.put(MyPageStateController()); // 현재 mypage 의 상태 표시
+  final mainController = Get.put(MainController());
+  final userController = Get.put(UserController());
+
   // Firebase : 반려견 테이블 참조 값
-  final petsRef = FirebaseFirestore.instance
-      .collection('Users/${'imcsh313@naver.com'}/Pets')
+  var petsRef = FirebaseFirestore.instance
+      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets')
       .withConverter(
       fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
       toFirestore: (dogData, _) => dogData.toJson());
 
   // Firebase : 유저 전화 번호 저장을 위한 참조 값
-  final userRef = FirebaseFirestore.instance
-      .collection('Users/${'imcsh313@naver.com'}/UserInfo')
+  var userRef = FirebaseFirestore.instance
+      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets')
       .withConverter(
       fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
       toFirestore: (userData, _) => userData.toJson());
-
-  // GetX
-  final petController = Get.put(PetController()); // 슬라이더에서 선택된 반려견 정보를 위젯간 공유
-  final mypageStateController = Get.put(MyPageStateController()); // 현재 mypage 의 상태 표시
-  final mainController = Get.put(MainController());
 
   // Widget
   // 정보 화면 타이틀 위젯
@@ -82,7 +84,7 @@ class _MyPageState extends State<MyPage> {
   Stream<num> getTotalWalkMin() async* {
     num totalWalkMin = 0; // 총 산책 시간
     CollectionReference petRef = FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/Pets');
+        .collection('Users/${userController.loginEmail}/Pets');
     QuerySnapshot _docInPets = await petRef.get();
     for (int i = 0; i < _docInPets.docs.length; i++) {
       String _docInPetsID =
@@ -104,7 +106,7 @@ class _MyPageState extends State<MyPage> {
   Stream<num> getTotalWalkCnt() async* {
     num totalWalkCnt = 0; // 총 산책 횟수
     CollectionReference petRef = FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/Pets');
+        .collection('Users/${userController.loginEmail}/Pets');
     QuerySnapshot _docInPets = await petRef.get();
     for (int i = 0; i < _docInPets.docs.length; i++) {
       String _docInPetsID =
@@ -124,6 +126,18 @@ class _MyPageState extends State<MyPage> {
     // 총 산책 시간과 총 산책 횟수 계산
     getTotalWalkMin();
     getTotalWalkCnt();
+
+    petsRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets')
+        .withConverter(
+        fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+        toFirestore: (dogData, _) => dogData.toJson());
+
+    userRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets')
+        .withConverter(
+        fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
+        toFirestore: (userData, _) => userData.toJson());
   }
 
   @override
@@ -196,7 +210,7 @@ class _MyPageState extends State<MyPage> {
                                     return CircularProgressIndicator();
 
                                   String phNum = '아직 번호가 등록 되어 있지 않습니다.';
-                                  if(userSnapshot.data!.docs.length != 0) {
+                                  if(userSnapshot.data!.docs[0].get('phoneNumber') != null) {
                                     phNum = userSnapshot.data!.docs[0].get('phoneNumber');
                                   }
 
@@ -224,13 +238,8 @@ class _MyPageState extends State<MyPage> {
                                           return;
                                         }
 
-                                        if(userSnapshot.data!.docs.length == 0) {
-                                          userRef.doc('number').set(UserData(phoneNumber: value.elementAt(0).toString())).then((value) => print('전화번호 저장 완료'))
-                                              .catchError((error) => print('전화번호 저장 오류! ${error}'));
-                                        } else {
-                                          userRef.doc('number').update(map)
-                                              .whenComplete(() => print("변경 완료")).catchError((error) => print('전화번호 저장 오류! ${error}'));
-                                        }
+                                        userRef.doc('number').update(map).whenComplete(() => print("변경 완료"))
+                                            .catchError((error) => print('전화번호 저장 오류! ${error}'));
                                       });
                                     },
                                     child: CircleAvatar(

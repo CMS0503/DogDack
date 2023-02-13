@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/input_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+
+import '../../../controllers/user_controller.dart';
 
 class DatePicker extends StatefulWidget {
   const DatePicker({super.key});
@@ -20,7 +23,7 @@ class _DatePickerState extends State<DatePicker> {
 
   // 강아지 이름 불러오기 추가
   // final dogRef = FirebaseFirestore.instance
-  //     .collection('Users/${'imcsh313@naver.com'}/Calendar')
+  //     .collection('Users/${userController.loginEmail}/Calendar')
   //     .withConverter(
   //         fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
   //         toFirestore: (dogData, _) => dogData.toJson());
@@ -29,9 +32,10 @@ class _DatePickerState extends State<DatePicker> {
 
   // var selectedValue = '';
   // final Map<String, List<Object>> events = {'': []};
+  final userController = Get.put(UserController());
 
-  final petsRef = FirebaseFirestore.instance
-      .collection('Users/${'imcsh313@naver.com'}/Pets');
+  var petsRef = FirebaseFirestore.instance
+      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets');
 
   String docId = '';
 
@@ -63,6 +67,8 @@ class _DatePickerState extends State<DatePicker> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    petsRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets');
     getName();
   }
 

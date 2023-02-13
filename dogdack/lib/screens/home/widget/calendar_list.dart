@@ -17,7 +17,7 @@ class CalenderListView extends StatefulWidget {
 }
 
 class _CalenderListViewState extends State<CalenderListView> {
-  CollectionReference dogRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString().toString()}/Pets');
+  CollectionReference dogRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
 
   //GetXController
   final homeCalendarController = Get.put(HomePageCalendarController());

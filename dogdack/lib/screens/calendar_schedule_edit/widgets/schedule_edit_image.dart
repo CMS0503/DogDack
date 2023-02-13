@@ -9,6 +9,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 
+import '../../../controllers/user_controller.dart';
+
 class ScheduleEditImage extends StatefulWidget {
   const ScheduleEditImage({super.key});
 
@@ -20,6 +22,7 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
   // firebase storage 불러오기
   FirebaseStorage storage = FirebaseStorage.instance;
   final controller = Get.put(InputController());
+  final userController = Get.put(UserController());
 
   // 이미지 업로드 (카메라 / 갤러리)
   Future<void> _upload(String inputSource) async {
@@ -46,7 +49,7 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
         final result = await storage
             .ref()
             .child(
-                '${'imcsh313@naver.com'}/dogs/${controller.selectedValue}/${controller.date}/$fileName')
+                '${userController.loginEmail}/dogs/${controller.selectedValue}/${controller.date}/$fileName')
             .putFile(
               imageFile,
               SettableMetadata(
@@ -84,7 +87,7 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
     final ListResult result = await storage
         .ref()
         .child(
-            '${'imcsh313@naver.com'}/dogs/${controller.selectedValue}/${controller.date}')
+            '${userController.loginEmail}/dogs/${controller.selectedValue}/${controller.date}')
         .list();
     final List<Reference> allFiles = result.items;
 
@@ -92,7 +95,7 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
         .collection(
           'Users',
         )
-        .doc('imcsh313@naver.com')
+        .doc(userController.loginEmail)
         .collection('Calendar')
         .doc(DateFormat('yyMMdd').format(controller.date))
         .get();

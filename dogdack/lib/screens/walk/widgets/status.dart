@@ -20,7 +20,7 @@ class _StatusState extends State<Status> {
   final WalkController walkController = Get.put(WalkController());
   final PetController petController = Get.put(PetController());
 
-  // final petsRef = FirebaseFirestore.instance.collection('Users/${'imcsh313@naver.com'}/Pets')
+  // final petsRef = FirebaseFirestore.instance.collection('Users/${userController.loginEmail}/Pets')
   //     .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
 
   // String imageurl = "";
@@ -36,7 +36,7 @@ class _StatusState extends State<Status> {
   //
   // Future<void> setImageUrl () async {
   //   var documentSnapshot = await FirebaseFirestore.instance
-  //       .collection('Users/${'imcsh313@naver.com'}/Pets')
+  //       .collection('Users/${userController.loginEmail}/Pets')
   //
   //
   //   imageurl = walkController.ImageURL.toString();

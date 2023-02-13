@@ -3,6 +3,7 @@ import 'package:dogdack/controllers/button_controller.dart';
 import 'package:dogdack/controllers/walk_controller.dart';
 import 'package:dogdack/models/dog_data.dart';
 import 'package:dogdack/screens/calendar_detail/calender_detail.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,6 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../controllers/input_controller.dart';
+import '../../../controllers/user_controller.dart';
 
 class Calendar extends StatefulWidget {
   static Map<String, List> events = {};
@@ -21,6 +23,8 @@ class Calendar extends StatefulWidget {
 
   // 보여줄 달 화면 날짜
   final DateTime focusedDay;
+
+
 
   const Calendar({
     super.key,
@@ -33,8 +37,10 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  final userRef = FirebaseFirestore.instance
-      .collection('Users/${'imcsh313@naver.com'.toString()}/Pets')
+  final userController = Get.put(UserController());
+
+  var userRef = FirebaseFirestore.instance
+      .collection('Users/${FirebaseAuth.instance.currentUser!.email}/Pets')
       .withConverter(
           fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
           toFirestore: (dogData, _) => dogData.toJson());
@@ -47,7 +53,7 @@ class _CalendarState extends State<Calendar> {
   getName() async {
     // final controller = Get.put(InputController());
     final petsRef = FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/Pets');
+        .collection('Users/${userController.loginEmail}/Pets');
     var dogDoc = await petsRef.get();
     List<String> dogs = [];
     // 자.. 여기다가 등록된 강아지들 다 입력하는거야
@@ -111,6 +117,13 @@ class _CalendarState extends State<Calendar> {
   @override
   void initState() {
     super.initState();
+
+    userRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets')
+        .withConverter(
+        fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+        toFirestore: (dogData, _) => dogData.toJson());
+
     setState(() {
       btnController.getName().then((value) {
         setState(() {});

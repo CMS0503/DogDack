@@ -14,6 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../controllers/user_controller.dart';
+
 class CalendarScheduleEdit extends StatefulWidget {
   // 모슨요일인지 받기
   const CalendarScheduleEdit({super.key, required this.day});
@@ -27,6 +29,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
   final inputController = TextEditingController();
   final controller = Get.put(InputController());
   final buttonController = Get.put(ButtonController());
+  final userController = Get.put(UserController());
 
   // 완료 버튼 클릭 시 데이터 저장
   void fbstoreWrite() async {
@@ -34,7 +37,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
     controller.saveName = controller.selectedValue;
     // Pet Collection 접근
     final petsRef = FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'.toString()}/Pets');
+        .collection('Users/${userController.loginEmail}/Pets');
     // 산책했는지 확인하는 변수(분)
     final walkCheck = (int.parse(controller.endTime.seconds.toString()) -
             int.parse(controller.startTime.seconds.toString())) /
