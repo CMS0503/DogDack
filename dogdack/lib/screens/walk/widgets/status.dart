@@ -1,9 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/walk_controller.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 
 import '../../../controllers/mypage_controller.dart';
 
@@ -19,28 +16,6 @@ class Status extends StatefulWidget {
 class _StatusState extends State<Status> {
   final WalkController walkController = Get.put(WalkController());
   final PetController petController = Get.put(PetController());
-
-  // final petsRef = FirebaseFirestore.instance.collection('Users/${'imcsh313@naver.com'}/Pets')
-  //     .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
-
-  // String imageurl = "";
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  //
-  //   setUrl().then((result) {
-  //     setState(() {});
-  //   });
-  // }
-  //
-  // Future<void> setImageUrl () async {
-  //   var documentSnapshot = await FirebaseFirestore.instance
-  //       .collection('Users/${'imcsh313@naver.com'}/Pets')
-  //
-  //
-  //   imageurl = walkController.ImageURL.toString();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -69,12 +44,19 @@ class _StatusState extends State<Status> {
                           right: 40,
                           child: IconButton(
                             onPressed: () {
-                              walkController.ledSig = !walkController.ledSig;
+                              walkController.ledSig == '1'
+                                  ? walkController.ledSig = '0'
+                                  : walkController.ledSig = '1';
                             },
-                            icon: Icon(
-                              Icons.lightbulb_outline,
-                              color: Colors.yellow,
-                            ),
+                            icon: walkController.ledSig == '1'
+                                ? const Icon(
+                                    Icons.lightbulb_outline,
+                                    color: Colors.yellow,
+                                  )
+                                : const Icon(
+                                    Icons.lightbulb_outline,
+                                    color: Colors.yellow,
+                                  ),
                           ),
                         )
                       ],
@@ -82,24 +64,27 @@ class _StatusState extends State<Status> {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 width: 10,
               ),
               Column(
                 children: [
-                  walkController.isBleConnect == true
+                  walkController.isBleConnect.value == true
                       ? IconButton(
                           onPressed: () {
                             Navigator.pushNamed(context, '/Ble');
                           },
-                          icon: Icon(Icons.bluetooth_connected))
+                          icon: const Icon(
+                            Icons.bluetooth_outlined,
+                            color: Colors.blue,
+                          ))
                       : IconButton(
                           onPressed: () {
                             Navigator.pushNamed(context, '/Ble');
                           },
-                          icon: Icon(Icons.bluetooth_outlined),
+                          icon: const Icon(Icons.bluetooth_outlined),
                         ),
-                  Text('${walkController.name}'),
+                  Text(walkController.name),
                 ],
               ),
             ],
@@ -119,7 +104,7 @@ class _StatusState extends State<Status> {
                   ),
                   Obx(
                     () => Text(
-                      walkController.goal == 0
+                      walkController.goal.value == 0
                           ? "목표 산책 시간을 입력해 주세요"
                           : '${walkController.goal} 분',
                       style: Theme.of(context).textTheme.displayMedium,
