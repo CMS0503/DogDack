@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:restart_app/restart_app.dart';
 
 import '../../../controllers/home_controller.dart';
 
@@ -36,6 +37,7 @@ class _CalendarListDetailState extends State<CalendarListDetail> {
                 print('일요일을 선택하셨습니다. 선택한 강아지 문서 ID : ${homeCalendarController.queryDocumentSnapshotDog.id}');
                 print('일요일을 선택하셨습니다. 선택한 강아지 이름 : ${homeCalendarController.queryDocumentSnapshotDog['name']}');
                 print('일요일을 선택하셨습니다. 선택한 날짜 ${homeCalendarController.sunday}');
+                //Restart.restartApp();
               },
             ),
             //월요일

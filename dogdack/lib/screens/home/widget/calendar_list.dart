@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/home_controller.dart';
 import 'package:dogdack/screens/home/widget/calculator_week.dart';
 import 'package:dogdack/screens/home/widget/calendar_list_detail.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -16,7 +17,7 @@ class CalenderListView extends StatefulWidget {
 }
 
 class _CalenderListViewState extends State<CalenderListView> {
-  CollectionReference dogRef = FirebaseFirestore.instance.collection('Users/${'imcsh313@naver.com'.toString()}/Pets');
+  CollectionReference dogRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email.toString().toString()}/Pets');
 
   //GetXController
   final homeCalendarController = Get.put(HomePageCalendarController());

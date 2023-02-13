@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 // firebase
@@ -37,7 +38,7 @@ class EditDogInfoPage extends StatefulWidget {
 class _EditDogInfoPageState extends State<EditDogInfoPage> {
   // Firebase : 반려견 테이블 참조 값
   final petsRef = FirebaseFirestore.instance
-      .collection('Users/${'imcsh313@naver.com'}/Pets')
+      .collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
       .withConverter(
       fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
       toFirestore: (dogData, _) => dogData.toJson());
@@ -86,7 +87,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
 
   bool isSameName(String inputName) {
     final petRef = FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/Pets');
+        .collection('Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
 
     if (mypageStateController.myPageStateType == MyPageStateType.Edit &&
         inputName == petController.selectedPetName) {
@@ -299,7 +300,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   // 강아지 정보 데이터 삭제
   Future<void> _delete([DocumentSnapshot? documentSnapshot]) async {
     // Firebase storage 해당 이미지 제거
-    FirebaseStorage.instance.ref().child('${'imcsh313@naver.com'}/dogs/${petController.selectedPetImageFileName}').delete();
+    FirebaseStorage.instance.ref().child('${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${petController.selectedPetImageFileName}').delete();
 
     await petsRef
         .doc(petController.selectedPetID)
@@ -314,11 +315,11 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     // 이미지 파일을 변경하지 않았을 경우, Url download 불필요
     if(isChangeImg) {
       // 이미지 파일이 변경되었다면 기존 사진 데이터 제거
-      FirebaseStorage.instance.ref().child('${'imcsh313@naver.com'}/dogs/${petController.selectedPetImageFileName}').delete();
+      FirebaseStorage.instance.ref().child('${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${petController.selectedPetImageFileName}').delete();
 
       // 새로 저장할 이미지의 레퍼런스
       Reference petImgRef = FirebaseStorage.instance.ref()
-          .child('${'imcsh313@naver.com'}/dogs/${Path.basename(pickedPetImgFile!.path)}');
+          .child('${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${Path.basename(pickedPetImgFile!.path)}');
 
       await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
         await petImgRef!.getDownloadURL().then((value) {
@@ -366,7 +367,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   Future<void> _create([DocumentSnapshot? documentSnapshot]) async {
     // 강아지 이미지 파일 저장 경로
     Reference petImgRef = FirebaseStorage.instance.ref()
-        .child('${'imcsh313@naver.com'}/dogs/${Path.basename(pickedPetImgFile!.path)}');
+        .child('${FirebaseAuth.instance.currentUser!.email.toString()}/dogs/${Path.basename(pickedPetImgFile!.path)}');
 
     await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
       await petImgRef!.getDownloadURL().then((value) {

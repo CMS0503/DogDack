@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/screens/login/login_after_screen.dart';
 import 'dart:async';
 
@@ -10,7 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:get/get.dart';
 //firebase
+import 'controllers/user_controller.dart';
 import 'firebase_options.dart';
+import 'models/user_data.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -63,6 +66,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final userController = Get.put(UserController());
+
   void callDelay() async {
     // await Timer(const Duration(seconds: 3), () {});
     await Future.delayed(const Duration(seconds: 3));
@@ -74,6 +79,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     callDelay();
+    userController.initFlag = false;
   }
 
   @override
