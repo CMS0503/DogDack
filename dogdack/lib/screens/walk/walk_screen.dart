@@ -235,27 +235,28 @@ class WalkPage extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(screenHeight * 0.12),
+        preferredSize: Size.fromHeight(screenHeight * 0.08),
         child: const LogoWidget(),
       ),
       body: Obx(
-            () => Column(
-              children: [
-                const Status(),
-                const SizedBox(height: 10),
-                walkController.isBleConnect.value == false
-                    ? requestBluetoothConnectWidget(screenWidth, screenHeight, context)
+        () => Column(
+          children: [
+            const Status(),
+            const SizedBox(height: 10),
+            walkController.isBleConnect.value == false
+                ? requestBluetoothConnectWidget(screenWidth, screenHeight, context)
                     : Stack(
-                        children: [
-                          mapAreaWidget(screenWidth, screenHeight),
-                          walkController.goal.value == 0
-                            ? walkTimeModal(screenWidth, screenHeight, context)
-                            : (walkController.isRunning.value == walkController.isStart)
-                              ? Container()
-                              : endWalkModal(screenWidth, screenHeight, context),
-                        ],
-                      )
+                  children: [
+                    mapAreaWidget(screenWidth, screenHeight),
+                    walkController.goal.value == 0
+                        ? walkTimeModal(screenWidth, screenHeight, context)
+                        : (walkController.isRunning.value == walkController.isStart)
+                        ? Container()
+                        : endWalkModal(screenWidth, screenHeight, context),
+                  ],
+                )
               ],
 
               // children: [
@@ -272,7 +273,7 @@ class WalkPage extends StatelessWidget {
               //           ],
               //         ),
               // ],
-        ),
+            ),
       ),
     );
   }

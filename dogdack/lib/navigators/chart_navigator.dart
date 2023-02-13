@@ -11,7 +11,7 @@ class ChartNavigator extends StatelessWidget {
 
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      "/": (context) => ChartMain(),
+      "/": (context) => Chart(),
     };
   }
 

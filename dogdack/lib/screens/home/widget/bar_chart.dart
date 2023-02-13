@@ -1,3 +1,4 @@
+import 'package:dogdack/controllers/main_controll.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,7 @@ class _HomePageBarChartState extends State<HomePageBarChart> {
 
   //GetXController
   final homeChartController = Get.put(HomePageBarChartController());
+  final mainController = Get.put(MainController());
 
   // 하단 타이틀 명 : 6시 12시 6시
   Widget getTitles(double value, TitleMeta meta) {
@@ -123,18 +125,22 @@ class _HomePageBarChartState extends State<HomePageBarChart> {
   // 새로고침
   Future<dynamic> refreshState() async {
     setState(() {});
-    await Future<dynamic>.delayed(animDuration + const Duration(milliseconds: 100));
-    await refreshState();
+    await Future<dynamic>.delayed(animDuration + const Duration(milliseconds: 500));
+    if(mainController.tabindex == 0) {
+      await refreshState();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    refreshState();
+    //refreshState();
     return Container(
       height: size.height * 0.12,
-      child: BarChart(walkData(), swapAnimationDuration: animDuration),
+      child: GetBuilder<HomePageBarChartController> (builder: (_) {
+        return BarChart(walkData(), swapAnimationDuration: animDuration);
+      },),
     );
   }
 }

@@ -71,6 +71,7 @@ class _MapState extends State<myMap> {
               }
 
               widget.receiveData += stringValue;
+              print('receiveData: ${widget.receiveData}');
               // 한번 갱신 될 때마다
               // 시작 전
               if (!walkController.isRunning.value) {
@@ -202,7 +203,7 @@ class _MapState extends State<myMap> {
                           Alignment.center.y,
                         ),
                         child: Text(
-                          '${walkController.timeCount ~/ 360000} : ${walkController.timeCount ~/ 6000} : ${(walkController.timeCount % 6000) ~/ 100}',
+                          '${walkController.timeCount ~/ 3600} : ${walkController.timeCount ~/ 60} : ${walkController.timeCount % 60}',
                           // (_timeCount ~/ 100).toString() + ' 초',
                           style: const TextStyle(
                               fontSize: 30,

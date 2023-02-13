@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../models/dog_data.dart';
+
 class HomePageBarChartController extends GetxController {
   //실제 문서 수 카운트
   List<double> timeWalkCntListRealCnt = List.filled(25, 0);
@@ -38,6 +40,24 @@ class HomePageBarChartController extends GetxController {
       }
     }
 
+    update();
+  }
+}
+
+class HomePageCalendarController extends GetxController {
+  late QueryDocumentSnapshot<DogData> queryDocumentSnapshotDog;
+
+  DateTime sunday = DateTime(0);
+  DateTime monday = DateTime(0);
+  DateTime tuesday = DateTime(0);
+  DateTime wednesday = DateTime(0);
+  DateTime thursday = DateTime(0);
+  DateTime friday = DateTime(0);
+  DateTime saturday = DateTime(0);
+
+  bool isAutoFlag = true;
+
+  void autoFlagUpdate() {
     update();
   }
 }
