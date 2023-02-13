@@ -39,6 +39,7 @@ class ButtonController extends GetxController {
             .get();
         if (result.docs.isNotEmpty) {
           String dogId = result.docs[0].id;
+          controller.dognames[controller.selectedValue] = dogId.toString();
           final calRef = petsRef.doc(dogId).collection('Calendar');
           var data = await calRef.get();
           for (int i = 0; i < data.docs.length; i++) {
@@ -49,10 +50,8 @@ class ButtonController extends GetxController {
               data.docs[i]['beauty'],
             ];
           }
-          // setState(() {});
         }
       } else {
-        // 그게 아니면 selectedValue로 데이터 가져오기
         var result = await petsRef
             .where("name", isEqualTo: controller.selectedValue)
             .get();
@@ -68,8 +67,6 @@ class ButtonController extends GetxController {
               data.docs[i]['beauty'],
             ];
           }
-          // setState(() {});
-          // print(Calendar.events);
         }
       }
     }

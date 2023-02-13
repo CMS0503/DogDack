@@ -13,14 +13,15 @@ class InputController extends GetxController {
   bool beauty = true;
   List<String> imageUrl = [];
   String name = '';
-  List<String> dognames = [];
+  Map<String, dynamic> dognames = {};
   List<String> valueList = [];
   String selectedValue = '';
   String saveName = '';
   String time = '';
   DateTime today = DateTime.now();
+
   /////////////////////////여기 한줄 영우 추가/////////////////////
-  Map dog_names = {};
+  // Map dog_names = {};
   String selected_id = '';
   void setDate(selectedDate) {
     date = selectedDate;

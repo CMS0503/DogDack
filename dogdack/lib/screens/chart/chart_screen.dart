@@ -153,7 +153,7 @@ class _ChartMainState extends State<ChartMain> {
 
   /// 바뀔 강아지 이름
 
-  Map dog_names = {};
+  Map dognames = {};
 
   Future<Map<String, List<Object>>> getData() async {
     // 두달 산책 시간 포인트 불러오기
@@ -164,12 +164,12 @@ class _ChartMainState extends State<ChartMain> {
     var docId = await findName.get();
 
     for (int i = 0; i < docId.docs.length; i++) {
-      dog_names[docId.docs[i]['name'].toString()] = docId.docs[i].id.toString();
+      dognames[docId.docs[i]['name'].toString()] = docId.docs[i].id.toString();
     }
-    print(dog_names);
-    print(dog_names.values.toList()[0]);
-    if (controller.selected_id.isEmpty && dog_names.values.isNotEmpty) {
-      controller.selected_id = dog_names.values.toList()[0];
+    print(dognames);
+    print(dognames.values.toList()[0]);
+    if (controller.selected_id.isEmpty && dognames.values.isNotEmpty) {
+      controller.selected_id = dognames.values.toList()[0];
     }
 
     //////// 강아지 아이디 고정값으로 박아 놓음. 바꿔야 됨.
@@ -351,7 +351,7 @@ class _ChartMainState extends State<ChartMain> {
                           onChanged: (value) {
                             controller.selectedValue = value.toString();
                             controller.selected_id =
-                                controller.dog_names[value.toString()];
+                                controller.dognames[value.toString()];
 
                             setState(() {
                               getData();
@@ -386,10 +386,9 @@ class _ChartMainState extends State<ChartMain> {
                           ).toList(),
                           onChanged: (value) {
                             controller.selectedValue = value.toString();
-                            controller.selected_id =
-                                dog_names[value.toString()];
+                            controller.selected_id = dognames[value.toString()];
                             print(controller.selected_id);
-                            // controller.selected_id = controller.dog_names[value.toString()];
+                            // controller.selected_id = controller.dognames[value.toString()];
 
                             setState(() {
                               getData();

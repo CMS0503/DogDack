@@ -1,5 +1,11 @@
 class CalenderData {
-  CalenderData({this.isWalk, this.beauty, this.bath, this.imageUrl, this.diary});
+  CalenderData({
+    this.isWalk,
+    this.beauty,
+    this.bath,
+    this.imageUrl,
+    this.diary,
+  });
 
   final bool? isWalk; // 산책 여부
   final bool? beauty; // 미용 여부
@@ -18,7 +24,7 @@ class CalenderData {
 
   Map<String, dynamic> toJson() {
     return {
-      'isWalk' : isWalk,
+      'isWalk': isWalk,
       'beauty': beauty,
       'bath': bath,
       'imageUrl': imageUrl,
