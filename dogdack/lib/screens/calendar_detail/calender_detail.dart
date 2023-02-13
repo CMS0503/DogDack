@@ -27,12 +27,17 @@ class _CalenderDetailState extends State<CalenderDetail> {
   bool bath = false;
   bool beauty = false;
   String diary = "오늘의 일기";
-  late String imageUrl = 'images/login/login_image.png';
 
   ////////////////////////////////////파이어 베이스 연결 끝/////////////////////////////////////////////////////
 
   @override
   Widget build(BuildContext context) {
+    String imageUrl = 'images/login/login_image.png';
+    if (controller.imageUrl.isEmpty) {
+    } else {
+      imageUrl = controller.imageUrl[0];
+    }
+
     Color grey = const Color.fromARGB(255, 80, 78, 91);
     Color violet = const Color.fromARGB(255, 100, 92, 170);
     late Color hairColor = grey;
@@ -74,12 +79,13 @@ class _CalenderDetailState extends State<CalenderDetail> {
           children: <Widget>[
             //산책 타이틀 +  편집 버튼
             Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  CalDetailTitleWidget(
-                      name: walkController.curName, title: "산책"),
-                  CalEditButtonWidget(),
-                ]),
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                CalDetailTitleWidget(
+                    name: controller.selectedValue, title: "산책"),
+                CalEditButtonWidget(),
+              ],
+            ),
             //날짜
             Padding(
               padding: const EdgeInsets.only(left: 18, bottom: 15),
@@ -98,12 +104,23 @@ class _CalenderDetailState extends State<CalenderDetail> {
             // 산책 카드
             CalWalkCardWidget(
                 distance: controller.distance,
+                // 나중에 여러개로 바꿔야됨
                 imageUrl: imageUrl,
                 place: controller.place,
                 totalTimeMin: controller.time),
-            CalDetailTitleWidget(name: walkController.curName, title: "뷰티도장"),
-            BeautyWidget(hair_color: hairColor, bath_color: bathColor),
-            CalDetailTitleWidget(name: walkController.curName, title: "오늘의 일기"),
+            CalDetailTitleWidget(
+              name: controller.selectedValue,
+              title: "뷰티도장",
+            ),
+            BeautyWidget(
+              hair_color: hairColor,
+              bath_color: bathColor,
+            ),
+            CalDetailTitleWidget(
+              name: controller.selectedValue,
+              title: "오늘의 일기",
+            ),
+            // 나중에 여러개로 바꿔야됨
             DiaryWidget(diary_image: imageUrl, diary_text: controller.diary),
           ],
         ),

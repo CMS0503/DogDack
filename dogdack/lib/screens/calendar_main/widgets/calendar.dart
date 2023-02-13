@@ -38,6 +38,7 @@ class _CalendarState extends State<Calendar> {
       .withConverter(
           fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
           toFirestore: (dogData, _) => dogData.toJson());
+
   // input과 walk controller 불러오기
   final controller = Get.put(InputController());
   final btnController = Get.put(ButtonController());
@@ -52,7 +53,7 @@ class _CalendarState extends State<Calendar> {
     List<String> dogs = [];
     // 자.. 여기다가 등록된 강아지들 다 입력하는거야
     for (int i = 0; i < dogDoc.docs.length; i++) {
-      // controller.dog_names[dogDoc.docs[i]['name']] = dogDoc.docs[i]['name'];
+      controller.dognames[dogDoc.docs[i]['name']] = '';
       dogs.insert(0, dogDoc.docs[i]['name']);
     }
     controller.valueList = dogs;
@@ -70,6 +71,8 @@ class _CalendarState extends State<Calendar> {
             .get();
         if (result.docs.isNotEmpty) {
           String dogId = result.docs[0].id;
+          controller.dognames[controller.selectedValue] = dogId.toString();
+          // Calendar 데이터 불러오기
           final calRef = petsRef.doc(dogId).collection('Calendar');
           var data = await calRef.get();
           for (int i = 0; i < data.docs.length; i++) {
@@ -89,6 +92,7 @@ class _CalendarState extends State<Calendar> {
             .get();
         if (result.docs.isNotEmpty) {
           String dogId = result.docs[0].id;
+          controller.dognames[controller.selectedValue] = dogId.toString();
           final calRef = petsRef.doc(dogId).collection('Calendar');
           var data = await calRef.get();
           for (int i = 0; i < data.docs.length; i++) {
@@ -120,7 +124,6 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
-    print('hi');
     // getName();
     ButtonController().getName();
     Size screenSize = MediaQuery.of(context).size;
@@ -166,11 +169,11 @@ class _CalendarState extends State<Calendar> {
                         ).toList(),
                         onChanged: (value) {
                           controller.selectedValue = value.toString();
-                          // controller.selected_id =
-                          // controller.dog_names[value.toString()];
-                          setState(() {
-                            getName();
-                          });
+                          setState(
+                            () {
+                              getName();
+                            },
+                          );
                         },
                       )
                     // 등록된 강아지가 있으면 강아지 목록으로 dropdown
@@ -201,8 +204,6 @@ class _CalendarState extends State<Calendar> {
                         ).toList(),
                         onChanged: (value) {
                           controller.selectedValue = value.toString();
-                          // controller.selected_id =
-                          // controller.dog_names[value.toString()];
                           setState(() {
                             print('안녕하신가');
                             getName();

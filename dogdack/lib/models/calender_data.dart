@@ -5,7 +5,6 @@ class CalenderData {
     this.bath,
     this.imageUrl,
     this.diary,
-    // this.distance
   });
 
   final bool? isWalk; // 산책 여부
