@@ -46,7 +46,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
             width: 3,
             color: Colors.blue),
       );
-      walkController.abv();
+      walkController.updateState();
     });
   }
 
@@ -80,8 +80,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
 
       // 선택한 날짜의 산책 데이터를 내림차순 정렬(최신 데이터가 위로 오게)
       await firestore
-          .where("startTime",
-              isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday)
+          .where("startTime", isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday)
           .orderBy("startTime", descending: true)
           .get()
           .then((QuerySnapshot snapshot) async {

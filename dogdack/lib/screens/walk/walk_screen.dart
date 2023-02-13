@@ -29,7 +29,7 @@ class _WalkPageState extends State<WalkPage> {
       .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
 
   bool flag = false;
-  List<bool> flagList = [];
+  // List<bool> flagList = [];
 
   Widget mapAreaWidget(w, h) {
     return Container(
@@ -129,38 +129,34 @@ class _WalkPageState extends State<WalkPage> {
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        print(itemIndex);
-                                        print('${snapshot.data!.docs[itemIndex].get('name')}');
                                         if(!flag){
                                           var temp = List<bool>.filled(snapshot.data!.docs.length, false);
-                                          print('temp : $temp');
-                                          flagList = temp;
+                                          walkController.makeFlagList(temp);
                                           flag = true;
                                         }
-                                        print('flagList : $flagList');
-                                        flagList[itemIndex] = !flagList[itemIndex];
+                                        walkController.setFlagList(itemIndex);
+                                        setState(() {});
                                       },
-                                      child: Obx(() =>
-                                          Stack(
-                                          children: [
-                                            CircleAvatar(
-                                              radius: size.width * 0.2,
-                                              child: ClipOval(
-                                                  child: Container(),
-                                                  // FadeInImage.memoryNetwork(
-                                                  //   fit: BoxFit.cover,
-                                                  //   placeholder: kTransparentImage,
-                                                  //   image: snapshot.data!.docs[itemIndex].get('imageUrl'),
-                                                  // )
-                                              ),
+                                      child:
+                                        Stack(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: size.width * 0.2,
+                                            child: ClipOval(
+                                                child: Container(),
+                                                // FadeInImage.memoryNetwork(
+                                                //   fit: BoxFit.cover,
+                                                //   placeholder: kTransparentImage,
+                                                //   image: snapshot.data!.docs[itemIndex].get('imageUrl'),
+                                                // )
                                             ),
-                                            if(flagList.isNotEmpty) choiceDog(itemIndex, size.width * 0.07, snapshot.data!.docs[itemIndex].get('name')),
-                                          ],
-                                        ),
-                                      )
+                                          ),
+                                          if(walkController.flagList.isNotEmpty) walkController.choiceDog(itemIndex, size.width),
+                                        ],
+                                      ),
                                     ),
                                     SizedBox(height: 10,),
-                                    Text("${snapshot.data!.docs[itemIndex].get('name')}", style: TextStyle(fontSize: 20)),
+                                    Text("${snapshot.data!.docs[itemIndex].get('name')}", style: TextStyle(fontSize: 10)),
                                   ],
                                 );
                               },
@@ -172,7 +168,16 @@ class _WalkPageState extends State<WalkPage> {
                               child: Align(
                                 alignment: Alignment.bottomRight,
                                 child: ElevatedButton(
-                                    onPressed: (){},
+                                    onPressed: (){
+                                      walkController.selDogs.clear();
+                                      for(int i = 0; i < walkController.flagList.length; i++){
+                                        if(walkController.flagList[i]){
+                                          walkController.selDogs.add(snapshot.data!.docs[i].get('name'));
+                                        }
+                                      }
+                                      walkController.isSelected.value = true;
+                                      // print(walkController.selDogs);
+                                    },
                                     child: Text("선택")
                                 ),
                               ),
@@ -339,33 +344,6 @@ class _WalkPageState extends State<WalkPage> {
     );
   }
 
-  Widget choiceDog(int itemIndex, double size, String name) {
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      walkController.toggle.value = !walkController.toggle.value;
-      // if(flagList[itemIndex]) {
-      //   walkController.selDogs.add(name);
-      // } else {
-      //   walkController.selDogs.remove(name);
-      // }
-      // print('selDogs : ${walkController.selDogs}');
-    });
-    return
-    flagList[itemIndex]?
-    SizedBox(
-      height: size * 5,
-      child: Align(
-      alignment: Alignment.bottomRight,
-      child:
-        CircleAvatar(
-          backgroundImage: const AssetImage('assets/check.png') ,
-          backgroundColor: Color(0xff504E5B),
-          radius: size,
-        ),
-      ),
-    )
-    :Container();
-  }
-
 
   // This widget is the root of your application.
   @override
@@ -378,26 +356,24 @@ class _WalkPageState extends State<WalkPage> {
         preferredSize: Size.fromHeight(screenHeight * 0.12),
         child: const LogoWidget(),
       ),
-      body: Obx(
-            () => Column(
+      body: Obx(() =>Column(
           children: [
             const Status(),
             const SizedBox(height: 10),
             walkController.isBleConnect.value == false
                 ? requestBluetoothConnectWidget(screenWidth, screenHeight, context)
-                : choiceDogModal(screenWidth, screenHeight, context)
-
-
-            // : Stack(
-            //     children: [
-            //       mapAreaWidget(screenWidth, screenHeight),
-            //       walkController.goal.value == 0
-            //         ? walkTimeModal(screenWidth, screenHeight, context)
-            //         : (walkController.isRunning.value == walkController.isStart)
-            //           ? Container()
-            //           : endWalkModal(screenWidth, screenHeight, context),
-            //     ],
-            //   )
+                : walkController.isSelected.value == false
+                ? choiceDogModal(screenWidth, screenHeight, context)
+                :Stack(
+              children: [
+                mapAreaWidget(screenWidth, screenHeight),
+                walkController.goal.value == 0
+                    ? walkTimeModal(screenWidth, screenHeight, context)
+                    : (walkController.isRunning.value == walkController.isStart)
+                    ? Container()
+                    : endWalkModal(screenWidth, screenHeight, context),
+              ],
+            )
           ],
         ),
       ),

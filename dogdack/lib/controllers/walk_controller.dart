@@ -53,9 +53,41 @@ class WalkController extends GetxController {
   RxInt tmp_goal = 0.obs;
   RxInt curGoal = 0.obs;
   String curName = "";
-  RxBool toggle = false.obs;
-  List selDogs = [];
 
+  // 산책 강아지 선택 modal 변수
+  RxList flagList = [].obs;
+  List selDogs = [];
+  RxBool isSelected = false.obs;
+
+  // ---강아지 선택 modal---
+  void makeFlagList(List temp) {
+    flagList.value = temp;
+    update();
+  }
+
+  void setFlagList(int index) {
+    flagList[index] = !flagList[index];
+    update();
+  }
+
+  Widget choiceDog(int itemIndex, double size) {
+    return
+      flagList[itemIndex]?
+      SizedBox(
+        height: size * 0.35,
+        child: Align(
+          alignment: Alignment.bottomRight,
+          child:
+          CircleAvatar(
+            backgroundImage: const AssetImage('assets/check.png') ,
+            backgroundColor: Color(0xff504E5B),
+            radius: size * 0.07,
+          ),
+        ),
+      ):Container();
+  }
+
+  //----------------------
 
   void getList() async {
     String temp = "";
@@ -191,7 +223,7 @@ class WalkController extends GetxController {
     super.onClose();
   }
 
-  void abv() {
+  void updateState() {
     update();
   }
 
