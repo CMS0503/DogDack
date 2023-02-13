@@ -46,7 +46,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
             width: 3,
             color: Colors.blue),
       );
-      walkController.abv();
+      walkController.updateState();
     });
   }
 

@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/models/walk_data.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -16,7 +18,7 @@ class WalkController extends GetxController {
   final String serviceUUID = '0000ffe0-0000-1000-8000-00805f9b34fb';
   final String characteristicUUID = '0000ffe1-0000-1000-8000-00805f9b34fb';
 
-  RxBool isBleConnect = false.obs;
+  RxBool isBleConnect = true.obs;
 
   // 위도, 경도
   RxDouble latitude = 37.500735.obs;
@@ -63,6 +65,40 @@ class WalkController extends GetxController {
   RxInt curGoal = 0.obs;
   String curName = "";
 
+  // 산책 강아지 선택 modal 변수
+  RxList flagList = [].obs;
+  List selDogs = [];
+  RxBool isSelected = false.obs;
+
+  // ---강아지 선택 modal---
+  void makeFlagList(List temp) {
+    flagList.value = temp;
+    update();
+  }
+
+  void setFlagList(int index) {
+    flagList[index] = !flagList[index];
+    update();
+  }
+
+  Widget choiceDog(int itemIndex, double size) {
+    return
+      flagList[itemIndex]?
+      SizedBox(
+        height: size * 0.35,
+        child: Align(
+          alignment: Alignment.bottomRight,
+          child:
+          CircleAvatar(
+            backgroundImage: const AssetImage('assets/check.png') ,
+            backgroundColor: Color(0xff504E5B),
+            radius: size * 0.07,
+          ),
+        ),
+      ):Container();
+  }
+
+  //----------------------
   // LCD data
   String? phoneNumber;
   String? walkTimer;
@@ -242,7 +278,7 @@ class WalkController extends GetxController {
     super.onClose();
   }
 
-  void abv() {
+  void updateState() {
     update();
   }
 
