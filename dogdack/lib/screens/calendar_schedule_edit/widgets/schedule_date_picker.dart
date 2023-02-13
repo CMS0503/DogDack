@@ -4,7 +4,6 @@ import 'package:dogdack/controllers/input_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class DatePicker extends StatefulWidget {
   const DatePicker({super.key});
@@ -53,41 +52,10 @@ class _DatePickerState extends State<DatePicker> {
       if (controller.selectedValue == '') {
         // 그냥 처음 강아지로 가져오기
         controller.selectedValue = dogs[0];
-        // var result =
-        //     await petsRef.where("name", isEqualTo: selectedValue).get();
-        // if (result.docs.isNotEmpty) {
-        //   String dogId = result.docs[0].id;
-        //   final calRef = petsRef.doc(dogId).collection('Calendar');
-        //   var data = await calRef.get();
-        //   for (int i = 0; i < data.docs.length; i++) {
-        //     Calendar.events['${data.docs[i].reference.id}/$selectedValue'] = [
-        //       data.docs[i]['diary'],
-        //       data.docs[i]['bath'],
-        //       data.docs[i]['beauty'],
-        //     ];
-        //   }
+
         setState(() {});
         // }
       }
-      //  else {
-      //   // 그게 아니면 selectedValue로 데이터 가져오기
-      //   var result =
-      //       await petsRef.where("name", isEqualTo: selectedValue).get();
-      //   if (result.docs.isNotEmpty) {
-      //     String dogId = result.docs[0].id;
-      //     final calRef = petsRef.doc(dogId).collection('Calendar');
-      //     var data = await calRef.get();
-      //     for (int i = 0; i < data.docs.length; i++) {
-      //       Calendar.events['${data.docs[i].reference.id}/$selectedValue'] = [
-      //         data.docs[i]['diary'],
-      //         data.docs[i]['bath'],
-      //         data.docs[i]['beauty'],
-      //       ];
-      //     }
-      //     setState(() {});
-      //     print(Calendar.events);
-      //   }
-      // }
     }
   }
 

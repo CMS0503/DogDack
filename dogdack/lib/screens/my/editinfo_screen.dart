@@ -1,8 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 // firebase
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_picker/picker.dart';
 
@@ -39,8 +39,8 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   final petsRef = FirebaseFirestore.instance
       .collection('Users/${'imcsh313@naver.com'}/Pets')
       .withConverter(
-          fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
-          toFirestore: (dogData, _) => dogData.toJson());
+      fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+      toFirestore: (dogData, _) => dogData.toJson());
 
   // GetX
   final petController = Get.put(PetController());
@@ -106,23 +106,23 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   // 견종 카테고리 선택
   showPickerKategorieArray(BuildContext context) {
     new Picker(
-        adapter: PickerDataAdapter<String>(
+      adapter: PickerDataAdapter<String>(
           pickerData: kategorieList,
           isArray: true),
-        hideHeader: true,
-        confirmText: '확인',
-        confirmTextStyle: TextStyle(color: Color(0xff646CAA), fontFamily: 'bmjua'),
-        cancelText: '취소',
+      hideHeader: true,
+      confirmText: '확인',
+      confirmTextStyle: TextStyle(color: Color(0xff646CAA), fontFamily: 'bmjua'),
+      cancelText: '취소',
 
-        cancelTextStyle: TextStyle(color: Color(0xff646CAA), fontFamily: 'bmjua'),
-        title: new Text("견종 카테고리를 골라주세요"),
-        onConfirm: (Picker picker, List value) {
-          setState(() {
-            kategorie = picker.getSelectedValues()[0];
-            selectKategorie = true;
-            print(kategorie);
-          });
-        },
+      cancelTextStyle: TextStyle(color: Color(0xff646CAA), fontFamily: 'bmjua'),
+      title: new Text("견종 카테고리를 골라주세요"),
+      onConfirm: (Picker picker, List value) {
+        setState(() {
+          kategorie = picker.getSelectedValues()[0];
+          selectKategorie = true;
+          print(kategorie);
+        });
+      },
     ).showDialog(context);
   }
 
@@ -164,7 +164,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                     onTap: () {
                       chooseImageInCamera();
                       Navigator.pop(context);
-                      },
+                    },
                   ),
                 ),
                 Container(
@@ -175,7 +175,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                     onTap: () {
                       chooseImageInGallery();
                       Navigator.pop(context);
-                      },
+                    },
                   ),
                 ),
               ],
@@ -197,7 +197,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     // 가져온 사진을 원형으로 잘라냄
     var file = await ImageCropper().cropImage(
       compressFormat: ImageCompressFormat.jpg,
-      compressQuality: 100,
+      compressQuality: 50,
       sourcePath: pickedFile.path,
       aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
       cropStyle: CropStyle.circle,
@@ -227,7 +227,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     // 가져온 사진을 원형으로 잘라냄
     var file = await ImageCropper().cropImage(
       compressFormat: ImageCompressFormat.jpg,
-      compressQuality: 100,
+      compressQuality: 50,
       sourcePath: pickedFile.path,
       aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
       cropStyle: CropStyle.circle,
@@ -299,7 +299,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   // 강아지 정보 데이터 삭제
   Future<void> _delete([DocumentSnapshot? documentSnapshot]) async {
     // Firebase storage 해당 이미지 제거
-    // FirebaseStorage.instance.ref().child('${'imcsh313@naver.com'}/dogs/${petController.selectedPetImageFileName}').delete();
+    FirebaseStorage.instance.ref().child('${'imcsh313@naver.com'}/dogs/${petController.selectedPetImageFileName}').delete();
 
     await petsRef
         .doc(petController.selectedPetID)
@@ -310,18 +310,15 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
 
   // 강아지 정보 데이터 수정
   Future<void> _update([DocumentSnapshot? documentSnapshot]) async {
-    // Strage 사용을 막기 위해 임시로 설정함.
-    isChangeImg = false;
-
     // 편집 모드에서는 이미지 파일을 변경하였을 경우 기존 이미지를 제거하고 새로운 이미지로 갱신
     // 이미지 파일을 변경하지 않았을 경우, Url download 불필요
     if(isChangeImg) {
       // 이미지 파일이 변경되었다면 기존 사진 데이터 제거
-      // FirebaseStorage.instance.ref().child('${'imcsh313@naver.com'}/dogs/${petController.selectedPetImageFileName}').delete();
+      FirebaseStorage.instance.ref().child('${'imcsh313@naver.com'}/dogs/${petController.selectedPetImageFileName}').delete();
 
       // 새로 저장할 이미지의 레퍼런스
-      Reference petImgRef = FirebaseStorage.instance.ref().child(
-          '${'imcsh313@naver.com'}/dogs/${Path.basename(pickedPetImgFile!.path)}');
+      Reference petImgRef = FirebaseStorage.instance.ref()
+          .child('${'imcsh313@naver.com'}/dogs/${Path.basename(pickedPetImgFile!.path)}');
 
       await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
         await petImgRef!.getDownloadURL().then((value) {
@@ -368,10 +365,10 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   // 강아지 정보 데이터 추가
   Future<void> _create([DocumentSnapshot? documentSnapshot]) async {
     // 강아지 이미지 파일 저장 경로
-    Reference petImgRef = FirebaseStorage.instance.ref().child(
-        '${'imcsh313@naver.com'}/dogs/${Path.basename(pickedPetImgFile!.path)}');
+    Reference petImgRef = FirebaseStorage.instance.ref()
+        .child('${'imcsh313@naver.com'}/dogs/${Path.basename(pickedPetImgFile!.path)}');
 
-    /*await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
+    await petImgRef!.putFile(pickedPetImgFile!).whenComplete(() async {
       await petImgRef!.getDownloadURL().then((value) {
         recommend = getRecommendTime(kategorie);
 
@@ -390,24 +387,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
         )).then((value) => print('강아지 정보 저장 완료'))
             .catchError((error) => print('강아지 정보 저장 오류! ${petsRef}'));
       });
-    });*/
-
-    recommend = getRecommendTime(kategorie);
-
-    //이미지 경로를 db 에 저장
-    petsRef.add(DogData(
-      imageUrl: 'https://edu.ssafy.com/edu/main/index.do',
-      imageFileName: Path.basename(pickedPetImgFile!.path),
-      name: name,
-      gender: gender,
-      birth: birth,
-      kategorie: kategorie,
-      breed: breed,
-      weight: weight,
-      recommend: recommend,
-      createdAt: Timestamp.now(),
-    )).then((value) => print('강아지 정보 저장 완료'))
-        .catchError((error) => print('강아지 정보 저장 오류! ${petsRef}'));
+    });
   }
 
   // 상태 확인을 위한 boolean 변수
@@ -459,15 +439,6 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
             fontSize: cardHeight * 0.035,
           ),
         ),
-        CircleAvatar(
-          child: Icon(
-            Icons.edit,
-            size: cardHeight * 0.025,
-            color: Colors.white,
-          ),
-          backgroundColor: Color(0xff504E5B),
-          radius: cardHeight * 0.015,
-        ),
       ],
     );
   }
@@ -509,6 +480,8 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
     final double petInfoWidth = size.width * 0.8;
     final double petInfoHeight = size.height * 0.7;
 
+    TextStyle guideTextStyle = TextStyle(color: Color(0xff504E5B), fontSize: petInfoHeight * 0.027);
+
     return GestureDetector(
       onTap: () {
         // 폼 이외의 위치를 탭하면 키보드 해제
@@ -543,10 +516,10 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                       radius: size.width * 0.2,
                       child: pickComp
                           ? ClipOval(child: mypageStateController.myPageStateType == MyPageStateType.Create
-                            ? Image(image: FileImage(pickedPetImgFile))
-                            : !isChangeImg
-                              ? /*Image.network(petController.selectedPetImageUrl)*/ Container(color: Colors.amber)
-                              : Image(image: FileImage(pickedPetImgFile)))
+                          ? Image(image: FileImage(pickedPetImgFile))
+                          : !isChangeImg
+                          ? Image(image: CachedNetworkImageProvider(petController.selectedPetImageUrl))
+                          : Image(image: FileImage(pickedPetImgFile)))
                           : Icon(Icons.add, size: size.width * 0.2, color: Colors.white),
                     ),
                   ],
@@ -596,9 +569,9 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                 onChanged: (value) {
                                   name = value!;
                                 },
-                                style: TextStyle(color: Color(0xff504E5B)),
+                                style: guideTextStyle,
                                 decoration: InputDecoration(
-                                  hintText: '이름을 입력하세요!',
+                                  hintText: ' 이름을 입력하세요!',
                                 ),
                                 controller: _nameController,
                               ),
@@ -631,7 +604,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                       FocusManager.instance.primaryFocus?.unfocus();
                                       await _selectDate(context);
                                     },
-                                    child: Text(birth, style: TextStyle(color: Color(0xff504E5B), fontSize: petInfoHeight * 0.027)),
+                                    child: Text(birth, style: guideTextStyle),
                                   ),
                                 ),
                                 Divider(color: Color(0xff504E5B), height: petInfoHeight * 0.01, thickness: 0.5),
@@ -645,7 +618,6 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                 Row(
                                   children: [
                                     infoTitleBox(petInfoHeight, '분류'),
-                                    SizedBox(width: petInfoWidth * 0.02,),
                                     InkWell(
                                       onTap: () {
                                         FlutterDialog(context);
@@ -669,7 +641,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                       FocusManager.instance.primaryFocus?.unfocus();
                                       showPickerKategorieArray(context);
                                     },
-                                    child: Text(kategorie, style: TextStyle(color: Color(0xff504E5B), fontSize: petInfoHeight * 0.027)),
+                                    child: Text(kategorie, style: guideTextStyle),
                                   ),
                                 ),
                                 Divider(color: Color(0xff504E5B), height: petInfoHeight * 0.01, thickness: 0.5),
@@ -688,9 +660,10 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                   breed = value!;
                                 },
                                 decoration: InputDecoration(
-                                  hintText: '견종을 입력하세요!',
+                                  hintText: ' 견종을 입력하세요!',
                                 ),
                                 controller: _breedController,
+                                style: guideTextStyle,
                               ),
                             ),
                             SizedBox(height: petInfoHeight * 0.02),
@@ -719,208 +692,203 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                 ? Center(child: !uploadingData
                                   ? ElevatedButton(onPressed: !uploadingData
                                     ? () async {
-                                    // 키보드 해제
-                                    FocusManager.instance.primaryFocus?.unfocus();
+                                  // 키보드 해제
+                                  FocusManager.instance.primaryFocus?.unfocus();
 
-                                    // 버튼 중복 클릭 시 재호출 방지
-                                    if (uploadingData) return;
+                                  // 버튼 중복 클릭 시 재호출 방지
+                                  if (uploadingData) return;
 
-                                    setState(() {
-                                      uploadingData = true;
-                                    });
+                                  setState(() {
+                                    uploadingData = true;
+                                  });
 
-                                    // 사진을 등록 하지 않을 경우 알림
-                                    if (!pickComp) {
-                                      MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.ImageNotExist);
-                                      uploadingData = false;
-                                      return;
-                                    }
-
-                                    // 이름을 등록 하지 않을 경우 알림
-                                    if (name.length == 0) {
-                                      MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameNotExist);
-                                      uploadingData = false;
-                                      return;
-                                    }
-
-                                    // 이름이 10글자를 초과할 경우 알림
-                                    if(name.length > 10) {
-                                      MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameOverflow);
-                                      uploadingData = false;
-                                      return;
-                                    }
-
-                                    // 이름 중복 검사
-                                    if(isSameName(name)) {
-                                      MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameAlreadyExist);
-                                      uploadingData = false;
-                                      return;
-                                    }
-
-                                    // 생일을 선택하지 않은 경우 알림
-                                    if(!selectBirth) {
-                                      MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BirthNotExist);
-                                      uploadingData = false;
-                                      return;
-                                    }
-
-                                    // 견종 그룹을 입력하지 않은 경우 알림
-                                    if(!selectKategorie) {
-                                      MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.KategorieNotExist);
-                                      uploadingData = false;
-                                      return;
-                                    }
-
-                                    // 견종을 입력하지 않은 경우 알림
-                                    if(breed.length == 0) {
-                                      MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BreedNotExist);
-                                      uploadingData = false;
-                                      return;
-                                    }
-
-                                    // 견종이 20글자를 초과할 경우 알림
-                                    if(breed.length > 20) {
-                                      MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BreedOverflow);
-                                      uploadingData = false;
-                                      return;
-                                    }
-
-                                    // 몸무게 미 입력은 미입력으로 표기
-
-                                    await _create().whenComplete(() {
-                                      if (Navigator.canPop(context))
-                                        Navigator.pop(context);
-                                    });
-
-                                    setState(() {
-                                      createData = true;
-                                      uploadingData = false;
-                                    });
+                                  // 사진을 등록 하지 않을 경우 알림
+                                  if (!pickComp) {
+                                    MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.ImageNotExist);
+                                    uploadingData = false;
+                                    return;
                                   }
+
+                                  // 이름을 등록 하지 않을 경우 알림
+                                  if (name.length == 0) {
+                                    MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameNotExist);
+                                    uploadingData = false;
+                                    return;
+                                  }
+
+                                  // 이름이 10글자를 초과할 경우 알림
+                                  if(name.length > 10) {
+                                    MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameOverflow);
+                                    uploadingData = false;
+                                    return;
+                                  }
+
+                                  // 이름 중복 검사
+                                  if(isSameName(name)) {
+                                    MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameAlreadyExist);
+                                    uploadingData = false;
+                                    return;
+                                  }
+
+                                  // 생일을 선택하지 않은 경우 알림
+                                  if(!selectBirth) {
+                                    MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BirthNotExist);
+                                    uploadingData = false;
+                                    return;
+                                  }
+
+                                  // 견종 그룹을 입력하지 않은 경우 알림
+                                  if(!selectKategorie) {
+                                    MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.KategorieNotExist);
+                                    uploadingData = false;
+                                    return;
+                                  }
+
+                                  // 견종을 입력하지 않은 경우 알림
+                                  if(breed.length == 0) {
+                                    MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BreedNotExist);
+                                    uploadingData = false;
+                                    return;
+                                  }
+
+                                  // 견종이 20글자를 초과할 경우 알림
+                                  if(breed.length > 20) {
+                                    MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BreedOverflow);
+                                    uploadingData = false;
+                                    return;
+                                  }
+
+                                  // 몸무게 미 입력은 미입력으로 표기
+
+                                  await _create().whenComplete(() {
+                                    if (Navigator.canPop(context))
+                                      Navigator.pop(context);
+                                  });
+
+                                  setState(() {
+                                    createData = true;
+                                    uploadingData = false;
+                                  });
+                                }
                                     : null,
-                                  child: Text('등록하기'),
-                                  style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(Color(0xff646CAA)),
-                                    foregroundColor: MaterialStateProperty.all(Colors.white),
-                                  ),)
-                                  : CircularProgressIndicator(),
-                            )
+                                      child: Text('등록하기'),
+                                      style: ButtonStyle(
+                                        backgroundColor: MaterialStateProperty.all(Color(0xff646CAA)),
+                                        foregroundColor: MaterialStateProperty.all(Colors.white),
+                                      ),)
+                                  : CircularProgressIndicator(),)
                                 : !editingData
                                   ? Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      children: [
-                                        ElevatedButton(
-                                          onPressed: ! editingData
-                                              ? () async {
-                                                FocusManager.instance.primaryFocus?.unfocus();
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: ! editingData
+                                        ? () async {
+                                          FocusManager.instance.primaryFocus?.unfocus();
 
-                                                // 버튼 중복 클릭 시 재호출 방지
-                                                if (editingData) return;
+                                          // 버튼 중복 클릭 시 재호출 방지
+                                          if (editingData) return;
 
-                                                setState(() {
-                                                  editingData = true;
-                                                });
+                                          setState(() {
+                                            editingData = true;
+                                          });
 
-                                                // 사진을 등록 하지 않을 경우 알림
-                                                if (!pickComp) {
-                                                  MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.ImageNotExist);
-                                                  editingData = false;
-                                                  return;
-                                                }
+                                          // 사진을 등록 하지 않을 경우 알림
+                                          if (!pickComp) {
+                                            MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.ImageNotExist);
+                                            editingData = false;
+                                            return;
+                                          }
 
-                                                // 이름을 등록 하지 않을 경우 알림
-                                                if (name.length == 0) {
-                                                  MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameNotExist);editingData = false;
-                                                  return;
-                                                }
+                                          // 이름을 등록 하지 않을 경우 알림
+                                          if (name.length == 0) {
+                                            MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameNotExist);editingData = false;
+                                            editingData = false;
+                                            return;
+                                          }
 
-                                                // 이름이 10글자를 초과할 경우 알림
-                                                if(name.length > 10) {
-                                                  MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameOverflow);
-                                                  uploadingData = false;
-                                                  return;
-                                                }
+                                          // 이름이 10글자를 초과할 경우 알림
+                                          if(name.length > 10) {
+                                            MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameOverflow);
+                                            editingData = false;
+                                            return;
+                                          }
 
-                                                // 이름 중복 검사
-                                                if(isSameName(name)) {
-                                                  MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameAlreadyExist);
-                                                  uploadingData = false;
-                                                  return;
-                                                }
+                                          // 이름 중복 검사
+                                          if(isSameName(name)) {
+                                            MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.NameAlreadyExist);
+                                            editingData = false;
+                                            return;
+                                          }
 
-                                                // 생일을 선택하지 않은 경우
-                                                if (!selectBirth) {
-                                                  MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BirthNotExist);
-                                                  editingData = false;
-                                                  return;
-                                                }
+                                          // 생일을 선택하지 않은 경우
+                                          if (!selectBirth) {
+                                            MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BirthNotExist);
+                                            editingData = false;
+                                            return;
+                                          }
 
-                                                // 견종을 입력하지 않은 경우
-                                                if(breed.length == 0) {
-                                                  MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BreedNotExist);
-                                                  editingData = false;
-                                                  return;
-                                                }
+                                          // 견종을 입력하지 않은 경우
+                                          if(breed.length == 0) {
+                                            MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BreedNotExist);
+                                            editingData = false;
+                                            return;
+                                          }
 
-                                                // 견종이 20글자를 초과할 경우 알림
-                                                if(breed.length > 20) {
-                                                  MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BreedOverflow);
-                                                  uploadingData = false;
-                                                  return;
-                                                }
+                                          // 견종이 20글자를 초과할 경우 알림
+                                          if(breed.length > 20) {
+                                            MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.BreedOverflow);
+                                            editingData = false;
+                                            return;
+                                          }
 
-                                                await _update().whenComplete(() {
-                                                  if (Navigator.canPop(context))
-                                                    Navigator.pop(context);
+                                          await _update().whenComplete(() {
+                                            if (Navigator.canPop(context))
+                                              Navigator.pop(context);
 
-                                                  setState(() {
-                                                    editingData = false;
-                                                  });
-                                                });}
-                                              : null,
-                                          child: Text('변경하기'),
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Color(0xff646CAA)),
-                                            foregroundColor: MaterialStateProperty.all(Colors.white),
-                                          ),
+                                          setState(() {
+                                            editingData = false;
+                                          });
+                                      });}
+                                        : null,
+                                        child: Text('변경하기'),
+                                        style: ButtonStyle(
+                                          backgroundColor: MaterialStateProperty.all(Color(0xff646CAA)),
+                                          foregroundColor: MaterialStateProperty.all(Colors.white),
                                         ),
-                                        ElevatedButton(
-                                          onPressed: ! editingData
-                                              ? () async {
-                                                FocusManager.instance.primaryFocus?.unfocus();
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: ! editingData
+                                        ? () async {
+                                          FocusManager.instance.primaryFocus?.unfocus();
 
-                                                // 버튼 중복 클릭 시 재호출 방지
-                                                if (editingData) return;
+                                          // 버튼 중복 클릭 시 재호출 방지
+                                          if (editingData) return;
 
-                                                setState(() {
-                                                  editingData = true;
-                                                });
+                                          setState(() {
+                                            editingData = true;
+                                          });
 
-                                                petController.selectedPetScrollIndex = 0;
-                                                homeSliderController.sliderIdx = 0;
+                                          petController.selectedPetScrollIndex = 0;
+                                          homeSliderController.sliderIdx = 0;
 
-                                                await _delete().whenComplete(() {
-                                                  if (Navigator.canPop(context)) {
-                                                    Navigator.pop(context);
-                                                  }
+                                          await _delete().whenComplete(() {
+                                            if (Navigator.canPop(context)) {
+                                              Navigator.pop(context);
+                                            }
 
-                                                  setState(() {
-                                                    editingData = false;
-                                                  });
-                                                });
-                                              }
-                                              : null,
-                                          child: Text('삭제하기'),
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Color(0xff646CAA)),
-                                            foregroundColor: MaterialStateProperty.all(Colors.white),
-                                          ),
-                                ),
-                                      ],
-                                    )
-                                  : Center(
-                                      child: CircularProgressIndicator(),
-                                    ),
+                                            setState(() {
+                                              editingData = false;
+                                            });});}
+                                        : null,
+                                        child: Text('삭제하기'),
+                                        style: ButtonStyle(
+                                          backgroundColor: MaterialStateProperty.all(Color(0xff646CAA)),
+                                          foregroundColor: MaterialStateProperty.all(Colors.white),
+                                        ),
+                                      ),
+                                    ],)
+                                  : Center(child: CircularProgressIndicator(),),
                           ],
                         ),
                       ),

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/button_controller.dart';
-import 'package:dogdack/controllers/main_controll.dart';
 import 'package:dogdack/controllers/walk_controller.dart';
+import 'package:dogdack/models/dog_data.dart';
 import 'package:dogdack/screens/calendar_detail/calender_detail.dart';
 
 import 'package:flutter/material.dart';
@@ -33,21 +33,26 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
+  final userRef = FirebaseFirestore.instance
+      .collection('Users/${'imcsh313@naver.com'.toString()}/Pets')
+      .withConverter(
+          fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+          toFirestore: (dogData, _) => dogData.toJson());
+  // input과 walk controller 불러오기
   final controller = Get.put(InputController());
+  final btnController = Get.put(ButtonController());
   final walkController = Get.put(WalkController());
 
-  // final Map<String, List<Object>> events = {'': []};
-
-  String docId = '';
-
+  // 강아지 정보 불러오기
   getName() async {
-    final controller = Get.put(InputController());
+    // final controller = Get.put(InputController());
     final petsRef = FirebaseFirestore.instance
         .collection('Users/${'imcsh313@naver.com'}/Pets');
     var dogDoc = await petsRef.get();
     List<String> dogs = [];
     // 자.. 여기다가 등록된 강아지들 다 입력하는거야
     for (int i = 0; i < dogDoc.docs.length; i++) {
+      // controller.dog_names[dogDoc.docs[i]['name']] = dogDoc.docs[i]['name'];
       dogs.insert(0, dogDoc.docs[i]['name']);
     }
     controller.valueList = dogs;
@@ -94,22 +99,22 @@ class _CalendarState extends State<Calendar> {
               data.docs[i]['beauty'],
             ];
           }
-          print(Calendar.events);
-          print('hi');
-          setState(() {});
-          // print(Calendar.events);
         }
       }
     }
+    print('얼마나 불러오는지 확인해보자');
+    setState(() {});
   }
+
+  int a = 0;
 
   @override
   void initState() {
     super.initState();
-    // getData();
-
     setState(() {
-      getName();
+      btnController.getName().then((value) {
+        setState(() {});
+      });
     });
   }
 
@@ -132,7 +137,6 @@ class _CalendarState extends State<Calendar> {
       const Color.fromARGB(255, 235, 199, 232),
     ];
 // Obx(() {
-    // 날짜별 박스 데코
     return Column(
       children: [
         Container(
@@ -140,11 +144,12 @@ class _CalendarState extends State<Calendar> {
           alignment: Alignment.centerLeft,
           child: Padding(
             padding: const EdgeInsets.only(left: 20),
-            child: GetBuilder<MainController>(
-              builder: (_) {
-                // getName();
-
+            child: StreamBuilder(
+              stream: userRef.snapshots(),
+              builder: (petContext, petSnapshot) {
+                // 등록한 강아지가 없으면
                 return controller.valueList.isEmpty
+                    // 강아지를 등록해달라는 dropbar
                     ? DropdownButton(
                         underline: Container(),
                         elevation: 0,
@@ -160,12 +165,14 @@ class _CalendarState extends State<Calendar> {
                         ).toList(),
                         onChanged: (value) {
                           controller.selectedValue = value.toString();
+                          // controller.selected_id =
+                          // controller.dog_names[value.toString()];
                           setState(() {
                             getName();
                           });
-                          // ButtonController.getName();
                         },
                       )
+                    // 등록된 강아지가 있으면 강아지 목록으로 dropdown
                     : DropdownButton(
                         icon: const Icon(
                           Icons.expand_more,
@@ -192,19 +199,22 @@ class _CalendarState extends State<Calendar> {
                           },
                         ).toList(),
                         onChanged: (value) {
+                          print('뭐하는놈인가');
                           controller.selectedValue = value.toString();
+                          print('미친놈아니야!');
+                          // controller.selected_id =
+                          // controller.dog_names[value.toString()];
+                          print('안녕 못한다네');
                           setState(() {
+                            print('안녕하신가');
                             getName();
                           });
-                          // ButtonController.getName();
                         },
                       );
               },
             ),
           ),
         ),
-        // GetBuilder<ButtonController>(builder: (_) {
-        //   return
         TableCalendar(
           // 날짜 언어 설정
           locale: 'ko_KR',
@@ -308,60 +318,53 @@ class _CalendarState extends State<Calendar> {
             markerBuilder: (context, day, events) {
               // 이벤트 비어 있으면 빈 Box
               if (events.isEmpty) {
-                return ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.white),
-                    onPressed: () {
-                      controller.setDate(day);
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const CalenderDetail()),
-                      );
-                    },
-                    child: const SizedBox());
+                return const SizedBox();
               }
-              return ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-                onPressed: () {
-                  controller.setDate(day);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 20),
+              return Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: GestureDetector(
+                  onTap: () {
+                    controller.setDate(day);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CalenderDetail(),
+                      ),
+                    );
+                  },
                   child: ListView(
                     children: <Widget>[
                       SizedBox(
                         height: 20,
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          elevation: 0,
-                          child: ListTile(
-                            // tileColor: Colors.black,
-                            shape: const RoundedRectangleBorder(
+                        child: Container(
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            elevation: 0,
+                            child: ListTile(
+                              shape: const RoundedRectangleBorder(
                                 borderRadius: BorderRadius.all(
-                              Radius.circular(3),
-                            )),
-                            tileColor: events[0] == true
-                                ? colors[0]
-                                : const Color.fromARGB(255, 255, 255, 255),
+                                  Radius.circular(3),
+                                ),
+                              ),
+                              tileColor: events[0] == true
+                                  ? colors[0]
+                                  : const Color.fromARGB(255, 255, 255, 255),
+                            ),
                           ),
                         ),
                       ),
                       SizedBox(
                         height: 20,
                         child: Card(
-                          // shape: RoundedRectangleBorder(
-                          //   borderRadius: BorderRadius.circular(100.0),
-                          // ),
                           elevation: 0,
                           child: ListTile(
                             shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                              Radius.circular(3),
-                            )),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(3),
+                              ),
+                            ),
                             tileColor: events[1] == true
                                 ? colors[1]
                                 : const Color.fromARGB(255, 255, 255, 255),
@@ -377,9 +380,10 @@ class _CalendarState extends State<Calendar> {
                           elevation: 0,
                           child: ListTile(
                             shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                              Radius.circular(3),
-                            )),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(3),
+                              ),
+                            ),
                             tileColor: events[2] == true
                                 ? colors[2]
                                 : const Color.fromARGB(255, 255, 255, 255),

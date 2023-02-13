@@ -1,13 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/mypage_controller.dart';
-import 'package:dogdack/screens/home/bar_char.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:dogdack/screens/home/widget/bar_chart.dart';
+import 'package:dogdack/screens/home/widget/calendar_list.dart';
 import 'package:flutter/material.dart';
 import 'package:dogdack/commons/logo_widget.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
+import '../../controllers/home_controller.dart';
 import '../../models/dog_data.dart';
 
 
@@ -27,6 +29,8 @@ class _HomePageState extends State<HomePage> {
 
   final sliderController = Get.put(HomePageSliderController());
   final homePageWalkCalculatorController = Get.put(HomePageWalkCalculatorController());
+  final homePageBarChartController = Get.put(HomePageBarChartController());
+  final homePageCalendarController = Get.put(HomePageCalendarController());
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +40,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(height * 0.12),
+          preferredSize: Size.fromHeight(height * 0.09),
           child: const LogoWidget(),
         ),
         body: SingleChildScrollView(
@@ -61,6 +65,7 @@ class _HomePageState extends State<HomePage> {
 
                     // 여기서 부터는 등록된 반려견이 1마리 이상 존재함.
 
+                    // 함께 한 날짜 구하기
                     //오늘 날짜 구하기
                     var _today = DateTime.now();
                     //현재 선택된 반려견 생일 문자열 파싱
@@ -72,6 +77,7 @@ class _HomePageState extends State<HomePage> {
                     }
                     int displayBirth = int.parse(_today.difference(DateTime.parse(_petBirth)).inDays.toString());
 
+                    // 산책 달성률 구하기
                     String curDogID = petSnapshot.data!.docs[sliderController.sliderIdx].id;
                     CollectionReference refCurDogWalk = FirebaseFirestore.instance.collection('Users/imcsh313@naver.com/Pets/').doc(curDogID).collection('Walk');
 
@@ -95,6 +101,12 @@ class _HomePageState extends State<HomePage> {
                       homePageWalkCalculatorController.getTodayWalkPercent();
                     });
 
+                    //그래프 데이터 계산
+                    homePageBarChartController.calculatorHomeChartData(curDogID, refCurDogWalk);
+
+                    //홈화면 캘린더 매핑
+                    homePageCalendarController.queryDocumentSnapshotDog = petSnapshot.data!.docs[sliderController.sliderIdx];
+
                     return Column(
                       children: [
                         Text(
@@ -104,53 +116,51 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         SizedBox(
-                          height: height * 0.02,
+                          height: height * 0.01,
                         ),
                         GetBuilder<HomePageWalkCalculatorController>(builder: (_) {
                           return Text(
                             '${homePageWalkCalculatorController.compPercent}%',
                             style: TextStyle(
                                 color: Color(0xff644CAA),
-                                fontSize: width * 0.07
+                                fontSize: width * 0.06
                             ),
                           );
                         }),
                         SizedBox(
-                          height: height * 0.01,
+                          height: height * 0.001,
                         ),
                         // 좌우 스크롤 슬라이더
-                        CarouselSlider.builder(
-                          options: CarouselOptions(
-                            viewportFraction: 0.5,
-                            enlargeCenterPage : true,
-                            enlargeFactor : 0.4,
-                            enableInfiniteScroll: true,
-                            onPageChanged: (index, reason) {
-                              setState(() {
-                                sliderController.sliderIdx = index;
-                              });
+                        GetBuilder<HomePageCalendarController>(builder: (_) {
+                          return CarouselSlider.builder(
+                            options: CarouselOptions(
+                              viewportFraction: 0.5,
+                              enlargeCenterPage : true,
+                              enlargeFactor : 0.4,
+                              enableInfiniteScroll: true,
+                              onPageChanged: (index, reason) {
+                                setState(() {
+                                  sliderController.sliderIdx = index;
+                                });
+                              },
+                              autoPlay: homePageCalendarController.isAutoFlag,
+                              autoPlayInterval: Duration(seconds: 7),
+                            ),
+                            itemCount: petSnapshot.data!.docs.length,
+                            itemBuilder: (context, itemIndex, pageViewIndex) {
+                              return CircleAvatar(
+                                radius: size.width * 0.23,
+                                child: ClipOval(
+                                  child: CachedNetworkImage(
+                                    imageUrl: petSnapshot.data!.docs[itemIndex].get('imageUrl'),
+                                    progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) => Icon(Icons.error),
+                                  ),
+                                ),
+                              );
                             },
-                            autoPlay: true,
-                          ),
-                          itemCount: petSnapshot.data!.docs.length,
-                          itemBuilder: (context, itemIndex, pageViewIndex) {
-                            return CircleAvatar(
-                              radius: size.width * 0.25,
-                              child: ClipOval(
-                                child: Container(
-                                  color: Colors.amber,
-                                  width: 50,
-                                  height: 50,
-                                ) /*FadeInImage.memoryNetwork(
-                                    fit: BoxFit.cover,
-                                    placeholder: kTransparentImage,
-                                    image: snapshot.data!.docs[itemIndex].get('imageUrl'),
-                                  )*/,
-                              ),
-                            );
-                          },
-                        ),
-                        SizedBox(height: size.height * 0.02),
+                          );
+                        }),
                         Center(
                           child: Text(
                             petSnapshot.data!.docs[sliderController.sliderIdx].get('name'),
@@ -167,14 +177,20 @@ class _HomePageState extends State<HomePage> {
                               color: Color(0xff504E5B),
                             ),
                           ),
-                        )
+                        ),
+                        SizedBox(height: size.height * 0.04),
+                        Text(
+                          '${petSnapshot.data!.docs[sliderController.sliderIdx]['name']}의 최애 산책 시간',
+                          style: TextStyle(color: Color(0xaa504E5B)),
+                        ),
+                        SizedBox(height: size.height * 0.01),
+                        HomePageBarChart(),
+                        SizedBox(height: size.height * 0.01),
+                        CalenderListView(),
                       ],
                     );
                   },
                 ),
-                /*Container(
-                    child: BarChartSample1(),
-                  ),*/
               ],
             ),
           ),
