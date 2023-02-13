@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/button_controller.dart';
+import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/controllers/walk_controller.dart';
 import 'package:dogdack/models/dog_data.dart';
 import 'package:dogdack/screens/calendar_detail/calender_detail.dart';
@@ -33,22 +34,19 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  final userRef = FirebaseFirestore.instance
-      .collection('Users/${'imcsh313@naver.com'.toString()}/Pets')
-      .withConverter(
-          fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
-          toFirestore: (dogData, _) => dogData.toJson());
+  late CollectionReference<DogData> userRef;
 
   // input과 walk controller 불러오기
   final controller = Get.put(InputController());
   final btnController = Get.put(ButtonController());
   final walkController = Get.put(WalkController());
+  final userController = Get.put(UserController());
 
   // 강아지 정보 불러오기
   getName() async {
     // final controller = Get.put(InputController());
     final petsRef = FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/Pets');
+        .collection('Users/${userController.loginEmail}/Pets');
     var dogDoc = await petsRef.get();
     List<String> dogs = [];
     // 자.. 여기다가 등록된 강아지들 다 입력하는거야
@@ -124,6 +122,12 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
+    userRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets')
+        .withConverter(
+        fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+        toFirestore: (dogData, _) => dogData.toJson());
+
     // getName();
     ButtonController().getName();
     Size screenSize = MediaQuery.of(context).size;

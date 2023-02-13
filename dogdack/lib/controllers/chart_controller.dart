@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dogdack/controllers/user_controller.dart';
 import 'package:get/get.dart';
 
 class ChartController extends GetxController {
-  final petsRef = FirebaseFirestore.instance
-      .collection('Users/${'imcsh313@naver.com'}/Pets');
+  final userController = Get.put(UserController());
 
   // 강아지 이름 key: 이름, values: 아이디
   Map dogNames = {};
@@ -43,7 +43,8 @@ class ChartController extends GetxController {
 
 // 데리고 있는 강아지 리스트를 불러온다.
   Future<void> getNames() async {
-    var dogDoc = await petsRef.orderBy('name').get();
+    var dogDoc = await FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets').orderBy('name').get();
     for (int i = 0; i < dogDoc.docs.length; i++) {
       String name = dogDoc.docs[i]['name'].toString();
       if (!dogNames.keys.toList().contains(name)) {
@@ -64,7 +65,7 @@ class ChartController extends GetxController {
       List<double> twoMonthGoal = List<double>.filled(60, 1);
       Map<String, List<double>> temp = {};
       CollectionReference refCurDogWalk = FirebaseFirestore.instance
-          .collection('Users/imcsh313@naver.com/Pets/')
+          .collection('Users/${userController.loginEmail}/Pets/')
           .doc(dogNames.values.toList()[i].toString())
           .collection('Walk');
 

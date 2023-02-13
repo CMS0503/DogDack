@@ -17,17 +17,12 @@ import '../controllers/user_controller.dart';
 import '../models/user_data.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+  MainPage({Key? key}) : super(key: key);
 
-  @override
-  State<MainPage> createState() => _MainPageState();
-}
-
-class _MainPageState extends State<MainPage> {
-  final mainController = Get.put(MainController());
   final userController = Get.put(UserController());
 
   void initUserDB() {
+    final userColRef = FirebaseFirestore.instance.collection('Users');
     final userInfoRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/UserInfo');
 
     userController.loginEmail = FirebaseAuth.instance.currentUser!.email.toString();
@@ -43,50 +38,70 @@ class _MainPageState extends State<MainPage> {
             // 접속한 계정으로 설정
             userController.loginEmail = FirebaseAuth.instance.currentUser!.email.toString();
           }
+
+          userController.update();
         });
       } else {
+        userColRef.get().then((value) {
+          userColRef.doc(FirebaseAuth.instance.currentUser!.email).set({});
+        });
         userInfoRef.get().then((value) {
-          userInfoRef.doc('information').set(UserData(isHost: false, ).toJson());
+          userInfoRef.doc('information').set(UserData(isHost: false, hostEmail: '', password: '', phoneNumber: '').toJson());
         });
       }
     });
   }
 
   @override
+  State<MainPage> createState(){
+    initUserDB();
+    return _MainPageState();
+  }
+}
+
+class _MainPageState extends State<MainPage> {
+  final mainController = Get.put(MainController());
+  final userController = Get.put(UserController());
+
+  @override
   void initState() {
     super.initState();
-    initUserDB();
   }
 
   @override
   Widget build(BuildContext context) {
-    if(userController.initFlag == false) {
-      //여기서 유저 데이터 DB 초기화
-      initUserDB();
-      userController.initFlag = true;
-    }
 
     return Obx(() => Scaffold(
       body: Stack(children: [
         Offstage(
           offstage: mainController.tabindex != 0,
-          child: HomeNavigator(),
+          child: GetBuilder<UserController>(builder: (_) {
+            return HomeNavigator();
+          },),
         ),
         Offstage(
           offstage: mainController.tabindex != 1,
-          child: WalkNavigator(),
+          child: GetBuilder<UserController>(builder: (_) {
+            return WalkNavigator();
+          },),
         ),
         Offstage(
           offstage: mainController.tabindex != 2,
-          child: const CalenderNavigator(),
+          child: GetBuilder<UserController>(builder: (_) {
+            return CalenderNavigator();
+          },),
         ),
         Offstage(
           offstage: mainController.tabindex != 3,
-          child: const ChartNavigator(),
+          child: GetBuilder<UserController>(builder: (_) {
+            return ChartNavigator();
+          },),
         ),
         Offstage(
           offstage: mainController.tabindex != 4,
-          child: const MyPageNavigator(),
+          child: GetBuilder<UserController>(builder: (_) {
+            return MyPageNavigator();
+          },),
         ),
       ]),
       bottomNavigationBar: BottomNavigationBar(

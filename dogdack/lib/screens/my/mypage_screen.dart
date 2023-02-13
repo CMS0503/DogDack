@@ -202,13 +202,13 @@ class _MyPageState extends State<MyPage> {
                                   if(!userSnapshot.hasData)
                                     return CircularProgressIndicator();
 
-                                  String phNum = '아직 번호가 등록 되어 있지 않습니다.';
-                                  if(userSnapshot.data!.docs[0].get('phoneNumber') != null) {
-                                    phNum = userSnapshot.data!.docs[0].get('phoneNumber');
-                                  }
-
                                   return InkWell(
                                     onTap: () {
+                                      String phNum = '아직 번호가 등록 되어 있지 않습니다.';
+                                      if(userSnapshot.data!.docs[0].get('phoneNumber').toString().length != 0) {
+                                        phNum = userSnapshot.data!.docs[0].get('phoneNumber');
+                                      }
+
                                       showTextInputDialog(
                                         context: context,
                                         title: '전화 번호',

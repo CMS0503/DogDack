@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/button_controller.dart';
+import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/models/calender_data.dart';
 import 'package:dogdack/models/walk_data.dart';
 import 'package:dogdack/controllers/input_controller.dart';
@@ -34,6 +35,7 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
   final endController = TextEditingController();
   final distanceController = TextEditingController();
   final placeController = TextEditingController();
+  final userController = Get.put(UserController());
 
   FirebaseStorage storage = FirebaseStorage.instance;
 
@@ -61,7 +63,7 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
         final result = await storage
             .ref()
             .child(
-                '${'imcsh313@naver.com'}/dogs/${controller.selectedValue}/${controller.date}/$fileName')
+                '${userController.loginEmail}/dogs/${controller.selectedValue}/${controller.date}/$fileName')
             .putFile(
               imageFile,
               SettableMetadata(
@@ -99,7 +101,7 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
     final ListResult result = await storage
         .ref()
         .child(
-            '${'imcsh313@naver.com'}/dogs/${controller.selectedValue}/${controller.date}')
+            '${userController.loginEmail}/dogs/${controller.selectedValue}/${controller.date}')
         .list();
     final List<Reference> allFiles = result.items;
 
@@ -107,7 +109,7 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
         .collection(
           'Users',
         )
-        .doc('imcsh313@naver.com')
+        .doc(userController.loginEmail)
         .collection('Calendar')
         .doc(DateFormat('yyMMdd').format(controller.date))
         .get();
@@ -146,7 +148,7 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
     controller.saveName = controller.selectedValue;
     // Pet Collection 접근
     final petsRef = FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'.toString()}/Pets');
+        .collection('Users/${userController.loginEmail}/Pets');
     // 산책했는지 확인하는 변수(분)
     final walkCheck = (int.parse(controller.endTime.seconds.toString()) -
             int.parse(controller.startTime.seconds.toString())) /

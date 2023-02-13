@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/input_controller.dart';
+import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/screens/calendar_detail/widget/walk/cal_walk_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -38,6 +39,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
   final Completer<GoogleMapController> _controller = Completer();
   final walkController = Get.put(WalkController());
   final inputController = Get.put(InputController());
+  final userController = Get.put(UserController());
 
   @override
   void initState() {
@@ -62,7 +64,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
     String docId =
         inputController.dognames[inputController.selectedValue.toString()];
     CollectionReference petRef = FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/Pets/$docId/Walk');
+        .collection('Users/${userController.loginEmail}/Pets/$docId/Walk');
 
     await petRef.get().then(
       (value) async {
