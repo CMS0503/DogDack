@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/mypage_controller.dart';
@@ -143,12 +144,9 @@ class _WalkPageState extends State<WalkPage> {
                                           CircleAvatar(
                                             radius: size.width * 0.2,
                                             child: ClipOval(
-                                                child: Container(),
-                                                // FadeInImage.memoryNetwork(
-                                                //   fit: BoxFit.cover,
-                                                //   placeholder: kTransparentImage,
-                                                //   image: snapshot.data!.docs[itemIndex].get('imageUrl'),
-                                                // )
+                                                child: CachedNetworkImage(
+                                                  imageUrl: snapshot.data!.docs[itemIndex].get('imageUrl'),
+                                                )
                                             ),
                                           ),
                                           if(walkController.flagList.isNotEmpty) walkController.choiceDog(itemIndex, size.width),
@@ -156,7 +154,7 @@ class _WalkPageState extends State<WalkPage> {
                                       ),
                                     ),
                                     SizedBox(height: 10,),
-                                    Text("${snapshot.data!.docs[itemIndex].get('name')}", style: TextStyle(fontSize: 10)),
+                                    Text("${snapshot.data!.docs[itemIndex].get('name')}", style: TextStyle(fontSize: 20)),
                                   ],
                                 );
                               },
@@ -176,6 +174,7 @@ class _WalkPageState extends State<WalkPage> {
                                         }
                                       }
                                       walkController.isSelected.value = true;
+                                      walkController.dropdownValue = walkController.selDogs.first;
                                       // print(walkController.selDogs);
                                     },
                                     child: Text("선택")

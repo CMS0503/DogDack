@@ -65,12 +65,12 @@ class WalkController extends GetxController {
   RxInt curGoal = 0.obs;
   String curName = "";
 
-  // 산책 강아지 선택 modal 변수
+  // ---강아지 선택 modal---
   RxList flagList = [].obs;
   List selDogs = [];
   RxBool isSelected = false.obs;
+  RxString selUrl = "".obs;
 
-  // ---강아지 선택 modal---
   void makeFlagList(List temp) {
     flagList.value = temp;
     update();
@@ -98,7 +98,14 @@ class WalkController extends GetxController {
       ):Container();
   }
 
-  //----------------------
+  // ----------------------
+
+  // 산책화면 강아지 dropdown
+  String dropdownValue = "";
+
+  // ---------------------
+
+
   // LCD data
   String? phoneNumber;
   String? walkTimer;
@@ -114,7 +121,7 @@ class WalkController extends GetxController {
         temp = messege.data()['name'];
         petList.add(temp);
       }
-      print(petList);
+      // print(petList);
     }
   }
 
