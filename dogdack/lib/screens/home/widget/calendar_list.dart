@@ -106,8 +106,10 @@ class _CalenderListViewState extends State<CalenderListView> {
                       child: Icon(Icons.arrow_circle_right_outlined, size: size.width * 0.1, color: Color(0xff644CAA),),
                       onTap: () {
                         btnManagerIdx--;
-                        if(btnManagerIdx < 0) {
+                        if(btnManagerIdx == 0) {
                           endOfWeek = true;
+                        }
+                        if(btnManagerIdx < 0) {
                           btnManagerIdx = 0;
                         }
                         setState(() {
