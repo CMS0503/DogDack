@@ -204,7 +204,7 @@ class _MyPageState extends State<MyPage> {
 
                                   return InkWell(
                                     onTap: () {
-                                      String phNum = '아직 번호가 등록 되어 있지 않습니다.';
+                                      String phNum = '아직 번호가 등록 되지 않았어요!';
                                       if(userSnapshot.data!.docs[0].get('phoneNumber').toString().length != 0) {
                                         phNum = userSnapshot.data!.docs[0].get('phoneNumber');
                                       }
