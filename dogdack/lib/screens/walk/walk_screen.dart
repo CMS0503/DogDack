@@ -110,10 +110,10 @@ class _WalkPageState extends State<WalkPage> {
     final size = MediaQuery.of(context).size;
 
     return Opacity(
-      opacity: 0.7,
+      opacity: 0.8,
       child: Container(
           decoration: const BoxDecoration(color: Colors.grey),
-          height: h * 0.562,
+          height: h * 0.67,
           width: w,
           child: Align(
               alignment: Alignment.center,
@@ -225,7 +225,6 @@ class _WalkPageState extends State<WalkPage> {
                                                         child: const Text("확인"),
                                                       ),
                                                     ),
-                                                  ),
                                                 ],
                                               );
                                             }
@@ -248,7 +247,7 @@ class _WalkPageState extends State<WalkPage> {
                                         });
                                       }
                                     },
-                                    child: const Text("선택")),
+                                    child: const Text("출발하기!")),
                               ),
                             )
                           ],
@@ -257,7 +256,9 @@ class _WalkPageState extends State<WalkPage> {
                     );
                   },
                 ),
-              ))),
+              )
+          )
+      ),
     );
   }
 
