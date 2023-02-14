@@ -74,12 +74,18 @@ class _CalendarState extends State<Calendar> {
           final calRef = petsRef.doc(dogId).collection('Calendar');
           var data = await calRef.get();
           for (int i = 0; i < data.docs.length; i++) {
+            print('여기서 날짜가 나와야됨');
+
             Calendar.events[
                 '${data.docs[i].reference.id}/${controller.selectedValue}'] = [
               data.docs[i]['isWalk'],
               data.docs[i]['bath'],
               data.docs[i]['beauty'],
+              data.docs[i]['diary'],
+              data.docs[i]['imageUrl'],
             ];
+            print('diary 프린트 해보는곳');
+            print(data.docs[i]['diary']);
           }
           // setState(() {});
         }
@@ -94,11 +100,16 @@ class _CalendarState extends State<Calendar> {
           final calRef = petsRef.doc(dogId).collection('Calendar');
           var data = await calRef.get();
           for (int i = 0; i < data.docs.length; i++) {
+            print('여기서 날짜가 나와야됨');
+            print(i);
+            print(data.docs[i].reference.id);
             Calendar.events[
                 '${data.docs[i].reference.id}/${controller.selectedValue}'] = [
               data.docs[i]['isWalk'],
               data.docs[i]['bath'],
               data.docs[i]['beauty'],
+              data.docs[i]['diary'],
+              data.docs[i]['imageUrl'],
             ];
           }
         }
@@ -143,6 +154,7 @@ class _CalendarState extends State<Calendar> {
       const Color.fromARGB(255, 191, 172, 224),
       const Color.fromARGB(255, 235, 199, 232),
     ];
+
 // Obx(() {
     return Column(
       children: [
@@ -329,9 +341,28 @@ class _CalendarState extends State<Calendar> {
                     controller.setDate(day);
                     // detail로 넘길 date
                     controller.date = day;
-                    controller.distance = Calendar.events[3].toString();
-                    print(
-                        'controller.distance in calendar.dart : ${controller.distance}');
+                    // controller.distance = Calendar.events[3].toString();
+                    // print('안녕하신지요술사');
+                    // print(events);
+                    // print(events[0]);
+
+                    setState(() {
+                      // print('다람쥐');
+                      // print(events[1].runtimeType);
+                      // print("${controller.bath.runtimeType}1");
+                      controller.bath = events[1] as bool;
+                      controller.beauty = events[2] as bool;
+                      controller.diary = events[3] as String;
+                      // controller.imgUrl = events[4][0];
+                      print('여기입니다 여기');
+                      print(events[4].runtimeType);
+                      // controller.imageUrl = events[4].toString();
+                      print('다람쥐람쥐');
+                      print(events);
+                      // controller.diary = events[3];
+                      // print('여기서 불리언확인');
+                      // print(controller.beauty);
+                    });
 
                     Navigator.push(
                       context,

@@ -45,19 +45,22 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
   void initState() {
     super.initState();
 
-    setPoly().then((result) {
-      _polyline.add(
-        Polyline(
-            polylineId: const PolylineId('1'),
-            points: latlng,
-            width: 3,
-            color: Colors.blue),
-      );
-      walkController.updateState();
-    });
+    setPoly().then(
+      (result) {
+        _polyline.add(
+          Polyline(
+              polylineId: const PolylineId('1'),
+              points: latlng,
+              width: 3,
+              color: Colors.blue),
+        );
+        walkController.updateState();
+      },
+    );
   }
 
   Future<void> setPoly() async {
+    print('@@@@@@@@@@@@@@@@@@@@무한로딩체크@@@@@@@@@@@@@@@@@@@@@');
     latlng.clear();
     String docId =
         inputController.dognames[inputController.selectedValue.toString()];
@@ -89,11 +92,18 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
             widget.geodata = snapshot.docs[0]['geolist'];
             // 장소, 거리, 시간 데이터
             widget.placedata = snapshot.docs[0]['place'];
+            inputController.distance = snapshot.docs[0]['distance'].toString();
+            inputController.startTime = snapshot.docs[0]['startTime'];
+            inputController.endTime = snapshot.docs[0]['endTime'];
+            inputController.place = snapshot.docs[0]['place'];
 
             for (var i = 0; i < snapshot.docs.length; i++) {
               widget.timedata += snapshot.docs[i]['totalTimeMin'];
               widget.distdata += snapshot.docs[i]['distance'];
             }
+            print('@@@@@@@@@@@@@@@@ 무한로딩체크 @@@@@@@@@@@@@@@@@@@@');
+
+            // 여기 geodata 수정해야 될 거 같은데, 송빈님이랑 상의하기
             addPloy(widget.geodata);
           },
         );
@@ -111,6 +121,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
 
   @override
   Widget build(BuildContext context) {
+    print('@@@@@@@@@@@@@@@@@@@@무한로딩체크@@@@@@@@@@@@@@@@@@@@@');
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     double height = screenSize.height;

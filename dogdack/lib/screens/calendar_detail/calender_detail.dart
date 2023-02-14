@@ -29,7 +29,6 @@ class _CalenderDetailState extends State<CalenderDetail> {
   String diary = "오늘의 일기";
 
   ////////////////////////////////////파이어 베이스 연결 끝/////////////////////////////////////////////////////
-
   @override
   Widget build(BuildContext context) {
     String imageUrl = 'images/login/login_image.png';
@@ -93,21 +92,29 @@ class _CalenderDetailState extends State<CalenderDetail> {
                 children: [
                   // 등록한 날짜가 나와야 함
                   CalDetailDateWidget(
-                      time:
-                          "${controller.date.year}년 ${controller.date.month}월 ${controller.date.day}일 ${controller.date.hour}시 ${controller.date.second}분에서"),
+                    // time:
+                    //     "${controller.date.year}년 ${controller.date.month}월 ${controller.date.day}일 ${controller.date.hour}시 ${controller.date.second}분에서"
+                    time: DateTime.fromMicrosecondsSinceEpoch(
+                      controller.startTime.microsecondsSinceEpoch,
+                    ),
+                  ),
+
                   CalDetailDateWidget(
-                      time:
-                          "${controller.date.year}년 ${controller.date.month}월 ${controller.date.day}일 ${controller.date.hour}시 ${controller.date.second}분까지")
+                    time: DateTime.fromMicrosecondsSinceEpoch(
+                      controller.endTime.microsecondsSinceEpoch,
+                    ),
+                  )
                 ],
               ),
             ),
             // 산책 카드
             CalWalkCardWidget(
-                distance: controller.distance,
-                // 나중에 여러개로 바꿔야됨
-                imageUrl: imageUrl,
-                place: controller.place,
-                totalTimeMin: controller.time),
+              distance: controller.distance,
+              // 나중에 여러개로 바꿔야됨
+              imageUrl: imageUrl,
+              place: controller.place,
+              totalTimeMin: controller.time,
+            ),
             CalDetailTitleWidget(
               name: controller.selectedValue,
               title: "뷰티도장",

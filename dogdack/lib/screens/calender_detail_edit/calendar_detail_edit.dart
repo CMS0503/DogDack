@@ -224,10 +224,16 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
     super.initState();
     startController.text = DateFormat('hh:mm a')
         .format(
-            DateTime.fromMillisecondsSinceEpoch(controller.startTime.seconds))
+          DateTime.fromMicrosecondsSinceEpoch(
+              controller.startTime.microsecondsSinceEpoch),
+        )
         .toString();
+    print(startController.text);
     endController.text = DateFormat('hh:mm a')
-        .format(DateTime.fromMillisecondsSinceEpoch(controller.endTime.seconds))
+        .format(
+          DateTime.fromMicrosecondsSinceEpoch(
+              controller.endTime.microsecondsSinceEpoch),
+        )
         .toString();
     placeController.text = controller.place;
     distanceController.text = controller.distance;
