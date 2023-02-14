@@ -20,6 +20,10 @@ class myMap extends StatefulWidget {
 
 class _MapState extends State<myMap> {
   // late GoogleMapController _controller;
+  Color grey = const Color.fromARGB(255, 80, 78, 91);
+  Color violet = const Color.fromARGB(255, 100, 92, 170);
+  Color violet2 = const Color.fromARGB(255, 160, 132, 202);
+
   final Completer<GoogleMapController> _controller = Completer();
   final walkController = Get.put(WalkController());
 
@@ -49,7 +53,7 @@ class _MapState extends State<myMap> {
       target: LatLng(walkController.lat, walkController.lon),
       zoom: 17,
     );
-    updatePosition();
+    // updatePosition();
   }
 
   void updatePosition() async {
@@ -57,7 +61,7 @@ class _MapState extends State<myMap> {
     for (BluetoothService service in walkController.services!) {
       if (service.uuid.toString() == walkController.serviceUUID) {
         for (BluetoothCharacteristic characteristic
-            in service.characteristics) {
+        in service.characteristics) {
           if (characteristic.uuid.toString() ==
               walkController.characteristicUUID) {
             await characteristic.setNotifyValue(true);
@@ -137,42 +141,45 @@ class _MapState extends State<myMap> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      body: Stack(
-        children: [
-          GoogleMap(
-              // liteModeEnabled: true,
-              zoomControlsEnabled: false,
-              initialCameraPosition: _initialPosition!,
-              mapType: MapType.normal,
-              onMapCreated: (mapController) {
-                if (_controller.isCompleted == false) {
-                  _controller.complete(mapController);
-                }
-              },
-              markers: markers.toSet(),
-              polylines: {
-                Polyline(
-                  polylineId: const PolylineId('route'),
-                  visible: true,
-                  width: 5,
-                  points: latlng,
-                  color: Colors.blue,
-                ),
-              }),
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-                size.width * 0.01, size.height * 0.53, size.width * 0.01, 0),
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                      color: Theme.of(context).primaryColor, width: 3.0)),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Scaffold(
+        body: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: GoogleMap(
+                  // liteModeEnabled: true,
+                  zoomControlsEnabled: false,
+                  initialCameraPosition: _initialPosition!,
+                  mapType: MapType.normal,
+                  onMapCreated: (mapController) {
+                    if (_controller.isCompleted == false) {
+                      _controller.complete(mapController);
+                    }
+                  },
+                  markers: markers.toSet(),
+                  polylines: {
+                    Polyline(
+                      polylineId: const PolylineId('route'),
+                      visible: true,
+                      width: 5,
+                      points: latlng,
+                      color: Colors.blue,
+                    ),
+                  }),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(size.height * 0.01,
+                  size.height * 0.52, size.height * 0.01, 0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: violet2,
+                      width: 3,
+                    )),
                 height: size.height * 0.1,
                 // color: Colors.white,
                 child: Obx(
@@ -191,33 +198,31 @@ class _MapState extends State<myMap> {
                               _clickPlayButton();
                             },
                             child: walkController.isRunning.value
-                                ? Icon(Icons.pause,
-                                    color: Theme.of(context).primaryColor)
-                                : Icon(Icons.play_arrow,
-                                    color: Theme.of(context).primaryColor)),
+                                ? Icon(Icons.pause, color: violet2)
+                                : Icon(Icons.play_arrow, color: violet2)),
                       ),
-                      // 산책 시간
-                      Align(
-                        alignment: Alignment(
-                          Alignment.centerLeft.x + size.width * 0.0005,
-                          Alignment.center.y,
-                        ),
-                        child: Text(
-                          '${walkController.timeCount ~/ 360000} : ${walkController.timeCount ~/ 6000} : ${(walkController.timeCount % 6000) ~/ 100}',
-                          // (_timeCount ~/ 100).toString() + ' 초',
-                          style: const TextStyle(
-                              fontSize: 30,
-                              color: Color.fromARGB(255, 80, 78, 91)),
-                        ),
-                      ),
-                      // 산책 거리
-                      Align(
-                        alignment: Alignment(
-                          Alignment.centerRight.x - size.width * 0.0005,
-                          Alignment.center.y,
-                        ),
-                        child: Text(
-                          '$totalDistance m',
+                          // 산책 시간
+                          Align(
+                            alignment: Alignment(
+                              Alignment.centerLeft.x + size.width * 0.0005,
+                              Alignment.center.y,
+                            ),
+                            child: Text(
+                              '${walkController.timeCount ~/ 3600} : ${walkController.timeCount ~/ 60} : ${walkController.timeCount % 60}',
+                              // (_timeCount ~/ 100).toString() + ' 초',
+                              style: const TextStyle(
+                                  fontSize: 30,
+                                  color: Color.fromARGB(255, 80, 78, 91)),
+                            ),
+                          ),
+                          // 산책 거리
+                          Align(
+                            alignment: Alignment(
+                              Alignment.centerRight.x - size.width * 0.0005,
+                              Alignment.center.y,
+                            ),
+                            child: Text(
+                              '$totalDistance m',
                           // 'data',
                           style: const TextStyle(
                               fontSize: 30,
@@ -228,9 +233,9 @@ class _MapState extends State<myMap> {
                   ),
                 ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -254,7 +259,7 @@ class OutlineCircleButton extends StatelessWidget {
     this.onTap,
     this.borderSize = 0.5,
     this.radius = 20.0,
-    this.borderColor = const Color.fromARGB(255, 100, 92, 170),
+    this.borderColor = const Color.fromARGB(255, 160, 132, 202),
     this.foregroundColor = Colors.white,
     this.child,
   }) : super(key: key);

@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 import '../../controllers/home_controller.dart';
+import '../../controllers/user_controller.dart';
 import '../../models/dog_data.dart';
 
 
@@ -24,23 +25,27 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   // Firebase : 반려견 테이블 참조 값
-  final petsRef = FirebaseFirestore.instance.collection('Users/imcsh313@naver.com/Pets')
-      .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
+  late CollectionReference<DogData> petsRef;
 
   final sliderController = Get.put(HomePageSliderController());
   final homePageWalkCalculatorController = Get.put(HomePageWalkCalculatorController());
   final homePageBarChartController = Get.put(HomePageBarChartController());
   final homePageCalendarController = Get.put(HomePageCalendarController());
+  final userController = Get.put(UserController());
 
   @override
   Widget build(BuildContext context) {
+    petsRef = FirebaseFirestore.instance.collection('Users/${userController.loginEmail}/Pets')
+        .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
+
     Size size = MediaQuery.of(context).size;
     double width = size.width;
     double height = size.height;
 
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(height * 0.09),
+          preferredSize: Size.fromHeight(height * 0.08),
           child: const LogoWidget(),
         ),
         body: SingleChildScrollView(
@@ -59,7 +64,16 @@ class _HomePageState extends State<HomePage> {
                     // 불러온 데이터가 없을 경우 등록 안내
                     if (petSnapshot.data!.docs.length == 0) {
                       return Center(
-                        child: Text('마이 페이지에서 댕댕이를 등록해주세요!'),
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(0, size.height * 0.25, 0, 0),
+                          child: Column(
+                            children: [
+                              Image.asset('assets/dogs.png'),
+                              SizedBox(height: size.height * 0.05),
+                              Text('마이페이지에서 댕댕이를 등록해주세요!'),
+                            ],
+                          ),
+                        ),
                       );
                     }
 
@@ -79,7 +93,7 @@ class _HomePageState extends State<HomePage> {
 
                     // 산책 달성률 구하기
                     String curDogID = petSnapshot.data!.docs[sliderController.sliderIdx].id;
-                    CollectionReference refCurDogWalk = FirebaseFirestore.instance.collection('Users/imcsh313@naver.com/Pets/').doc(curDogID).collection('Walk');
+                    CollectionReference refCurDogWalk = petsRef.doc(curDogID).collection('Walk');
 
                     var startOfToday = Timestamp.fromDate(DateTime.now().subtract(Duration(hours: DateTime.now().hour, minutes: DateTime.now().minute, seconds: DateTime.now().second, milliseconds: DateTime.now().millisecond, microseconds: DateTime.now().microsecond)));
                     var endOfToday = Timestamp.fromDate(DateTime.now().add(Duration(days: 1, hours: -DateTime.now().hour, minutes: -DateTime.now().minute, seconds: -DateTime.now().second, milliseconds: -DateTime.now().millisecond, microseconds: -DateTime.now().microsecond)));

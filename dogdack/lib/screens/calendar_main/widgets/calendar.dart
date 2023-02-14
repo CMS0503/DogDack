@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/button_controller.dart';
+import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/controllers/walk_controller.dart';
 import 'package:dogdack/models/dog_data.dart';
 import 'package:dogdack/screens/calendar_detail/calender_detail.dart';
@@ -33,26 +34,24 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  final userRef = FirebaseFirestore.instance
-      .collection('Users/${'imcsh313@naver.com'.toString()}/Pets')
-      .withConverter(
-          fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
-          toFirestore: (dogData, _) => dogData.toJson());
+  late CollectionReference<DogData> userRef;
+
   // input과 walk controller 불러오기
   final controller = Get.put(InputController());
   final btnController = Get.put(ButtonController());
   final walkController = Get.put(WalkController());
+  final userController = Get.put(UserController());
 
   // 강아지 정보 불러오기
   getName() async {
     // final controller = Get.put(InputController());
     final petsRef = FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/Pets');
+        .collection('Users/${userController.loginEmail}/Pets');
     var dogDoc = await petsRef.get();
     List<String> dogs = [];
     // 자.. 여기다가 등록된 강아지들 다 입력하는거야
     for (int i = 0; i < dogDoc.docs.length; i++) {
-      // controller.dog_names[dogDoc.docs[i]['name']] = dogDoc.docs[i]['name'];
+      controller.dognames[dogDoc.docs[i]['name']] = '';
       dogs.insert(0, dogDoc.docs[i]['name']);
     }
     controller.valueList = dogs;
@@ -70,6 +69,8 @@ class _CalendarState extends State<Calendar> {
             .get();
         if (result.docs.isNotEmpty) {
           String dogId = result.docs[0].id;
+          controller.dognames[controller.selectedValue] = dogId.toString();
+          // Calendar 데이터 불러오기
           final calRef = petsRef.doc(dogId).collection('Calendar');
           var data = await calRef.get();
           for (int i = 0; i < data.docs.length; i++) {
@@ -89,6 +90,7 @@ class _CalendarState extends State<Calendar> {
             .get();
         if (result.docs.isNotEmpty) {
           String dogId = result.docs[0].id;
+          controller.dognames[controller.selectedValue] = dogId.toString();
           final calRef = petsRef.doc(dogId).collection('Calendar');
           var data = await calRef.get();
           for (int i = 0; i < data.docs.length; i++) {
@@ -97,12 +99,12 @@ class _CalendarState extends State<Calendar> {
               data.docs[i]['isWalk'],
               data.docs[i]['bath'],
               data.docs[i]['beauty'],
+              data.docs[i]['distance'],
             ];
           }
         }
       }
     }
-    print('얼마나 불러오는지 확인해보자');
     setState(() {});
   }
 
@@ -120,6 +122,12 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
+    userRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets')
+        .withConverter(
+        fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+        toFirestore: (dogData, _) => dogData.toJson());
+
     // getName();
     ButtonController().getName();
     Size screenSize = MediaQuery.of(context).size;
@@ -165,11 +173,11 @@ class _CalendarState extends State<Calendar> {
                         ).toList(),
                         onChanged: (value) {
                           controller.selectedValue = value.toString();
-                          // controller.selected_id =
-                          // controller.dog_names[value.toString()];
-                          setState(() {
-                            getName();
-                          });
+                          setState(
+                            () {
+                              getName();
+                            },
+                          );
                         },
                       )
                     // 등록된 강아지가 있으면 강아지 목록으로 dropdown
@@ -199,12 +207,7 @@ class _CalendarState extends State<Calendar> {
                           },
                         ).toList(),
                         onChanged: (value) {
-                          print('뭐하는놈인가');
                           controller.selectedValue = value.toString();
-                          print('미친놈아니야!');
-                          // controller.selected_id =
-                          // controller.dog_names[value.toString()];
-                          print('안녕 못한다네');
                           setState(() {
                             print('안녕하신가');
                             getName();
@@ -325,6 +328,8 @@ class _CalendarState extends State<Calendar> {
                 child: GestureDetector(
                   onTap: () {
                     controller.setDate(day);
+                    controller.distance = Calendar.events[3].toString();
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(

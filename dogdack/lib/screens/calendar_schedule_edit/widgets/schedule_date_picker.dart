@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/input_controller.dart';
+import 'package:dogdack/controllers/user_controller.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,28 +16,15 @@ class DatePicker extends StatefulWidget {
 class _DatePickerState extends State<DatePicker> {
   // 오늘 날짜를 기본으로 저장
   final controller = Get.put(InputController());
+  final userController = Get.put(UserController());
 
   DateTime date = DateTime.now();
-
-  // 강아지 이름 불러오기 추가
-  // final dogRef = FirebaseFirestore.instance
-  //     .collection('Users/${'imcsh313@naver.com'}/Calendar')
-  //     .withConverter(
-  //         fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
-  //         toFirestore: (dogData, _) => dogData.toJson());
-
-  // dogname =
-
-  // var selectedValue = '';
-  // final Map<String, List<Object>> events = {'': []};
-
-  final petsRef = FirebaseFirestore.instance
-      .collection('Users/${'imcsh313@naver.com'}/Pets');
 
   String docId = '';
 
   getName() async {
-    var dogDoc = await petsRef.get();
+    var dogDoc = await FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets').get();
     List<String> dogs = [];
     // 자.. 여기다가 등록된 강아지들 다 입력하는거야
     for (int i = 0; i < dogDoc.docs.length; i++) {
@@ -126,7 +114,7 @@ class _DatePickerState extends State<DatePicker> {
                                 controller.date = newDate!;
                               });
 
-                              // if (newDate == null) return;
+                              if (newDate == null) return;
                             },
                           ),
                           Container(

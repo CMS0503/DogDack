@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/walk_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:circular_profile_avatar/circular_profile_avatar.dart';
+import 'package:dogdack/models/dog_data.dart';
 
 import '../../../controllers/mypage_controller.dart';
 import '../../../models/dog_data.dart';
@@ -23,27 +25,35 @@ class _StatusState extends State<Status> {
   final petsRef = FirebaseFirestore.instance.collection('Users/${'imcsh313@naver.com'}/Pets')
       .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
 
+  Color grey = const Color.fromARGB(255, 80, 78, 91);
+  Color violet = const Color.fromARGB(255, 100, 92, 170);
+  Color violet2 = const Color.fromARGB(255, 160, 132, 202);
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     walkController.getCur();
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
-      elevation: 2.0,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Column(
-                  children: [
-                    Obx(() =>
-                      SizedBox(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Card(
+        // color: violet2,
+
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+          // side: BorderSide(color: Colors.black, width: 2)
+        ),
+        elevation: 2.0,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // SizedBox(height: 5,),
+              Row(
+                children: [
+                  Column(
+                    children: [
+                      Obx(() => SizedBox(
                         width: size.width * 0.2,
                         height: size.width * 0.2,
                         child: Stack(
@@ -267,6 +277,7 @@ class _StatusState extends State<Status> {
               ],
             ),
           ],
+
         ),
       ),
     );

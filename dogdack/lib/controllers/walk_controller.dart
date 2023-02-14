@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dogdack/controllers/user_controller.dart';
+import 'package:dogdack/models/user_data.dart';
 import 'package:dogdack/models/walk_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:dogdack/models/user_data.dart';
 
 import '../models/dog_data.dart';
 
@@ -17,7 +17,9 @@ class WalkController extends GetxController {
   final String serviceUUID = '0000ffe0-0000-1000-8000-00805f9b34fb';
   final String characteristicUUID = '0000ffe1-0000-1000-8000-00805f9b34fb';
 
-  RxBool isBleConnect = true.obs;
+  final userController = Get.put(UserController());
+
+  RxBool isBleConnect = false.obs;
 
   // 위도, 경도
   RxDouble latitude = 37.500735.obs;
@@ -114,7 +116,7 @@ class WalkController extends GetxController {
   void getList() async {
     String temp = "";
     await for (var snapshot in FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/Pets')
+        .collection('Users/${userController.loginEmail}/Pets')
         .snapshots()) {
       for (var messege in snapshot.docs) {
         temp = messege.data()['name'];
@@ -139,7 +141,7 @@ class WalkController extends GetxController {
     int temp = 0;
     int recTime = 0;
     await for (var snapshot in FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/Pets')
+        .collection('Users/${userController.loginEmail}/Pets')
         .snapshots()) {
       for (var messege in snapshot.docs) {
         cnt++;
@@ -172,20 +174,20 @@ class WalkController extends GetxController {
   void getData() async {
     final petsRef = FirebaseFirestore.instance
         .collection(
-            'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets')
+            'Users/${userController.loginEmail}/Pets')
         .withConverter(
             fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
             toFirestore: (dogData, _) => dogData.toJson());
 
     // Firebase : 유저 전화 번호 저장을 위한 참조 값
     final userRef = FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/UserInfo')
+        .collection('Users/${userController.loginEmail}/UserInfo')
         .withConverter(
             fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
             toFirestore: (userData, _) => userData.toJson());
 
     CollectionReference petRef = FirebaseFirestore.instance.collection(
-        'Users/${FirebaseAuth.instance.currentUser!.email.toString()}/Pets');
+        'Users/${userController.loginEmail}/Pets');
 
     QuerySnapshot _docInPets = await petRef.get();
 
@@ -196,7 +198,8 @@ class WalkController extends GetxController {
         .data()!
         .imageUrl!;
 
-    phoneNumber = (await userRef.doc('number').get()).data()!.phoneNumber;
+    // phoneNumber = (await userRef.doc('number').get()).data()!.phoneNumber;
+    phoneNumber = "0101010";
   }
 
   void addData(lat, lng) {
@@ -211,7 +214,7 @@ class WalkController extends GetxController {
     String docId = "";
 
     CollectionReference petRef = FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/Pets');
+        .collection('Users/${userController.loginEmail}/Pets');
 
     final petDoc = petRef.where("name", isEqualTo: curName);
     petDoc.get().then((value) {
@@ -219,7 +222,7 @@ class WalkController extends GetxController {
       // print('$curName의 문서 id : $docId');
 
       FirebaseFirestore.instance
-          .collection('Users/${'imcsh313@naver.com'}/Pets/$docId/Walk')
+          .collection('Users/${userController.loginEmail}/Pets/$docId/Walk')
           .withConverter(
             fromFirestore: (snapshot, options) =>
                 WalkData.fromJson(snapshot.data()!),
@@ -266,7 +269,7 @@ class WalkController extends GetxController {
   }
 
   void startTimer() {
-    timer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       timeCount++;
     });
     update();

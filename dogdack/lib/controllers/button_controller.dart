@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/input_controller.dart';
+import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar.dart';
 import 'package:get/get.dart';
 
@@ -9,6 +10,8 @@ class ButtonController extends GetxController {
 
   int get buttonindex => _buttonIndex.value;
 
+  final userController = Get.put(UserController());
+
   void changeButtonIndex(idx) {
     _buttonIndex.value = idx;
     update();
@@ -17,7 +20,7 @@ class ButtonController extends GetxController {
   getName() async {
     final controller = Get.put(InputController());
     final petsRef = FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/Pets');
+        .collection('Users/${userController.loginEmail}/Pets');
     var dogDoc = await petsRef.get();
     List<String> dogs = [];
     // 자.. 여기다가 등록된 강아지들 다 입력하는거야
@@ -39,6 +42,7 @@ class ButtonController extends GetxController {
             .get();
         if (result.docs.isNotEmpty) {
           String dogId = result.docs[0].id;
+          controller.dognames[controller.selectedValue] = dogId.toString();
           final calRef = petsRef.doc(dogId).collection('Calendar');
           var data = await calRef.get();
           for (int i = 0; i < data.docs.length; i++) {
@@ -49,10 +53,8 @@ class ButtonController extends GetxController {
               data.docs[i]['beauty'],
             ];
           }
-          // setState(() {});
         }
       } else {
-        // 그게 아니면 selectedValue로 데이터 가져오기
         var result = await petsRef
             .where("name", isEqualTo: controller.selectedValue)
             .get();
@@ -68,8 +70,6 @@ class ButtonController extends GetxController {
               data.docs[i]['beauty'],
             ];
           }
-          // setState(() {});
-          // print(Calendar.events);
         }
       }
     }

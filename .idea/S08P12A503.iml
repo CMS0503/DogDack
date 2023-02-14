@@ -6,6 +6,36 @@
       <excludeFolder url="file://$MODULE_DIR$/dogdack/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/dogdack/build" />
       <excludeFolder url="file://$MODULE_DIR$/dogdack/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/linux/flutter/ephemeral/.plugin_symlinks/dynamic_color/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/linux/flutter/ephemeral/.plugin_symlinks/dynamic_color/example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/linux/flutter/ephemeral/.plugin_symlinks/dynamic_color/example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/windows/flutter/ephemeral/.plugin_symlinks/path_provider_windows/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/windows/flutter/ephemeral/.plugin_symlinks/path_provider_windows/example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/windows/flutter/ephemeral/.plugin_symlinks/path_provider_windows/example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/windows/flutter/ephemeral/.plugin_symlinks/screen_brightness_windows/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/windows/flutter/ephemeral/.plugin_symlinks/screen_brightness_windows/example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/windows/flutter/ephemeral/.plugin_symlinks/screen_brightness_windows/example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/windows/flutter/ephemeral/.plugin_symlinks/dynamic_color/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/windows/flutter/ephemeral/.plugin_symlinks/dynamic_color/build" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/windows/flutter/ephemeral/.plugin_symlinks/dynamic_color/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/linux/flutter/ephemeral/.plugin_symlinks/path_provider_linux/build" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/linux/flutter/ephemeral/.plugin_symlinks/path_provider_linux/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/linux/flutter/ephemeral/.plugin_symlinks/path_provider_linux/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/linux/flutter/ephemeral/.plugin_symlinks/path_provider_linux/example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/linux/flutter/ephemeral/.plugin_symlinks/path_provider_linux/example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/linux/flutter/ephemeral/.plugin_symlinks/path_provider_linux/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/linux/flutter/ephemeral/.plugin_symlinks/dynamic_color/build" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/linux/flutter/ephemeral/.plugin_symlinks/dynamic_color/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/linux/flutter/ephemeral/.plugin_symlinks/dynamic_color/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/windows/flutter/ephemeral/.plugin_symlinks/path_provider_windows/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/windows/flutter/ephemeral/.plugin_symlinks/path_provider_windows/build" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/windows/flutter/ephemeral/.plugin_symlinks/path_provider_windows/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/windows/flutter/ephemeral/.plugin_symlinks/screen_brightness_windows/build" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/windows/flutter/ephemeral/.plugin_symlinks/screen_brightness_windows/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/windows/flutter/ephemeral/.plugin_symlinks/screen_brightness_windows/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/windows/flutter/ephemeral/.plugin_symlinks/dynamic_color/example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/windows/flutter/ephemeral/.plugin_symlinks/dynamic_color/example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/dogdack/windows/flutter/ephemeral/.plugin_symlinks/dynamic_color/example/.pub" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
