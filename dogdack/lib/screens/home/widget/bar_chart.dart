@@ -28,7 +28,8 @@ class _HomePageBarChartState extends State<HomePageBarChart> {
     switch (value.toInt()) {
       case 6: text = const Text('6am', style: style); break;
       case 12: text = const Text('12pm', style: style); break;
-      case 18: text = const Text('6pm', style: style); break;
+       case 18: text = const Text('6pm', style: style); break;
+      // case 24: text = const Text('12am', style: style); break;
       default: text = const Text('', style: style); break;
     }
     return SideTitleWidget(
