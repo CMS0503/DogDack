@@ -19,7 +19,7 @@ class WalkController extends GetxController {
 
   final userController = Get.put(UserController());
 
-  RxBool isBleConnect = false.obs;
+  RxBool isBleConnect = true.obs;
 
   // 위도, 경도
   RxDouble latitude = 37.500735.obs;
