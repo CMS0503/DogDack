@@ -182,8 +182,7 @@ class _MapState extends State<myMap> {
 
         latlng.add(
             LatLng(currentLocation!.latitude!, currentLocation!.longitude!));
-        walkController.addData(
-            currentLocation!.latitude, currentLocation!.longitude);
+
         setState(() {});
       },
     );
