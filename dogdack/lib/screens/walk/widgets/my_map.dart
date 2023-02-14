@@ -40,7 +40,7 @@ class _MapState extends State<myMap> {
 
   final ll.Distance distance = const ll.Distance();
   late LatLng temp;
-  double? totalDistance = 0;
+  // RxDouble? totalDistance = 0.0.obs;
 
   LocationData? currentLocation;
 
@@ -171,19 +171,21 @@ class _MapState extends State<myMap> {
             ),
           ),
         );
-        if (latlng.length > 1) {
-          totalDistance = totalDistance! +
-              calTotalDistance(
-                  ll.LatLng(latlng.last.latitude, latlng.last.longitude),
-                  ll.LatLng(
-                      currentLocation!.latitude!, currentLocation!.longitude!));
-          walkController.distance = totalDistance;
+        if (walkController.isStart && walkController.isRunning.value) {
+          if (latlng.length > 1) {
+            walkController.totalDistance!.value =
+                walkController.totalDistance!.value +
+                    calTotalDistance(
+                        ll.LatLng(latlng.last.latitude, latlng.last.longitude),
+                        ll.LatLng(currentLocation!.latitude!,
+                            currentLocation!.longitude!));
+          }
+
+          latlng.add(
+              LatLng(currentLocation!.latitude!, currentLocation!.longitude!));
+
+          setState(() {});
         }
-
-        latlng.add(
-            LatLng(currentLocation!.latitude!, currentLocation!.longitude!));
-
-        setState(() {});
       },
     );
   }
@@ -279,7 +281,7 @@ class _MapState extends State<myMap> {
                               Alignment.center.y,
                             ),
                             child: Text(
-                              '$totalDistance m',
+                              '${walkController.totalDistance} m',
                           // 'data',
                           style: const TextStyle(
                               fontSize: 25,

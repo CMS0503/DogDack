@@ -56,7 +56,7 @@ class WalkController extends GetxController {
   Timestamp? startTime;
   Timestamp? endTime;
 
-  double? distance = 0.0;
+  // double? distance = 0.0;
   int light = 0;
 
   // 강아지 정보
@@ -168,7 +168,7 @@ class WalkController extends GetxController {
       String pn = phoneNumber!;
       String timer =
           '${timeCount ~/ 3600}:${timeCount ~/ 60}:${timeCount % 60}';
-      String dist = '${distance!.toInt()}';
+      String dist = '${totalDistance!.toInt()}';
       String isLed = ledSig;
 
       Data data = Data(pn, timer, dist, isLed);
@@ -207,9 +207,9 @@ class WalkController extends GetxController {
   }
 
   void addData(List<LatLng> latlng) {
-    for(int i = 0; i < latlng.length; i++){
-      geolist?.add(GeoPoint(latlng[i].latitude, latlng[i].longitude));
-    }
+    // for(int i = 0; i < latlng.length; i++){
+    //   geolist?.add(GeoPoint(latlng[i].latitude, latlng[i].longitude));
+    // }
     update();
   }
 
@@ -239,13 +239,13 @@ class WalkController extends GetxController {
             // .doc('${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}')
             // .set(WalkData(
             .add(WalkData(
-              geolist: geolist,
+          geolist: geolist,
               startTime: startTime,
               endTime: endTime,
               totalTimeMin: timeCount.value ~/ 6000,
               isAuto: true,
               // place: ,
-              distance: distance,
+              distance: totalDistance.toInt(),
               goal: goal.value,
             ));
 
@@ -281,6 +281,24 @@ class WalkController extends GetxController {
     _device = device;
     isBleConnect.value = true;
     update();
+  }
+
+  void disconnect() {
+    try {
+      isSelected.value == false;
+      goal.value = 0;
+      isRunning.value = false;
+      isStart = false;
+      totalDistance.value = 0;
+      timeCount.value = 0;
+      rectime = 0;
+
+      // 강아지 선택 초기화
+      // flagList = [].obs;
+      // selDogs = [];
+      // isSelected = false.obs;
+      // selUrl = "".obs;
+    } catch (e) {}
   }
 
   void updateWalkingState() {

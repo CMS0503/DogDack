@@ -345,7 +345,7 @@ class _WalkPageState extends State<WalkPage> {
               decoration: const BoxDecoration(
                   color: Colors.grey,
                   borderRadius: BorderRadius.all(Radius.circular(15))),
-              height: h * 0.6,
+              height: h * 0.67,
               width: w,
             ),
           ),
@@ -398,15 +398,15 @@ class _WalkPageState extends State<WalkPage> {
                           child: TextButton(
                             child: const Text(
                               '종료',
-                              style: TextStyle(color: Colors.red),
+                              style: TextStyle(color: Colors.red, fontSize: 16),
                             ),
                             onPressed: () {
                               walkController.endTime = Timestamp.now();
                               walkController.addData(walkController.latlng);
                               walkController.sendDB();
+                              walkController.disconnect();
                               // 캘린더 화면으로
                               mainController.changeTabIndex(2);
-                              // 캘린더 상세화면으로 이동해야함
                             },
                           ),
                         ),
