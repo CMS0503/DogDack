@@ -45,18 +45,16 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
   void initState() {
     super.initState();
 
-    setPoly().then(
-      (result) {
-        _polyline.add(
-          Polyline(
-              polylineId: const PolylineId('1'),
-              points: latlng,
-              width: 3,
-              color: Colors.blue),
-        );
-        walkController.abv();
-      },
-    );
+    setPoly().then((result) {
+      _polyline.add(
+        Polyline(
+            polylineId: const PolylineId('1'),
+            points: latlng,
+            width: 3,
+            color: Colors.blue),
+      );
+      walkController.updateState();
+    });
   }
 
   Future<void> setPoly() async {
