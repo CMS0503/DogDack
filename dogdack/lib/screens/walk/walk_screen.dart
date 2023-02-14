@@ -33,35 +33,56 @@ class WalkPage extends StatelessWidget {
   }
 
   Widget requestBluetoothConnectWidget(w, h, context) {
-    return Container(
-      height: h * 0.5,
-      width: w,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 13),
+      child: Stack(
+        alignment: Alignment.center,
         children: [
-          const Text(
-            '블루투스 연결을 확인해주세요',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
+          Opacity(
+            opacity: 0.8,
+            child: Container(
+              decoration: const BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.all(Radius.circular(15))),
+              height: h * 0.6,
+              width: w,
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.bluetooth_outlined,
-                color: Colors.blue,
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              height: 100,
+              width: w * 0.8,
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(15)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 15),
+                  const Text(
+                    '블루투스 연결을 확인해주세요',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.bluetooth_outlined,
+                        color: Colors.blue,
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pushNamed(context, '/Ble'),
+                        child: const Text('지금 연결하러 가기'),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              TextButton(
-                onPressed: () => Navigator.pushNamed(context, '/Ble'),
-                child: const Text('지금 연결하러 가기'),
-              ),
-            ],
+            ),
           ),
-          const SizedBox(
-            height: 100,
-          )
         ],
       ),
     );
@@ -97,26 +118,26 @@ class WalkPage extends StatelessWidget {
               ),
             ),
             Container(
-              height: 200,
-              width: w * 0.9,
+              height: 170,
+              width: w * 0.8,
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(15)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                    height: 20,
+                    height: 15,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("권장 산책 시간 : ", style: TextStyle(fontSize: 25)),
+                      Text("권장 산책 시간 : ", style: TextStyle(fontSize: 20)),
                       Text('${walkController.rectime} 분',
-                          style: TextStyle(fontSize: 25)),
+                          style: TextStyle(fontSize: 20)),
                     ],
                   ),
                   Container(
-                    padding: EdgeInsets.all(20),
+                    padding: EdgeInsets.all(10),
                     child: Column(
                       children: [
                         Padding(
@@ -262,21 +283,20 @@ class WalkPage extends StatelessWidget {
           children: [
             const Status(),
             const SizedBox(height: 10),
-            walkController.isBleConnect.value == true
-                ? requestBluetoothConnectWidget(
-                    screenWidth, screenHeight, context)
-                : Stack(
-                    children: [
-                      mapAreaWidget(screenWidth, screenHeight),
-                      walkController.goal.value == 0
-                          ? walkTimeModal(screenWidth, screenHeight, context)
-                          : (walkController.isRunning.value ==
-                                  walkController.isStart)
-                              ? Container()
-                              : endWalkModal(
-                                  screenWidth, screenHeight, context),
-                    ],
-                  )
+            Stack(
+              children: [
+                mapAreaWidget(screenWidth, screenHeight),
+                walkController.isBleConnect.value == false
+                    ? requestBluetoothConnectWidget(
+                        screenWidth, screenHeight, context)
+                    : walkController.goal.value == 0
+                        ? walkTimeModal(screenWidth, screenHeight, context)
+                        : (walkController.isRunning.value ==
+                                walkController.isStart)
+                            ? Container()
+                            : endWalkModal(screenWidth, screenHeight, context),
+              ],
+            )
           ],
 
           // children: [
