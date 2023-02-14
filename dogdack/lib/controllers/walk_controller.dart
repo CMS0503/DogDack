@@ -19,7 +19,7 @@ class WalkController extends GetxController {
 
   final userController = Get.put(UserController());
 
-  RxBool isBleConnect = false.obs;
+  RxBool isBleConnect = true.obs;
 
   // 위도, 경도
   RxDouble latitude = 37.500735.obs;
@@ -85,15 +85,18 @@ class WalkController extends GetxController {
   Widget choiceDog(int itemIndex, double size) {
     return
       flagList[itemIndex]?
-      SizedBox(
-        height: size * 0.35,
+      Container(
+        // color: Colors.red,
+        height: size * 0.4,
         child: Align(
           alignment: Alignment.bottomRight,
-          child:
+            child:
           CircleAvatar(
-            backgroundImage: const AssetImage('assets/check.png') ,
-            backgroundColor: const Color(0xff504E5B),
-            radius: size * 0.07,
+            backgroundImage: const ExactAssetImage('assets/dogdack.png') ,
+            backgroundColor: Colors.transparent,
+            // backgroundColor: ,
+            radius: size * 0.12,
+
           ),
         ),
       ):Container();
@@ -202,8 +205,10 @@ class WalkController extends GetxController {
     phoneNumber = "0101010";
   }
 
-  void addData(lat, lng) {
-    geolist?.add(GeoPoint(lat, lng));
+  void addData(List<LatLng> latlng) {
+    for(int i = 0; i < latlng.length; i++){
+      geolist?.add(GeoPoint(latlng[i].latitude, latlng[i].longitude));
+    }
     update();
   }
 

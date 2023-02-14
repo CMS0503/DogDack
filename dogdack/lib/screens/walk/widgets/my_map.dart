@@ -110,17 +110,12 @@ class _MapState extends State<myMap> {
 
                   if (latlng.length > 1) {
                     totalDistance = totalDistance! +
-                        calTotalDistance(
-                            ll.LatLng(
-                                latlng.last.latitude, latlng.last.longitude),
-                            ll.LatLng(currentPosition.latitude,
-                                currentPosition.longitude));
+                        calTotalDistance(ll.LatLng(latlng.last.latitude, latlng.last.longitude),
+                            ll.LatLng(currentPosition.latitude, currentPosition.longitude));
                     walkController.distance = totalDistance;
                   }
 
                   latlng.add(currentPosition);
-                  walkController.addData(
-                      currentPosition.latitude, currentPosition.longitude);
                   print('totaldistance: $totalDistance');
                   setState(() {});
                 } catch (e) {
@@ -249,6 +244,7 @@ class _MapState extends State<myMap> {
     } else {
       print('timer stop');
       walkController.pauseTimer();
+      walkController.latlng.addAll(latlng);
     }
   }
 }

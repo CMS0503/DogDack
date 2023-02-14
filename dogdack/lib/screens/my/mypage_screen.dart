@@ -75,14 +75,11 @@ class _MyPageState extends State<MyPage> {
   // 총 산책 시간 계산
   Stream<num> getTotalWalkMin() async* {
     num totalWalkMin = 0; // 총 산책 시간
-    CollectionReference petRef = FirebaseFirestore.instance
-        .collection('Users/${userController.loginEmail}/Pets');
+    CollectionReference petRef = FirebaseFirestore.instance.collection('Users/${userController.loginEmail}/Pets');
     QuerySnapshot _docInPets = await petRef.get();
     for (int i = 0; i < _docInPets.docs.length; i++) {
-      String _docInPetsID =
-          _docInPets.docs[i].id; // Pets Collection 아래 문서 이름 (반려견 이름)
-      CollectionReference walkRef =
-      petsRef.doc('${_docInPetsID}').collection('Walk');
+      String _docInPetsID = _docInPets.docs[i].id; // Pets Collection 아래 문서 이름 (반려견 이름)
+      CollectionReference walkRef = petsRef.doc('${_docInPetsID}').collection('Walk');
       QuerySnapshot _docInWalk = await walkRef.get();
       for (int j = 0; j < _docInWalk.docs.length; j++) {
         totalWalkMin += _docInWalk.docs[j]['totalTimeMin'];
