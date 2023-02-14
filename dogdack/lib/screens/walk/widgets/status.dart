@@ -232,9 +232,21 @@ class _StatusState extends State<Status> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    '목표 산책 달성률',
-                    style: Theme.of(context).textTheme.bodyMedium,
+                  Container(
+                    width: size.width * 0.3,
+                    height: size.height * 0.035,
+                    decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 160, 132, 202),
+                        borderRadius: BorderRadius.circular(20)),
+                    child: const Center(
+                      child: Text(
+                        '목표 산책 달성률',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'bmjua',
+                            color: Colors.white),
+                      ),
+                    ),
                   ),
                   const SizedBox(
                     height: 3,
