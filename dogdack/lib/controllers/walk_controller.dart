@@ -87,19 +87,23 @@ class WalkController extends GetxController {
   }
 
   Widget choiceDog(int itemIndex, double size) {
-    return flagList[itemIndex]
-        ? SizedBox(
-            height: size * 0.35,
-            child: Align(
-              alignment: Alignment.bottomRight,
-              child: CircleAvatar(
-                backgroundImage: const AssetImage('assets/check.png'),
-                backgroundColor: const Color(0xff504E5B),
-                radius: size * 0.07,
-              ),
-            ),
-          )
-        : Container();
+    return
+      flagList[itemIndex]?
+      Container(
+        // color: Colors.red,
+        height: size * 0.4,
+        child: Align(
+          alignment: Alignment.bottomRight,
+            child:
+          CircleAvatar(
+            backgroundImage: const ExactAssetImage('assets/dogdack.png') ,
+            backgroundColor: Colors.transparent,
+            // backgroundColor: ,
+            radius: size * 0.12,
+
+          ),
+        ),
+      ):Container();
   }
 
   // ----------------------
@@ -202,8 +206,10 @@ class WalkController extends GetxController {
     phoneNumber = "01085382550";
   }
 
-  void addData(lat, lng) {
-    // geolist?.add(GeoPoint(lat, lng));
+  void addData(List<LatLng> latlng) {
+    for(int i = 0; i < latlng.length; i++){
+      geolist?.add(GeoPoint(latlng[i].latitude, latlng[i].longitude));
+    }
     update();
   }
 
@@ -324,18 +330,18 @@ class WalkController extends GetxController {
   Future<void> sendDataToArduino(data) async {
     String json = jsonEncode(data) + '\n';
 
-    // for (BluetoothService service in services!) {
-    //   if (service.uuid.toString() == serviceUUID) {
-    //     for (BluetoothCharacteristic characteristic
-    //         in service.characteristics) {
-    //       if (characteristic.uuid.toString() == characteristicUUID) {
-    //         await characteristic.write(utf8.encode(json),
-    //             withoutResponse: true);
-    //         print('Send Data: $json');
-    //       }
-    //     }
-    //   }
-    // }
+    for (BluetoothService service in services!) {
+      if (service.uuid.toString() == serviceUUID) {
+        for (BluetoothCharacteristic characteristic
+            in service.characteristics) {
+          if (characteristic.uuid.toString() == characteristicUUID) {
+            await characteristic.write(utf8.encode(json),
+                withoutResponse: true);
+            print('Send Data: $json');
+          }
+        }
+      }
+    }
   }
 }
 

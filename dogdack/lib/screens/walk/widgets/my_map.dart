@@ -259,31 +259,31 @@ class _MapState extends State<myMap> {
                                 ? Icon(Icons.pause, color: violet2)
                                 : Icon(Icons.play_arrow, color: violet2)),
                       ),
-                      // 산책 시간
-                      Align(
-                        alignment: Alignment(
-                          Alignment.centerLeft.x + size.width * 0.0005,
-                          Alignment.center.y,
-                        ),
-                        child: Text(
-                          '${walkController.timeCount ~/ 3600} : ${walkController.timeCount ~/ 60} : ${walkController.timeCount % 60}',
-                          // (_timeCount ~/ 100).toString() + ' 초',
-                          style: const TextStyle(
-                              fontSize: 30,
-                              color: Color.fromARGB(255, 80, 78, 91)),
-                        ),
-                      ),
-                      // 산책 거리
-                      Align(
-                        alignment: Alignment(
-                          Alignment.centerRight.x - size.width * 0.0005,
-                          Alignment.center.y,
-                        ),
-                        child: Text(
-                          '$totalDistance m',
+                          // 산책 시간
+                          Align(
+                            alignment: Alignment(
+                              Alignment.centerLeft.x + size.width * 0.0005,
+                              Alignment.center.y,
+                            ),
+                            child: Text(
+                              '${walkController.timeCount ~/ 3600} : ${walkController.timeCount ~/ 60} : ${walkController.timeCount % 60}',
+                              // (_timeCount ~/ 100).toString() + ' 초',
+                              style: const TextStyle(
+                                  fontSize: 25,
+                                  color: Color.fromARGB(255, 80, 78, 91)),
+                            ),
+                          ),
+                          // 산책 거리
+                          Align(
+                            alignment: Alignment(
+                              Alignment.centerRight.x - size.width * 0.0005,
+                              Alignment.center.y,
+                            ),
+                            child: Text(
+                              '$totalDistance m',
                           // 'data',
                           style: const TextStyle(
-                              fontSize: 30,
+                              fontSize: 25,
                               color: Color.fromARGB(255, 80, 78, 91)),
                         ),
                       ),
@@ -307,6 +307,7 @@ class _MapState extends State<myMap> {
     } else {
       print('timer stop');
       walkController.pauseTimer();
+      walkController.latlng.addAll(latlng);
     }
   }
 }
