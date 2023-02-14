@@ -12,6 +12,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../models/dog_data.dart';
 
+import 'package:dogdack/controllers/input_controller.dart';
+import 'package:intl/intl.dart';
+import 'package:dogdack/models/calender_data.dart';
+
 class WalkController extends GetxController {
   // 블루투스 장치 id
   final String serviceUUID = '0000ffe0-0000-1000-8000-00805f9b34fb';
@@ -109,7 +113,6 @@ class WalkController extends GetxController {
 
   // ---------------------
 
-
   // LCD data
   String? phoneNumber;
   String? walkTimer;
@@ -165,7 +168,7 @@ class WalkController extends GetxController {
       String pn = phoneNumber!;
       String timer =
           '${timeCount ~/ 3600}:${timeCount ~/ 60}:${timeCount % 60}';
-      String dist = '${distance!.toInt()}m';
+      String dist = '${distance!.toInt()}';
       String isLed = ledSig;
 
       Data data = Data(pn, timer, dist, isLed);
@@ -173,11 +176,9 @@ class WalkController extends GetxController {
     });
   }
 
-
   void getData() async {
     final petsRef = FirebaseFirestore.instance
-        .collection(
-            'Users/${userController.loginEmail}/Pets')
+        .collection('Users/${userController.loginEmail}/Pets')
         .withConverter(
             fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
             toFirestore: (dogData, _) => dogData.toJson());
@@ -189,8 +190,8 @@ class WalkController extends GetxController {
             fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
             toFirestore: (userData, _) => userData.toJson());
 
-    CollectionReference petRef = FirebaseFirestore.instance.collection(
-        'Users/${userController.loginEmail}/Pets');
+    CollectionReference petRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets');
 
     QuerySnapshot _docInPets = await petRef.get();
 
@@ -202,7 +203,7 @@ class WalkController extends GetxController {
         .imageUrl!;
 
     // phoneNumber = (await userRef.doc('number').get()).data()!.phoneNumber;
-    phoneNumber = "0101010";
+    phoneNumber = "01085382550";
   }
 
   void addData(List<LatLng> latlng) {
@@ -212,7 +213,8 @@ class WalkController extends GetxController {
     update();
   }
 
-  void sendDB() {
+  void sendDB() async {
+    final inputController = Get.put(InputController());
     print("-----------send to DB-------------");
     // geolist?.add(GeoPoint(23.412, 125.234125));
     // geolist?.add(GeoPoint(42.213, 142.234125));
@@ -221,30 +223,51 @@ class WalkController extends GetxController {
     CollectionReference petRef = FirebaseFirestore.instance
         .collection('Users/${userController.loginEmail}/Pets');
 
-    final petDoc = petRef.where("name", isEqualTo: curName);
-    petDoc.get().then((value) {
-      docId = value.docs[0].id;
-      // print('$curName의 문서 id : $docId');
+    selDogs.forEach((dogName) {
+      final petDoc = petRef.where("name", isEqualTo: dogName);
+      petDoc.get().then((value) {
+        docId = value.docs[0].id;
+        // print('$curName의 문서 id : $docId');
 
-      FirebaseFirestore.instance
-          .collection('Users/${userController.loginEmail}/Pets/$docId/Walk')
-          .withConverter(
-            fromFirestore: (snapshot, options) =>
-                WalkData.fromJson(snapshot.data()!),
-            toFirestore: (value, options) => value.toJson(),
-          )
-          // .doc('${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}')
-          // .set(WalkData(
-          .add(WalkData(
-            geolist: geolist,
-            startTime: startTime,
-            endTime: endTime,
-            totalTimeMin: timeCount.value ~/ 6000,
-            isAuto: true,
-            // place: ,
-            distance: distance,
-            goal: goal.value,
-          ));
+        FirebaseFirestore.instance
+            .collection('Users/${userController.loginEmail}/Pets/$docId/Walk')
+            .withConverter(
+              fromFirestore: (snapshot, options) =>
+                  WalkData.fromJson(snapshot.data()!),
+              toFirestore: (value, options) => value.toJson(),
+            )
+            // .doc('${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}')
+            // .set(WalkData(
+            .add(WalkData(
+              geolist: geolist,
+              startTime: startTime,
+              endTime: endTime,
+              totalTimeMin: timeCount.value ~/ 6000,
+              isAuto: true,
+              // place: ,
+              distance: distance,
+              goal: goal.value,
+            ));
+
+        // calendar 저장
+        petRef
+            .doc(docId)
+            .collection('Calendar')
+            .doc(DateFormat('yyMMdd').format(inputController.date).toString())
+            .withConverter(
+              fromFirestore: (snapshot, options) =>
+                  CalenderData.fromJson(snapshot.data()!),
+              toFirestore: (value, options) => value.toJson(),
+            )
+            .set(CalenderData(
+              isWalk: true,
+              bath: false,
+              beauty: false,
+              // distance: controller.distance,
+            ))
+            .then((value) => print("document added"))
+            .catchError((error) => print("Fail to add doc $error"));
+      });
     });
   }
 
@@ -297,13 +320,12 @@ class WalkController extends GetxController {
   }
 
   void initLCD() async {
-    Data data = Data('00000000000', '00:00:00', '0m', "1");
+    Data data = Data('00000000000', '00:00:00', '0', "1");
 
     String json = jsonEncode(data);
 
     sendDataToArduino(json);
   }
-
 
   Future<void> sendDataToArduino(data) async {
     String json = jsonEncode(data) + '\n';
@@ -330,16 +352,16 @@ class Data {
   final String isLedOn;
 
   Data(
-      this.phoneNumber,
-      this.timer,
-      this.distance,
-      this.isLedOn,
-      );
+    this.phoneNumber,
+    this.timer,
+    this.distance,
+    this.isLedOn,
+  );
 
   Map<String, dynamic> toJson() => {
-    'phoneNumber': phoneNumber,
-    'timer': timer,
-    'distance': distance,
-    'isLedOn': isLedOn,
-  };
+        'phoneNumber': phoneNumber,
+        'timer': timer,
+        'distance': distance,
+        'isLedOn': isLedOn,
+      };
 }
