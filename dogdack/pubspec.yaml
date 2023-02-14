@@ -94,6 +94,7 @@ flutter:
     - images/login/
     - assets/check.png
     - assets/dog.jpg
+    - assets/dogs.png
 
   fonts:
     - family: bmjua
