@@ -53,17 +53,21 @@ class _MapState extends State<myMap> {
       target: LatLng(walkController.lat, walkController.lon),
       zoom: 17,
     );
-    // updatePosition();
+    updatePosition();
   }
 
   void updatePosition() async {
+    print('update');
     GoogleMapController googleMapController = await _controller.future;
     for (BluetoothService service in walkController.services!) {
+      print('service: ${service}');
       if (service.uuid.toString() == walkController.serviceUUID) {
+        print('service ok');
         for (BluetoothCharacteristic characteristic
-        in service.characteristics) {
+            in service.characteristics) {
           if (characteristic.uuid.toString() ==
               walkController.characteristicUUID) {
+            print('characteristic ok');
             await characteristic.setNotifyValue(true);
             String stringValue = '';
             characteristic.value.listen((value) {

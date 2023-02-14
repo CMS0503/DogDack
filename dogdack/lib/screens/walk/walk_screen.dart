@@ -395,7 +395,7 @@ class _WalkPageState extends State<WalkPage> {
                               walkController.endTime = Timestamp.now();
                               walkController.sendDB();
                               // 캘린더 화면으로
-                              mainController.changeTabIndex(1);
+                              mainController.changeTabIndex(2);
                               // 캘린더 상세화면으로 이동해야함
                             },
                           ),
@@ -432,39 +432,25 @@ class _WalkPageState extends State<WalkPage> {
           children: [
             const Status(),
             const SizedBox(height: 10),
-            Stack(
-              children: [
-                mapAreaWidget(screenWidth, screenHeight),
-                walkController.isBleConnect.value == false
-                    ? requestBluetoothConnectWidget(
-                        screenWidth, screenHeight, context)
-                    : walkController.isSelected.value == false
-                        ? choiceDogModal(screenWidth, screenHeight, context)
-                        : walkController.goal.value == 0
-                            ? walkTimeModal(screenWidth, screenHeight, context)
-                            : (walkController.isRunning.value ==
-                                    walkController.isStart)
-                                ? Container()
-                                : endWalkModal(
-                                    screenWidth, screenHeight, context),
-              ],
-                )
-              ],
-
-          // children: [
-          //   const Status(),
-          //   const SizedBox(height: 10),
-          //   walkController.isBleConnect.value == false
-          //       ? requestBluetoothConnectWidget(screenWidth, screenHeight, context)
-          //       :Stack(
-          //           children: [
-          //             mapAreaWidget(screenWidth, screenHeight),
-          //             (walkController.isRunning.value == walkController.isStart)
-          //                 ? Container()
-          //                 : endWalkModal(screenWidth, screenHeight, context),
-          //           ],
-          //         ),
-          // ],
+            walkController.isBleConnect.value == false
+                ? requestBluetoothConnectWidget(
+                    screenWidth, screenHeight, context)
+                : Stack(
+                    children: [
+                      mapAreaWidget(screenWidth, screenHeight),
+                      walkController.isSelected.value == false
+                          ? choiceDogModal(screenWidth, screenHeight, context)
+                          : walkController.goal.value == 0
+                              ? walkTimeModal(
+                                  screenWidth, screenHeight, context)
+                              : (walkController.isRunning.value ==
+                                      walkController.isStart)
+                                  ? Container()
+                                  : endWalkModal(
+                                      screenWidth, screenHeight, context),
+                    ],
+                  )
+          ],
         ),
       ),
     );
