@@ -17,6 +17,10 @@ class WalkPage extends StatelessWidget {
   final walkController = Get.put(WalkController());
   final mainController = Get.put(MainController());
 
+  Color grey = const Color.fromARGB(255, 80, 78, 91);
+  Color violet = const Color.fromARGB(255, 100, 92, 170);
+  Color violet2 = const Color.fromARGB(255, 160, 132, 202);
+
   Widget mapAreaWidget(w, h) {
     return Container(
       height: h * 0.6,
@@ -67,46 +71,49 @@ class WalkPage extends StatelessWidget {
     return Opacity(
       opacity: 0.7,
       child: CarouselSlider(
-        options: CarouselOptions(
-
-        ),
-        items: [
-
-        ],
+        options: CarouselOptions(),
+        items: [],
       ),
     );
   }
 
   Widget walkTimeModal(w, h, context) {
     walkController.recommend();
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Opacity(
-        opacity: 0.8,
-        child: Container(
-          decoration: const BoxDecoration(color: Colors.grey),
-          height: h * 0.6,
-          width: w,
-          child: Align(
-            alignment: Alignment.center,
-            child: Container(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 13),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Opacity(
+              opacity: 0.8,
+              child: Container(
+                decoration: const BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.all(Radius.circular(15))),
+                height: h * 0.6,
+                width: w,
+              ),
+            ),
+            Container(
               height: 200,
               width: w * 0.9,
               decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(15)
-              ),
+                  color: Colors.white, borderRadius: BorderRadius.circular(15)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  SizedBox(
+                    height: 20,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text("권장 산책 시간 : ", style: TextStyle(fontSize: 25)),
-                      Text('${walkController.rectime} 분', style: TextStyle(fontSize: 25)),
+                      Text('${walkController.rectime} 분',
+                          style: TextStyle(fontSize: 25)),
                     ],
-                  ),
-                  const SizedBox(
-                    height: 10,
                   ),
                   Container(
                     padding: EdgeInsets.all(20),
@@ -115,19 +122,24 @@ class WalkPage extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
                           child: TextField(
-                            onChanged: (text){
+                            onChanged: (text) {
                               walkController.tmp_goal.value = int.parse(text);
                             },
                             decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10))),
                               labelText: '목표 산책 시간',
                             ),
                           ),
                         ),
                         ElevatedButton(
-                          onPressed: (){
-                            walkController.goal.value = walkController.tmp_goal.value;
+                          onPressed: () {
+                            walkController.goal.value =
+                                walkController.tmp_goal.value;
                           },
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: violet2),
                           child: Text("입력"),
                         )
                       ],
@@ -136,67 +148,74 @@ class WalkPage extends StatelessWidget {
                 ],
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
-
   }
 
   Widget endWalkModal(w, h, context) {
-    return Opacity(
-      opacity: 0.7,
-      child: Container(
-        decoration: const BoxDecoration(color: Colors.grey),
-        height: h * 0.6,
-        width: w,
-        child: Align(
-          alignment: Alignment.center,
-          child: Container(
-            height: 100,
-            width: w * 0.9,
-            decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(15)),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  height: 10,
-                ),
-                const Text('산책하기를 종료합니다'),
-                const Text('산책 거리가 짧으면 기록되지 않습니다.'),
-                const SizedBox(
-                  height: 5,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: w * 0.45,
-                      // decoration: BoxDecoration(color: Colors.red),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              minimumSize: const Size(50, 30)),
-                          child: Text(
-                            '산책 계속하기',
-                            style: Theme.of(context).textTheme.bodyMedium,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 13),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Opacity(
+            opacity: 0.8,
+            child: Container(
+              decoration: const BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.all(Radius.circular(15))),
+              height: h * 0.6,
+              width: w,
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              height: 100,
+              width: w * 0.8,
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(15)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Text('산책하기를 종료합니다'),
+                  const Text('산책 거리가 짧으면 기록되지 않습니다.'),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: w * 0.4,
+                        // decoration: BoxDecoration(color: Colors.red),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: const Size(50, 30)),
+                            child: Text(
+                              '산책 계속하기',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            onPressed: () {
+                              walkController.updateWalkingState();
+                              walkController.startTimer();
+                            },
                           ),
-                          onPressed: () {
-                            walkController.updateWalkingState();
-                            walkController.startTimer();
-                          },
                         ),
                       ),
-                    ),
-                    Container(
-                      width: w * 0.45,
-                      // decoration: BoxDecoration(color: Colors.blue),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: TextButton(
+                      Container(
+                        width: w * 0.4,
+                        // decoration: BoxDecoration(color: Colors.blue),
+                        child: Align(
+                          alignment: Alignment.center,
                           child: TextButton(
                             child: const Text(
                               '종료',
@@ -210,23 +229,21 @@ class WalkPage extends StatelessWidget {
                               // 캘린더 상세화면으로 이동해야함
                             },
                           ),
-                          onPressed: () => {},
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 5,
-                )
-              ],
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  )
+                ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
-
 
   // This widget is the root of your application.
   @override
@@ -245,37 +262,39 @@ class WalkPage extends StatelessWidget {
           children: [
             const Status(),
             const SizedBox(height: 10),
-            walkController.isBleConnect.value == false
-                ? requestBluetoothConnectWidget(screenWidth, screenHeight, context)
-                    : Stack(
-                  children: [
-                    mapAreaWidget(screenWidth, screenHeight),
-                    walkController.goal.value == 0
-                        ? walkTimeModal(screenWidth, screenHeight, context)
-                        : (walkController.isRunning.value == walkController.isStart)
-                        ? Container()
-                        : endWalkModal(screenWidth, screenHeight, context),
-                  ],
-                )
-              ],
+            walkController.isBleConnect.value == true
+                ? requestBluetoothConnectWidget(
+                    screenWidth, screenHeight, context)
+                : Stack(
+                    children: [
+                      mapAreaWidget(screenWidth, screenHeight),
+                      walkController.goal.value == 0
+                          ? walkTimeModal(screenWidth, screenHeight, context)
+                          : (walkController.isRunning.value ==
+                                  walkController.isStart)
+                              ? Container()
+                              : endWalkModal(
+                                  screenWidth, screenHeight, context),
+                    ],
+                  )
+          ],
 
-              // children: [
-              //   const Status(),
-              //   const SizedBox(height: 10),
-              //   walkController.isBleConnect.value == false
-              //       ? requestBluetoothConnectWidget(screenWidth, screenHeight, context)
-              //       :Stack(
-              //           children: [
-              //             mapAreaWidget(screenWidth, screenHeight),
-              //             (walkController.isRunning.value == walkController.isStart)
-              //                 ? Container()
-              //                 : endWalkModal(screenWidth, screenHeight, context),
-              //           ],
-              //         ),
-              // ],
-            ),
+          // children: [
+          //   const Status(),
+          //   const SizedBox(height: 10),
+          //   walkController.isBleConnect.value == false
+          //       ? requestBluetoothConnectWidget(screenWidth, screenHeight, context)
+          //       :Stack(
+          //           children: [
+          //             mapAreaWidget(screenWidth, screenHeight),
+          //             (walkController.isRunning.value == walkController.isStart)
+          //                 ? Container()
+          //                 : endWalkModal(screenWidth, screenHeight, context),
+          //           ],
+          //         ),
+          // ],
+        ),
       ),
     );
   }
 }
-
