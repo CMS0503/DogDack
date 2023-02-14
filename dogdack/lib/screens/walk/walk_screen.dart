@@ -1,8 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dogdack/controllers/mypage_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 import '../../controllers/walk_controller.dart';
 import '../../models/dog_data.dart';
@@ -11,11 +14,23 @@ import './widgets/status.dart';
 import '../../commons/logo_widget.dart';
 import '../../controllers/main_controll.dart';
 
-class WalkPage extends StatelessWidget {
+class WalkPage extends StatefulWidget {
   WalkPage({super.key});
 
+  @override
+  State<WalkPage> createState() => _WalkPageState();
+}
+
+class _WalkPageState extends State<WalkPage> {
   final walkController = Get.put(WalkController());
   final mainController = Get.put(MainController());
+  final petController = Get.put(PetController());
+
+  final petsRef = FirebaseFirestore.instance.collection('Users/imcsh313@naver.com/Pets')
+      .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
+
+  bool flag = false;
+  // List<bool> flagList = [];
 
   Color grey = const Color.fromARGB(255, 80, 78, 91);
   Color violet = const Color.fromARGB(255, 100, 92, 170);
@@ -23,7 +38,7 @@ class WalkPage extends StatelessWidget {
 
   Widget mapAreaWidget(w, h) {
     return Container(
-      height: h * 0.6,
+      height: h * 0.57,
       width: w,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
@@ -68,11 +83,121 @@ class WalkPage extends StatelessWidget {
   }
 
   Widget choiceDogModal(w, h, context) {
+
+    final size = MediaQuery.of(context).size;
+
     return Opacity(
       opacity: 0.7,
-      child: CarouselSlider(
-        options: CarouselOptions(),
-        items: [],
+      child: Container(
+          decoration: const BoxDecoration(color: Colors.grey),
+          height: h * 0.6,
+          width: w,
+          child: Align(
+              alignment: Alignment.center,
+              child: Container(
+                height: 250,
+                width: w * 0.9,
+                decoration: BoxDecoration(
+                    color: Colors.white, borderRadius: BorderRadius.circular(15)
+                ),
+                child: StreamBuilder(
+                  stream: petsRef.orderBy('createdAt').snapshots(),
+                  builder: (context, snapshot) {
+
+                    if (!snapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+
+                    // 불러온 데이터가 없을 경우 등록 안내
+                    if (snapshot.data!.docs.length == 0) {
+                      return Padding(
+                        padding: EdgeInsets.fromLTRB(0, size.height * 0.3, 0, 0),
+                        child: Text('댕댕이를 등록해주세요!'),
+                      );
+                    }
+                    return Column(
+                      children: [
+                        SizedBox(height: 20,),
+                        Stack(
+                          alignment: Alignment.center,
+                          children: <Widget> [
+                            CarouselSlider.builder(
+                              options: CarouselOptions(
+                                enlargeCenterPage: true,
+                                viewportFraction: 0.5,
+                                autoPlay: false,
+                                enableInfiniteScroll: false,
+                              ),
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (context, itemIndex, pageViewIndex){
+                                return Column(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        if(!flag){
+                                          var temp = List<bool>.filled(snapshot.data!.docs.length, false);
+                                          walkController.makeFlagList(temp);
+                                          flag = true;
+                                        }
+                                        walkController.setFlagList(itemIndex);
+                                        setState(() {});
+                                      },
+                                      child:
+                                        Stack(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: size.width * 0.2,
+                                            child: ClipOval(
+                                                child: CachedNetworkImage(
+                                                  imageUrl: snapshot.data!.docs[itemIndex].get('imageUrl'),
+                                                )
+                                            ),
+                                          ),
+                                          if(walkController.flagList.isNotEmpty) walkController.choiceDog(itemIndex, size.width),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 10,),
+                                    Text("${snapshot.data!.docs[itemIndex].get('name')}", style: TextStyle(fontSize: 20)),
+                                  ],
+                                );
+                              },
+                            ),
+                            Container(
+                              height: 220,
+                              width: 300,
+                              // color: Colors.red,
+                              child: Align(
+                                alignment: Alignment.bottomRight,
+                                child: ElevatedButton(
+                                    onPressed: (){
+                                      walkController.selDogs.clear();
+                                      for(int i = 0; i < walkController.flagList.length; i++){
+                                        if(walkController.flagList[i]){
+                                          walkController.selDogs.add(snapshot.data!.docs[i].get('name'));
+                                        }
+                                      }
+                                      walkController.isSelected.value = true;
+                                      walkController.dropdownValue = walkController.selDogs.first;
+                                      // print(walkController.selDogs);
+                                      petsRef.where('name', isEqualTo: walkController.dropdownValue).get().then((data) {
+                                        setState(() {
+                                          walkController.selUrl.value = data.docs[0]['imageUrl'];
+                                        });
+                                      });
+                                    },
+                                    child: Text("선택")
+                                ),
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    );
+                  },
+                ),
+              )
+          )
       ),
     );
   }
@@ -257,42 +382,25 @@ class WalkPage extends StatelessWidget {
         preferredSize: Size.fromHeight(screenHeight * 0.08),
         child: const LogoWidget(),
       ),
-      body: Obx(
-        () => Column(
+      body: Obx(() =>Column(
           children: [
             const Status(),
             const SizedBox(height: 10),
-            walkController.isBleConnect.value == true
-                ? requestBluetoothConnectWidget(
-                    screenWidth, screenHeight, context)
-                : Stack(
-                    children: [
-                      mapAreaWidget(screenWidth, screenHeight),
-                      walkController.goal.value == 0
-                          ? walkTimeModal(screenWidth, screenHeight, context)
-                          : (walkController.isRunning.value ==
-                                  walkController.isStart)
-                              ? Container()
-                              : endWalkModal(
-                                  screenWidth, screenHeight, context),
-                    ],
-                  )
+            walkController.isBleConnect.value == false
+                ? requestBluetoothConnectWidget(screenWidth, screenHeight, context)
+                : walkController.isSelected.value == false
+                ? choiceDogModal(screenWidth, screenHeight, context)
+                :Stack(
+              children: [
+                mapAreaWidget(screenWidth, screenHeight),
+                walkController.goal.value == 0
+                    ? walkTimeModal(screenWidth, screenHeight, context)
+                    : (walkController.isRunning.value == walkController.isStart)
+                    ? Container()
+                    : endWalkModal(screenWidth, screenHeight, context),
+              ],
+            )
           ],
-
-          // children: [
-          //   const Status(),
-          //   const SizedBox(height: 10),
-          //   walkController.isBleConnect.value == false
-          //       ? requestBluetoothConnectWidget(screenWidth, screenHeight, context)
-          //       :Stack(
-          //           children: [
-          //             mapAreaWidget(screenWidth, screenHeight),
-          //             (walkController.isRunning.value == walkController.isStart)
-          //                 ? Container()
-          //                 : endWalkModal(screenWidth, screenHeight, context),
-          //           ],
-          //         ),
-          // ],
         ),
       ),
     );
