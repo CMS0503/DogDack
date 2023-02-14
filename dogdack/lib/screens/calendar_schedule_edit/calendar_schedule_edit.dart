@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/button_controller.dart';
-import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/models/calender_data.dart';
 import 'package:dogdack/models/walk_data.dart';
 import 'package:dogdack/controllers/input_controller.dart';
@@ -28,7 +27,6 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
   final inputController = TextEditingController();
   final controller = Get.put(InputController());
   final buttonController = Get.put(ButtonController());
-  final userController = Get.put(UserController());
 
   // 완료 버튼 클릭 시 데이터 저장
   void fbstoreWrite() async {
@@ -36,7 +34,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
     controller.saveName = controller.selectedValue;
     // Pet Collection 접근
     final petsRef = FirebaseFirestore.instance
-        .collection('Users/${userController.loginEmail}/Pets');
+        .collection('Users/${'imcsh313@naver.com'.toString()}/Pets');
     // 산책했는지 확인하는 변수(분)
     final walkCheck = (int.parse(controller.endTime.seconds.toString()) -
             int.parse(controller.startTime.seconds.toString())) /
@@ -75,7 +73,6 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
             beauty: controller.beauty,
             isWalk: controller.walkCheck,
             imageUrl: controller.imageUrl,
-            // distance: controller.distance,
           ))
           .then((value) => print("document added"))
           .catchError((error) => print("Fail to add doc $error"));
