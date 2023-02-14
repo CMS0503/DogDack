@@ -57,9 +57,9 @@ class ChartController extends GetxController {
 // 두달동안의 데이터를 불러온다.
   Future<void> getData() async {
     for (int i = 0; i < dogNames.values.toList().length; i++) {
-      List<double> twoMonthHour = List<double>.filled(60, 0.001);
-      List<double> twoMonthDistance = List<double>.filled(60, 0.001);
-      List<double> twoMonthGoal = List<double>.filled(60, 0.001);
+      List<double> twoMonthHour = List<double>.filled(60, 0.000001);
+      List<double> twoMonthDistance = List<double>.filled(60, 0.000001);
+      List<double> twoMonthGoal = List<double>.filled(60, 0.000001);
       Map<String, List<double>> temp = {};
       CollectionReference refCurDogWalk = FirebaseFirestore.instance
           .collection('Users/${userController.loginEmail}/Pets/')

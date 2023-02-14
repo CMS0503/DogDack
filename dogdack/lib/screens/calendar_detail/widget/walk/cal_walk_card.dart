@@ -45,65 +45,10 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
   void initState() {
     super.initState();
 
-    setPoly().then(
-      (result) {
-        _polyline.add(
-          Polyline(
-              polylineId: const PolylineId('1'),
-              points: latlng,
-              width: 3,
-              color: Colors.blue),
-        );
-        walkController.abv();
-      },
-    );
+
+
   }
 
-  Future<void> setPoly() async {
-    latlng.clear();
-    String docId =
-        inputController.dognames[inputController.selectedValue.toString()];
-    CollectionReference petRef = FirebaseFirestore.instance
-        .collection('Users/${userController.loginEmail}/Pets/$docId/Walk');
-
-    await petRef.get().then(
-      (value) async {
-        // 달력에서 선택한 날짜
-        var selectedDay = inputController.date;
-        var startOfToday = Timestamp.fromDate(selectedDay);
-        var endOfToday =
-            Timestamp.fromDate(selectedDay.add(const Duration(days: 1)));
-
-        // 선택한 날짜의 산책 데이터를 내림차순 정렬(최신 데이터가 위로 오게)
-        await petRef
-            .where("startTime",
-                isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday)
-            .orderBy("startTime", descending: true)
-            .get()
-            .then(
-          (QuerySnapshot snapshot) async {
-            widget.geodata = snapshot.docs[0]['geolist'];
-            // 장소, 거리, 시간 데이터
-            widget.placedata = snapshot.docs[0]['place'];
-
-            for (var i = 0; i < snapshot.docs.length; i++) {
-              widget.timedata += snapshot.docs[i]['totalTimeMin'];
-              widget.distdata += snapshot.docs[i]['distance'];
-            }
-            addPloy(widget.geodata);
-          },
-        );
-      },
-    );
-
-    setState(() {});
-  }
-
-  Future<void> addPloy(data) async {
-    for (int i = 0; i < data.length; i++) {
-      latlng.add(LatLng(data[i].latitude, data[i].longitude));
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

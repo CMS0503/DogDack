@@ -30,6 +30,7 @@ class _ChartState extends State<Chart> {
         chartController.chartSelectedId.value = chartController.dogNames.values.toList()[0];
         chartController.chartSelectedName.value= chartController.dogNames.keys.toList()[0];
       };
+      setChartData();
       chartController.setData().then((value) {
         setState(() {});
       });
@@ -42,20 +43,20 @@ class _ChartState extends State<Chart> {
   String date_text = "주";
 
   // 일단 냅다 리스트로 불러와
-  List<double> day_hour_points = [1, 1, 1, 1, 1, 1, 1];
-  List<double> last_day_hour_points = [1, 1, 1, 1, 1, 1, 1];
-  List<double> week_hour_points = [1, 1, 1, 1, 1, 1, 1];
-  List<double> last_week_hour_points = [1, 1, 1, 1, 1, 1, 1];
+  List<double> day_hour_points = [];
+  List<double> last_day_hour_points = [];
+  List<double> week_hour_points = [];
+  List<double> last_week_hour_points = [];
 
-  List<double> day_distance_points = [1, 1, 1, 1, 1, 1, 1];
-  List<double> last_day_distance_points = [1, 1, 1, 1, 1, 1, 1];
-  List<double> week_distance_points = [1, 1, 1, 1, 1, 1, 1];
-  List<double> last_week_distance_points = [1, 1, 1, 1, 1, 1, 1];
+  List<double> day_distance_points = [];
+  List<double> last_day_distance_points = [];
+  List<double> week_distance_points = [];
+  List<double> last_week_distance_points = [];
 
-  List<double> day_goal_points = [1, 1, 1, 1, 1, 1, 1];
-  List<double> last_day_goal_points = [1, 1, 1, 1, 1, 1, 1];
-  List<double> week_goal_points = [1, 1, 1, 1, 1, 1, 1];
-  List<double> last_week_goal_points = [1, 1, 1, 1, 1, 1, 1];
+  List<double> day_goal_points = [];
+  List<double> last_day_goal_points = [];
+  List<double> week_goal_points = [];
+  List<double> last_week_goal_points = [];
 
   // 이번주 실제 산책 시간
   double day_hour_data = 0;
@@ -146,6 +147,7 @@ class _ChartState extends State<Chart> {
   Widget x_value_week = WeekWidget();
 
 
+
   void setChartData(){
     if (chartController.chartData.isEmpty) {
       print("데이터를 불러오는 중입니다.");
@@ -190,23 +192,35 @@ class _ChartState extends State<Chart> {
           .sublist(0, 60 - 30);
 
       for (int i = 0; i < day_hour_points.length; i++) {
-        if (day_hour_points[i].toInt() != 0) {
+        if (day_hour_points[i].floor() >1) {
           day_hour_data += day_hour_points[i];
+        }else{
+          day_hour_data+=0;
         }
-        if (last_day_hour_points[i].toInt() != 0) {
+        if (last_day_hour_points[i].toInt() >1) {
           last_day_hour_data += last_day_hour_points[i];
+        }else{
+          last_day_hour_data+=0;
         }
-        if (day_distance_points[i].toInt() != 0) {
+        if (day_distance_points[i].toInt() >1) {
           day_distance_data += day_distance_points[i];
+        }else{
+          day_distance_data +=0;
         }
-        if (last_day_distance_points[i].toInt() != 0) {
+        if (last_day_distance_points[i].toInt() >1) {
           last_day_distance_data += last_day_distance_points[i];
+        }else{
+          last_day_distance_data+=0;
         }
-        if (day_goal_points[i].toInt() != 0) {
+        if (day_goal_points[i].toInt() >1) {
           day_goal_data += day_goal_points[i];
+        }else{
+          day_goal_data+=0;
         }
-        if (last_day_goal_points[i].toInt() != 0) {
+        if (last_day_goal_points[i].toInt() >1) {
           last_day_goal_data += last_day_goal_points[i];
+        }else{
+          last_day_goal_data+=0;
         }
       }
       day_hour_data /= day_hour_points.length;
@@ -217,23 +231,35 @@ class _ChartState extends State<Chart> {
       last_day_goal_data /= last_day_goal_points.length;
 
       for (int i = 0; i < week_hour_points.length; i++) {
-        if (week_hour_points[i].toInt() != 0) {
+        if (week_hour_points[i].toInt() >1) {
           week_hour_data += week_hour_points[i];
+        }else{
+          week_hour_data+=0;
         }
-        if (last_week_hour_points[i].toInt() != 0) {
+        if (last_week_hour_points[i].toInt() >1) {
           last_week_hour_data += last_week_hour_points[i];
+        }else{
+          last_week_hour_data+=0;
         }
-        if (week_distance_points[i].toInt() != 0) {
+        if (week_distance_points[i].toInt() >1) {
           week_distance_data += week_distance_points[i];
+        }else{
+          week_distance_data+=0;
         }
-        if (last_week_distance_points[i].toInt() != 0) {
+        if (last_week_distance_points[i].toInt()>1) {
           last_week_distance_data += last_week_distance_points[i];
+        }else{
+          last_week_distance_data+=0;
         }
-        if (week_goal_points[i].toInt() != 0) {
+        if (week_goal_points[i].toInt()>1) {
           week_goal_data += week_goal_points[i];
+        }else{
+          week_goal_data+=0;
         }
-        if (last_week_goal_points[i].toInt() != 0) {
+        if (last_week_goal_points[i].toInt() >1) {
           last_week_goal_data += last_week_goal_points[i];
+        }else{
+          last_week_goal_data+=0;
         }
       }
       week_hour_data /= week_hour_points.length;
@@ -245,17 +271,26 @@ class _ChartState extends State<Chart> {
 
       if (day_goal_data.toInt() > 0) {
         day_achievement_rate = (day_hour_data / day_goal_data) * 100;
+      }else{
+        day_achievement_rate = 0;
       }
       if (last_day_goal_data.toInt() > 0) {
         last_day_achievement_rate =
             (last_day_hour_data / last_day_goal_data) * 100;
+      }else{
+        last_day_goal_data = 0;
+
       }
       if (week_goal_data.toInt()> 0) {
         week_achievement_rate = (week_hour_data / week_goal_data) * 100;
+      }else{
+        week_achievement_rate =0;
       }
       if (last_week_goal_data.toInt() > 0) {
         last_week_achievement_rate =
             (last_week_hour_data / last_week_goal_data) * 100;
+      }else{
+        last_week_goal_data = 0;
       }
 
       day_hour_increment = day_hour_data - last_day_hour_data;
@@ -309,161 +344,6 @@ class _ChartState extends State<Chart> {
             fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
             toFirestore: (dogData, _) => dogData.toJson());
 
-    setChartData();
-    // if (chartController.chartData.isEmpty) {
-    //   print("데이터를 불러오는 중입니다.");
-    // } else {
-    //   day_hour_points = chartController
-    //       .chartData[chartController.chartSelectedId]!["hour"]!
-    //       .sublist(60 - 7, 60);
-    //   last_day_hour_points = chartController
-    //       .chartData[chartController.chartSelectedId]!["hour"]!
-    //       .sublist(60 - 14, 60 - 7);
-    //   week_hour_points = chartController
-    //       .chartData[chartController.chartSelectedId]!["hour"]!
-    //       .sublist(60 - 30, 60);
-    //   last_week_hour_points = chartController
-    //       .chartData[chartController.chartSelectedId]!["hour"]!
-    //       .sublist(0, 60 - 30);
-    //
-    //   day_distance_points = chartController
-    //       .chartData[chartController.chartSelectedId]!["distance"]!
-    //       .sublist(60 - 7, 60);
-    //   last_day_distance_points = chartController
-    //       .chartData[chartController.chartSelectedId]!["distance"]!
-    //       .sublist(60 - 14, 60 - 7);
-    //   week_distance_points = chartController
-    //       .chartData[chartController.chartSelectedId]!["distance"]!
-    //       .sublist(60 - 30, 60);
-    //   last_week_distance_points = chartController
-    //       .chartData[chartController.chartSelectedId]!["distance"]!
-    //       .sublist(0, 60 - 30);
-    //
-    //   day_goal_points = chartController
-    //       .chartData[chartController.chartSelectedId]!["goal"]!
-    //       .sublist(60 - 7, 60);
-    //   last_day_goal_points = chartController
-    //       .chartData[chartController.chartSelectedId]!["goal"]!
-    //       .sublist(60 - 14, 60 - 7);
-    //   week_goal_points = chartController
-    //       .chartData[chartController.chartSelectedId]!["goal"]!
-    //       .sublist(60 - 30, 60);
-    //   last_week_goal_points = chartController
-    //       .chartData[chartController.chartSelectedId]!["goal"]!
-    //       .sublist(0, 60 - 30);
-    //
-    //   for (int i = 0; i < day_hour_points.length; i++) {
-    //     if (day_hour_points[i].toInt() != 0) {
-    //       day_hour_data += day_hour_points[i];
-    //     }
-    //     if (last_day_hour_points[i].toInt() != 0) {
-    //       last_day_hour_data += last_day_hour_points[i];
-    //     }
-    //     if (day_distance_points[i].toInt() != 0) {
-    //       day_distance_data += day_distance_points[i];
-    //     }
-    //     if (last_day_distance_points[i].toInt() != 0) {
-    //       last_day_distance_data += last_day_distance_points[i];
-    //     }
-    //     if (day_goal_points[i].toInt() != 0) {
-    //       day_goal_data += day_goal_points[i];
-    //     }
-    //     if (last_day_goal_points[i].toInt() != 0) {
-    //       last_day_goal_data += last_day_goal_points[i];
-    //     }
-    //   }
-    //   day_hour_data /= day_hour_points.length;
-    //   last_day_hour_data /= last_day_hour_points.length;
-    //   day_distance_data /= day_distance_points.length;
-    //   last_day_distance_data /= last_day_distance_points.length;
-    //   day_goal_data /= day_goal_points.length;
-    //   last_day_goal_data /= last_day_goal_points.length;
-    //
-    //   for (int i = 0; i < week_hour_points.length; i++) {
-    //     if (week_hour_points[i].toInt() != 0) {
-    //       week_hour_data += week_hour_points[i];
-    //     }
-    //     if (last_week_hour_points[i].toInt() != 0) {
-    //       last_week_hour_data += last_week_hour_points[i];
-    //     }
-    //     if (week_distance_points[i].toInt() != 0) {
-    //       week_distance_data += week_distance_points[i];
-    //     }
-    //     if (last_week_distance_points[i].toInt() != 0) {
-    //       last_week_distance_data += last_week_distance_points[i];
-    //     }
-    //     if (week_goal_points[i].toInt() != 0) {
-    //       week_goal_data += week_goal_points[i];
-    //     }
-    //     if (last_week_goal_points[i].toInt() != 0) {
-    //       last_week_goal_data += last_week_goal_points[i];
-    //     }
-    //   }
-    //   week_hour_data /= week_hour_points.length;
-    //   last_week_hour_data /= last_week_hour_points.length;
-    //   week_distance_data /= week_distance_points.length;
-    //   last_week_distance_data /= last_week_distance_points.length;
-    //   week_goal_data /= week_goal_points.length;
-    //   last_week_goal_data /= last_week_goal_points.length;
-    //
-    //   if (day_goal_data.toInt() > 0) {
-    //     day_achievement_rate = (day_hour_data / day_goal_data) * 100;
-    //   }
-    //   if (last_day_goal_data.toInt() > 0) {
-    //     last_day_achievement_rate =
-    //         (last_day_hour_data / last_day_goal_data) * 100;
-    //   }
-    //   if (week_goal_data.toInt()> 0) {
-    //     week_achievement_rate = (week_hour_data / week_goal_data) * 100;
-    //   }
-    //   if (last_week_goal_data.toInt() > 0) {
-    //     last_week_achievement_rate =
-    //         (last_week_hour_data / last_week_goal_data) * 100;
-    //   }
-    //
-    //   day_hour_increment = day_hour_data - last_day_hour_data;
-    //   if (day_hour_increment > 0) {
-    //     day_hour_increment_text = "늘었어요!";
-    //   } else {
-    //     day_hour_increment_text = "즐었어요!";
-    //   }
-    //
-    //   week_hour_increment = week_hour_data - last_week_hour_data;
-    //   if (week_hour_increment > 0) {
-    //     week_hour_increment_text = "늘었어요!";
-    //   } else {
-    //     week_hour_increment_text = "즐었어요!";
-    //   }
-    //   day_distance_increment = day_distance_data - last_day_distance_data;
-    //   if (day_distance_increment > 0) {
-    //     day_distance_increment_text = "증가했어요";
-    //   } else {
-    //     day_distance_increment_text = "감소했어요";
-    //   }
-    //   week_distance_increment = week_distance_data - last_week_distance_data;
-    //   if (week_distance_increment > 0) {
-    //     week_distance_increment_text = "증가했어요";
-    //   } else {
-    //     week_distance_increment_text = "감소했어요";
-    //   }
-    //
-    //   day_achievement_rate_increment =
-    //       day_achievement_rate - last_day_achievement_rate;
-    //   if (day_achievement_rate_increment > 0) {
-    //     day_achievement_increment_text = "올랐어요!";
-    //   } else {
-    //     day_achievement_increment_text = "떨어졌어요!";
-    //   }
-    //   week_achievement_rate_increment =
-    //       week_achievement_rate - last_week_achievement_rate;
-    //   if (week_achievement_rate_increment > 0) {
-    //     week_achievement_increment_text = "올랐어요!";
-    //   } else {
-    //     week_achievement_increment_text = "떨어졌어요!";
-    //   }
-    // }
-
-    // 위젯 선언
 
     Color grey = const Color.fromARGB(255, 80, 78, 91);
     Color violet = const Color.fromARGB(255, 100, 92, 170);
@@ -480,8 +360,8 @@ class _ChartState extends State<Chart> {
       message: day_hour_increment_text,
       title: "평균 산책시간",
       points: day_hour_points,
-      this_data: 0,
-      last_data: 0,
+      this_data: day_hour_data.toInt(),
+      last_data: day_hour_increment.toInt(),
       date_text: date_text,
       unit: "분",
       x_value: x_value,
@@ -492,8 +372,8 @@ class _ChartState extends State<Chart> {
       message: day_distance_increment_text,
       title: "평균 산책거리",
       points: day_distance_points,
-      last_data: 0,
-      this_data: 0,
+      last_data: day_distance_increment.toInt(),
+      this_data: day_distance_data.toInt(),
       date_text: date_text,
       unit: "미터",
       x_value: x_value,
@@ -563,11 +443,16 @@ class _ChartState extends State<Chart> {
       }
     }
 
-    change();
+
+    // 함수 실행 순서 바뀌면 안됨.
+
     chartController.getNames().then((value) {
       chartController.getData().then((value) {});
     });
-
+    print('day_hour_data1: ${day_hour_data}');
+    setChartData();
+    print('day_hour_data2: ${day_hour_data}');
+    change();
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     double height = screenSize.height;
@@ -611,6 +496,7 @@ class _ChartState extends State<Chart> {
                                   value.toString();
                               chartController.chartSelectedId.value =
                                   chartController.dogNames[value.toString()];
+                              setChartData();
                               setState(
                                 () {},
                               );
