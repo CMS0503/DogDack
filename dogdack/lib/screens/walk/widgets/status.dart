@@ -24,25 +24,6 @@ class _StatusState extends State<Status> {
       .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
 
 
-  // String imageurl = "";
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  //
-  //   setUrl().then((result) {
-  //     setState(() {});
-  //   });
-  // }
-  //
-  // Future<void> setImageUrl () async {
-  //   var documentSnapshot = await FirebaseFirestore.instance
-  //       .collection('Users/${'imcsh313@naver.com'}/Pets')
-  //
-  //
-  //   imageurl = walkController.ImageURL.toString();
-  // }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
