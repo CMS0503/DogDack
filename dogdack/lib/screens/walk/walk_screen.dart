@@ -22,12 +22,17 @@ class WalkPage extends StatefulWidget {
 class _WalkPageState extends State<WalkPage> {
   final walkController = Get.put(WalkController());
   final mainController = Get.put(MainController());
-  final petController = Get.put(PetController());
 
-  final petsRef = FirebaseFirestore.instance.collection('Users/imcsh313@naver.com/Pets')
-      .withConverter(fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!), toFirestore: (dogData, _) => dogData.toJson());
+  // final petController = Get.put(PetController());
+
+  final petsRef = FirebaseFirestore.instance
+      .collection('Users/imcsh313@naver.com/Pets')
+      .withConverter(
+          fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+          toFirestore: (dogData, _) => dogData.toJson());
 
   bool flag = false;
+
   // List<bool> flagList = [];
 
   Color grey = const Color.fromARGB(255, 80, 78, 91);
@@ -46,31 +51,55 @@ class _WalkPageState extends State<WalkPage> {
   }
 
   Widget requestBluetoothConnectWidget(w, h, context) {
-    return SizedBox(
-      height: h * 0.5,
-      width: w,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 13),
+      child: Stack(
+        alignment: Alignment.center,
         children: [
-          const Text(
-            '블루투스 연결을 확인해주세요',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
+          Opacity(
+            opacity: 0.8,
+            child: Container(
+              decoration: const BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.all(Radius.circular(15))),
+              height: h * 0.6,
+              width: w,
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.bluetooth_outlined,
-                color: Colors.blue,
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              height: 100,
+              width: w * 0.8,
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(15)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 15),
+                  const Text(
+                    '블루투스 연결을 확인해주세요',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.bluetooth_outlined,
+                        color: Colors.blue,
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pushNamed(context, '/Ble'),
+                        child: const Text('지금 연결하러 가기'),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              TextButton(
-                onPressed: () => Navigator.pushNamed(context, '/Ble'),
-                child: const Text('지금 연결하러 가기'),
-              ),
-            ],
+            ),
           ),
           const SizedBox(
             height: 100,
@@ -81,7 +110,6 @@ class _WalkPageState extends State<WalkPage> {
   }
 
   Widget choiceDogModal(w, h, context) {
-
     final size = MediaQuery.of(context).size;
 
     return Opacity(
@@ -96,12 +124,11 @@ class _WalkPageState extends State<WalkPage> {
                 height: 250,
                 width: w * 0.9,
                 decoration: BoxDecoration(
-                    color: Colors.white, borderRadius: BorderRadius.circular(15)
-                ),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15)),
                 child: StreamBuilder(
                   stream: petsRef.orderBy('createdAt').snapshots(),
                   builder: (context, snapshot) {
-
                     if (!snapshot.hasData) {
                       return const Center(child: CircularProgressIndicator());
                     }
@@ -109,16 +136,19 @@ class _WalkPageState extends State<WalkPage> {
                     // 불러온 데이터가 없을 경우 등록 안내
                     if (snapshot.data!.docs.isEmpty) {
                       return Padding(
-                        padding: EdgeInsets.fromLTRB(0, size.height * 0.3, 0, 0),
-                        child: const Text('댕댕이를 등록해주세요!'),
+                        padding:
+                            EdgeInsets.fromLTRB(0, size.height * 0.3, 0, 0),
+                        child: Text('댕댕이를 등록해주세요!'),
                       );
                     }
                     return Column(
                       children: [
-                        const SizedBox(height: 20,),
+                        SizedBox(
+                          height: 20,
+                        ),
                         Stack(
                           alignment: Alignment.center,
-                          children: <Widget> [
+                          children: <Widget>[
                             CarouselSlider.builder(
                               options: CarouselOptions(
                                 enlargeCenterPage: true,
@@ -127,36 +157,45 @@ class _WalkPageState extends State<WalkPage> {
                                 enableInfiniteScroll: false,
                               ),
                               itemCount: snapshot.data!.docs.length,
-                              itemBuilder: (context, itemIndex, pageViewIndex){
+                              itemBuilder: (context, itemIndex, pageViewIndex) {
                                 return Column(
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        if(!flag){
-                                          var temp = List<bool>.filled(snapshot.data!.docs.length, false);
+                                        if (!flag) {
+                                          var temp = List<bool>.filled(
+                                              snapshot.data!.docs.length,
+                                              false);
                                           walkController.makeFlagList(temp);
                                           flag = true;
                                         }
                                         walkController.setFlagList(itemIndex);
                                         setState(() {});
                                       },
-                                      child:
-                                        Stack(
+                                      child: Stack(
                                         children: [
                                           CircleAvatar(
                                             radius: size.width * 0.2,
                                             child: ClipOval(
                                                 child: CachedNetworkImage(
-                                                  imageUrl: snapshot.data!.docs[itemIndex].get('imageUrl'),
-                                                )
-                                            ),
+                                              imageUrl: snapshot
+                                                  .data!.docs[itemIndex]
+                                                  .get('imageUrl'),
+                                            )),
                                           ),
-                                          if(walkController.flagList.isNotEmpty) walkController.choiceDog(itemIndex, size.width),
+                                          if (walkController
+                                              .flagList.isNotEmpty)
+                                            walkController.choiceDog(
+                                                itemIndex, size.width),
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(height: 10,),
-                                    Text("${snapshot.data!.docs[itemIndex].get('name')}", style: const TextStyle(fontSize: 20)),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                        "${snapshot.data!.docs[itemIndex].get('name')}",
+                                        style: TextStyle(fontSize: 20)),
                                   ],
                                 );
                               },
@@ -168,11 +207,15 @@ class _WalkPageState extends State<WalkPage> {
                               child: Align(
                                 alignment: Alignment.bottomRight,
                                 child: ElevatedButton(
-                                    onPressed: (){
+                                    onPressed: () {
                                       walkController.selDogs.clear();
-                                      for(int i = 0; i < walkController.flagList.length; i++){
-                                        if(walkController.flagList[i]){
-                                          walkController.selDogs.add(snapshot.data!.docs[i].get('name'));
+                                      for (int i = 0;
+                                          i < walkController.flagList.length;
+                                          i++) {
+                                        if (walkController.flagList[i]) {
+                                          walkController.selDogs.add(snapshot
+                                              .data!.docs[i]
+                                              .get('name'));
                                         }
                                       }
                                       if(walkController.selDogs.isEmpty) {
@@ -220,9 +263,7 @@ class _WalkPageState extends State<WalkPage> {
                     );
                   },
                 ),
-              )
-          )
-      ),
+              ))),
     );
   }
 
@@ -242,41 +283,41 @@ class _WalkPageState extends State<WalkPage> {
               height: h * 0.57,
               width: w,
             ),
-          ),
-          Container(
-            height: 200,
-            width: w * 0.9,
-            decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(15)),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("권장 산책 시간 : ", style: TextStyle(fontSize: 25)),
-                    Text('${walkController.rectime} 분',
-                        style: const TextStyle(fontSize: 25)),
-                  ],
-                ),
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
+            Container(
+              height: 170,
+              width: w * 0.8,
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(15)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                        child: TextField(
-                          onChanged: (text) {
-                            walkController.tmp_goal.value = int.parse(text);
-                          },
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            labelText: '목표 산책 시간',
+                      Text("권장 산책 시간 : ", style: TextStyle(fontSize: 20)),
+                      Text('${walkController.rectime} 분',
+                          style: TextStyle(fontSize: 20)),
+                    ],
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                          child: TextField(
+                            onChanged: (text) {
+                              walkController.tmp_goal.value = int.parse(text);
+                            },
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10))),
+                              labelText: '목표 산책 시간',
+                            ),
                           ),
                         ),
                       ),

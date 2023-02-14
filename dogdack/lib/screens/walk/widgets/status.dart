@@ -185,37 +185,46 @@ class _StatusState extends State<Status> {
                     const SizedBox(
                       height: 3,
                     ),
-                    Obx(() => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 7),
-                      child: TextButton(
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.purple,
-                          ),
-                          onPressed: () {
-                            walkController.goal.value == 0
-                            ? null
-                            : showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                                  title: const Text("목표 산책시간 변경"),
-                                  content: SizedBox(
-                                    height: 100,
-                                    child: Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.all(20),
-                                        child: TextField(
-                                          decoration: InputDecoration(
-                                            labelText: '현재 목표 산책 시간 : ${walkController.goal.value} 분',
-                                          ),
-                                          onChanged: (text) {
-                                            setState(() {
-                                              walkController.tmp_goal.value = int.parse(text);
-                                            });
-                                          },
-                                        )
+                    Obx(
+                      () => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 7),
+                        child: TextButton(
+                            style: TextButton.styleFrom(
+                                    foregroundColor: Colors.purple,
+                                    padding: EdgeInsets.zero,
+                                    minimumSize: Size.zero,
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  onPressed: () {
+                                    walkController.goal.value == 0
+                                        ? null
+                                        : showDialog(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0)),
+                                                title: const Text("목표 산책시간 변경"),
+                                                content: SizedBox(
+                                      height: 100,
+                                      child: Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.all(20),
+                                          child: TextField(
+                                            decoration: InputDecoration(
+                                              labelText: '현재 목표 산책 시간 : ${walkController.goal.value} 분',
+                                            ),
+                                            onChanged: (text) {
+                                              setState(() {
+                                                walkController.tmp_goal.value = int.parse(text);
+                                              });
+                                            },
+                                          )
+                                        ),
                                       ),
                                     ),
                                   ),
