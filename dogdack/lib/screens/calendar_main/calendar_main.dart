@@ -6,7 +6,6 @@ import 'package:dogdack/models/dog_data.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar_mark.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/calendar_schedule_edit.dart';
-import 'package:dogdack/screens/calender_detail_edit/calendar_detail_edit.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -38,8 +37,8 @@ class _CalendarPageState extends State<CalendarMain> {
     userRef = FirebaseFirestore.instance
         .collection('Users/${userController.loginEmail}/Pets')
         .withConverter(
-        fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
-        toFirestore: (dogData, _) => dogData.toJson());
+            fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+            toFirestore: (dogData, _) => dogData.toJson());
 
     final controller = Get.put(ButtonController());
     Size screenSize = MediaQuery.of(context).size;
@@ -58,18 +57,18 @@ class _CalendarPageState extends State<CalendarMain> {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CalendarDetailEdit(
-                              day: DateTime.now(),
-                            ),
-                          ),
-                        );
-                      },
-                      child: const Text('hi')),
+                  // TextButton(
+                  //     onPressed: () {
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (context) => CalendarDetailEdit(
+                  //             day: DateTime.now(),
+                  //           ),
+                  //         ),
+                  //       );
+                  //     },
+                  //     child: const Text('hi')),
                   SizedBox(
                     height: height * 0.01,
                   ),

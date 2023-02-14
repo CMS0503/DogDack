@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/models/user_data.dart';
 import 'package:dogdack/models/walk_data.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -65,6 +66,47 @@ class WalkController extends GetxController {
   RxInt curGoal = 0.obs;
   String curName = "";
 
+  // ---강아지 선택 modal---
+  RxList flagList = [].obs;
+  List selDogs = [];
+  RxBool isSelected = false.obs;
+  RxString selUrl = "".obs;
+
+  void makeFlagList(List temp) {
+    flagList.value = temp;
+    update();
+  }
+
+  void setFlagList(int index) {
+    flagList[index] = !flagList[index];
+    update();
+  }
+
+  Widget choiceDog(int itemIndex, double size) {
+    return
+      flagList[itemIndex]?
+      SizedBox(
+        height: size * 0.35,
+        child: Align(
+          alignment: Alignment.bottomRight,
+          child:
+          CircleAvatar(
+            backgroundImage: const AssetImage('assets/check.png') ,
+            backgroundColor: const Color(0xff504E5B),
+            radius: size * 0.07,
+          ),
+        ),
+      ):Container();
+  }
+
+  // ----------------------
+
+  // 산책화면 강아지 dropdown
+  String dropdownValue = "";
+
+  // ---------------------
+
+
   // LCD data
   String? phoneNumber;
   String? walkTimer;
@@ -80,7 +122,7 @@ class WalkController extends GetxController {
         temp = messege.data()['name'];
         petList.add(temp);
       }
-      print(petList);
+      // print(petList);
     }
   }
 
@@ -127,6 +169,7 @@ class WalkController extends GetxController {
       sendDataToArduino(data);
     });
   }
+
 
   void getData() async {
     final petsRef = FirebaseFirestore.instance
@@ -244,7 +287,7 @@ class WalkController extends GetxController {
     super.onClose();
   }
 
-  void abv() {
+  void updateState() {
     update();
   }
 
@@ -255,6 +298,7 @@ class WalkController extends GetxController {
 
     sendDataToArduino(json);
   }
+
 
   Future<void> sendDataToArduino(data) async {
     String json = jsonEncode(data) + '\n';
@@ -281,16 +325,16 @@ class Data {
   final String isLedOn;
 
   Data(
-    this.phoneNumber,
-    this.timer,
-    this.distance,
-    this.isLedOn,
-  );
+      this.phoneNumber,
+      this.timer,
+      this.distance,
+      this.isLedOn,
+      );
 
   Map<String, dynamic> toJson() => {
-        'phoneNumber': phoneNumber,
-        'timer': timer,
-        'distance': distance,
-        'isLedOn': isLedOn,
-      };
+    'phoneNumber': phoneNumber,
+    'timer': timer,
+    'distance': distance,
+    'isLedOn': isLedOn,
+  };
 }

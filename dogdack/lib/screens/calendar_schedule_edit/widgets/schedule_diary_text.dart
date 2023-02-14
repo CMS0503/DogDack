@@ -34,7 +34,7 @@ class ScheduleDiaryText extends StatelessWidget {
                 controller.diary = value;
               },
               // controller: inputController,
-              controller: TextEditingController(text: controller.diary),
+              controller: TextEditingController(),
               cursorColor: Colors.grey,
               decoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(

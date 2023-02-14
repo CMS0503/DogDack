@@ -92,7 +92,9 @@ flutter:
   assets:
     - images/loading/
     - images/login/
-    - assets/
+    - assets/check.png
+    - assets/dog.jpg
+    - assets/dogs.png
 
   fonts:
     - family: bmjua
