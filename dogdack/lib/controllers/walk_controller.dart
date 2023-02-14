@@ -203,7 +203,7 @@ class WalkController extends GetxController {
   }
 
   void addData(lat, lng) {
-    geolist?.add(GeoPoint(lat, lng));
+    // geolist?.add(GeoPoint(lat, lng));
     update();
   }
 
@@ -324,18 +324,18 @@ class WalkController extends GetxController {
   Future<void> sendDataToArduino(data) async {
     String json = jsonEncode(data) + '\n';
 
-    for (BluetoothService service in services!) {
-      if (service.uuid.toString() == serviceUUID) {
-        for (BluetoothCharacteristic characteristic
-            in service.characteristics) {
-          if (characteristic.uuid.toString() == characteristicUUID) {
-            await characteristic.write(utf8.encode(json),
-                withoutResponse: true);
-            print('Send Data: $json');
-          }
-        }
-      }
-    }
+    // for (BluetoothService service in services!) {
+    //   if (service.uuid.toString() == serviceUUID) {
+    //     for (BluetoothCharacteristic characteristic
+    //         in service.characteristics) {
+    //       if (characteristic.uuid.toString() == characteristicUUID) {
+    //         await characteristic.write(utf8.encode(json),
+    //             withoutResponse: true);
+    //         print('Send Data: $json');
+    //       }
+    //     }
+    //   }
+    // }
   }
 }
 

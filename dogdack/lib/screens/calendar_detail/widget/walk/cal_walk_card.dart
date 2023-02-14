@@ -4,9 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/input_controller.dart';
 import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/screens/calendar_detail/widget/walk/cal_walk_text.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
+import 'package:flutter/gestures.dart';
 
 import '../../../../controllers/walk_controller.dart';
 
@@ -137,6 +139,9 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
                   children: [
                     GetBuilder<WalkController>(builder: (_) {
                       return GoogleMap(
+                        gestureRecognizers: Set()
+                          ..add(Factory<PanGestureRecognizer>(
+                              () => PanGestureRecognizer())),
                         initialCameraPosition: const CameraPosition(
                           target: LatLng(37.5012428, 127.039585),
                           zoom: 15,
