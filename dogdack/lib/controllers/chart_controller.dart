@@ -51,10 +51,7 @@ class ChartController extends GetxController {
         dogNames[name] = dogDoc.docs[i].id.toString();
       }
     }
-    // if (dogNames.values.toList().length != 0) {
-    //   chartSelectedId.value = dogNames.values.toList()[0];
-    //   chartSelectedName.value= dogNames.keys.toList()[0];
-    // }
+
   }
 
 // 두달동안의 데이터를 불러온다.
