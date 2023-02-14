@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,7 +22,8 @@ class WalkPage extends StatefulWidget {
 class _WalkPageState extends State<WalkPage> {
   final walkController = Get.put(WalkController());
   final mainController = Get.put(MainController());
-  final petController = Get.put(PetController());
+
+  // final petController = Get.put(PetController());
 
   final petsRef = FirebaseFirestore.instance
       .collection('Users/imcsh313@naver.com/Pets')
@@ -426,7 +428,7 @@ class _WalkPageState extends State<WalkPage> {
         child: const LogoWidget(),
       ),
       body: Obx(
-        () => Column(
+            () => Column(
           children: [
             const Status(),
             const SizedBox(height: 10),
@@ -446,8 +448,8 @@ class _WalkPageState extends State<WalkPage> {
                                 : endWalkModal(
                                     screenWidth, screenHeight, context),
               ],
-            )
-          ],
+                )
+              ],
 
           // children: [
           //   const Status(),
