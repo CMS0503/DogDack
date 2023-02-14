@@ -162,7 +162,7 @@ class _MapState extends State<myMap> {
               }),
           Padding(
             padding: EdgeInsets.fromLTRB(
-                size.height * 0.01, size.height * 0.53, size.height * 0.01, 0),
+                size.width * 0.01, size.height * 0.53, size.width * 0.01, 0),
             child: Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),

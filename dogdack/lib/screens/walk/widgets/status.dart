@@ -1,11 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/walk_controller.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:circular_profile_avatar/circular_profile_avatar.dart';
-import 'package:latlong2/latlong.dart';
 
 import '../../../controllers/mypage_controller.dart';
 import '../../../models/dog_data.dart';
@@ -92,7 +89,7 @@ class _StatusState extends State<Status> {
                               onPressed: () {
                                 walkController.ledSig = !walkController.ledSig;
                               },
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.lightbulb_outline,
                                 color: Colors.yellow,
                               ),
@@ -133,7 +130,6 @@ class _StatusState extends State<Status> {
                         onChanged: (String? value) {
                           petsRef.where('name', isEqualTo: walkController.dropdownValue).get().then((data) {
                             setState(() {
-                              walkController.selUrl.value = data.docs[0]['imageUrl'];
                               walkController.dropdownValue = value!;
                             });
                           });
@@ -166,12 +162,65 @@ class _StatusState extends State<Status> {
                     height: 3,
                   ),
                   Obx(
-                    () => Text(
-                      walkController.goal == 0
-                          ? "분"
-                          : '${walkController.goal} 분',
-                      style: Theme.of(context).textTheme.displayMedium,
-                    ),
+                    // () => Text(
+                    //   walkController.goal == 0
+                    //       ? "분"
+                    //       : '${walkController.goal} 분',
+                    //   style: Theme.of(context).textTheme.displayMedium,
+                    // ),
+                    () => TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.purple,
+                        ),
+                        onPressed: () {
+                          walkController.goal.value == 0
+                          ? null
+                          : showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                                title: const Text("목표 산책시간 변경"),
+                                content: SizedBox(
+                                  height: 100,
+                                  child: Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(20),
+                                      child: TextField(
+                                        decoration: InputDecoration(
+                                          labelText: '현재 목표 산책 시간 : ${walkController.goal.value} 분',
+                                        ),
+                                        onChanged: (text) {
+                                          setState(() {
+                                            walkController.tmp_goal.value = int.parse(text);
+                                          });
+                                        },
+                                      )
+                                    ),
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  ElevatedButton(
+                                    child: Text("변경하기"),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      // walkController.goal.value = context;
+                                      setState(() {
+                                        walkController.goal.value = walkController.tmp_goal.value;
+                                      });
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: Text(walkController.goal == 0
+                            ? "분"
+                            : '${walkController.goal} 분',
+                          style: Theme.of(context).textTheme.displayMedium,)
+                    )
                   )
                 ],
               ),

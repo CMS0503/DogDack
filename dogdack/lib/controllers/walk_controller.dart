@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/models/walk_data.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
@@ -91,7 +90,7 @@ class WalkController extends GetxController {
           child:
           CircleAvatar(
             backgroundImage: const AssetImage('assets/check.png') ,
-            backgroundColor: Color(0xff504E5B),
+            backgroundColor: const Color(0xff504E5B),
             radius: size * 0.07,
           ),
         ),

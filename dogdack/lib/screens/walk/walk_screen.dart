@@ -34,7 +34,7 @@ class _WalkPageState extends State<WalkPage> {
 
   Widget mapAreaWidget(w, h) {
     return Container(
-      height: h * 0.6,
+      height: h * 0.57,
       width: w,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
@@ -176,6 +176,11 @@ class _WalkPageState extends State<WalkPage> {
                                       walkController.isSelected.value = true;
                                       walkController.dropdownValue = walkController.selDogs.first;
                                       // print(walkController.selDogs);
+                                      petsRef.where('name', isEqualTo: walkController.dropdownValue).get().then((data) {
+                                        setState(() {
+                                          walkController.selUrl.value = data.docs[0]['imageUrl'];
+                                        });
+                                      });
                                     },
                                     child: Text("선택")
                                 ),
