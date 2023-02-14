@@ -114,17 +114,12 @@ class _MapState extends State<myMap> {
 
                   if (latlng.length > 1) {
                     totalDistance = totalDistance! +
-                        calTotalDistance(
-                            ll.LatLng(
-                                latlng.last.latitude, latlng.last.longitude),
-                            ll.LatLng(currentPosition.latitude,
-                                currentPosition.longitude));
+                        calTotalDistance(ll.LatLng(latlng.last.latitude, latlng.last.longitude),
+                            ll.LatLng(currentPosition.latitude, currentPosition.longitude));
                     walkController.distance = totalDistance;
                   }
 
                   latlng.add(currentPosition);
-                  walkController.addData(
-                      currentPosition.latitude, currentPosition.longitude);
                   print('totaldistance: $totalDistance');
                   setState(() {});
                 } catch (e) {
@@ -215,7 +210,7 @@ class _MapState extends State<myMap> {
                               '${walkController.timeCount ~/ 3600} : ${walkController.timeCount ~/ 60} : ${walkController.timeCount % 60}',
                               // (_timeCount ~/ 100).toString() + ' 초',
                               style: const TextStyle(
-                                  fontSize: 30,
+                                  fontSize: 25,
                                   color: Color.fromARGB(255, 80, 78, 91)),
                             ),
                           ),
@@ -229,7 +224,7 @@ class _MapState extends State<myMap> {
                               '$totalDistance m',
                           // 'data',
                           style: const TextStyle(
-                              fontSize: 30,
+                              fontSize: 25,
                               color: Color.fromARGB(255, 80, 78, 91)),
                         ),
                       ),
@@ -253,6 +248,7 @@ class _MapState extends State<myMap> {
     } else {
       print('timer stop');
       walkController.pauseTimer();
+      walkController.latlng.addAll(latlng);
     }
   }
 }

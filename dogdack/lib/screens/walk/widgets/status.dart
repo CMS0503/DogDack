@@ -4,11 +4,9 @@ import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/controllers/walk_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:dogdack/models/dog_data.dart';
 
 import '../../../controllers/mypage_controller.dart';
-import '../../../models/dog_data.dart';
 
 class Status extends StatefulWidget {
   const Status({
@@ -29,6 +27,8 @@ class _StatusState extends State<Status> {
   Color grey = const Color.fromARGB(255, 80, 78, 91);
   Color violet = const Color.fromARGB(255, 100, 92, 170);
   Color violet2 = const Color.fromARGB(255, 160, 132, 202);
+
+  bool isInt = false;
 
   @override
   Widget build(BuildContext context) {
@@ -109,23 +109,18 @@ class _StatusState extends State<Status> {
                   ],
                 ),
                 const SizedBox(width: 10,),
-                Obx(() =>
-                Column(
+                Obx(() => Column(
                     children: [
                       walkController.isBleConnect.value == true
                           ? IconButton(
-                              onPressed: () {
-                                Navigator.pushNamed(context, '/Ble');
-                              },
+                              onPressed: () {Navigator.pushNamed(context, '/Ble');},
                               icon: const Icon(
                                 Icons.bluetooth_outlined,
                                 color: Colors.blue,
                               )
                           )
                           : IconButton(
-                              onPressed: () {
-                                Navigator.pushNamed(context, '/Ble');
-                              },
+                              onPressed: () {Navigator.pushNamed(context, '/Ble');},
                               icon: const Icon(Icons.bluetooth_outlined),
                             ),
                       // Text('${walkController.name}'),
@@ -139,10 +134,12 @@ class _StatusState extends State<Status> {
                             color: Colors.deepPurpleAccent,
                           ),
                           onChanged: (String? value) {
-                            petsRef.where('name', isEqualTo: walkController.dropdownValue).get().then((data) {
+                            petsRef.where('name', isEqualTo: value).get().then((data) {
                               setState(() {
                                 walkController.dropdownValue = value!;
+                                walkController.selUrl.value = data.docs[0].get('imageUrl');
                               });
+
                             });
                           },
                           items: walkController.selDogs.map<DropdownMenuItem<String>>((dynamic value) {
@@ -153,9 +150,8 @@ class _StatusState extends State<Status> {
                           }).toList(),
                         ),
                       ]
-                      // walkController.showDropDown(),
                     ],
-                  ),
+                  )
                 ),
               ],
             ),
@@ -193,68 +189,85 @@ class _StatusState extends State<Status> {
                                     foregroundColor: Colors.purple,
                                     padding: EdgeInsets.zero,
                                     minimumSize: Size.zero,
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
+                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                   ),
-                                  onPressed: () {
-                                    walkController.goal.value == 0
-                                        ? null
-                                        : showDialog(
-                                            context: context,
-                                            barrierDismissible: false,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.0)),
-                                                title: const Text("목표 산책시간 변경"),
-                                                content: SizedBox(
-                                      height: 100,
-                                      child: Center(
-                                        child: Padding(
-                                          padding: EdgeInsets.all(20),
-                                          child: TextField(
-                                            decoration: InputDecoration(
-                                              labelText: '현재 목표 산책 시간 : ${walkController.goal.value} 분',
-                                            ),
-                                            onChanged: (text) {
-                                              setState(() {
-                                                walkController.tmp_goal.value = int.parse(text);
-                                              });
-                                            },
-                                          )
+                            onPressed: () {
+                              walkController.goal.value == 0
+                              ? null
+                              : showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                                      title: const Text("목표 산책시간 변경"),
+                                      content: SizedBox(
+                                        height: 100,
+                                        child: Center(
+                                          child: Padding(
+                                              padding: const EdgeInsets.all(20),
+                                              child: TextField(
+                                                decoration: InputDecoration(
+                                                  labelText: '현재 목표 산책 시간 : ${walkController.goal.value} 분',
+                                                ),
+                                                onChanged: (text) {
+                                                  if(int.tryParse(text) != null) {
+                                                    isInt = true;
+                                                    walkController.tmp_goal.value = int.parse(text);
+                                                  } else {
+                                                    isInt = false;
+                                                  }
+                                                },
+                                              )
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  actions: <Widget>[
-                                    ElevatedButton(
-                                      child: Text("변경하기"),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        // walkController.goal.value = context;
-                                        setState(() {
-                                          walkController.goal.value = walkController.tmp_goal.value;
-                                        });
-                                      },
-                                    ),
-                                  ],
+                                      actions: <Widget>[
+                                        ElevatedButton(
+                                          child: const Text("변경하기"),
+                                          onPressed: () {
+                                            if(isInt){
+                                              Navigator.pop(context);
+                                              walkController.goal.value = walkController.tmp_goal.value;
+                                            } else {
+                                              showDialog(
+                                                  context: context,
+                                                  barrierDismissible: false,
+                                                  builder: (BuildContext context){
+                                                    return AlertDialog(
+                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                                                      title: const Text("올바른 숫자를 입력하세요"),
+                                                      actions: <Widget> [
+                                                        Align(
+                                                          alignment: Alignment.center,
+                                                          child: ElevatedButton(
+                                                            onPressed: () {
+                                                              Navigator.pop(context);
+                                                            },
+                                                            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                                            child: const Text("확인"),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  }
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 );
-                              },
-                            );
-                          },
-                          child: Text(walkController.goal == 0
-                              ? "분"
-                              : '${walkController.goal} 분',
+                            },
+                            child: Text(walkController.goal == 0 ? "분" : '${walkController.goal} 분',
                             style: Theme.of(context).textTheme.displayMedium,)
+                        ),
                       ),
-                    ),
-                      )
+                    )
                   ],
                 ),
-                const SizedBox(
-                  height: 8,
-                ),
+                const SizedBox(height: 8,),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -262,7 +275,7 @@ class _StatusState extends State<Status> {
                       width: size.width * 0.3,
                       height: size.height * 0.035,
                       decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 160, 132, 202),
+                          color: const Color.fromARGB(255, 160, 132, 202),
                           borderRadius: BorderRadius.circular(20)),
                       child: const Center(
                         child: Text(
