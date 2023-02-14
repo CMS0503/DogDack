@@ -280,44 +280,45 @@ class _WalkPageState extends State<WalkPage> {
               decoration: const BoxDecoration(
                   color: Colors.grey,
                   borderRadius: BorderRadius.all(Radius.circular(15))),
-              height: h * 0.57,
+              height: h * 0.6,
               width: w,
             ),
-            Container(
-              height: 170,
-              width: w * 0.8,
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(15)),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+          ),
+          Container(
+            height: 170,
+            width: w * 0.8,
+            decoration: BoxDecoration(
+                color: Colors.white, borderRadius: BorderRadius.circular(15)),
+                  child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("권장 산책 시간 : ", style: TextStyle(fontSize: 20)),
+                    Text('${walkController.rectime} 분',
+                        style: TextStyle(fontSize: 20)),
+                  ],
+                ),
+                Container(
+                  padding: EdgeInsets.all(10),
+                  child: Column(
                     children: [
-                      Text("권장 산책 시간 : ", style: TextStyle(fontSize: 20)),
-                      Text('${walkController.rectime} 분',
-                          style: TextStyle(fontSize: 20)),
-                    ],
-                  ),
-                  Container(
-                    padding: EdgeInsets.all(10),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
-                          child: TextField(
-                            onChanged: (text) {
-                              walkController.tmp_goal.value = int.parse(text);
-                            },
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
-                              labelText: '목표 산책 시간',
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                        child: TextField(
+                          onChanged: (text) {
+                            walkController.tmp_goal.value = int.parse(text);
+                          },
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10))
                             ),
+                            labelText: '목표 산책 시간',
                           ),
                         ),
                       ),

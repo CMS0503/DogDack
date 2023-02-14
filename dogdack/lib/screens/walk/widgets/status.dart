@@ -227,7 +227,6 @@ class _StatusState extends State<Status> {
                                         ),
                                       ),
                                     ),
-                                  ),
                                   actions: <Widget>[
                                     ElevatedButton(
                                       child: Text("변경하기"),
