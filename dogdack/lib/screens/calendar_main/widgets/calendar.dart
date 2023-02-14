@@ -99,7 +99,6 @@ class _CalendarState extends State<Calendar> {
               data.docs[i]['isWalk'],
               data.docs[i]['bath'],
               data.docs[i]['beauty'],
-              data.docs[i]['distance'],
             ];
           }
         }
@@ -125,8 +124,8 @@ class _CalendarState extends State<Calendar> {
     userRef = FirebaseFirestore.instance
         .collection('Users/${userController.loginEmail}/Pets')
         .withConverter(
-        fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
-        toFirestore: (dogData, _) => dogData.toJson());
+            fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+            toFirestore: (dogData, _) => dogData.toJson());
 
     // getName();
     ButtonController().getName();
@@ -328,7 +327,11 @@ class _CalendarState extends State<Calendar> {
                 child: GestureDetector(
                   onTap: () {
                     controller.setDate(day);
+                    // detail로 넘길 date
+                    controller.date = day;
                     controller.distance = Calendar.events[3].toString();
+                    print(
+                        'controller.distance in calendar.dart : ${controller.distance}');
 
                     Navigator.push(
                       context,

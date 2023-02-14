@@ -63,11 +63,16 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
     latlng.clear();
     String docId =
         inputController.dognames[inputController.selectedValue.toString()];
-    CollectionReference petRef = FirebaseFirestore.instance
+    print('docId : $docId');
+    // walk 경로
+    CollectionReference walkRef = FirebaseFirestore.instance
         .collection('Users/${userController.loginEmail}/Pets/$docId/Walk');
 
-    await petRef.get().then(
+    print('cal_walk_card 안 : ${userController.loginEmail}');
+
+    await walkRef.get().then(
       (value) async {
+        print('cal_walk_card 안 : ${userController.loginEmail}');
         // 달력에서 선택한 날짜
         var selectedDay = inputController.date;
         var startOfToday = Timestamp.fromDate(selectedDay);
@@ -75,13 +80,14 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
             Timestamp.fromDate(selectedDay.add(const Duration(days: 1)));
 
         // 선택한 날짜의 산책 데이터를 내림차순 정렬(최신 데이터가 위로 오게)
-        await petRef
+        await walkRef
             .where("startTime",
                 isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday)
             .orderBy("startTime", descending: true)
             .get()
             .then(
           (QuerySnapshot snapshot) async {
+            print('cal_walk_card 안 snapshot: ${snapshot.docs}');
             widget.geodata = snapshot.docs[0]['geolist'];
             // 장소, 거리, 시간 데이터
             widget.placedata = snapshot.docs[0]['place'];
@@ -159,13 +165,15 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
                       ),
                     ),
                     Flexible(
-                        child: CalDetailTextWidget(
-                            title: "이동 거리",
-                            text: "${widget.distdata.toString()}미터")),
+                      child: CalDetailTextWidget(
+                          title: "이동 거리",
+                          text: "${widget.distdata.toString()}미터"),
+                    ),
                     Flexible(
-                        child: CalDetailTextWidget(
-                            title: "산책 시간",
-                            text: "${widget.timedata.toString()}분")),
+                      child: CalDetailTextWidget(
+                          title: "산책 시간",
+                          text: "${widget.timedata.toString()}분"),
+                    ),
                   ],
                 ),
               )
