@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class MainController extends GetxController {
@@ -7,6 +8,7 @@ class MainController extends GetxController {
 
   void changeTabIndex(idx) {
     _tabIndex.value = idx;
+    FocusManager.instance.primaryFocus?.unfocus();
     update();
   }
 }
