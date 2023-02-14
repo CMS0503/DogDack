@@ -255,6 +255,8 @@ class WalkController extends GetxController {
             )
             .set(CalenderData(
               isWalk: true,
+              bath: false,
+              beauty: false,
               // distance: controller.distance,
             ))
             .then((value) => print("document added"))
