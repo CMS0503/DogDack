@@ -145,17 +145,11 @@ class _ChartState extends State<Chart> {
   Widget x_value_day = DayWidget();
   Widget x_value_week = WeekWidget();
 
-  @override
-  Widget build(BuildContext context) {
-    petRef = FirebaseFirestore.instance
-        .collection('Users/${userController.loginEmail}/Pets')
-        .withConverter(
-            fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
-            toFirestore: (dogData, _) => dogData.toJson());
 
+  void setChartData(){
     if (chartController.chartData.isEmpty) {
       print("데이터를 불러오는 중입니다.");
-    } else {
+    }else {
       day_hour_points = chartController
           .chartData[chartController.chartSelectedId]!["hour"]!
           .sublist(60 - 7, 60);
@@ -249,17 +243,17 @@ class _ChartState extends State<Chart> {
       week_goal_data /= week_goal_points.length;
       last_week_goal_data /= last_week_goal_points.length;
 
-      if (day_goal_data > 0) {
+      if (day_goal_data.toInt() > 0) {
         day_achievement_rate = (day_hour_data / day_goal_data) * 100;
       }
-      if (last_day_goal_data > 0) {
+      if (last_day_goal_data.toInt() > 0) {
         last_day_achievement_rate =
             (last_day_hour_data / last_day_goal_data) * 100;
       }
-      if (week_goal_data > 0) {
+      if (week_goal_data.toInt()> 0) {
         week_achievement_rate = (week_hour_data / week_goal_data) * 100;
       }
-      if (last_week_goal_data > 0) {
+      if (last_week_goal_data.toInt() > 0) {
         last_week_achievement_rate =
             (last_week_hour_data / last_week_goal_data) * 100;
       }
@@ -305,6 +299,169 @@ class _ChartState extends State<Chart> {
         week_achievement_increment_text = "떨어졌어요!";
       }
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    petRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets')
+        .withConverter(
+            fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+            toFirestore: (dogData, _) => dogData.toJson());
+
+    setChartData();
+    // if (chartController.chartData.isEmpty) {
+    //   print("데이터를 불러오는 중입니다.");
+    // } else {
+    //   day_hour_points = chartController
+    //       .chartData[chartController.chartSelectedId]!["hour"]!
+    //       .sublist(60 - 7, 60);
+    //   last_day_hour_points = chartController
+    //       .chartData[chartController.chartSelectedId]!["hour"]!
+    //       .sublist(60 - 14, 60 - 7);
+    //   week_hour_points = chartController
+    //       .chartData[chartController.chartSelectedId]!["hour"]!
+    //       .sublist(60 - 30, 60);
+    //   last_week_hour_points = chartController
+    //       .chartData[chartController.chartSelectedId]!["hour"]!
+    //       .sublist(0, 60 - 30);
+    //
+    //   day_distance_points = chartController
+    //       .chartData[chartController.chartSelectedId]!["distance"]!
+    //       .sublist(60 - 7, 60);
+    //   last_day_distance_points = chartController
+    //       .chartData[chartController.chartSelectedId]!["distance"]!
+    //       .sublist(60 - 14, 60 - 7);
+    //   week_distance_points = chartController
+    //       .chartData[chartController.chartSelectedId]!["distance"]!
+    //       .sublist(60 - 30, 60);
+    //   last_week_distance_points = chartController
+    //       .chartData[chartController.chartSelectedId]!["distance"]!
+    //       .sublist(0, 60 - 30);
+    //
+    //   day_goal_points = chartController
+    //       .chartData[chartController.chartSelectedId]!["goal"]!
+    //       .sublist(60 - 7, 60);
+    //   last_day_goal_points = chartController
+    //       .chartData[chartController.chartSelectedId]!["goal"]!
+    //       .sublist(60 - 14, 60 - 7);
+    //   week_goal_points = chartController
+    //       .chartData[chartController.chartSelectedId]!["goal"]!
+    //       .sublist(60 - 30, 60);
+    //   last_week_goal_points = chartController
+    //       .chartData[chartController.chartSelectedId]!["goal"]!
+    //       .sublist(0, 60 - 30);
+    //
+    //   for (int i = 0; i < day_hour_points.length; i++) {
+    //     if (day_hour_points[i].toInt() != 0) {
+    //       day_hour_data += day_hour_points[i];
+    //     }
+    //     if (last_day_hour_points[i].toInt() != 0) {
+    //       last_day_hour_data += last_day_hour_points[i];
+    //     }
+    //     if (day_distance_points[i].toInt() != 0) {
+    //       day_distance_data += day_distance_points[i];
+    //     }
+    //     if (last_day_distance_points[i].toInt() != 0) {
+    //       last_day_distance_data += last_day_distance_points[i];
+    //     }
+    //     if (day_goal_points[i].toInt() != 0) {
+    //       day_goal_data += day_goal_points[i];
+    //     }
+    //     if (last_day_goal_points[i].toInt() != 0) {
+    //       last_day_goal_data += last_day_goal_points[i];
+    //     }
+    //   }
+    //   day_hour_data /= day_hour_points.length;
+    //   last_day_hour_data /= last_day_hour_points.length;
+    //   day_distance_data /= day_distance_points.length;
+    //   last_day_distance_data /= last_day_distance_points.length;
+    //   day_goal_data /= day_goal_points.length;
+    //   last_day_goal_data /= last_day_goal_points.length;
+    //
+    //   for (int i = 0; i < week_hour_points.length; i++) {
+    //     if (week_hour_points[i].toInt() != 0) {
+    //       week_hour_data += week_hour_points[i];
+    //     }
+    //     if (last_week_hour_points[i].toInt() != 0) {
+    //       last_week_hour_data += last_week_hour_points[i];
+    //     }
+    //     if (week_distance_points[i].toInt() != 0) {
+    //       week_distance_data += week_distance_points[i];
+    //     }
+    //     if (last_week_distance_points[i].toInt() != 0) {
+    //       last_week_distance_data += last_week_distance_points[i];
+    //     }
+    //     if (week_goal_points[i].toInt() != 0) {
+    //       week_goal_data += week_goal_points[i];
+    //     }
+    //     if (last_week_goal_points[i].toInt() != 0) {
+    //       last_week_goal_data += last_week_goal_points[i];
+    //     }
+    //   }
+    //   week_hour_data /= week_hour_points.length;
+    //   last_week_hour_data /= last_week_hour_points.length;
+    //   week_distance_data /= week_distance_points.length;
+    //   last_week_distance_data /= last_week_distance_points.length;
+    //   week_goal_data /= week_goal_points.length;
+    //   last_week_goal_data /= last_week_goal_points.length;
+    //
+    //   if (day_goal_data.toInt() > 0) {
+    //     day_achievement_rate = (day_hour_data / day_goal_data) * 100;
+    //   }
+    //   if (last_day_goal_data.toInt() > 0) {
+    //     last_day_achievement_rate =
+    //         (last_day_hour_data / last_day_goal_data) * 100;
+    //   }
+    //   if (week_goal_data.toInt()> 0) {
+    //     week_achievement_rate = (week_hour_data / week_goal_data) * 100;
+    //   }
+    //   if (last_week_goal_data.toInt() > 0) {
+    //     last_week_achievement_rate =
+    //         (last_week_hour_data / last_week_goal_data) * 100;
+    //   }
+    //
+    //   day_hour_increment = day_hour_data - last_day_hour_data;
+    //   if (day_hour_increment > 0) {
+    //     day_hour_increment_text = "늘었어요!";
+    //   } else {
+    //     day_hour_increment_text = "즐었어요!";
+    //   }
+    //
+    //   week_hour_increment = week_hour_data - last_week_hour_data;
+    //   if (week_hour_increment > 0) {
+    //     week_hour_increment_text = "늘었어요!";
+    //   } else {
+    //     week_hour_increment_text = "즐었어요!";
+    //   }
+    //   day_distance_increment = day_distance_data - last_day_distance_data;
+    //   if (day_distance_increment > 0) {
+    //     day_distance_increment_text = "증가했어요";
+    //   } else {
+    //     day_distance_increment_text = "감소했어요";
+    //   }
+    //   week_distance_increment = week_distance_data - last_week_distance_data;
+    //   if (week_distance_increment > 0) {
+    //     week_distance_increment_text = "증가했어요";
+    //   } else {
+    //     week_distance_increment_text = "감소했어요";
+    //   }
+    //
+    //   day_achievement_rate_increment =
+    //       day_achievement_rate - last_day_achievement_rate;
+    //   if (day_achievement_rate_increment > 0) {
+    //     day_achievement_increment_text = "올랐어요!";
+    //   } else {
+    //     day_achievement_increment_text = "떨어졌어요!";
+    //   }
+    //   week_achievement_rate_increment =
+    //       week_achievement_rate - last_week_achievement_rate;
+    //   if (week_achievement_rate_increment > 0) {
+    //     week_achievement_increment_text = "올랐어요!";
+    //   } else {
+    //     week_achievement_increment_text = "떨어졌어요!";
+    //   }
+    // }
 
     // 위젯 선언
 
@@ -489,6 +646,7 @@ class _ChartState extends State<Chart> {
                                   value.toString();
                               chartController.chartSelectedId.value =
                                   chartController.dogNames[value.toString()];
+                              setChartData();
                               setState(() {});
                             },
                           );
