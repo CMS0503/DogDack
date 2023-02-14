@@ -68,9 +68,16 @@ class _StatusState extends State<Status> {
                             right: 40,
                             child: IconButton(
                               onPressed: () {
-                                walkController.ledSig = !walkController.ledSig;
+                                walkController.ledSig == '1'
+                                    ? walkController.ledSig = '0'
+                                    : walkController.ledSig = '1';
                               },
-                              icon: const Icon(
+                              icon: walkController.ledSig == '1'
+                                  ? const Icon(
+                                Icons.lightbulb_outline,
+                                color: Colors.yellow,
+                              )
+                                  : const Icon(
                                 Icons.lightbulb_outline,
                                 color: Colors.yellow,
                               ),
@@ -91,7 +98,11 @@ class _StatusState extends State<Status> {
                             onPressed: () {
                               Navigator.pushNamed(context, '/Ble');
                             },
-                            icon: const Icon(Icons.bluetooth_connected))
+                            icon: const Icon(
+                              Icons.bluetooth_outlined,
+                              color: Colors.blue,
+                            )
+                        )
                         : IconButton(
                             onPressed: () {
                               Navigator.pushNamed(context, '/Ble');
@@ -135,72 +146,82 @@ class _StatusState extends State<Status> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    '목표 산책 시간',
-                    style: Theme.of(context).textTheme.bodyMedium,
+                  Container(
+                    width: size.width * 0.3,
+                    height: size.height * 0.035,
+                    decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 221, 137, 189),
+                        borderRadius: BorderRadius.circular(20)),
+                    child: const Center(
+                      child: Text(
+                        "오늘의 목표 시간",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'bmjua',
+                            color: Colors.white),
+                      ),
+                    ),
                   ),
+
                   const SizedBox(
                     height: 3,
                   ),
                   Obx(
-                    // () => Text(
-                    //   walkController.goal == 0
-                    //       ? "분"
-                    //       : '${walkController.goal} 분',
-                    //   style: Theme.of(context).textTheme.displayMedium,
-                    // ),
-                    () => TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.purple,
-                        ),
-                        onPressed: () {
-                          walkController.goal.value == 0
-                          ? null
-                          : showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                                title: const Text("목표 산책시간 변경"),
-                                content: SizedBox(
-                                  height: 100,
-                                  child: Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(20),
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                          labelText: '현재 목표 산책 시간 : ${walkController.goal.value} 분',
-                                        ),
-                                        onChanged: (text) {
-                                          setState(() {
-                                            walkController.tmp_goal.value = int.parse(text);
-                                          });
-                                        },
-                                      )
+                    () => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 7),
+                      child: TextButton(
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.purple,
+                          ),
+                          onPressed: () {
+                            walkController.goal.value == 0
+                            ? null
+                            : showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                                  title: const Text("목표 산책시간 변경"),
+                                  content: SizedBox(
+                                    height: 100,
+                                    child: Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(20),
+                                        child: TextField(
+                                          decoration: InputDecoration(
+                                            labelText: '현재 목표 산책 시간 : ${walkController.goal.value} 분',
+                                          ),
+                                          onChanged: (text) {
+                                            setState(() {
+                                              walkController.tmp_goal.value = int.parse(text);
+                                            });
+                                          },
+                                        )
+                                      ),
                                     ),
                                   ),
-                                ),
-                                actions: <Widget>[
-                                  ElevatedButton(
-                                    child: Text("변경하기"),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      // walkController.goal.value = context;
-                                      setState(() {
-                                        walkController.goal.value = walkController.tmp_goal.value;
-                                      });
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                        child: Text(walkController.goal == 0
-                            ? "분"
-                            : '${walkController.goal} 분',
-                          style: Theme.of(context).textTheme.displayMedium,)
+                                  actions: <Widget>[
+                                    ElevatedButton(
+                                      child: Text("변경하기"),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        // walkController.goal.value = context;
+                                        setState(() {
+                                          walkController.goal.value = walkController.tmp_goal.value;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child: Text(walkController.goal == 0
+                              ? "분"
+                              : '${walkController.goal} 분',
+                            style: Theme.of(context).textTheme.displayMedium,)
+                      ),
                     )
                   )
                 ],

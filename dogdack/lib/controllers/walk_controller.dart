@@ -109,7 +109,7 @@ class WalkController extends GetxController {
   String? phoneNumber;
   String? walkTimer;
   String dist = '0';
-  bool ledSig = true;
+  String ledSig = '1';
 
   void getList() async {
     String temp = "";
@@ -154,20 +154,20 @@ class WalkController extends GetxController {
   void onInit() {
     getData();
     // LCD 타이머
-    ever(timeCount, (_) {
-      if ((timeCount % 6000) % 100 == 0) {
-        // 1초마다 보냄
-        String pn = phoneNumber!;
-        String timer =
-            '${timeCount ~/ 360000}:${timeCount ~/ 6000}:${(timeCount % 6000) ~/ 100}';
-        String dist = '${distance!.toInt()}m';
-        bool isLed = ledSig;
 
-        Data data = Data(pn, timer, dist, isLed);
-        sendDataToArduino(data);
-      }
+    ever(timeCount, (_) {
+      // 1초마다 보냄
+      String pn = phoneNumber!;
+      String timer =
+          '${timeCount ~/ 3600}:${timeCount ~/ 60}:${timeCount % 60}';
+      String dist = '${distance!.toInt()}m';
+      String isLed = ledSig;
+
+      Data data = Data(pn, timer, dist, isLed);
+      sendDataToArduino(data);
     });
   }
+
 
   void getData() async {
     final petsRef = FirebaseFirestore.instance
@@ -289,12 +289,13 @@ class WalkController extends GetxController {
   }
 
   void initLCD() async {
-    Data data = Data('00000000000', '00:00:00', '0m', true);
+    Data data = Data('00000000000', '00:00:00', '0m', "1");
 
     String json = jsonEncode(data);
 
     sendDataToArduino(json);
   }
+
 
   Future<void> sendDataToArduino(data) async {
     String json = jsonEncode(data) + '\n';
@@ -318,19 +319,19 @@ class Data {
   final String phoneNumber;
   final String timer;
   final String distance;
-  final bool isLedOn;
+  final String isLedOn;
 
   Data(
-    this.phoneNumber,
-    this.timer,
-    this.distance,
-    this.isLedOn,
-  );
+      this.phoneNumber,
+      this.timer,
+      this.distance,
+      this.isLedOn,
+      );
 
   Map<String, dynamic> toJson() => {
-        'phoneNumber': phoneNumber,
-        'timer': timer,
-        'distance': distance,
-        'isLedOn': isLedOn,
-      };
+    'phoneNumber': phoneNumber,
+    'timer': timer,
+    'distance': distance,
+    'isLedOn': isLedOn,
+  };
 }
