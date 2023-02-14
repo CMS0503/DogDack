@@ -38,7 +38,7 @@ class _WalkPageState extends State<WalkPage> {
 
   Widget mapAreaWidget(w, h) {
     return SizedBox(
-      height: h * 0.57,
+      height: h * 0.67,
       width: w,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
@@ -267,21 +267,19 @@ class _WalkPageState extends State<WalkPage> {
               decoration: const BoxDecoration(
                   color: Colors.grey,
                   borderRadius: BorderRadius.all(Radius.circular(15))),
-              height: h * 0.6,
+              height: h * 0.67,
               width: w,
             ),
           ),
           Container(
-            height: 170,
+            height: 180,
             width: w * 0.8,
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(15)),
                   child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(
-                  height: 15,
-                ),
+                const SizedBox(height: 15,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

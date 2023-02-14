@@ -206,7 +206,7 @@ class _MapState extends State<myMap> {
                               '${walkController.timeCount ~/ 3600} : ${walkController.timeCount ~/ 60} : ${walkController.timeCount % 60}',
                               // (_timeCount ~/ 100).toString() + ' 초',
                               style: const TextStyle(
-                                  fontSize: 30,
+                                  fontSize: 25,
                                   color: Color.fromARGB(255, 80, 78, 91)),
                             ),
                           ),
@@ -220,7 +220,7 @@ class _MapState extends State<myMap> {
                               '$totalDistance m',
                           // 'data',
                           style: const TextStyle(
-                              fontSize: 30,
+                              fontSize: 25,
                               color: Color.fromARGB(255, 80, 78, 91)),
                         ),
                       ),
