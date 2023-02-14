@@ -26,6 +26,10 @@ class _ChartState extends State<Chart> {
   void initState() {
     chartController.selectedDateValue.value = "일주일";
     chartController.getNames().then((value) {
+      if (chartController.dogNames.values.toList().length != 0) {
+        chartController.chartSelectedId.value = chartController.dogNames.values.toList()[0];
+        chartController.chartSelectedName.value= chartController.dogNames.keys.toList()[0];
+      };
       chartController.setData().then((value) {
         setState(() {});
       });
