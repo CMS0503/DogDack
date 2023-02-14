@@ -89,7 +89,7 @@ class _MyAppState extends State<MyApp> {
             if (snapshot.hasData) {
               return widget.isFinish == true
                   ? MainPage()
-                  : const LoginAfterPage();
+                  : LoginAfterPage();
             } else {
               return const LoginPage();
             }
