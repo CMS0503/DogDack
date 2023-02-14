@@ -95,8 +95,8 @@ class LineChart extends CustomPainter {
   }
 
   void drawText(Canvas canvas, List<Offset> offsets) {
-    String maxValue = "${points.reduce(max)}";
-    String minValue = "${points.reduce(min)}";
+    String maxValue = "${points.reduce(max).toInt()}";
+    String minValue = "${points.reduce(min).toInt()}";
 
     drawTextValue(canvas, minValue, offsets[minValueIndex], false);
     drawTextValue(canvas, maxValue, offsets[maxValueIndex], true);

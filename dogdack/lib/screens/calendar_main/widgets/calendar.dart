@@ -155,6 +155,7 @@ class _CalendarState extends State<Calendar> {
             child: StreamBuilder(
               stream: userRef.snapshots(),
               builder: (petContext, petSnapshot) {
+
                 // 등록한 강아지가 없으면
                 return controller.valueList.isEmpty
                     // 강아지를 등록해달라는 dropbar
