@@ -24,31 +24,6 @@ class _DatePickerState extends State<DatePicker> {
 
   String docId = '';
 
-  // getName() async {
-  //   var dogDoc = await FirebaseFirestore.instance
-  //       .collection('Users/${userController.loginEmail}/Pets').get();
-  //   List<String> dogs = [];
-  //   // 자.. 여기다가 등록된 강아지들 다 입력하는거야
-  //   for (int i = 0; i < dogDoc.docs.length; i++) {
-  //     dogs.insert(0, dogDoc.docs[i]['name']);
-  //   }
-  //   controller.valueList = dogs;
-
-  //   // 근데 강아지들이 없으면?
-  //   if (dogs.isEmpty) {
-  //     '그냥 넘어가야지 뭐';
-  //   } else {
-  //     // 강아지들이 있는데 처음 들어왔을 때 강아지 선택을 안한 상태면
-  //     if (controller.selectedValue == '') {
-  //       // 그냥 처음 강아지로 가져오기
-  //       controller.selectedValue = dogs[0];
-
-  //       setState(() {});
-  //       // }
-  //     }
-  //   }
-  // }
-
   @override
   void initState() {
     // TODO: implement initState
