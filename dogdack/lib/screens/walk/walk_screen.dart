@@ -334,7 +334,14 @@ class _WalkPageState extends State<WalkPage> {
                           },
 
                           decoration: InputDecoration(
-                            hintText: '권장 산책 시간 : ${(walkController.rectime / walkController.selDogs.length).round()} 분',
+                            hintText:
+                                '권장 산책 시간 : ${(walkController.rectime / walkController.selDogs.length).round()} 분',
+                            enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 100, 92, 170))),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 100, 92, 170))),
                             border: const OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10))),
