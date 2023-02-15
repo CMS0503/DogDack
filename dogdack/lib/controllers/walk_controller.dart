@@ -253,7 +253,7 @@ class WalkController extends GetxController {
               endTime: endTime,
               totalTimeMin: timeCount.value ~/ 60,
               isAuto: true,
-              // place: ,
+              place: '장소',
               distance: totalDistance.toInt(),
               goal: goal.value,
             )).then((value) => disconnect());
