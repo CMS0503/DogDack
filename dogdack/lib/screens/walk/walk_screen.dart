@@ -118,7 +118,7 @@ class _WalkPageState extends State<WalkPage> {
           child: Align(
               alignment: Alignment.center,
               child: Container(
-                height: 260,
+                height: h * 0.26,
                 width: w * 0.9,
                 decoration: BoxDecoration(
                     color: Colors.white,
@@ -145,7 +145,7 @@ class _WalkPageState extends State<WalkPage> {
                           children: <Widget>[
                             CarouselSlider.builder(
                               options: CarouselOptions(
-                                viewportFraction: 0.5,
+                                viewportFraction: 0.45,
                                 autoPlay: false,
                                 enableInfiniteScroll: false,
                               ),
@@ -153,11 +153,7 @@ class _WalkPageState extends State<WalkPage> {
                               itemBuilder: (context, itemIndex, pageViewIndex) {
                                 return Column(
                                   children: [
-                                    Text(
-                                        "${snapshot.data!.docs[itemIndex].get('name')}     ",
-                                        style: const TextStyle(fontSize: 20, )
-                                    ),
-                                    const SizedBox(height: 10,),
+                                    const SizedBox(height: 15,),
                                     InkWell(
                                       onTap: () {
                                         if (!flag) {
@@ -172,14 +168,26 @@ class _WalkPageState extends State<WalkPage> {
                                       },
                                       child: Stack(
                                         children: [
-                                          CircleAvatar(
-                                            radius: size.width * 0.18,
-                                            child: ClipOval(
-                                                child: CachedNetworkImage(
-                                                  imageUrl: snapshot
-                                                      .data!.docs[itemIndex]
-                                                      .get('imageUrl'),
-                                                )),
+                                          Container(
+                                            // color: Colors.red,
+                                            height: size.height * 0.18,
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                    "${snapshot.data!.docs[itemIndex].get('name')}",
+                                                    style: const TextStyle(fontSize: 20, )
+                                                ),
+                                                const SizedBox(height: 15,),
+                                                CircleAvatar(
+                                                  radius: size.width * 0.13,
+                                                  child: ClipOval(
+                                                      child: CachedNetworkImage(
+                                                        imageUrl: snapshot.data!.docs[itemIndex].get('imageUrl'),
+                                                      )
+                                                  ),
+                                                ),
+                                              ],
+                                            )
                                           ),
                                           if (walkController.flagList.isNotEmpty) walkController.choiceDog(itemIndex, size.width),
                                         ],
@@ -190,7 +198,8 @@ class _WalkPageState extends State<WalkPage> {
                               },
                             ),
                             Container(
-                              height: size.height * 0.33,
+                              // color: Colors.red,
+                              height: size.height * 0.25,
                               width: size.width * 0.85,
                               child: Align(
                                 alignment: Alignment.bottomRight,
@@ -230,13 +239,11 @@ class _WalkPageState extends State<WalkPage> {
                                         walkController.dropdownValue =
                                             walkController.selDogs.first;
                                         // print(walkController.selDogs);
-                                        petsRef.where('name', isEqualTo: walkController.dropdownValue)
-                                            .get()
-                                            .then((data) {
-                                              setState(() {
-                                                walkController.selUrl.value = data.docs[0]['imageUrl'];
-                                              });
-                                            });
+                                        petsRef.where('name', isEqualTo: walkController.dropdownValue).get().then((data) {
+                                          setState(() {
+                                            walkController.selUrl.value = data.docs[0]['imageUrl'];
+                                          });
+                                        });
                                       }
                                       walkController.recommend();
                                     },

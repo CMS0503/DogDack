@@ -89,18 +89,18 @@ class WalkController extends GetxController {
   Widget choiceDog(int itemIndex, double size) {
     return
       Align(
-        alignment: Alignment.bottomRight,
-        child: SizedBox(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          // color: Colors.yellow,
           height: size * 0.4,
-          width: size * 0.3,
+          width: size * 0.28,
           child:
           Align(
               alignment: Alignment.bottomRight,
               child:
               flagList[itemIndex]
               ? Image.asset("assets/dogdack.png")
-              : Container(
-              )
+              : Container()
           )
         )
       );
