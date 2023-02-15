@@ -118,18 +118,21 @@ class _CalenderListViewState extends State<CalenderListView> {
                           btnManagerIdx = 0;
                         }
                         setState(() {
-                          updateHomeCalendarVar(btnManagerIdx);
-                        });
-                        delayState();
-                      },
-                ) : Icon(Icons.arrow_circle_right_outlined, size: size.width * 0.1, color: Colors.grey,),
-
+                            updateHomeCalendarVar(btnManagerIdx);
+                          });
+                          delayState();
+                        },
+                      )
+                    : Icon(
+                        Icons.arrow_circle_right_outlined,
+                        size: size.width * 0.1,
+                        color: Colors.grey,
+                      ),
               ],
             ),
           ),
           SizedBox(height: 10),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 10),
-          child: CalendarListDetail(),),
+          CalendarListDetail(),
 
           // CalIconWidget()
         ],

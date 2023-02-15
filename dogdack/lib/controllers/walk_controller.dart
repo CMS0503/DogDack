@@ -200,13 +200,6 @@ class WalkController extends GetxController {
 
     QuerySnapshot _docInPets = await petRef.get();
 
-    name = (await petsRef.doc(_docInPets.docs.first.id.toString()).get())
-        .data()!
-        .name!;
-    imgUrl = (await petsRef.doc(_docInPets.docs.first.id.toString()).get())
-        .data()!
-        .imageUrl!;
-
     // phoneNumber = (await userRef.doc('number').get()).data()!.phoneNumber;
     phoneNumber = "01085382550";
   }
