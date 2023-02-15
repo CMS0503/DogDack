@@ -188,7 +188,7 @@ class WalkController extends GetxController {
       String isLed = ledSig;
 
       Data data = Data(pn, timer, dist, isLed);
-      sendDataToArduino(data);
+      // sendDataToArduino(data);
     });
   }
 
@@ -355,7 +355,7 @@ class WalkController extends GetxController {
 
     String json = jsonEncode(data);
 
-    sendDataToArduino(json);
+    // sendDataToArduino(json);
   }
 
   Future<void> sendDataToArduino(data) async {
