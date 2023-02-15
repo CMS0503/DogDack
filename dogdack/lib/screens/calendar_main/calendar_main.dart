@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/commons/logo_widget.dart';
 import 'package:dogdack/controllers/button_controller.dart';
+import 'package:dogdack/controllers/input_controller.dart';
 import 'package:dogdack/controllers/main_controll.dart';
 import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/models/dog_data.dart';
@@ -95,6 +96,7 @@ class _CalendarPageState extends State<CalendarMain> {
   }
 
   renderFloatingActionButton() {
+    final inputController = Get.put(InputController());
     return Container(
       width: 48,
       height: 48,
@@ -107,6 +109,7 @@ class _CalendarPageState extends State<CalendarMain> {
       ),
       child: FloatingActionButton.small(
         onPressed: () {
+          inputController.imageUrl = [];
           Navigator.push(
             context,
             MaterialPageRoute(

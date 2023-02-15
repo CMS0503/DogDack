@@ -102,6 +102,8 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
             '${userController.loginEmail}/dogs/${controller.selectedValue}/${DateFormat('yyMMdd').format(controller.date)}')
         .list();
     final List<Reference> allFiles = result.items;
+    print('사진불러오기');
+    print('사진 불러오는데 ${controller.date}');
     print(result.items);
 
     final snapshot = await FirebaseFirestore.instance

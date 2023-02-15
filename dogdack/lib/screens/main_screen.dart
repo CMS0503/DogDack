@@ -91,12 +91,12 @@ class _MainPageState extends State<MainPage> {
             return CalenderNavigator();
           },),
         ),
-        Offstage(
-          offstage: mainController.tabindex != 3,
-          child: GetBuilder<UserController>(builder: (_) {
-            return ChartNavigator();
-          },),
-        ),
+        // Offstage(
+        //   offstage: mainController.tabindex != 3,
+        //   child: GetBuilder<UserController>(builder: (_) {
+        //     return ChartNavigator();
+        //   },),
+        // ),
         Offstage(
           offstage: mainController.tabindex != 4,
           child: GetBuilder<UserController>(builder: (_) {
