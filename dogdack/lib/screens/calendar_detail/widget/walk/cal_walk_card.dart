@@ -55,6 +55,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
               color: Colors.blue),
         );
         walkController.updateState();
+        setState(() {});
       },
     );
   }
@@ -64,16 +65,12 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
     latlng.clear();
     String docId =
         inputController.dognames[inputController.selectedValue.toString()];
-    print('docId : $docId');
     // walk 경로
     CollectionReference walkRef = FirebaseFirestore.instance
         .collection('Users/${userController.loginEmail}/Pets/$docId/Walk');
 
-    print('cal_walk_card 안 : ${userController.loginEmail}');
-
     await walkRef.get().then(
       (value) async {
-        print('cal_walk_card 안 : ${userController.loginEmail}');
         // 달력에서 선택한 날짜
         var selectedDay = inputController.date;
         var startOfToday = Timestamp.fromDate(selectedDay);
@@ -108,9 +105,9 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
           },
         );
       },
-    );
-
-    setState(() {});
+    ).then((value) {
+      setState(() {});
+    });
   }
 
   Future<void> addPloy(data) async {

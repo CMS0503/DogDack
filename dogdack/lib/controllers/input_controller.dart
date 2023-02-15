@@ -12,7 +12,6 @@ class InputController extends GetxController {
   bool bath = true;
   bool beauty = true;
   List<String> imageUrl = [];
-  String imgUrl = '';
   String name = '';
   Map<String, dynamic> dognames = {};
   List<String> valueList = [];

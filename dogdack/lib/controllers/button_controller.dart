@@ -52,7 +52,7 @@ class ButtonController extends GetxController {
               data.docs[i]['bath'],
               data.docs[i]['beauty'],
               data.docs[i]['diary'],
-              data.docs[i]['imageUrl'],
+              // data.docs[i]['imageUrl'],
             ];
           }
         }
@@ -71,7 +71,7 @@ class ButtonController extends GetxController {
               data.docs[i]['bath'],
               data.docs[i]['beauty'],
               data.docs[i]['diary'],
-              data.docs[i]['imageUrl'],
+              // data.docs[i]['imageUrl'],
             ];
           }
         }

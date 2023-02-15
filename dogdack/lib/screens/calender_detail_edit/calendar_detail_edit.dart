@@ -63,7 +63,7 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
         final result = await storage
             .ref()
             .child(
-                '${userController.loginEmail}/dogs/${controller.selectedValue}/${controller.date}/$fileName')
+                '${userController.loginEmail}/dogs/${controller.selectedValue}/${DateFormat('yyMMdd').format(controller.date)}/$fileName')
             .putFile(
               imageFile,
               SettableMetadata(
@@ -75,8 +75,6 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
             );
         result.ref.getDownloadURL().then((value) {
           controller.imageUrl.add(value.toString());
-          // print('이미지 url');
-          // print(controller.imageUrl);
         });
 
         // Refresh the UI
@@ -97,13 +95,15 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
   // This function is called when the app launches for the first time or when an image is uploaded or deleted
   Future<List<Map<String, dynamic>>> _loadImages() async {
     List<Map<String, dynamic>> files = [];
-
+    print(controller.date);
     final ListResult result = await storage
         .ref()
         .child(
-            '${userController.loginEmail}/dogs/${controller.selectedValue}/${controller.date}')
+            '${userController.loginEmail}/dogs/${controller.selectedValue}/${DateFormat('yyMMdd').format(controller.date)}')
         .list();
     final List<Reference> allFiles = result.items;
+    print('사진불러오기');
+    print(result.items);
 
     final snapshot = await FirebaseFirestore.instance
         .collection(
@@ -117,16 +117,11 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
     await Future.forEach<Reference>(allFiles, (file) async {
       final String fileUrl = await file.getDownloadURL();
       final FullMetadata fileMeta = await file.getMetadata();
-      // print('$fileUrl, ${file.fullPath}');
-      if (controller.imageUrl.contains(fileUrl)) {
-        files.add({
-          "url": fileUrl,
-          "path": file.fullPath,
-          "uploaded_by": fileMeta.customMetadata?['uploaded_by'] ?? 'Nobody',
-          "description":
-              fileMeta.customMetadata?['description'] ?? 'No description'
-        });
-      }
+
+      files.add({
+        "url": fileUrl,
+        "path": file.fullPath,
+      });
     });
 
     return files;

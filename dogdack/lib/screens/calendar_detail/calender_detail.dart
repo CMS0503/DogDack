@@ -1,7 +1,6 @@
 import 'package:dogdack/controllers/walk_controller.dart';
 import 'package:dogdack/screens/calendar_detail/widget/beauty/beauty_icon.dart';
 import 'package:dogdack/screens/calendar_detail/widget/diary/diary_widget.dart';
-import 'package:dogdack/screens/calendar_detail/widget/cal_detail_date.dart';
 import 'package:dogdack/screens/calendar_detail/widget/cal_detail_title.dart';
 import 'package:dogdack/screens/calendar_detail/widget/cal_edit_button.dart';
 import 'package:dogdack/screens/calendar_detail/widget/walk/cal_walk_card.dart';
@@ -31,7 +30,8 @@ class _CalenderDetailState extends State<CalenderDetail> {
   ////////////////////////////////////파이어 베이스 연결 끝/////////////////////////////////////////////////////
   @override
   Widget build(BuildContext context) {
-    String imageUrl = 'images/login/login_image.png';
+    // String imageUrl = 'images/login/login_image.png';
+    String imageUrl = '';
     if (controller.imageUrl.isEmpty) {
     } else {
       imageUrl = controller.imageUrl[0];
@@ -89,21 +89,17 @@ class _CalenderDetailState extends State<CalenderDetail> {
             Padding(
               padding: const EdgeInsets.only(left: 18, bottom: 15),
               child: Column(
-                children: [
+                children: const [
                   // 등록한 날짜가 나와야 함
-                  CalDetailDateWidget(
-                    // time:
-                    //     "${controller.date.year}년 ${controller.date.month}월 ${controller.date.day}일 ${controller.date.hour}시 ${controller.date.second}분에서"
-                    time: DateTime.fromMicrosecondsSinceEpoch(
-                      controller.startTime.microsecondsSinceEpoch,
-                    ),
-                  ),
+                  // CalDetailDateWidget(
+                  // time:
+                  //     "${controller.date.year}년 ${controller.date.month}월 ${controller.date.day}일 ${controller.date.hour}시 ${controller.date.second}분에서"
+                  // time: DateTime.fromMicrosecondsSinceEpoch(
+                  //   controller.startTime.microsecondsSinceEpoch,
+                  // ),
+                  // ),
 
-                  CalDetailDateWidget(
-                    time: DateTime.fromMicrosecondsSinceEpoch(
-                      controller.endTime.microsecondsSinceEpoch,
-                    ),
-                  )
+                  // CalDetailDateWidget(),
                 ],
               ),
             ),

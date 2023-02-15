@@ -17,9 +17,6 @@ class _BeautyWidgetState extends State<BeautyWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print('irwjeoirwejriowejriowerjweio');
-    print(controller.bath);
-    print(controller.beauty);
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     return Row(
