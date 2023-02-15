@@ -65,6 +65,7 @@ dependencies:
   cached_network_image: ^3.2.3
   restart_app: ^1.1.2
   location: ^4.2.0
+  animated_floating_buttons: ^0.0.2
 
 dev_dependencies:
   flutter_test:
@@ -96,6 +97,7 @@ flutter:
     - assets/dog.jpg
     - assets/dogs.png
     - assets/dogdack.png
+    - assets/logo.png
 
   fonts:
     - family: bmjua

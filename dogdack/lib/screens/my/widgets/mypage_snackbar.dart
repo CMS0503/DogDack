@@ -13,6 +13,7 @@ enum SnackBarErrorType {
   NameAlreadyExist, // 반려견 이름이 이미 존재하는 경우
   PasswordNotExist, // 공유 비밀번호가 입력되지 않았을 경우
   InvalidLogin, // 공유 로그인 정보가 유효하지 않음
+  EmailNotExist, // 존재하지 않는 이메일 입니다.
 }
 
 class MyPageSnackBar {
@@ -62,6 +63,9 @@ class MyPageSnackBar {
         break;
       case SnackBarErrorType.InvalidLogin:
         msg = '잘못된 입력입니다!';
+        break;
+      case SnackBarErrorType.EmailNotExist:
+        msg = '입력하신 이메일에 해당하는 유저가 없어요!';
         break;
     }
 

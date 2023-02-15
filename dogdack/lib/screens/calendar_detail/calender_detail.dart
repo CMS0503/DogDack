@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/controllers/walk_controller.dart';
 import 'package:dogdack/screens/calendar_detail/widget/beauty/beauty_icon.dart';
 import 'package:dogdack/screens/calendar_detail/widget/diary/diary_widget.dart';
@@ -25,7 +26,7 @@ class _CalenderDetailState extends State<CalenderDetail> {
   final walkController = Get.put(WalkController());
   final userController = Get.put(UserController());
 
-  Future<void> test() async {
+  Future<void> getImage() async {
     var dogDoc = await FirebaseFirestore.instance
         .collection('Users/${userController.loginEmail}/Pets')
         .doc(controller.dognames[controller.selectedValue].toString())
@@ -33,7 +34,30 @@ class _CalenderDetailState extends State<CalenderDetail> {
         .doc(DateFormat('yyMMdd').format(controller.date))
         .get();
 
-    print(dogDoc['imageUrl']);
+    imgList = dogDoc['imageUrl'];
+  }
+
+  @override
+  void initState() {
+    FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets')
+        .doc(controller.dognames[controller.selectedValue].toString())
+        .collection('Calendar')
+        .doc(DateFormat('yyMMdd').format(controller.date))
+        .get()
+        .then((value) {
+      imgList = value['imageUrl'];
+      print("이닛 함수 실행");
+      print(imgList);
+      print(imgList.length);
+      setState(() {
+        if (imgList.length != 0) {
+          imageUrl = imgList[0] as String;
+        }
+      });
+    });
+
+    super.initState();
   }
 
 // 캘린더에서 받아온 데이터
@@ -41,17 +65,17 @@ class _CalenderDetailState extends State<CalenderDetail> {
   bool bath = false;
   bool beauty = false;
   String diary = "오늘의 일기";
+  List<Object?> imgList = [];
+  var imageUrl = '';
 
   ////////////////////////////////////파이어 베이스 연결 끝/////////////////////////////////////////////////////
   @override
   Widget build(BuildContext context) {
-    test();
-    String imageUrl = '';
-    if (controller.imageUrl.isEmpty) {
-    } else {
-      imageUrl = controller.imageUrl[0];
-    }
-
+    // getImage().then((value) {
+    //  if(tempImg.toList().length!=0){
+    //    imageUrl = tempImg.toList()[0].toString();
+    //  }
+    // });
     Color grey = const Color.fromARGB(255, 80, 78, 91);
     Color violet = const Color.fromARGB(255, 100, 92, 170);
     late Color hairColor = grey;
@@ -67,8 +91,11 @@ class _CalenderDetailState extends State<CalenderDetail> {
     } else {
       bathColor = grey;
     }
-    if (controller.imageUrl.isNotEmpty) {
-      imageUrl = controller.imageUrl[0];
+
+    Widget imageWidge =  Image.asset('images/login/login_image.png');
+
+    if(imageUrl.length!=0){
+      imageWidge = DiaryWidget(diaryImage: imageUrl, diaryText: controller.diary);
     }
 
     return Scaffold(
@@ -107,14 +134,11 @@ class _CalenderDetailState extends State<CalenderDetail> {
                 children: const [
                   // 등록한 날짜가 나와야 함
                   // CalDetailDateWidget(
-                  // time:
-                  //     "${controller.date.year}년 ${controller.date.month}월 ${controller.date.day}일 ${controller.date.hour}시 ${controller.date.second}분에서"
-                  // time: DateTime.fromMicrosecondsSinceEpoch(
-                  //   controller.startTime.microsecondsSinceEpoch,
-                  // ),
-                  // ),
-
-                  // CalDetailDateWidget(),
+                  //     time:
+                  //     "${controller.date.year}년 ${controller.date.month}월 ${controller.date.day}일 ${controller.date.hour}시 ${controller.date.second}분에서"),
+                  // CalDetailDateWidget(
+                  //     time:
+                  //     "${controller.date.year}년 ${controller.date.month}월 ${controller.date.day}일 ${controller.date.hour}시 ${controller.date.second}분까지")
                 ],
               ),
             ),
@@ -130,6 +154,7 @@ class _CalenderDetailState extends State<CalenderDetail> {
               name: controller.selectedValue,
               title: "뷰티도장",
             ),
+
             BeautyWidget(
               hair_color: hairColor,
               bath_color: bathColor,
@@ -139,7 +164,9 @@ class _CalenderDetailState extends State<CalenderDetail> {
               title: "오늘의 일기",
             ),
             // 나중에 여러개로 바꿔야됨
-            DiaryWidget(diaryImage: imageUrl, diaryText: controller.diary),
+            imageWidge
+
+            ,
           ],
         ),
       ),

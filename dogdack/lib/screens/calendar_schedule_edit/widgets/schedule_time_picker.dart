@@ -69,7 +69,7 @@ class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
                   return;
                 }
                 timeController.text = time.format(context);
-                // controller.time = time.format(context);
+                controller.time = time.format(context);
                 var dateTime = DateTime(
                   controller.date.year,
                   controller.date.month,
@@ -79,8 +79,6 @@ class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
                 );
                 if (widget.start_end == '시작') {
                   controller.startTime = Timestamp.fromDate(dateTime);
-                  print('hihihihihihihihihihihihihi');
-                  print(controller.startTime);
                 } else {
                   controller.endTime = Timestamp.fromDate(dateTime);
                 }
