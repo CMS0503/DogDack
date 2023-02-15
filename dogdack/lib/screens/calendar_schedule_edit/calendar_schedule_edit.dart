@@ -71,6 +71,9 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
         }
       });
     
+      print(controller.bath);
+      print(controller.beauty);
+      print(controller.diary);
 
       // Calendar data 입력하기
       petsRef
@@ -211,9 +214,9 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                     // controller.imageUrl = [];
                     print('ontroller.imageUrl');
                     print(controller.imageUrl);
-                    controller.bath = true;
-                    controller.beauty = true;
-                    controller.walkCheck = true;
+                    // controller.bath = true;
+                    // controller.beauty = true;
+                    // controller.walkCheck = true;
 
                     // 입력 완료하면 달력화면으로 돌아가기 위해 pop
                     Navigator.pop(context);
