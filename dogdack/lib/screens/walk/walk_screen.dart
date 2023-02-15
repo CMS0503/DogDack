@@ -163,9 +163,7 @@ class _WalkPageState extends State<WalkPage> {
                               itemBuilder: (context, itemIndex, pageViewIndex) {
                                 return Column(
                                   children: [
-                                    const SizedBox(
-                                      height: 15,
-                                    ),
+                                    const SizedBox(height: 15,),
                                     InkWell(
                                       onTap: () {
                                         if (!flag) {
@@ -182,29 +180,25 @@ class _WalkPageState extends State<WalkPage> {
                                         children: [
                                           Container(
                                             // color: Colors.red,
-                                              height: size.height * 0.18,
-                                              child: Column(
-                                                children: [
-                                                  Text(
-                                                      "${snapshot.data!.docs[itemIndex].get('name')}",
-                                                      style: const TextStyle(
-                                                        fontSize: 20,
-                                                      )),
-                                                  const SizedBox(
-                                                    height: 15,
+                                            height: size.height * 0.18,
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                    "${snapshot.data!.docs[itemIndex].get('name')}",
+                                                    style: const TextStyle(fontSize: 20, )
+                                                ),
+                                                const SizedBox(height: 15,),
+                                                CircleAvatar(
+                                                  radius: size.width * 0.13,
+                                                  child: ClipOval(
+                                                      child: CachedNetworkImage(
+                                                        imageUrl: snapshot.data!.docs[itemIndex].get('imageUrl'),
+                                                      )
                                                   ),
-                                                  CircleAvatar(
-                                                    radius: size.width * 0.13,
-                                                    child: ClipOval(
-                                                        child:
-                                                            CachedNetworkImage(
-                                                      imageUrl: snapshot
-                                                          .data!.docs[itemIndex]
-                                                          .get('imageUrl'),
-                                                    )),
-                                                  ),
-                                                ],
-                                              )),
+                                                ),
+                                              ],
+                                            )
+                                          ),
                                           if (walkController
                                               .flagList.isNotEmpty)
                                             walkController.choiceDog(
@@ -316,7 +310,7 @@ class _WalkPageState extends State<WalkPage> {
             ),
           ),
           Container(
-            height: 180,
+            height: h * 0.23,
             width: w * 0.8,
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(15)),
@@ -326,15 +320,7 @@ class _WalkPageState extends State<WalkPage> {
                 const SizedBox(
                   height: 15,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("권장 산책 시간 : ", style: TextStyle(fontSize: 20)),
-                    Text(
-                        '${(walkController.rectime / walkController.selDogs.length).round()} 분',
-                        style: const TextStyle(fontSize: 20)),
-                  ],
-                ),
+                const Text('목표 산책 시간을 입력하세요', style: TextStyle(fontSize: 20)),
                 Container(
                   padding: const EdgeInsets.all(10),
                   child: Column(
@@ -346,27 +332,24 @@ class _WalkPageState extends State<WalkPage> {
                           onChanged: (text) {
                             walkController.tmp_goal.value = int.parse(text);
                           },
-                          decoration: const InputDecoration(
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 100, 92, 170))),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 100, 92, 170))),
-                            border: OutlineInputBorder(
+
+                          decoration: InputDecoration(
+                            hintText: '권장 산책 시간 : ${(walkController.rectime / walkController.selDogs.length).round()} 분',
+                            border: const OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10))),
-                            focusColor: Color.fromARGB(255, 100, 92, 170),
-                            labelText: '목표 산책 시간',
-                            labelStyle: TextStyle(
-                                color: Color.fromARGB(255, 100, 92, 170)),
+                            // labelText: '목표 산책 시간',
                           ),
                         ),
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          walkController.goal.value =
-                              walkController.tmp_goal.value;
+
+                          if(walkController.tmp_goal.value == 0) {
+                            walkController.goal.value = (walkController.rectime / walkController.selDogs.length).round();
+                          } else {
+                            walkController.goal.value = walkController.tmp_goal.value;
+                          }
                         },
                         style:
                             ElevatedButton.styleFrom(backgroundColor: violet2),
