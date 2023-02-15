@@ -87,9 +87,7 @@ class _MyAppState extends State<MyApp> {
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return widget.isFinish == true
-                  ? MainPage()
-                  : const LoginAfterPage();
+              return widget.isFinish == true ? MainPage() : LoginAfterPage();
             } else {
               return const LoginPage();
             }

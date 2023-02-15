@@ -4,11 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/input_controller.dart';
 import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/screens/calendar_detail/widget/walk/cal_walk_text.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
+import 'package:flutter/gestures.dart';
 
+import '../../../../controllers/mypage_controller.dart';
 import '../../../../controllers/walk_controller.dart';
+import '../../../../models/dog_data.dart';
 
 class CalWalkCardWidget extends StatefulWidget {
   String place;
@@ -36,22 +40,98 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
   final Set<Polyline> _polyline = {};
   List<LatLng> latlng = [];
 
+  late CollectionReference<DogData> petsRef;
+
   final Completer<GoogleMapController> _controller = Completer();
   final walkController = Get.put(WalkController());
   final inputController = Get.put(InputController());
   final userController = Get.put(UserController());
+  final petController = Get.put(PetController());
 
   @override
   void initState() {
     super.initState();
 
+    setPoly().then(
+      (result) {
+        _polyline.add(
+          Polyline(
+              polylineId: const PolylineId('1'),
+              points: latlng,
+              width: 3,
+              color: Colors.blue),
+        );
+        walkController.updateState();
+        setState(() {});
+      },
+    );
+  }
 
+  Future<void> setPoly() async {
+    print('@@@@@@@@@@@@@@@@@@@@무한로딩체크@@@@@@@@@@@@@@@@@@@@@');
+    latlng.clear();
+    String docId =
+        inputController.dognames[inputController.selectedValue.toString()];
+    // walk 경로
+    CollectionReference walkRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets/$docId/Walk');
 
+    await walkRef.get().then(
+      (value) async {
+        // 달력에서 선택한 날짜
+        var selectedDay = inputController.date;
+        var startOfToday = Timestamp.fromDate(selectedDay);
+        var endOfToday =
+            Timestamp.fromDate(selectedDay.add(const Duration(days: 1)));
+
+        // 선택한 날짜의 산책 데이터를 내림차순 정렬(최신 데이터가 위로 오게)
+        await walkRef
+            .where("startTime",
+                isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday)
+            .orderBy("startTime", descending: true)
+            .get()
+            .then(
+          (QuerySnapshot snapshot) async {
+            widget.geodata = snapshot.docs[0]['geolist'];
+            // 장소, 거리, 시간 데이터
+            widget.placedata = snapshot.docs[0]['place'];
+            inputController.distance = snapshot.docs[0]['distance'].toString();
+            inputController.startTime = snapshot.docs[0]['startTime'];
+            inputController.endTime = snapshot.docs[0]['endTime'];
+            inputController.place = snapshot.docs[0]['place'];
+
+            for (var i = 0; i < snapshot.docs.length; i++) {
+              widget.timedata += snapshot.docs[i]['totalTimeMin'];
+              widget.distdata += snapshot.docs[i]['distance'];
+            }
+
+            await addPloy(widget.geodata).then((value) async {
+              if (latlng.length > 1) {
+                GoogleMapController googleMapController =
+                    await _controller.future;
+                googleMapController.animateCamera(
+                  CameraUpdate.newCameraPosition(
+                    CameraPosition(
+                      zoom: 17,
+                      target: LatLng(latlng[latlng.length ~/ 2].latitude,
+                          latlng[latlng.length ~/ 2].longitude),
+                    ),
+                  ),
+                );
+              }
+            });
+          },
+        );
+      },
+    ).then((value) {
+      setState(() {});
+    });
   }
 
 
   @override
   Widget build(BuildContext context) {
+    print('@@@@@@@@@@@@@@@@@@@@무한로딩체크@@@@@@@@@@@@@@@@@@@@@');
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     double height = screenSize.height;
@@ -78,6 +158,8 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
                   children: [
                     GetBuilder<WalkController>(builder: (_) {
                       return GoogleMap(
+                        gestureRecognizers: Set()..add(Factory<PanGestureRecognizer>(
+                              () => PanGestureRecognizer())),
                         initialCameraPosition: const CameraPosition(
                           target: LatLng(37.5012428, 127.039585),
                           zoom: 15,
@@ -104,13 +186,15 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
                       ),
                     ),
                     Flexible(
-                        child: CalDetailTextWidget(
-                            title: "이동 거리",
-                            text: "${widget.distdata.toString()}미터")),
+                      child: CalDetailTextWidget(
+                          title: "이동 거리",
+                          text: "${widget.distdata.toString()}미터"),
+                    ),
                     Flexible(
-                        child: CalDetailTextWidget(
-                            title: "산책 시간",
-                            text: "${widget.timedata.toString()}분")),
+                      child: CalDetailTextWidget(
+                          title: "산책 시간",
+                          text: "${widget.timedata.toString()}분"),
+                    ),
                   ],
                 ),
               )

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dogdack/controllers/button_controller.dart';
 import 'package:dogdack/controllers/input_controller.dart';
 import 'package:dogdack/controllers/user_controller.dart';
 
@@ -17,41 +18,45 @@ class _DatePickerState extends State<DatePicker> {
   // 오늘 날짜를 기본으로 저장
   final controller = Get.put(InputController());
   final userController = Get.put(UserController());
+  final btnController = Get.put(ButtonController());
 
   DateTime date = DateTime.now();
 
   String docId = '';
 
-  getName() async {
-    var dogDoc = await FirebaseFirestore.instance
-        .collection('Users/${userController.loginEmail}/Pets').get();
-    List<String> dogs = [];
-    // 자.. 여기다가 등록된 강아지들 다 입력하는거야
-    for (int i = 0; i < dogDoc.docs.length; i++) {
-      dogs.insert(0, dogDoc.docs[i]['name']);
-    }
-    controller.valueList = dogs;
+  // getName() async {
+  //   var dogDoc = await FirebaseFirestore.instance
+  //       .collection('Users/${userController.loginEmail}/Pets').get();
+  //   List<String> dogs = [];
+  //   // 자.. 여기다가 등록된 강아지들 다 입력하는거야
+  //   for (int i = 0; i < dogDoc.docs.length; i++) {
+  //     dogs.insert(0, dogDoc.docs[i]['name']);
+  //   }
+  //   controller.valueList = dogs;
 
-    // 근데 강아지들이 없으면?
-    if (dogs.isEmpty) {
-      '그냥 넘어가야지 뭐';
-    } else {
-      // 강아지들이 있는데 처음 들어왔을 때 강아지 선택을 안한 상태면
-      if (controller.selectedValue == '') {
-        // 그냥 처음 강아지로 가져오기
-        controller.selectedValue = dogs[0];
+  //   // 근데 강아지들이 없으면?
+  //   if (dogs.isEmpty) {
+  //     '그냥 넘어가야지 뭐';
+  //   } else {
+  //     // 강아지들이 있는데 처음 들어왔을 때 강아지 선택을 안한 상태면
+  //     if (controller.selectedValue == '') {
+  //       // 그냥 처음 강아지로 가져오기
+  //       controller.selectedValue = dogs[0];
 
-        setState(() {});
-        // }
-      }
-    }
-  }
+  //       setState(() {});
+  //       // }
+  //     }
+  //   }
+  // }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getName();
+    // getName();
+    setState(() {
+    btnController.getName;
+    });
   }
 
   @override
@@ -117,6 +122,7 @@ class _DatePickerState extends State<DatePicker> {
                               if (newDate == null) return;
                             },
                           ),
+                          // 드랍다운 버튼
                           Container(
                             alignment: Alignment.centerLeft,
                             child: Padding(
@@ -155,7 +161,6 @@ class _DatePickerState extends State<DatePicker> {
                                         setState(() {
                                           controller.selectedValue =
                                               value.toString();
-                                          // getName();
                                           controller.saveName =
                                               controller.selectedValue;
                                         });

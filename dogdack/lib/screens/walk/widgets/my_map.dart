@@ -6,13 +6,17 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:latlong2/latlong.dart' as ll;
+import 'package:location/location.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 
 import '../../../controllers/walk_controller.dart';
 
 class myMap extends StatefulWidget {
   late final String title;
   late String receiveData = '';
-  Map? location;
+
+  // Map? location;
 
   @override
   _MapState createState() => _MapState();
@@ -20,6 +24,10 @@ class myMap extends StatefulWidget {
 
 class _MapState extends State<myMap> {
   // late GoogleMapController _controller;
+  Color grey = const Color.fromARGB(255, 80, 78, 91);
+  Color violet = const Color.fromARGB(255, 100, 92, 170);
+  Color violet2 = const Color.fromARGB(255, 160, 132, 202);
+
   final Completer<GoogleMapController> _controller = Completer();
   final walkController = Get.put(WalkController());
 
@@ -32,7 +40,9 @@ class _MapState extends State<myMap> {
 
   final ll.Distance distance = const ll.Distance();
   late LatLng temp;
-  double? totalDistance = 0;
+  // RxDouble? totalDistance = 0.0.obs;
+
+  LocationData? currentLocation;
 
   addMarker(cordinate) {
     setState(() {
@@ -49,85 +59,134 @@ class _MapState extends State<myMap> {
       target: LatLng(walkController.lat, walkController.lon),
       zoom: 17,
     );
-    updatePosition();
+    // updatePosition(); // GPS 모듈
+    getCurrentLocation();
   }
 
-  void updatePosition() async {
+  // void updatePosition() async {
+  //   print('update');
+  //   GoogleMapController googleMapController = await _controller.future;
+  //   for (BluetoothService service in walkController.services!) {
+  //     print('service: ${service}');
+  //     if (service.uuid.toString() == walkController.serviceUUID) {
+  //       print('service ok');
+  //       for (BluetoothCharacteristic characteristic
+  //           in service.characteristics) {
+  //         if (characteristic.uuid.toString() ==
+  //             walkController.characteristicUUID) {
+  //           print('characteristic ok');
+  //           await characteristic.setNotifyValue(true);
+  //           String stringValue = '';
+  //           characteristic.value.listen((value) {
+  //             print('listen: ${value}');
+  //             try {
+  //               stringValue = utf8.decode(value).toString();
+  //             } catch (e) {
+  //               print('Error in decoding(my_map.dart): $e');
+  //             }
+  //
+  //             widget.receiveData += stringValue;
+  //             print('receiveData: ${widget.receiveData}');
+  //             // 한번 갱신 될 때마다
+  //             // 시작 전
+  //             if (!walkController.isRunning.value) {
+  //               widget.receiveData = '';
+  //             } else if (widget.receiveData.contains('{') &&
+  //                 widget.receiveData.contains('}')) {
+  //               // 시작 후
+  //               try {
+  //                 int start = widget.receiveData.indexOf('{');
+  //                 int end = widget.receiveData.indexOf('}') + 1;
+  //
+  //                 widget.receiveData = widget.receiveData.substring(start, end);
+  //
+  //                 widget.location = jsonDecode(widget.receiveData);
+  //                 walkController.setCurrentLocation(
+  //                     widget.location!['lat'], widget.location!["lon"]);
+  //                 print(
+  //                     'walkController location: ${walkController.lat} ${walkController.lon}');
+  //                 widget.receiveData = '';
+  //                 LatLng currentPosition = LatLng(
+  //                   walkController.lat,
+  //                   walkController.lon,
+  //                 );
+  //                 googleMapController.animateCamera(
+  //                   CameraUpdate.newCameraPosition(
+  //                     CameraPosition(
+  //                       zoom: 17,
+  //                       target: currentPosition,
+  //                     ),
+  //                   ),
+  //                 );
+  //
+  //                 if (latlng.length > 1) {
+  //                   totalDistance = totalDistance! +
+  //                       calTotalDistance(
+  //                           ll.LatLng(
+  //                               latlng.last.latitude, latlng.last.longitude),
+  //                           ll.LatLng(currentPosition.latitude,
+  //                               currentPosition.longitude));
+  //                   walkController.distance = totalDistance;
+  //                 }
+  //
+  //                 latlng.add(currentPosition);
+  //                 walkController.addData(
+  //                     currentPosition.latitude, currentPosition.longitude);
+  //                 print('totaldistance: $totalDistance');
+  //                 setState(() {});
+  //               } catch (e) {
+  //                 print('Error in set position - $e');
+  //               }
+  //             }
+  //           });
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+
+  void getCurrentLocation() async {
+    print('getCurLocation');
+    Location myLocation = Location();
+    myLocation.getLocation().then(
+      (location) {
+        currentLocation = location;
+      },
+    );
+
+    print(currentLocation);
     GoogleMapController googleMapController = await _controller.future;
-    for (BluetoothService service in walkController.services!) {
-      if (service.uuid.toString() == walkController.serviceUUID) {
-        for (BluetoothCharacteristic characteristic
-            in service.characteristics) {
-          if (characteristic.uuid.toString() ==
-              walkController.characteristicUUID) {
-            await characteristic.setNotifyValue(true);
-            String stringValue = '';
-            characteristic.value.listen((value) {
-              print('listen: ${value}');
-              try {
-                stringValue = utf8.decode(value).toString();
-              } catch (e) {
-                print('Error in decoding(my_map.dart): $e');
-              }
-
-              widget.receiveData += stringValue;
-              print('receiveData: ${widget.receiveData}');
-              // 한번 갱신 될 때마다
-              // 시작 전
-              if (!walkController.isRunning.value) {
-                widget.receiveData = '';
-              } else if (widget.receiveData.contains('{') &&
-                  widget.receiveData.contains('}')) {
-                // 시작 후
-                try {
-                  int start = widget.receiveData.indexOf('{');
-                  int end = widget.receiveData.indexOf('}') + 1;
-
-                  widget.receiveData = widget.receiveData.substring(start, end);
-
-                  widget.location = jsonDecode(widget.receiveData);
-                  walkController.setCurrentLocation(
-                      widget.location!['lat'], widget.location!["lon"]);
-                  print(
-                      'walkController location: ${walkController.lat} ${walkController.lon}');
-                  widget.receiveData = '';
-                  LatLng currentPosition = LatLng(
-                    walkController.lat,
-                    walkController.lon,
-                  );
-                  googleMapController.animateCamera(
-                    CameraUpdate.newCameraPosition(
-                      CameraPosition(
-                        zoom: 17,
-                        target: currentPosition,
-                      ),
-                    ),
-                  );
-
-                  if (latlng.length > 1) {
-                    totalDistance = totalDistance! +
-                        calTotalDistance(
-                            ll.LatLng(
-                                latlng.last.latitude, latlng.last.longitude),
-                            ll.LatLng(currentPosition.latitude,
-                                currentPosition.longitude));
-                    walkController.distance = totalDistance;
-                  }
-
-                  latlng.add(currentPosition);
-                  walkController.addData(
-                      currentPosition.latitude, currentPosition.longitude);
-                  print('totaldistance: $totalDistance');
-                  setState(() {});
-                } catch (e) {
-                  print('Error in set position - $e');
-                }
-              }
-            });
+    myLocation.onLocationChanged.listen(
+      (newLoc) {
+        currentLocation = newLoc;
+        googleMapController.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              zoom: 17,
+              target: LatLng(
+                newLoc.latitude!,
+                newLoc.longitude!,
+              ),
+            ),
+          ),
+        );
+        if (walkController.isStart && walkController.isRunning.value) {
+          if (latlng.length > 1) {
+            walkController.totalDistance!.value =
+                walkController.totalDistance!.value +
+                    calTotalDistance(
+                        ll.LatLng(latlng.last.latitude, latlng.last.longitude),
+                        ll.LatLng(currentLocation!.latitude!,
+                            currentLocation!.longitude!));
           }
+
+          latlng.add(
+              LatLng(currentLocation!.latitude!, currentLocation!.longitude!));
+
+          setState(() {});
         }
-      }
-    }
+      },
+    );
   }
 
   double calTotalDistance(ll.LatLng p1, ll.LatLng p2) {
@@ -137,42 +196,48 @@ class _MapState extends State<myMap> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      body: Stack(
-        children: [
-          GoogleMap(
-              // liteModeEnabled: true,
-              zoomControlsEnabled: false,
-              initialCameraPosition: _initialPosition!,
-              mapType: MapType.normal,
-              onMapCreated: (mapController) {
-                if (_controller.isCompleted == false) {
-                  _controller.complete(mapController);
-                }
-              },
-              markers: markers.toSet(),
-              polylines: {
-                Polyline(
-                  polylineId: const PolylineId('route'),
-                  visible: true,
-                  width: 5,
-                  points: latlng,
-                  color: Colors.blue,
-                ),
-              }),
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-                size.height * 0.01, size.height * 0.53, size.height * 0.01, 0),
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                      color: Theme.of(context).primaryColor, width: 3.0)),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Scaffold(
+        body: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: GoogleMap(
+                  // liteModeEnabled: true,
+                  gestureRecognizers: Set()
+                    ..add(Factory<PanGestureRecognizer>(
+                        () => PanGestureRecognizer())),
+                  zoomControlsEnabled: false,
+                  initialCameraPosition: _initialPosition!,
+                  mapType: MapType.normal,
+                  onMapCreated: (mapController) {
+                    if (_controller.isCompleted == false) {
+                      _controller.complete(mapController);
+                    }
+                  },
+                  markers: markers.toSet(),
+                  polylines: {
+                    Polyline(
+                      polylineId: const PolylineId('route'),
+                      visible: true,
+                      width: 5,
+                      points: latlng,
+                      color: Colors.blue,
+                    ),
+                  }),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(size.height * 0.01,
+                  size.height * 0.52, size.height * 0.01, 0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: violet2,
+                      width: 3,
+                    )),
                 height: size.height * 0.1,
                 // color: Colors.white,
                 child: Obx(
@@ -191,36 +256,34 @@ class _MapState extends State<myMap> {
                               _clickPlayButton();
                             },
                             child: walkController.isRunning.value
-                                ? Icon(Icons.pause,
-                                    color: Theme.of(context).primaryColor)
-                                : Icon(Icons.play_arrow,
-                                    color: Theme.of(context).primaryColor)),
+                                ? Icon(Icons.pause, color: violet2)
+                                : Icon(Icons.play_arrow, color: violet2)),
                       ),
-                      // 산책 시간
-                      Align(
-                        alignment: Alignment(
-                          Alignment.centerLeft.x + size.width * 0.0005,
-                          Alignment.center.y,
-                        ),
-                        child: Text(
-                          '${walkController.timeCount ~/ 3600} : ${walkController.timeCount ~/ 60} : ${walkController.timeCount % 60}',
-                          // (_timeCount ~/ 100).toString() + ' 초',
-                          style: const TextStyle(
-                              fontSize: 30,
-                              color: Color.fromARGB(255, 80, 78, 91)),
-                        ),
-                      ),
-                      // 산책 거리
-                      Align(
-                        alignment: Alignment(
-                          Alignment.centerRight.x - size.width * 0.0005,
-                          Alignment.center.y,
-                        ),
-                        child: Text(
-                          '$totalDistance m',
+                          // 산책 시간
+                          Align(
+                            alignment: Alignment(
+                              Alignment.centerLeft.x + size.width * 0.0005,
+                              Alignment.center.y,
+                            ),
+                            child: Text(
+                              '${walkController.timeCount ~/ 3600} : ${walkController.timeCount ~/ 60} : ${walkController.timeCount % 60}',
+                              // (_timeCount ~/ 100).toString() + ' 초',
+                              style: const TextStyle(
+                                  fontSize: 25,
+                                  color: Color.fromARGB(255, 80, 78, 91)),
+                            ),
+                          ),
+                          // 산책 거리
+                          Align(
+                            alignment: Alignment(
+                              Alignment.centerRight.x - size.width * 0.0005,
+                              Alignment.center.y,
+                            ),
+                            child: Text(
+                              '${walkController.totalDistance} m',
                           // 'data',
                           style: const TextStyle(
-                              fontSize: 30,
+                              fontSize: 25,
                               color: Color.fromARGB(255, 80, 78, 91)),
                         ),
                       ),
@@ -228,9 +291,9 @@ class _MapState extends State<myMap> {
                   ),
                 ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -244,6 +307,7 @@ class _MapState extends State<myMap> {
     } else {
       print('timer stop');
       walkController.pauseTimer();
+      walkController.latlng.addAll(latlng);
     }
   }
 }
@@ -254,7 +318,7 @@ class OutlineCircleButton extends StatelessWidget {
     this.onTap,
     this.borderSize = 0.5,
     this.radius = 20.0,
-    this.borderColor = const Color.fromARGB(255, 100, 92, 170),
+    this.borderColor = const Color.fromARGB(255, 160, 132, 202),
     this.foregroundColor = Colors.white,
     this.child,
   }) : super(key: key);

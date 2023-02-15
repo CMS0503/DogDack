@@ -48,20 +48,12 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
         final result = await storage
             .ref()
             .child(
-                '${userController.loginEmail}/dogs/${controller.selectedValue}/${controller.date}/$fileName')
+                '${userController.loginEmail}/dogs/${controller.selectedValue}/${DateFormat('yyMMdd').format(controller.date)}/$fileName')
             .putFile(
               imageFile,
-              SettableMetadata(
-                customMetadata: {
-                  'uploaded_by': 'A bad guy',
-                  'description': 'Some description...'
-                },
-              ),
             );
         result.ref.getDownloadURL().then((value) {
           controller.imageUrl.add(value.toString());
-          // print('이미지 url');
-          // print(controller.imageUrl);
         });
 
         // Refresh the UI
@@ -86,7 +78,7 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
     final ListResult result = await storage
         .ref()
         .child(
-            '${userController.loginEmail}/dogs/${controller.selectedValue}/${controller.date}')
+            '${userController.loginEmail}/dogs/${controller.selectedValue}/${DateFormat('yyMMdd').format(controller.date)}')
         .list();
     final List<Reference> allFiles = result.items;
 
@@ -122,7 +114,6 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
   Future<void> _delete(String ref, String url) async {
     await storage.ref(ref).delete();
     controller.imageUrl.remove(url);
-    print('controller.imageUrl ${controller.imageUrl}');
     // Rebuild the UI
     setState(() {});
   }
