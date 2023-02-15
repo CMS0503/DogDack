@@ -1,5 +1,6 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dogdack/controllers/mypage_floatingbtn_controller.dart';
 import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/models/user_data.dart';
 import 'package:dogdack/screens/my/widgets/mypage_snackbar.dart';
@@ -44,6 +45,7 @@ class _MyPageState extends State<MyPage> {
   final mypageStateController = Get.put(MyPageStateController());
   final mainController = Get.put(MainController());
   final userController = Get.put(UserController());
+  final floatingController = Get.put(MyPageFloatingBtnController());
 
   //Colors
   Color floatingBtnColor_total = Color(0xff644CAA);
@@ -90,6 +92,9 @@ class _MyPageState extends State<MyPage> {
             onPressed: () {
               //페이지 옵션 -> 추가하기 화면
               mypageStateController.myPageStateType = MyPageStateType.Create;
+
+              floatingController.floatBtnKey.currentState?.closeFABs();
+
               // 반려견 정보 추가 페이지로 이동
               Navigator.push(context, MaterialPageRoute(builder: (context) => EditDogInfoPage()));
             },
@@ -118,6 +123,8 @@ class _MyPageState extends State<MyPage> {
           SizedBox(width: deviceSize.width * 0.02),
           FloatingActionButton(
             onPressed: () {
+              floatingController.floatBtnKey.currentState?.closeFABs();
+
               String phNum = '아직 번호가 등록 되지 않았어요!';
               userRef.get().then((value) {
                 String phoneNumber =  value.docs[0].get('phoneNumber').toString();
@@ -180,6 +187,8 @@ class _MyPageState extends State<MyPage> {
           SizedBox(width: deviceSize.width * 0.02),
           FloatingActionButton(
             onPressed: () {
+              floatingController.floatBtnKey.currentState?.closeFABs();
+
               showTextInputDialog(
                   context: globalContext,
                   title: '그룹 가입하기',
@@ -256,7 +265,7 @@ class _MyPageState extends State<MyPage> {
           SizedBox(width: deviceSize.width * 0.02),
           FloatingActionButton(
             onPressed: () {
-
+              floatingController.floatBtnKey.currentState?.closeFABs();
             },
             heroTag: "showMemberBtn",
             tooltip: '그룹 멤버보기',
@@ -283,6 +292,8 @@ class _MyPageState extends State<MyPage> {
           SizedBox(width: deviceSize.width * 0.02),
           FloatingActionButton(
             onPressed: () {
+              floatingController.floatBtnKey.currentState?.closeFABs();
+
               showOkCancelAlertDialog(
                 context: globalContext,
                 cancelLabel: '취소',
@@ -327,6 +338,8 @@ class _MyPageState extends State<MyPage> {
           SizedBox(width: deviceSize.width * 0.02),
           FloatingActionButton(
             onPressed: () {
+              floatingController.floatBtnKey.currentState?.closeFABs();
+
               String getPassword = '아직 비밀번호가 등록되지 않았어요!';
               myRef.get().then((myDBPass) {
                 String dbPassword = myDBPass.docs[0].get('password').toString();
@@ -455,6 +468,9 @@ class _MyPageState extends State<MyPage> {
       onTap: () {
         //포커스를 벗어나면 키보드를 해제함
         FocusManager.instance.primaryFocus?.unfocus();
+
+        if(floatingController.floatBtnKey.currentState?.isOpened == true)
+          floatingController.floatBtnKey.currentState?.closeFABs();
       },
       child: Scaffold(
         appBar: PreferredSize(
@@ -462,14 +478,13 @@ class _MyPageState extends State<MyPage> {
           child: const LogoWidget(),
         ),
         floatingActionButton: AnimatedFloatingActionButton(
-            fabButtons: userController.isHost ? <Widget>[
-              petAddBtn(), phoneBtn(), guestGroupOut(),
-            ] : <Widget>[
-              petAddBtn(), phoneBtn(), joinGroupBtn(), setPassword()
-            ],
-            colorStartAnimation: floatingBtnColor_total,
-            colorEndAnimation: Colors.red,
-            animatedIconData: AnimatedIcons.menu_close //To principal button
+          fabButtons: userController.isHost ? <Widget>[
+              petAddBtn(), phoneBtn(), guestGroupOut(),] : <Widget>[
+              petAddBtn(), phoneBtn(), joinGroupBtn(), setPassword()],
+          colorStartAnimation: floatingBtnColor_total,
+          colorEndAnimation: Colors.red,
+          key: floatingController.floatBtnKey,
+          animatedIconData: AnimatedIcons.menu_close,
         ),
         // 키보드 등장 시 화면 오버플로우가 발생하지 않도록 함.
         body: SingleChildScrollView(
@@ -783,6 +798,8 @@ class _MyPageState extends State<MyPage> {
                                     Center(
                                       child: ElevatedButton(
                                         onPressed: () {
+                                          floatingController.floatBtnKey.currentState?.closeFABs();
+
                                           // 편집 상태
                                           mypageStateController.myPageStateType = MyPageStateType.Edit;
 
