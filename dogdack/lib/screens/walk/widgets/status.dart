@@ -129,10 +129,10 @@ class _StatusState extends State<Status> {
                           value: walkController.dropdownValue,
                           elevation: 16,
                           style: const TextStyle(color: Colors.deepPurple),
-                          underline: Container(
-                            height: 2,
-                            color: Colors.deepPurpleAccent,
-                          ),
+                          // underline: Container(
+                          //   height: 2,
+                          //   color: Colors.deepPurpleAccent,
+                          // ),
                           onChanged: (String? value) {
                             petsRef.where('name', isEqualTo: value).get().then((data) {
                               setState(() {
