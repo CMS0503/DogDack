@@ -23,7 +23,7 @@ class WalkController extends GetxController {
 
   final userController = Get.put(UserController());
 
-  RxBool isBleConnect = false.obs;
+  RxBool isBleConnect = true.obs;
 
   // 위도, 경도
   RxDouble latitude = 37.500735.obs;
@@ -88,22 +88,33 @@ class WalkController extends GetxController {
 
   Widget choiceDog(int itemIndex, double size) {
     return
-      flagList[itemIndex]?
-      Container(
-        // color: Colors.red,
-        height: size * 0.4,
-        child: Align(
-          alignment: Alignment.bottomRight,
-            child:
-          CircleAvatar(
-            backgroundImage: const ExactAssetImage('assets/dogdack.png') ,
-            backgroundColor: Colors.transparent,
-            // backgroundColor: ,
-            radius: size * 0.12,
+      Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          // color: Colors.yellow,
+          height: size * 0.4,
+          width: size * 0.28,
+          child:
+          Align(
+              alignment: Alignment.bottomRight,
+              child:
+              flagList[itemIndex]
+              ? Image.asset("assets/dogdack.png")
+              : Container()
+          )
+        )
+      );
 
-          ),
-        ),
-      ):Container();
+
+        // CircleAvatar(
+        //   backgroundImage: const ExactAssetImage('assets/dogdack.png') ,
+        //   backgroundColor: Colors.transparent,
+        //   // backgroundColor: ,
+        //   radius: size * 0.12,
+        // ),
+      // ):Container(
+      //   color: Colors.red,
+      // );
   }
 
   // ----------------------
@@ -200,13 +211,6 @@ class WalkController extends GetxController {
 
     QuerySnapshot _docInPets = await petRef.get();
 
-    // name = (await petsRef.doc(_docInPets.docs.first.id.toString()).get())
-    //     .data()!
-    //     .name!;
-    // imgUrl = (await petsRef.doc(_docInPets.docs.first.id.toString()).get())
-    //     .data()!
-    //     .imageUrl!;
-
     // phoneNumber = (await userRef.doc('number').get()).data()!.phoneNumber;
     phoneNumber = "01085382550";
   }
@@ -249,7 +253,7 @@ class WalkController extends GetxController {
               endTime: endTime,
               totalTimeMin: timeCount.value ~/ 60,
               isAuto: true,
-              // place: ,
+              place: '장소',
               distance: totalDistance.toInt(),
               goal: goal.value,
             )).then((value) => disconnect());

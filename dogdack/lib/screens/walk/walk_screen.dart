@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/user_controller.dart';
+import 'package:dogdack/screens/calendar_main/calendar_main.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -109,16 +110,24 @@ class _WalkPageState extends State<WalkPage> {
   Widget choiceDogModal(w, h, context) {
     final size = MediaQuery.of(context).size;
 
-    return Opacity(
-      opacity: 0.8,
-      child: Container(
-          decoration: const BoxDecoration(color: Colors.grey),
-          height: h * 0.67,
-          width: w,
-          child: Align(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 13),
+      child: Stack(
+        children: [
+          Opacity(
+            opacity: 0.6,
+            child: Container(
+              decoration: const BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.all(Radius.circular(15))),
+              height: size.height * 0.62,
+              width: size.width,
+            ),
+          ),
+          Align(
               alignment: Alignment.center,
               child: Container(
-                height: 250,
+                height: h * 0.26,
                 width: w * 0.9,
                 decoration: BoxDecoration(
                     color: Colors.white,
@@ -140,14 +149,12 @@ class _WalkPageState extends State<WalkPage> {
                     }
                     return Column(
                       children: [
-                        const SizedBox(height: 20,),
                         Stack(
                           alignment: Alignment.center,
                           children: <Widget>[
                             CarouselSlider.builder(
                               options: CarouselOptions(
-                                enlargeCenterPage: true,
-                                viewportFraction: 0.5,
+                                viewportFraction: 0.45,
                                 autoPlay: false,
                                 enableInfiniteScroll: false,
                               ),
@@ -155,6 +162,7 @@ class _WalkPageState extends State<WalkPage> {
                               itemBuilder: (context, itemIndex, pageViewIndex) {
                                 return Column(
                                   children: [
+                                    const SizedBox(height: 15,),
                                     InkWell(
                                       onTap: () {
                                         if (!flag) {
@@ -169,82 +177,107 @@ class _WalkPageState extends State<WalkPage> {
                                       },
                                       child: Stack(
                                         children: [
-                                          CircleAvatar(
-                                            radius: size.width * 0.2,
-                                            child: ClipOval(
-                                                child: CachedNetworkImage(
-                                              imageUrl: snapshot
-                                                  .data!.docs[itemIndex]
-                                                  .get('imageUrl'),
-                                            )),
+                                          Container(
+                                            // color: Colors.red,
+                                            height: size.height * 0.18,
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                    "${snapshot.data!.docs[itemIndex].get('name')}",
+                                                    style: const TextStyle(fontSize: 20, )
+                                                ),
+                                                const SizedBox(height: 15,),
+                                                CircleAvatar(
+                                                  radius: size.width * 0.13,
+                                                  child: ClipOval(
+                                                      child: CachedNetworkImage(
+                                                        imageUrl: snapshot.data!.docs[itemIndex].get('imageUrl'),
+                                                      )
+                                                  ),
+                                                ),
+                                              ],
+                                            )
                                           ),
-                                          if (walkController.flagList.isNotEmpty) walkController.choiceDog(itemIndex, size.width),
+                                          if (walkController
+                                              .flagList.isNotEmpty)
+                                            walkController.choiceDog(
+                                                itemIndex, size.width),
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                        "${snapshot.data!.docs[itemIndex].get('name')}",
-                                        style: const TextStyle(fontSize: 20)),
                                   ],
                                 );
                               },
                             ),
-                            SizedBox(
-                              height: 220,
-                              width: 300,
+                            Container(
                               // color: Colors.red,
+                              height: size.height * 0.25,
+                              width: size.width * 0.85,
                               child: Align(
                                 alignment: Alignment.bottomRight,
                                 child: ElevatedButton(
-                                    onPressed: () {
-                                      walkController.selDogs.clear();
-                                      for (int i = 0; i < walkController.flagList.length; i++) {
-                                        if (walkController.flagList[i]) {
-                                          walkController.selDogs.add(snapshot.data!.docs[i].get('name'));
-                                        }
+                                  style: ElevatedButton.styleFrom(
+                                      primary: Theme.of(context).primaryColor),
+                                  onPressed: () {
+                                    walkController.selDogs.clear();
+                                    for (int i = 0;
+                                        i < walkController.flagList.length;
+                                        i++) {
+                                      if (walkController.flagList[i]) {
+                                        walkController.selDogs.add(
+                                            snapshot.data!.docs[i].get('name'));
                                       }
-                                      if (walkController.selDogs.isEmpty) {
-                                        showDialog(
-                                            context: context,
-                                            barrierDismissible: false,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                                                  title: const Text("함께할 강아지를 선택해주세요."),
-                                                  actions: <Widget> [
-                                                    Align(
-                                                      alignment: Alignment.center,
-                                                      child: ElevatedButton(
-                                                        onPressed: () {
-                                                          Navigator.pop(context);
-                                                        },
-                                                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                                                        child: const Text("확인"),
-                                                      ),
-                                                    ),
-                                                ],
-                                              );
-                                            }
-                                        );
-                                      } else {
-                                        walkController.isSelected.value = true;
-                                        walkController.dropdownValue =
-                                            walkController.selDogs.first;
-                                        // print(walkController.selDogs);
-                                        petsRef.where('name', isEqualTo: walkController.dropdownValue)
-                                            .get()
-                                            .then((data) {
-                                              setState(() {
-                                                walkController.selUrl.value = data.docs[0]['imageUrl'];
-                                              });
-                                            });
-                                      }
-                                      walkController.recommend();
-                                    },
-                                    child: const Text("출발하기!")),
+                                    }
+                                    if (walkController.selDogs.isEmpty) {
+                                      showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0)),
+                                              title: const Text(
+                                                  "함께할 강아지를 선택해주세요."),
+                                              actions: <Widget>[
+                                                Align(
+                                                  alignment: Alignment.center,
+                                                  child: ElevatedButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                            backgroundColor:
+                                                                Colors.red),
+                                                    child: const Text("확인"),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          });
+                                    } else {
+                                      walkController.isSelected.value = true;
+                                      walkController.dropdownValue =
+                                          walkController.selDogs.first;
+                                      // print(walkController.selDogs);
+                                      petsRef
+                                          .where('name',
+                                              isEqualTo:
+                                                  walkController.dropdownValue)
+                                          .get()
+                                          .then((data) {
+                                        setState(() {
+                                          walkController.selUrl.value =
+                                              data.docs[0]['imageUrl'];
+                                        });
+                                      });
+                                    }
+                                    walkController.recommend();
+                                  },
+                                  child: const Text("출발하기!"),
+                                ),
                               ),
                             )
                           ],
@@ -253,14 +286,13 @@ class _WalkPageState extends State<WalkPage> {
                     );
                   },
                 ),
-              )
-          )
+              )),
+        ],
       ),
     );
   }
 
   Widget walkTimeModal(w, h, context) {
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 13),
       child: Stack(
@@ -284,12 +316,15 @@ class _WalkPageState extends State<WalkPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 15,),
+                const SizedBox(
+                  height: 15,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text("권장 산책 시간 : ", style: TextStyle(fontSize: 20)),
-                    Text('${(walkController.rectime / walkController.selDogs.length).round()} 분',
+                    Text(
+                        '${(walkController.rectime / walkController.selDogs.length).round()} 분',
                         style: const TextStyle(fontSize: 20)),
                   ],
                 ),
@@ -314,7 +349,8 @@ class _WalkPageState extends State<WalkPage> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          walkController.goal.value = walkController.tmp_goal.value;
+                          walkController.goal.value =
+                              walkController.tmp_goal.value;
                         },
                         style:
                             ElevatedButton.styleFrom(backgroundColor: violet2),
@@ -330,7 +366,6 @@ class _WalkPageState extends State<WalkPage> {
       ),
     );
   }
-
 
   Widget endWalkModal(w, h, context) {
     return Padding(
@@ -402,13 +437,12 @@ class _WalkPageState extends State<WalkPage> {
                             onPressed: () {
                               walkController.endTime = Timestamp.now();
                               walkController.addData(walkController.latlng);
-                              walkController.sendDB().then((value) {
-                                flag = false;
-                              });
 
-                              // 캘린더 화면으로
-                              mainController.changeTabIndex(2);
+                              walkController.sendDB();
+                              walkController.disconnect();
+                              flag = false;
 
+                              userController.myUpdate().then((value) {});
                             },
                           ),
                         ),
@@ -433,8 +467,8 @@ class _WalkPageState extends State<WalkPage> {
     petsRef = FirebaseFirestore.instance
         .collection('Users/${userController.loginEmail}/Pets')
         .withConverter(
-        fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
-        toFirestore: (dogData, _) => dogData.toJson());
+            fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+            toFirestore: (dogData, _) => dogData.toJson());
 
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
