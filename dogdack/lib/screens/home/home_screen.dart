@@ -5,7 +5,6 @@ import 'package:dogdack/controllers/mypage_controller.dart';
 import 'package:dogdack/screens/home/widget/bar_chart.dart';
 import 'package:dogdack/screens/home/widget/calendar_list.dart';
 import 'package:dogdack/screens/home/widget/goal_achievement.dart';
-import 'package:dogdack/screens/home/widget/week_cal_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:dogdack/commons/logo_widget.dart';
 import 'package:get/get.dart';
@@ -29,8 +28,7 @@ class _HomePageState extends State<HomePage> {
   late CollectionReference<DogData> petsRef;
 
   final sliderController = Get.put(HomePageSliderController());
-  final homePageWalkCalculatorController =
-      Get.put(HomePageWalkCalculatorController());
+  final homePageWalkCalculatorController = Get.put(HomePageWalkCalculatorController());
   final homePageBarChartController = Get.put(HomePageBarChartController());
   final homePageCalendarController = Get.put(HomePageCalendarController());
   final userController = Get.put(UserController());
@@ -70,8 +68,7 @@ class _HomePageState extends State<HomePage> {
                     if (petSnapshot.data!.docs.length == 0) {
                       return Center(
                         child: Padding(
-                          padding:
-                              EdgeInsets.fromLTRB(0, size.height * 0.25, 0, 0),
+                          padding: EdgeInsets.fromLTRB(0, size.height * 0.25, 0, 0),
                           child: Column(
                             children: [
                               Image.asset('assets/dogs.png'),
@@ -89,24 +86,17 @@ class _HomePageState extends State<HomePage> {
                     //오늘 날짜 구하기
                     var _today = DateTime.now();
                     //현재 선택된 반려견 생일 문자열 파싱
-                    String _petBirthYearOrigin = petSnapshot
-                        .data!.docs[sliderController.sliderIdx]
-                        .get('birth');
+                    String _petBirthYearOrigin = petSnapshot.data!.docs[sliderController.sliderIdx].get('birth');
                     String _petBirth = '';
                     List<String> birthList = _petBirthYearOrigin.split('.');
                     for (int liIdx = 0; liIdx < birthList.length; liIdx++) {
                       _petBirth += birthList.elementAt(liIdx);
                     }
-                    int displayBirth = int.parse(_today
-                        .difference(DateTime.parse(_petBirth))
-                        .inDays
-                        .toString());
+                    int displayBirth = int.parse(_today.difference(DateTime.parse(_petBirth)).inDays.toString());
 
                     // 산책 달성률 구하기
-                    String curDogID =
-                        petSnapshot.data!.docs[sliderController.sliderIdx].id;
-                    CollectionReference refCurDogWalk =
-                        petsRef.doc(curDogID).collection('Walk');
+                    String curDogID = petSnapshot.data!.docs[sliderController.sliderIdx].id;
+                    CollectionReference refCurDogWalk = petsRef.doc(curDogID).collection('Walk');
 
                     var startOfToday = Timestamp.fromDate(DateTime.now()
                         .subtract(Duration(
@@ -124,57 +114,51 @@ class _HomePageState extends State<HomePage> {
                             milliseconds: -DateTime.now().millisecond,
                             microseconds: -DateTime.now().microsecond)));
 
-                    refCurDogWalk
-                        .where("startTime",
-                            isGreaterThanOrEqualTo: startOfToday,
-                            isLessThan: endOfToday)
-                        .get()
-                        .then((QuerySnapshot snapshot) {
-                      num totalGoalTime = 0;
-                      num totalTimeMinute = 0;
-                      for (var document in snapshot.docs) {
-                        totalGoalTime += document.get('goal');
-                        totalTimeMinute += document.get('totalTimeMin');
-                      }
+                    refCurDogWalk.where("startTime", isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday).get().then((QuerySnapshot snapshot) {
+                          num totalGoalTime = 0;
+                          num totalTimeMinute = 0;
+                          for (var document in snapshot.docs) {
+                            totalGoalTime += document.get('goal');
+                            totalTimeMinute += document.get('totalTimeMin');
+                          }
 
-                      if (totalGoalTime == 0) {
-                        homePageWalkCalculatorController.compPercent = 100;
-                      } else {
-                        homePageWalkCalculatorController.compPercent =
-                            ((totalTimeMinute / totalGoalTime) * 100).toInt();
-                      }
+                          if (totalGoalTime == 0) {
+                            homePageWalkCalculatorController.compPercent = 100;
+                          } else {
+                            homePageWalkCalculatorController.compPercent = ((totalTimeMinute / totalGoalTime) * 100).toInt();
+                          }
 
-                      homePageWalkCalculatorController.getTodayWalkPercent();
+                          homePageWalkCalculatorController.getTodayWalkPercent();
                     });
 
                     //그래프 데이터 계산
-                    homePageBarChartController.calculatorHomeChartData(
-                        curDogID, refCurDogWalk);
+                    homePageBarChartController.calculatorHomeChartData(curDogID, refCurDogWalk);
 
                     //홈화면 캘린더 매핑
-                    homePageCalendarController.queryDocumentSnapshotDog =
-                        petSnapshot.data!.docs[sliderController.sliderIdx];
+                    homePageCalendarController.queryDocumentSnapshotDog = petSnapshot.data!.docs[sliderController.sliderIdx];
 
                     return Column(
                       children: [
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                        GetBuilder<HomePageWalkCalculatorController>(builder: (_) {
+                          return Column(
                             children: [
-                              Text(
-                                '오늘 ${petSnapshot.data!.docs[sliderController.sliderIdx].get('name')} 산책 달성량 ',
-                                style: TextStyle(
-                                    color: Color(0xff504E5B), fontSize: 18),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '오늘 ${petSnapshot.data!.docs[sliderController.sliderIdx].get('name')} 산책 달성량 ',
+                                    style: TextStyle(color: Color(0xff504E5B), fontSize: 18),
+                                  ),
+                                  Text(
+                                    '${homePageWalkCalculatorController.compPercent}%',
+                                    style: TextStyle(color: Color.fromARGB(255, 100, 92, 170), fontSize: 20),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                '${homePageWalkCalculatorController.compPercent}%',
-                                style: TextStyle(
-                                    color: Color.fromARGB(255, 100, 92, 170),
-                                    fontSize: 20),
-                              ),
-                            ]),
-                        GoalAchievementWidget(
-                            this_data:
-                                homePageWalkCalculatorController.compPercent),
+                              GoalAchievementWidget(this_data: homePageWalkCalculatorController.compPercent),
+                            ],
+                          );
+                        }),
 
                         // 좌우 스크롤 슬라이더
                         GetBuilder<HomePageCalendarController>(builder: (_) {
@@ -232,15 +216,13 @@ class _HomePageState extends State<HomePage> {
                                   color: Color.fromARGB(255, 221, 137, 189),
                                   size: 18,
                                 )
-                              ]),
+                              ]
+                          ),
                         ),
                         SizedBox(height: 30),
                         // 일주일 달력
                         CalenderListView(),
                         SizedBox(height: 50),
-
-
-
                         Text(
                           '${petSnapshot.data!.docs[sliderController.sliderIdx]['name']}의 최애 산책 시간',
                           style: TextStyle(color: Color(0xff504E5B), fontSize: 18),
