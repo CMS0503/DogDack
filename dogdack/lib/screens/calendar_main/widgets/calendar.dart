@@ -82,10 +82,7 @@ class _CalendarState extends State<Calendar> {
               data.docs[i]['bath'],
               data.docs[i]['beauty'],
               data.docs[i]['diary'],
-              // data.docs[i]['imageUrl'],
             ];
-            print('diary 프린트 해보는곳');
-            print(data.docs[i]['diary']);
           }
           // setState(() {});
         }
@@ -109,7 +106,6 @@ class _CalendarState extends State<Calendar> {
               data.docs[i]['bath'],
               data.docs[i]['beauty'],
               data.docs[i]['diary'],
-              // data.docs[i]['imageUrl'],
             ];
           }
         }
@@ -354,6 +350,7 @@ class _CalendarState extends State<Calendar> {
                     controller.bath = events[1] as bool;
                     controller.beauty = events[2] as bool;
                     controller.diary = events[3] as String;
+                    // controller.imageUrl = events[4] as List<String>;
 
                     // if (events[4].length == 0)
                     // controller.imgUrl = events[4]?[0];

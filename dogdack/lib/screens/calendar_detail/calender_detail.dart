@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/walk_controller.dart';
 import 'package:dogdack/screens/calendar_detail/widget/beauty/beauty_icon.dart';
 import 'package:dogdack/screens/calendar_detail/widget/diary/diary_widget.dart';
@@ -6,8 +7,10 @@ import 'package:dogdack/screens/calendar_detail/widget/cal_edit_button.dart';
 import 'package:dogdack/screens/calendar_detail/widget/walk/cal_walk_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import '../../controllers/input_controller.dart';
 import '../../controllers/mypage_controller.dart';
+import '../../controllers/user_controller.dart';
 
 class CalenderDetail extends StatefulWidget {
   const CalenderDetail({super.key});
@@ -20,6 +23,18 @@ class _CalenderDetailState extends State<CalenderDetail> {
   final controller = Get.put(InputController());
   final mypageStateController = Get.put(MyPageStateController());
   final walkController = Get.put(WalkController());
+  final userController = Get.put(UserController());
+
+  Future<void> test() async {
+    var dogDoc = await FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets')
+        .doc(controller.dognames[controller.selectedValue].toString())
+        .collection('Calendar')
+        .doc(DateFormat('yyMMdd').format(controller.date))
+        .get();
+
+    print(dogDoc['imageUrl']);
+  }
 
 // 캘린더에서 받아온 데이터
   String docId = '짬뽕';
@@ -30,7 +45,7 @@ class _CalenderDetailState extends State<CalenderDetail> {
   ////////////////////////////////////파이어 베이스 연결 끝/////////////////////////////////////////////////////
   @override
   Widget build(BuildContext context) {
-    // String imageUrl = 'images/login/login_image.png';
+    test();
     String imageUrl = '';
     if (controller.imageUrl.isEmpty) {
     } else {
