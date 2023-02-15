@@ -27,10 +27,10 @@ class CalWalkCardWidget extends StatefulWidget {
 
   CalWalkCardWidget(
       {super.key,
-      required this.place,
-      required this.distance,
-      required this.totalTimeMin,
-      required this.imageUrl});
+        required this.place,
+        required this.distance,
+        required this.totalTimeMin,
+        required this.imageUrl});
 
   @override
   State<CalWalkCardWidget> createState() => _CalWalkCardWidget();
@@ -48,84 +48,60 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
   final userController = Get.put(UserController());
   final petController = Get.put(PetController());
 
+
   @override
   void initState() {
     super.initState();
 
-    setPoly().then(
-      (result) {
-        _polyline.add(
-          Polyline(
-              polylineId: const PolylineId('1'),
-              points: latlng,
-              width: 3,
-              color: Colors.blue),
-        );
-        walkController.updateState();
-        setState(() {});
-      },
-    );
+    setPoly().then((result) {
+      _polyline.add(
+        Polyline(
+            polylineId: const PolylineId('1'),
+            points: latlng,
+            width: 3,
+            color: Colors.blue
+        ),
+      );
+      walkController.updateState();
+    });
   }
 
   Future<void> setPoly() async {
-    print('@@@@@@@@@@@@@@@@@@@@무한로딩체크@@@@@@@@@@@@@@@@@@@@@');
     latlng.clear();
-    String docId =
-        inputController.dognames[inputController.selectedValue.toString()];
+    String docId = inputController.dognames[inputController.selectedValue.toString()];
+    print('docId : $docId');
     // walk 경로
-    CollectionReference walkRef = FirebaseFirestore.instance
-        .collection('Users/${userController.loginEmail}/Pets/$docId/Walk');
+    CollectionReference walkRef = FirebaseFirestore.instance.collection('Users/${userController.loginEmail}/Pets/$docId/Walk');
 
-    await walkRef.get().then(
-      (value) async {
-        // 달력에서 선택한 날짜
-        var selectedDay = inputController.date;
-        var startOfToday = Timestamp.fromDate(selectedDay);
-        var endOfToday =
-            Timestamp.fromDate(selectedDay.add(const Duration(days: 1)));
+    print('cal_walk_card 안 : ${userController.loginEmail}');
 
-        // 선택한 날짜의 산책 데이터를 내림차순 정렬(최신 데이터가 위로 오게)
-        await walkRef
-            .where("startTime",
-                isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday)
-            .orderBy("startTime", descending: true)
-            .get()
-            .then(
-          (QuerySnapshot snapshot) async {
-            widget.geodata = snapshot.docs[0]['geolist'];
-            // 장소, 거리, 시간 데이터
-            widget.placedata = snapshot.docs[0]['place'];
-            inputController.distance = snapshot.docs[0]['distance'].toString();
-            inputController.startTime = snapshot.docs[0]['startTime'];
-            inputController.endTime = snapshot.docs[0]['endTime'];
-            inputController.place = snapshot.docs[0]['place'];
+    await walkRef.get().then((value) async {
+      print('cal_walk_card 안 : ${userController.loginEmail}');
+      // 달력에서 선택한 날짜
+      var selectedDay = inputController.date;
+      print(selectedDay);
+      var startOfToday = Timestamp.fromDate(selectedDay);
+      var endOfToday = Timestamp.fromDate(selectedDay.add(const Duration(days: 1)));
 
-            for (var i = 0; i < snapshot.docs.length; i++) {
-              widget.timedata += snapshot.docs[i]['totalTimeMin'];
-              widget.distdata += snapshot.docs[i]['distance'];
-            }
+      // 선택한 날짜의 산책 데이터를 내림차순 정렬(최신 데이터가 위로 오게)
+      await walkRef.where("startTime", isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday).orderBy("startTime", descending: true)
+          .get()
+          .then((QuerySnapshot snapshot) async {
+        print('cal_walk_card 안 snapshot: ${snapshot.docs}');
+        widget.geodata = snapshot.docs[0]['geolist'];
+        // 장소, 거리, 시간 데이터
+        widget.placedata = snapshot.docs[0]['place'];
 
-            await addPloy(widget.geodata).then((value) async {
-              if (latlng.length > 1) {
-                GoogleMapController googleMapController =
-                    await _controller.future;
-                googleMapController.animateCamera(
-                  CameraUpdate.newCameraPosition(
-                    CameraPosition(
-                      zoom: 17,
-                      target: LatLng(latlng[latlng.length ~/ 2].latitude,
-                          latlng[latlng.length ~/ 2].longitude),
-                    ),
-                  ),
-                );
-              }
-            });
-          },
-        );
+        for (var i = 0; i < snapshot.docs.length; i++) {
+          widget.timedata += snapshot.docs[i]['totalTimeMin'];
+          widget.distdata += snapshot.docs[i]['distance'];
+        }
+        addPloy(widget.geodata);
       },
-    ).then((value) {
-      setState(() {});
-    });
+      );
+    },
+    );
+    setState(() {});
   }
 
   Future<void> addPloy(data) async {
@@ -136,7 +112,6 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print('@@@@@@@@@@@@@@@@@@@@무한로딩체크@@@@@@@@@@@@@@@@@@@@@');
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     double height = screenSize.height;
@@ -158,13 +133,17 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
                 height: height * 0.2,
                 margin: const EdgeInsets.all(20),
                 decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(16.0)),
+                BoxDecoration(borderRadius: BorderRadius.circular(16.0)),
                 child: Stack(
                   children: [
                     GetBuilder<WalkController>(builder: (_) {
-                      return GoogleMap(
-                        gestureRecognizers: Set()..add(Factory<PanGestureRecognizer>(
-                              () => PanGestureRecognizer())),
+                      return
+                      latlng.isEmpty
+                      ? Image.asset("assets/logo.png")
+                      : GoogleMap(
+                        gestureRecognizers: Set()
+                          ..add(Factory<PanGestureRecognizer>(
+                                  () => PanGestureRecognizer())),
                         initialCameraPosition: const CameraPosition(
                           target: LatLng(37.5012428, 127.039585),
                           zoom: 15,

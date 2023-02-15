@@ -207,6 +207,7 @@ class _StatusState extends State<Status> {
                                           child: Padding(
                                               padding: const EdgeInsets.all(20),
                                               child: TextField(
+                                                keyboardType: TextInputType.number,
                                                 decoration: InputDecoration(
                                                   labelText: '현재 목표 산책 시간 : ${walkController.goal.value} 분',
                                                 ),

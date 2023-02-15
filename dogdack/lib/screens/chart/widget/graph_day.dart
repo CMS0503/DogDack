@@ -26,11 +26,12 @@ class _DayWidgetState extends State<DayWidget> {
   @override
   Widget build(BuildContext context) {
     for(int i=0;i<7;i++){
-      days.add(DateFormat.E('ko_KR').format(DateTime.now().subtract(Duration(days: 6-i))));
+      days.add(DateFormat.E('ko_KR').format(DateTime.now().subtract(Duration(days: 7-i))));
     }
+    print(days);
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
-    int index = 0;
+    int index = 6;
     return Container(
         width: width * 0.7,
         child: Center(
@@ -38,25 +39,25 @@ class _DayWidgetState extends State<DayWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Container(
-                child: Text("${days[index++]}", style: style),
+                child: Text("${days[index--]}", style: style),
               ),
               Container(
-                child: Text("${days[index++]}", style: style),
+                child: Text("${days[index--]}", style: style),
               ),
               Container(
-                child: Text("${days[index++]}", style: style),
+                child: Text("${days[index--]}", style: style),
               ),
               Container(
-                child: Text("${days[index++]}", style: style),
+                child: Text("${days[index--]}", style: style),
               ),
               Container(
-                child: Text("${days[index++]}", style: style),
+                child: Text("${days[index--]}", style: style),
               ),
               Container(
-                child: Text("${days[index++]}", style: style),
+                child: Text("${days[index--]}", style: style),
               ),
               Container(
-                child: Text("${days[index++]}", style: style),
+                child: Text("${days[index--]}", style: style),
               )
             ],
           ),
@@ -81,7 +82,7 @@ class _WeekWidgetState extends State<WeekWidget> {
   Widget build(BuildContext context) {
 
     for(int i=0;i<28;i+=7){
-      days.add( DateFormat('MM/dd').format(DateTime.now().subtract(Duration(days: 28-i))));
+      days.add( DateFormat('MM/dd').format(DateTime.now().subtract(Duration(days: 30-i))));
     }
     days.add(DateFormat('MM/dd').format(DateTime.now()));
 

@@ -234,18 +234,15 @@ class _WalkPageState extends State<WalkPage> {
                                         walkController.dropdownValue =
                                             walkController.selDogs.first;
                                         // print(walkController.selDogs);
-                                        petsRef
-                                            .where('name',
-                                                isEqualTo: walkController
-                                                    .dropdownValue)
+                                        petsRef.where('name', isEqualTo: walkController.dropdownValue)
                                             .get()
                                             .then((data) {
-                                          setState(() {
-                                            walkController.selUrl.value =
-                                                data.docs[0]['imageUrl'];
-                                          });
-                                        });
+                                              setState(() {
+                                                walkController.selUrl.value = data.docs[0]['imageUrl'];
+                                              });
+                                            });
                                       }
+                                      walkController.recommend();
                                     },
                                     child: const Text("출발하기!")),
                               ),
@@ -263,7 +260,7 @@ class _WalkPageState extends State<WalkPage> {
   }
 
   Widget walkTimeModal(w, h, context) {
-    walkController.recommend();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 13),
       child: Stack(
@@ -292,7 +289,7 @@ class _WalkPageState extends State<WalkPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text("권장 산책 시간 : ", style: TextStyle(fontSize: 20)),
-                    Text('${walkController.rectime} 분',
+                    Text('${(walkController.rectime / walkController.selDogs.length).round()} 분',
                         style: const TextStyle(fontSize: 20)),
                   ],
                 ),
@@ -303,6 +300,7 @@ class _WalkPageState extends State<WalkPage> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
                         child: TextField(
+                          keyboardType: TextInputType.number,
                           onChanged: (text) {
                             walkController.tmp_goal.value = int.parse(text);
                           },
@@ -332,6 +330,7 @@ class _WalkPageState extends State<WalkPage> {
       ),
     );
   }
+
 
   Widget endWalkModal(w, h, context) {
     return Padding(
@@ -403,9 +402,10 @@ class _WalkPageState extends State<WalkPage> {
                             onPressed: () {
                               walkController.endTime = Timestamp.now();
                               walkController.addData(walkController.latlng);
-                              walkController.sendDB();
-                              walkController.disconnect();
-                              flag = false;
+                              walkController.sendDB().then((value) {
+                                flag = false;
+                              });
+
                               // 캘린더 화면으로
                               mainController.changeTabIndex(2);
 

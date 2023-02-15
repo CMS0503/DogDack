@@ -6,8 +6,8 @@ class CalHealthCardWidget extends StatefulWidget {
   Color color;
   String title;
   String message;
-  int this_data;
-  int last_data;
+  double this_data;
+  double last_data;
   String date_text;
   String unit;
   Widget x_value;
