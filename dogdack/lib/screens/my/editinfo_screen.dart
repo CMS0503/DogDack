@@ -58,8 +58,8 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   String imageFileName = ''; // 이미지 파일 이름
   String name = ""; // 이름
   String gender = 'Male'; // 성별 초기 값
-  String birth = '여기를 눌러 생일을 추가해주세요!'; // 생일
-  String kategorie = '여기를 눌러 카테고리를 추가해주세요!'; // 견종 카테고리
+  String birth = '생일을 추가해주세요!'; // 생일
+  String kategorie = '카테고리를 추가해주세요!'; // 견종 카테고리
   String breed = '미지정'; // 견종
   num weight = 0; // 몸무게
   num recommend = 0; // 일일 권장 산책 시간
@@ -670,15 +670,23 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                       onTap: () {
                                         FlutterDialog(context);
                                       },
-                                      child: CircleAvatar(
-                                        backgroundColor:
-                                            const Color(0xff504E5B),
-                                        radius: petInfoHeight * 0.015,
-                                        child: Icon(
-                                          Icons.question_mark,
-                                          size: petInfoHeight * 0.025,
-                                          color: Colors.white,
-                                        ),
+                                      child: Row(
+                                        children: [
+                                          CircleAvatar(
+                                            backgroundColor:
+                                                const Color(0xff504E5B),
+                                            radius: petInfoHeight * 0.015,
+                                            child: Icon(
+                                              Icons.question_mark,
+                                              size: petInfoHeight * 0.025,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          Text(
+                                            '  내 강아지는 어디에 속할까요?',
+                                            style: TextStyle(fontSize: size.width * 0.03),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],

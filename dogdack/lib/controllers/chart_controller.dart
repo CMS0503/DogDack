@@ -14,6 +14,7 @@ class ChartController extends GetxController {
 
   // 선택된 강아지 id
   RxString chartSelectedId = ''.obs;
+
   // 선택된 강아지 이름
   RxString chartSelectedName = ''.obs;
 
@@ -24,10 +25,9 @@ class ChartController extends GetxController {
   Map<String, List> dogsDate = {};
 
   RxString selectedDateValue = ''.obs;
+//강아지 이름
+  String name = '';
 
-
-
-  List<double> hour_points = [];
 
   Future<void> setData() async {
     fillDate();
@@ -42,16 +42,26 @@ class ChartController extends GetxController {
   }
 
 // 데리고 있는 강아지 리스트를 불러온다.
-  Future<void> getNames() async {
+  Future<Map> getNames() async {
     var dogDoc = await FirebaseFirestore.instance
-        .collection('Users/${userController.loginEmail}/Pets').orderBy('name').get();
+        .collection('Users/${userController.loginEmail}/Pets')
+        .orderBy('name')
+        .get();
     for (int i = 0; i < dogDoc.docs.length; i++) {
       String name = dogDoc.docs[i]['name'].toString();
       if (!dogNames.keys.toList().contains(name)) {
         dogNames[name] = dogDoc.docs[i].id.toString();
       }
+
     }
 
+    if (dogNames.keys.length == 1){
+      chartSelectedName.value = dogNames.keys.toList().first;
+    }
+
+    print(":controller get names");
+
+    return dogNames;
   }
 
 // 두달동안의 데이터를 불러온다.
@@ -68,46 +78,47 @@ class ChartController extends GetxController {
 
       await refCurDogWalk
           .where('startTime',
-          isGreaterThan: DateTime.now().subtract(Duration(days: 60)))
+              isGreaterThan: DateTime.now().subtract(Duration(days: 60)))
           .orderBy('startTime', descending: false)
           .get()
           .then((QuerySnapshot snapshot) {
         List<String> tempList = [];
         //(강아지 : [가지고 있는 데이트 리스트])
-        dogsDate[dogNames.values.toList()[i].toString()] = tempList;
+        if (!dogNames.values.isNull) {
 
-        for (int j = 0; j < snapshot.docs.length; j++) {
-          tempList.add((snapshot.docs[j]['startTime'])
-              .toDate()
-              .toString()
-              .substring(0, 10));
-        }
-        for (int j = 0; j < dateList.length; j++) {
-          if (dogsDate[dogNames.values.toList()[i].toString()]!.isNotEmpty) {
 
-            for (int k = 0;
-            k < dogsDate[dogNames.values.toList()[i].toString()]!.length;
-            k++) {
-              if (dogsDate[dogNames.values.toList()[i].toString()]![k] ==
-                  (dateList[j])) {
-                twoMonthHour[j] = snapshot.docs[k]['totalTimeMin'].toDouble();
-                twoMonthDistance[j] = snapshot.docs[k]['distance'].toDouble();
-                twoMonthGoal[j] = snapshot.docs[k]['goal'].toDouble();
+          dogsDate[dogNames.values.toList()[i].toString()] = tempList;
+
+          for (int j = 0; j < snapshot.docs.length; j++) {
+            tempList.add((snapshot.docs[j]['startTime'])
+                .toDate()
+                .toString()
+                .substring(0, 10));
+          }
+
+          for (int j = 0; j < dateList.length; j++) {
+            if (dogsDate[dogNames.values.toList()[i].toString()]!.length != 0) {
+              print("여기가 실행되면 안됨1");
+              print(dogNames.keys);
+
+              for (int k = 0;
+                  k < dogsDate[dogNames.values.toList()[i].toString()]!.length;
+                  k++) {
+                if (dogsDate[dogNames.values.toList()[i].toString()]![k] ==
+                    (dateList[j])) {
+                  twoMonthHour[j] = snapshot.docs[k]['totalTimeMin'].toDouble();
+                  twoMonthDistance[j] = snapshot.docs[k]['distance'].toDouble();
+                  twoMonthGoal[j] = snapshot.docs[k]['goal'].toDouble();
+                }
               }
             }
           }
         }
-
       });
       temp['hour'] = twoMonthHour;
       temp['distance'] = twoMonthDistance;
       temp['goal'] = twoMonthGoal;
       chartData[dogNames.values.toList()[i].toString()] = temp;
-
     } // 강아지 별 for문
   }
-
-
-
-
 }
