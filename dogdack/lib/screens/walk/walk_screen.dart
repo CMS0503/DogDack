@@ -118,7 +118,7 @@ class _WalkPageState extends State<WalkPage> {
           child: Align(
               alignment: Alignment.center,
               child: Container(
-                height: 250,
+                height: 260,
                 width: w * 0.9,
                 decoration: BoxDecoration(
                     color: Colors.white,
@@ -140,13 +140,11 @@ class _WalkPageState extends State<WalkPage> {
                     }
                     return Column(
                       children: [
-                        const SizedBox(height: 20,),
                         Stack(
                           alignment: Alignment.center,
                           children: <Widget>[
                             CarouselSlider.builder(
                               options: CarouselOptions(
-                                enlargeCenterPage: true,
                                 viewportFraction: 0.5,
                                 autoPlay: false,
                                 enableInfiniteScroll: false,
@@ -155,6 +153,11 @@ class _WalkPageState extends State<WalkPage> {
                               itemBuilder: (context, itemIndex, pageViewIndex) {
                                 return Column(
                                   children: [
+                                    Text(
+                                        "${snapshot.data!.docs[itemIndex].get('name')}     ",
+                                        style: const TextStyle(fontSize: 20, )
+                                    ),
+                                    const SizedBox(height: 10,),
                                     InkWell(
                                       onTap: () {
                                         if (!flag) {
@@ -170,32 +173,25 @@ class _WalkPageState extends State<WalkPage> {
                                       child: Stack(
                                         children: [
                                           CircleAvatar(
-                                            radius: size.width * 0.2,
+                                            radius: size.width * 0.18,
                                             child: ClipOval(
                                                 child: CachedNetworkImage(
-                                              imageUrl: snapshot
-                                                  .data!.docs[itemIndex]
-                                                  .get('imageUrl'),
-                                            )),
+                                                  imageUrl: snapshot
+                                                      .data!.docs[itemIndex]
+                                                      .get('imageUrl'),
+                                                )),
                                           ),
                                           if (walkController.flagList.isNotEmpty) walkController.choiceDog(itemIndex, size.width),
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                        "${snapshot.data!.docs[itemIndex].get('name')}",
-                                        style: const TextStyle(fontSize: 20)),
                                   ],
                                 );
                               },
                             ),
-                            SizedBox(
-                              height: 220,
-                              width: 300,
-                              // color: Colors.red,
+                            Container(
+                              height: size.height * 0.33,
+                              width: size.width * 0.85,
                               child: Align(
                                 alignment: Alignment.bottomRight,
                                 child: ElevatedButton(
