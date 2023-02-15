@@ -120,7 +120,7 @@ class _WalkPageState extends State<WalkPage> {
               decoration: const BoxDecoration(
                   color: Colors.grey,
                   borderRadius: BorderRadius.all(Radius.circular(15))),
-              height: size.height * 0.67,
+              height: size.height * 0.62,
               width: size.width,
             ),
           ),
@@ -434,17 +434,7 @@ class _WalkPageState extends State<WalkPage> {
                             onPressed: () {
                               walkController.endTime = Timestamp.now();
                               walkController.addData(walkController.latlng);
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return Dialog(
-                                      child: Container(
-                                        height: 200,
-                                        width: 400,
-                                        child: Text('장소'),
-                                      ),
-                                    );
-                                  });
+
                               walkController.sendDB();
                               walkController.disconnect();
                               flag = false;
