@@ -25,7 +25,7 @@ class ChartController extends GetxController {
   Map<String, List> dogsDate = {};
 
   RxString selectedDateValue = ''.obs;
-
+//강아지 이름
   String name = '';
 
 
