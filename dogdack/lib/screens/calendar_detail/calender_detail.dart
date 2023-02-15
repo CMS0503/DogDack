@@ -47,9 +47,6 @@ class _CalenderDetailState extends State<CalenderDetail> {
         .get()
         .then((value) {
       imgList = value['imageUrl'];
-      print("이닛 함수 실행");
-      print(imgList);
-      print(imgList.length);
       setState(() {
         if (imgList.length != 0) {
           imageUrl = imgList[0] as String;
@@ -107,8 +104,8 @@ class _CalenderDetailState extends State<CalenderDetail> {
         ),
         title: Text(
           mypageStateController.myPageStateType == MyPageStateType.Create
-              ? '추가하기'
-              : '캘린더 상세페이지',
+              ? ''
+              : '',
           style: TextStyle(
             color: grey,
           ),
