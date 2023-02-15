@@ -95,7 +95,7 @@ class _CalenderDetailState extends State<CalenderDetail> {
     Widget imageWidge =  Image.asset('images/login/login_image.png');
 
     if(imageUrl.length!=0){
-      imageWidge = DiaryWidget(diary_image: imageUrl, diary_text: controller.diary);
+      imageWidge = DiaryWidget(diaryImage: imageUrl, diaryText: controller.diary);
     }
 
     return Scaffold(
@@ -133,12 +133,12 @@ class _CalenderDetailState extends State<CalenderDetail> {
               child: Column(
                 children: const [
                   // 등록한 날짜가 나와야 함
-                  CalDetailDateWidget(
-                      time:
-                          "${controller.date.year}년 ${controller.date.month}월 ${controller.date.day}일 ${controller.date.hour}시 ${controller.date.second}분에서"),
-                  CalDetailDateWidget(
-                      time:
-                          "${controller.date.year}년 ${controller.date.month}월 ${controller.date.day}일 ${controller.date.hour}시 ${controller.date.second}분까지")
+                  // CalDetailDateWidget(
+                  //     time:
+                  //     "${controller.date.year}년 ${controller.date.month}월 ${controller.date.day}일 ${controller.date.hour}시 ${controller.date.second}분에서"),
+                  // CalDetailDateWidget(
+                  //     time:
+                  //     "${controller.date.year}년 ${controller.date.month}월 ${controller.date.day}일 ${controller.date.hour}시 ${controller.date.second}분까지")
                 ],
               ),
             ),

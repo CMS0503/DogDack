@@ -22,7 +22,7 @@ class _DiaryWidget extends State<DiaryWidget> {
 
   Future<void> getDiary() async {
     String docId =
-        inputController.dognames[inputController.selectedValue.toString()];
+    inputController.dognames[inputController.selectedValue.toString()];
     CollectionReference calRef = FirebaseFirestore.instance
         .collection('Users/${userController.loginEmail}/Pets/$docId/Calendar');
 
@@ -37,30 +37,6 @@ class _DiaryWidget extends State<DiaryWidget> {
       widget.diaryImage = diaryDoc['imageUrl'][0];
     }
   }
-
-  // getImages() async {
-  //   String docId =
-  //       inputController.dognames[inputController.selectedValue.toString()];
-  //   CollectionReference calRef = FirebaseFirestore.instance
-  //       .collection('Users/${userController.loginEmail}/Pets/$docId/Calendar');
-  //   var diaryDoc = await calRef
-  //       .doc(DateFormat('yyMMdd').format(inputController.date))
-  //       .get();
-  //   if (inputController.imageUrl.isNotEmpty) {
-  //     widget.diaryImage = inputController.imageUrl[0].toString();
-  //   }
-  //   setState(() {});
-  // }
-
-  // Future<void> test() async {
-  //   var dogDoc = await FirebaseFirestore.instance
-  //       .collection('Users/1109ssh.code@gmail.com/Pets')
-  //       .doc('eVXhh9h8Xo85JSfdz2Tp')
-  //       .collection('Calendar')
-  //       .doc('230216')
-  //       .get();
-  //   print(dogDoc['imageUrl']);
-  // }
 
   @override
   void initState() {
@@ -96,16 +72,16 @@ class _DiaryWidget extends State<DiaryWidget> {
                 padding: EdgeInsets.all(20),
                 child: Container(
                   width: 130,
-                    height: 130,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                  child: Image.network(widget.diary_image, loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress){
+                  height: 130,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                  ),
+                  child: Image.network(widget.diaryImage, loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress){
                     if(loadingProgress == null){
                       return child;
                     }
                     return Center(
-                      child: Image.asset('images/login/login_image.png')
+                        child: Image.asset('images/login/login_image.png')
                     );
                   },
                   ),),
@@ -118,10 +94,10 @@ class _DiaryWidget extends State<DiaryWidget> {
                 //   child: Image.network(widget.diary_image, height: 130, width: 130,loadingBuilder: ,)
                 // ),
               ),
-              Text("${widget.diary_text}", style: TextStyle(
-                fontFamily: 'bmjua',
-                color: grey,
-                fontSize: 18
+              Text("${widget.diaryText}", style: TextStyle(
+                  fontFamily: 'bmjua',
+                  color: grey,
+                  fontSize: 18
               ),)
 
             ],
