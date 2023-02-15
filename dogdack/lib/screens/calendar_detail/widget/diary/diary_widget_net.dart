@@ -6,16 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-class DiaryWidget extends StatefulWidget {
+class DiaryNetWidget extends StatefulWidget {
   String diaryImage = '';
   String? diaryText;
-  DiaryWidget({super.key, required this.diaryImage, required this.diaryText});
+  DiaryNetWidget({super.key, required this.diaryImage, required this.diaryText});
 
   @override
-  State<DiaryWidget> createState() => _DiaryWidget();
+  State<DiaryNetWidget> createState() => _DiaryNetWidget();
 }
 
-class _DiaryWidget extends State<DiaryWidget> {
+class _DiaryNetWidget extends State<DiaryNetWidget> {
   FirebaseStorage storage = FirebaseStorage.instance;
   final userController = Get.put(UserController());
   final inputController = Get.put(InputController());
@@ -76,10 +76,17 @@ class _DiaryWidget extends State<DiaryWidget> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                   ),
-                  child:  Image.asset('images/login/login_image.png')
+                  child: Image.network(widget.diaryImage, loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress){
+                    if(loadingProgress == null){
+                      return child;
+                    }
+                    return Center(
+                        child: Image.asset('images/login/login_image.png')
+                    );
+                  },
                   ),),
 
-
+              ),
               Text("${widget.diaryText}", style: TextStyle(
                   fontFamily: 'bmjua',
                   color: grey,

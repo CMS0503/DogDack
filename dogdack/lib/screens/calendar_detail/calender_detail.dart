@@ -5,6 +5,7 @@ import 'package:dogdack/screens/calendar_detail/widget/beauty/beauty_icon.dart';
 import 'package:dogdack/screens/calendar_detail/widget/diary/diary_widget.dart';
 import 'package:dogdack/screens/calendar_detail/widget/cal_detail_title.dart';
 import 'package:dogdack/screens/calendar_detail/widget/cal_edit_button.dart';
+import 'package:dogdack/screens/calendar_detail/widget/diary/diary_widget_net.dart';
 import 'package:dogdack/screens/calendar_detail/widget/walk/cal_walk_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -89,10 +90,10 @@ class _CalenderDetailState extends State<CalenderDetail> {
       bathColor = grey;
     }
 
-    Widget imageWidge =  Image.asset('images/login/login_image.png');
+    Widget imageWidge =  DiaryWidget(diaryImage: imageUrl, diaryText: controller.diary);
 
     if(imageUrl.length!=0){
-      imageWidge = DiaryWidget(diaryImage: imageUrl, diaryText: controller.diary);
+      imageWidge = DiaryNetWidget(diaryImage: imageUrl, diaryText: controller.diary);
     }
 
     return Scaffold(
@@ -120,7 +121,7 @@ class _CalenderDetailState extends State<CalenderDetail> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 CalDetailTitleWidget(
-                    name: controller.selectedValue, title: "산책"),
+                    name: controller.selectedValue, title: "발자취"),
                 CalEditButtonWidget(),
               ],
             ),
