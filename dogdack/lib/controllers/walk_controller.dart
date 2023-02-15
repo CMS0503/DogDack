@@ -269,6 +269,8 @@ class WalkController extends GetxController {
               isWalk: true,
               bath: false,
               beauty: false,
+              diary: '',
+              imageUrl: [],
               // distance: controller.distance,
             ))
             .then((value) => print("document added"))
