@@ -106,17 +106,19 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
             }
 
             await addPloy(widget.geodata).then((value) async {
-              GoogleMapController googleMapController =
-                  await _controller.future;
-              googleMapController.animateCamera(
-                CameraUpdate.newCameraPosition(
-                  CameraPosition(
-                    zoom: 17,
-                    target: LatLng(latlng[latlng.length ~/ 2].latitude,
-                        latlng[latlng.length ~/ 2].longitude),
+              if (latlng.length > 1) {
+                GoogleMapController googleMapController =
+                    await _controller.future;
+                googleMapController.animateCamera(
+                  CameraUpdate.newCameraPosition(
+                    CameraPosition(
+                      zoom: 17,
+                      target: LatLng(latlng[latlng.length ~/ 2].latitude,
+                          latlng[latlng.length ~/ 2].longitude),
+                    ),
                   ),
-                ),
-              );
+                );
+              }
             });
           },
         );
