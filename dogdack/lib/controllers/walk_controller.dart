@@ -207,9 +207,9 @@ class WalkController extends GetxController {
   }
 
   void addData(List<LatLng> latlng) {
-    // for(int i = 0; i < latlng.length; i++){
-    //   geolist?.add(GeoPoint(latlng[i].latitude, latlng[i].longitude));
-    // }
+    for (int i = 0; i < latlng.length; i++) {
+      geolist?.add(GeoPoint(latlng[i].latitude, latlng[i].longitude));
+    }
     update();
   }
 
