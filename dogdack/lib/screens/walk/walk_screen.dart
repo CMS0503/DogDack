@@ -144,7 +144,7 @@ class _WalkPageState extends State<WalkPage> {
                     if (snapshot.data!.docs.isEmpty) {
                       return Padding(
                         padding:
-                        EdgeInsets.fromLTRB(0, size.height * 0.3, 0, 0),
+                            EdgeInsets.fromLTRB(0, size.height * 0.3, 0, 0),
                         child: const Text('댕댕이를 등록해주세요!'),
                       );
                     }
@@ -163,7 +163,9 @@ class _WalkPageState extends State<WalkPage> {
                               itemBuilder: (context, itemIndex, pageViewIndex) {
                                 return Column(
                                   children: [
-                                    const SizedBox(height: 15,),
+                                    const SizedBox(
+                                      height: 15,
+                                    ),
                                     InkWell(
                                       onTap: () {
                                         if (!flag) {
@@ -185,20 +187,24 @@ class _WalkPageState extends State<WalkPage> {
                                                 children: [
                                                   Text(
                                                       "${snapshot.data!.docs[itemIndex].get('name')}",
-                                                      style: const TextStyle(fontSize: 20, )
+                                                      style: const TextStyle(
+                                                        fontSize: 20,
+                                                      )),
+                                                  const SizedBox(
+                                                    height: 15,
                                                   ),
-                                                  const SizedBox(height: 15,),
                                                   CircleAvatar(
                                                     radius: size.width * 0.13,
                                                     child: ClipOval(
-                                                        child: CachedNetworkImage(
-                                                          imageUrl: snapshot.data!.docs[itemIndex].get('imageUrl'),
-                                                        )
-                                                    ),
+                                                        child:
+                                                            CachedNetworkImage(
+                                                      imageUrl: snapshot
+                                                          .data!.docs[itemIndex]
+                                                          .get('imageUrl'),
+                                                    )),
                                                   ),
                                                 ],
-                                              )
-                                          ),
+                                              )),
                                           if (walkController
                                               .flagList.isNotEmpty)
                                             walkController.choiceDog(
@@ -222,8 +228,8 @@ class _WalkPageState extends State<WalkPage> {
                                   onPressed: () {
                                     walkController.selDogs.clear();
                                     for (int i = 0;
-                                    i < walkController.flagList.length;
-                                    i++) {
+                                        i < walkController.flagList.length;
+                                        i++) {
                                       if (walkController.flagList[i]) {
                                         walkController.selDogs.add(
                                             snapshot.data!.docs[i].get('name'));
@@ -237,8 +243,8 @@ class _WalkPageState extends State<WalkPage> {
                                             return AlertDialog(
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                  BorderRadius.circular(
-                                                      8.0)),
+                                                      BorderRadius.circular(
+                                                          8.0)),
                                               title: const Text(
                                                   "함께할 강아지를 선택해주세요."),
                                               actions: <Widget>[
@@ -250,8 +256,8 @@ class _WalkPageState extends State<WalkPage> {
                                                     },
                                                     style: ElevatedButton
                                                         .styleFrom(
-                                                        backgroundColor:
-                                                        Colors.red),
+                                                            backgroundColor:
+                                                                Colors.red),
                                                     child: const Text("확인"),
                                                   ),
                                                 ),
@@ -265,13 +271,13 @@ class _WalkPageState extends State<WalkPage> {
                                       // print(walkController.selDogs);
                                       petsRef
                                           .where('name',
-                                          isEqualTo:
-                                          walkController.dropdownValue)
+                                              isEqualTo:
+                                                  walkController.dropdownValue)
                                           .get()
                                           .then((data) {
                                         setState(() {
                                           walkController.selUrl.value =
-                                          data.docs[0]['imageUrl'];
+                                              data.docs[0]['imageUrl'];
                                         });
                                       });
                                     }
@@ -341,10 +347,19 @@ class _WalkPageState extends State<WalkPage> {
                             walkController.tmp_goal.value = int.parse(text);
                           },
                           decoration: const InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 100, 92, 170))),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 100, 92, 170))),
                             border: OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10))),
+                            focusColor: Color.fromARGB(255, 100, 92, 170),
                             labelText: '목표 산책 시간',
+                            labelStyle: TextStyle(
+                                color: Color.fromARGB(255, 100, 92, 170)),
                           ),
                         ),
                       ),

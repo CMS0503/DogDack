@@ -98,8 +98,8 @@ class ChartController extends GetxController {
 
           for (int j = 0; j < dateList.length; j++) {
             if (dogsDate[dogNames.values.toList()[i].toString()]!.length != 0) {
-              print("여기가 실행되면 안됨1");
-              print(dogNames.keys);
+              // print("여기가 실행되면 안됨1");
+              // print(dogNames.keys);
 
               for (int k = 0;
                   k < dogsDate[dogNames.values.toList()[i].toString()]!.length;

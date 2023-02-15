@@ -163,12 +163,12 @@ class WalkController extends GetxController {
         fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
         toFirestore: (dogData, _) => dogData.toJson());
 
-    print('selDogs : $selDogs');
+    // print('selDogs : $selDogs');
     for(int i = 0; i < selDogs.length; i++) {
       petsRef.where('name', isEqualTo: selDogs[i]).get().then((value) {
         temp = value.docs[0].get('recommend');
         rectime = rectime + temp;
-        print('rectime : $rectime');
+        // print('rectime : $rectime');
       });
     }
     update();

@@ -116,8 +116,8 @@ class _StatusState extends State<Status> {
                               onPressed: () {Navigator.pushNamed(context, '/Ble');},
                               icon: const Icon(
                                 Icons.bluetooth_outlined,
-                                color: Colors.blue,
-                              )
+                                      color: Color.fromARGB(255, 100, 92, 170),
+                                    )
                           )
                           : IconButton(
                               onPressed: () {Navigator.pushNamed(context, '/Ble');},

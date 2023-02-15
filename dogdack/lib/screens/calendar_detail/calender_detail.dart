@@ -47,9 +47,9 @@ class _CalenderDetailState extends State<CalenderDetail> {
         .get()
         .then((value) {
       imgList = value['imageUrl'];
-      print("이닛 함수 실행");
-      print(imgList);
-      print(imgList.length);
+      // print("이닛 함수 실행");
+      // print(imgList);
+      // print(imgList.length);
       setState(() {
         if (imgList.length != 0) {
           imageUrl = imgList[0] as String;

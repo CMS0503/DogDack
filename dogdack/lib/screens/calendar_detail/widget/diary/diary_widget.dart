@@ -30,10 +30,8 @@ class _DiaryWidget extends State<DiaryWidget> {
         .doc(DateFormat('yyMMdd').format(inputController.date))
         .get();
     widget.diaryText = diaryDoc['diary'];
-    print('그렇다면 여기는?');
     print(inputController.date);
     if (diaryDoc['imageUrl'].length != 0) {
-      print('여기는 지나가나?');
       widget.diaryImage = diaryDoc['imageUrl'][0];
     }
   }
