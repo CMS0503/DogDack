@@ -23,7 +23,7 @@ class WalkController extends GetxController {
 
   final userController = Get.put(UserController());
 
-  RxBool isBleConnect = false.obs;
+  RxBool isBleConnect = true.obs;
 
   // 위도, 경도
   RxDouble latitude = 37.500735.obs;
@@ -133,12 +133,15 @@ class WalkController extends GetxController {
   }
 
   int getCur() {
-    if ((timeCount.value ~/ 100) == 0) {
+    print('timeCount : $timeCount');
+    print('goal : $goal');
+    if ((timeCount.value) == 0) {
       curGoal.value = 0;
     } else {
       curGoal.value =
-          (((timeCount.value ~/ 100) / (goal.value * 60)) * 100).round();
+          (((timeCount.value) / (goal.value * 60)) * 100).round();
     }
+    print('curGoal : $curGoal');
     return curGoal.value;
   }
 
@@ -285,7 +288,7 @@ class WalkController extends GetxController {
 
   void disconnect() {
     try {
-      isSelected.value == false;
+      isSelected.value = false;
       goal.value = 0;
       isRunning.value = false;
       isStart = false;
@@ -294,10 +297,19 @@ class WalkController extends GetxController {
       rectime = 0;
 
       // 강아지 선택 초기화
-      // flagList = [].obs;
-      // selDogs = [];
-      // isSelected = false.obs;
-      // selUrl = "".obs;
+      flagList.value = [];
+      selDogs = [];
+      isSelected.value = false;
+      selUrl.value = "";
+      dropdownValue = "";
+      update();
+      print("==================");
+      print(flagList);
+      print(selDogs);
+      print(selUrl);
+      print(dropdownValue);
+      print(isSelected);
+      print("==================");
     } catch (e) {}
   }
 

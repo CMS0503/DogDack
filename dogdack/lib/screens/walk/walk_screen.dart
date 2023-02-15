@@ -405,8 +405,10 @@ class _WalkPageState extends State<WalkPage> {
                               walkController.addData(walkController.latlng);
                               walkController.sendDB();
                               walkController.disconnect();
+                              flag = false;
                               // 캘린더 화면으로
                               mainController.changeTabIndex(2);
+
                             },
                           ),
                         ),
