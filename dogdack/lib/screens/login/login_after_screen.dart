@@ -1,13 +1,56 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/screens/main_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+
+import '../../controllers/user_controller.dart';
+import '../../models/user_data.dart';
 
 class LoginAfterPage extends StatefulWidget {
-  const LoginAfterPage({super.key});
+  LoginAfterPage({super.key});
+
+  final userController = Get.put(UserController());
+
+  void initUserDB() {
+    final userColRef = FirebaseFirestore.instance.collection('Users');
+    final userInfoRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/UserInfo');
+
+    userController.loginEmail = FirebaseAuth.instance.currentUser!.email.toString();
+
+    FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.email).get().then((value){
+      if(value.exists) {
+        userInfoRef.get().then((value) {
+          userController.isHost = value.docs[0]['isHost'];
+          if(userController.isHost == true) {
+            // 호스트 계정으로 설정
+            userController.loginEmail = value.docs[0]['hostEmail'];
+          } else {
+            // 접속한 계정으로 설정
+            userController.loginEmail = FirebaseAuth.instance.currentUser!.email.toString();
+          }
+
+          userController.update();
+        });
+      } else {
+        userColRef.get().then((value) {
+          userColRef.doc(FirebaseAuth.instance.currentUser!.email).set({});
+        });
+        userInfoRef.get().then((value) {
+          userInfoRef.doc('information').set(UserData(isHost: false, hostEmail: '', password: '', phoneNumber: '').toJson());
+        });
+      }
+    });
+  }
+
   @override
-  _LoginAfterPage createState() => _LoginAfterPage();
+  _LoginAfterPage createState() {
+    initUserDB();
+    return _LoginAfterPage();
+  }
 }
 
 class _LoginAfterPage extends State<LoginAfterPage> {

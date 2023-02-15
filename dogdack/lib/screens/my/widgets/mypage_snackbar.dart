@@ -11,6 +11,8 @@ enum SnackBarErrorType {
   BreedOverflow, // 반려견 견종이 제한 글자(20글자) 를 초과함
   PhoneNumberNotExist, // 전화번호가 입력되지 않았을 경우
   NameAlreadyExist, // 반려견 이름이 이미 존재하는 경우
+  PasswordNotExist, // 공유 비밀번호가 입력되지 않았을 경우
+  InvalidLogin, // 공유 로그인 정보가 유효하지 않음
 }
 
 class MyPageSnackBar {
@@ -54,6 +56,12 @@ class MyPageSnackBar {
         break;
       case SnackBarErrorType.NameAlreadyExist:
         msg = '같은 이름의 댕댕이가 이미 있어요!\n다른 이름으로 입력하세요!';
+        break;
+      case SnackBarErrorType.PasswordNotExist:
+        msg = '비밀번호를 입력하지 않았어요!';
+        break;
+      case SnackBarErrorType.InvalidLogin:
+        msg = '잘못된 입력입니다!';
         break;
     }
 

@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:get/get.dart';
 //firebase
+import 'controllers/user_controller.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -63,9 +64,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final userController = Get.put(UserController());
+
   void callDelay() async {
     // await Timer(const Duration(seconds: 3), () {});
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 3));
 
     widget.isFinish = true;
     setState(() {});

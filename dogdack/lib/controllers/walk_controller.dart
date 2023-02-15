@@ -2,15 +2,26 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dogdack/controllers/user_controller.dart';
+import 'package:dogdack/models/user_data.dart';
 import 'package:dogdack/models/walk_data.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../models/dog_data.dart';
+
+import 'package:dogdack/controllers/input_controller.dart';
+import 'package:intl/intl.dart';
+import 'package:dogdack/models/calender_data.dart';
+
 class WalkController extends GetxController {
   // 블루투스 장치 id
-  final String serviceUuid = '0000ffe0-0000-1000-8000-00805f9b34fb';
-  final String characteristicUuid = '0000ffe1-0000-1000-8000-00805f9b34fb';
+  final String serviceUUID = '0000ffe0-0000-1000-8000-00805f9b34fb';
+  final String characteristicUUID = '0000ffe1-0000-1000-8000-00805f9b34fb';
+
+  final userController = Get.put(UserController());
 
   RxBool isBleConnect = false.obs;
 
@@ -45,33 +56,92 @@ class WalkController extends GetxController {
   Timestamp? startTime;
   Timestamp? endTime;
 
-  double? distance = 0.0;
+  // double? distance = 0.0;
+  int light = 0;
+
+  // 강아지 정보
+  QuerySnapshot? _docInPets;
+  String name = "asd";
+  String? imgUrl;
+
   int rectime = 0;
   RxInt goal = 0.obs;
   RxInt tmp_goal = 0.obs;
   RxInt curGoal = 0.obs;
   String curName = "";
 
+  // ---강아지 선택 modal---
+  RxList flagList = [].obs;
+  List selDogs = [];
+  RxBool isSelected = false.obs;
+  RxString selUrl = "".obs;
+
+  void makeFlagList(List temp) {
+    flagList.value = temp;
+    update();
+  }
+
+  void setFlagList(int index) {
+    flagList[index] = !flagList[index];
+    update();
+  }
+
+  Widget choiceDog(int itemIndex, double size) {
+    return
+      flagList[itemIndex]?
+      Container(
+        // color: Colors.red,
+        height: size * 0.4,
+        child: Align(
+          alignment: Alignment.bottomRight,
+            child:
+          CircleAvatar(
+            backgroundImage: const ExactAssetImage('assets/dogdack.png') ,
+            backgroundColor: Colors.transparent,
+            // backgroundColor: ,
+            radius: size * 0.12,
+
+          ),
+        ),
+      ):Container();
+  }
+
+  // ----------------------
+
+  // 산책화면 강아지 dropdown
+  String dropdownValue = "";
+
+  // ---------------------
+
+  // LCD data
+  String? phoneNumber;
+  String? walkTimer;
+  String dist = '0';
+  String ledSig = '1';
+
   void getList() async {
     String temp = "";
     await for (var snapshot in FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/Pets')
+        .collection('Users/${userController.loginEmail}/Pets')
         .snapshots()) {
       for (var messege in snapshot.docs) {
         temp = messege.data()['name'];
         petList.add(temp);
       }
-      print(petList);
+      // print(petList);
     }
   }
 
   int getCur() {
-    if ((timeCount.value ~/ 100) == 0) {
+    print('timeCount : $timeCount');
+    print('goal : $goal');
+    if ((timeCount.value) == 0) {
       curGoal.value = 0;
     } else {
       curGoal.value =
-          (((timeCount.value ~/ 100) / (goal.value * 60)) * 100).round();
+          (((timeCount.value) / (goal.value * 60)) * 100).round();
     }
+    print('curGoal : $curGoal');
     return curGoal.value;
   }
 
@@ -80,7 +150,7 @@ class WalkController extends GetxController {
     int temp = 0;
     int recTime = 0;
     await for (var snapshot in FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/Pets')
+        .collection('Users/${userController.loginEmail}/Pets')
         .snapshots()) {
       for (var messege in snapshot.docs) {
         cnt++;
@@ -93,52 +163,114 @@ class WalkController extends GetxController {
 
   @override
   void onInit() {
+    getData();
+    // LCD 타이머
+
     ever(timeCount, (_) {
-      if ((timeCount % 6000) % 100 == 0) {
-        sendData(
-            '${timeCount ~/ 360000}:${timeCount ~/ 6000}:${(timeCount % 6000) ~/ 100}, ${distance!.toInt()}m');
-      }
+      // 1초마다 보냄
+      String pn = phoneNumber!;
+      String timer =
+          '${timeCount ~/ 3600}:${timeCount ~/ 60}:${timeCount % 60}';
+      String dist = '${totalDistance!.toInt()}';
+      String isLed = ledSig;
+
+      Data data = Data(pn, timer, dist, isLed);
+      sendDataToArduino(data);
     });
   }
 
-  void addData(lat, lng) {
-    geolist?.add(GeoPoint(lat, lng));
+  void getData() async {
+    final petsRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets')
+        .withConverter(
+            fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+            toFirestore: (dogData, _) => dogData.toJson());
+
+    // Firebase : 유저 전화 번호 저장을 위한 참조 값
+    final userRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/UserInfo')
+        .withConverter(
+            fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
+            toFirestore: (userData, _) => userData.toJson());
+
+    CollectionReference petRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets');
+
+    QuerySnapshot _docInPets = await petRef.get();
+
+    name = (await petsRef.doc(_docInPets.docs.first.id.toString()).get())
+        .data()!
+        .name!;
+    imgUrl = (await petsRef.doc(_docInPets.docs.first.id.toString()).get())
+        .data()!
+        .imageUrl!;
+
+    // phoneNumber = (await userRef.doc('number').get()).data()!.phoneNumber;
+    phoneNumber = "01085382550";
+  }
+
+  void addData(List<LatLng> latlng) {
+    for (int i = 0; i < latlng.length; i++) {
+      geolist?.add(GeoPoint(latlng[i].latitude, latlng[i].longitude));
+    }
     update();
   }
 
-  void sendDB() {
+  void sendDB() async {
+    final inputController = Get.put(InputController());
     print("-----------send to DB-------------");
     // geolist?.add(GeoPoint(23.412, 125.234125));
     // geolist?.add(GeoPoint(42.213, 142.234125));
     String docId = "";
 
     CollectionReference petRef = FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/Pets');
+        .collection('Users/${userController.loginEmail}/Pets');
 
-    final petDoc = petRef.where("name", isEqualTo: curName);
-    petDoc.get().then((value) {
-      docId = value.docs[0].id;
-      // print('$curName의 문서 id : $docId');
+    selDogs.forEach((dogName) {
+      final petDoc = petRef.where("name", isEqualTo: dogName);
+      petDoc.get().then((value) {
+        docId = value.docs[0].id;
+        // print('$curName의 문서 id : $docId');
 
-      FirebaseFirestore.instance
-          .collection('Users/${'imcsh313@naver.com'}/Pets/$docId/Walk')
-          .withConverter(
-            fromFirestore: (snapshot, options) =>
-                WalkData.fromJson(snapshot.data()!),
-            toFirestore: (value, options) => value.toJson(),
-          )
-          // .doc('${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}')
-          // .set(WalkData(
-          .add(WalkData(
-            geolist: geolist,
-            startTime: startTime,
-            endTime: endTime,
-            totalTimeMin: timeCount.value ~/ 6000,
-            isAuto: true,
-            // place: ,
-            distance: distance,
-            goal: goal.value,
-          ));
+        FirebaseFirestore.instance
+            .collection('Users/${userController.loginEmail}/Pets/$docId/Walk')
+            .withConverter(
+              fromFirestore: (snapshot, options) =>
+                  WalkData.fromJson(snapshot.data()!),
+              toFirestore: (value, options) => value.toJson(),
+            )
+            // .doc('${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}')
+            // .set(WalkData(
+            .add(WalkData(
+          geolist: geolist,
+              startTime: startTime,
+              endTime: endTime,
+              totalTimeMin: timeCount.value ~/ 6000,
+              isAuto: true,
+              // place: ,
+              distance: totalDistance.toInt(),
+              goal: goal.value,
+            ));
+
+        // calendar 저장
+        petRef
+            .doc(docId)
+            .collection('Calendar')
+            .doc(DateFormat('yyMMdd').format(inputController.date).toString())
+            .withConverter(
+              fromFirestore: (snapshot, options) =>
+                  CalenderData.fromJson(snapshot.data()!),
+              toFirestore: (value, options) => value.toJson(),
+            )
+            .set(CalenderData(
+              isWalk: true,
+              bath: false,
+              beauty: false,
+              // distance: controller.distance,
+            ))
+            .then((value) => print("document added"))
+            .catchError((error) => print("Fail to add doc $error"));
+      });
     });
   }
 
@@ -152,6 +284,33 @@ class WalkController extends GetxController {
     _device = device;
     isBleConnect.value = true;
     update();
+  }
+
+  void disconnect() {
+    try {
+      isSelected.value = false;
+      goal.value = 0;
+      isRunning.value = false;
+      isStart = false;
+      totalDistance.value = 0;
+      timeCount.value = 0;
+      rectime = 0;
+
+      // 강아지 선택 초기화
+      flagList.value = [];
+      selDogs = [];
+      isSelected.value = false;
+      selUrl.value = "";
+      dropdownValue = "";
+      update();
+      print("==================");
+      print(flagList);
+      print(selDogs);
+      print(selUrl);
+      print(dropdownValue);
+      print(isSelected);
+      print("==================");
+    } catch (e) {}
   }
 
   void updateWalkingState() {
@@ -168,7 +327,7 @@ class WalkController extends GetxController {
   }
 
   void startTimer() {
-    timer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       timeCount++;
     });
     update();
@@ -186,27 +345,53 @@ class WalkController extends GetxController {
     super.onClose();
   }
 
-  void abv() {
+  void updateState() {
     update();
   }
 
   void initLCD() async {
-    await sendData('01085382550a');
-    await sendData('0:0:0, 0m');
+    Data data = Data('00000000000', '00:00:00', '0', "1");
+
+    String json = jsonEncode(data);
+
+    sendDataToArduino(json);
   }
 
-  Future<void> sendData(data) async {
-    print('Send Data: ${data.toString()}');
+  Future<void> sendDataToArduino(data) async {
+    String json = jsonEncode(data) + '\n';
+
     for (BluetoothService service in services!) {
-      if (service.uuid.toString() == serviceUuid) {
+      if (service.uuid.toString() == serviceUUID) {
         for (BluetoothCharacteristic characteristic
             in service.characteristics) {
-          if (characteristic.uuid.toString() == characteristicUuid) {
-            await characteristic.write(utf8.encode(data),
+          if (characteristic.uuid.toString() == characteristicUUID) {
+            await characteristic.write(utf8.encode(json),
                 withoutResponse: true);
+            print('Send Data: $json');
           }
         }
       }
     }
   }
+}
+
+class Data {
+  final String phoneNumber;
+  final String timer;
+  final String distance;
+  final String isLedOn;
+
+  Data(
+    this.phoneNumber,
+    this.timer,
+    this.distance,
+    this.isLedOn,
+  );
+
+  Map<String, dynamic> toJson() => {
+        'phoneNumber': phoneNumber,
+        'timer': timer,
+        'distance': distance,
+        'isLedOn': isLedOn,
+      };
 }

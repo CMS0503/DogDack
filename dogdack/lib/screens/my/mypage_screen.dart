@@ -1,10 +1,12 @@
 // Widgets
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/models/user_data.dart';
 import 'package:dogdack/screens/my/widgets/mypage_snackbar.dart';
+import 'package:dogdack/screens/my/widgets/share_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
 // Firebase
@@ -37,29 +39,22 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends State<MyPage> {
   // Firebase : 반려견 테이블 참조 값
-  final petsRef = FirebaseFirestore.instance
-      .collection('Users/${'imcsh313@naver.com'}/Pets')
-      .withConverter(
-          fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
-          toFirestore: (dogData, _) => dogData.toJson());
+  late CollectionReference<DogData> petsRef;
 
   // Firebase : 유저 전화 번호 저장을 위한 참조 값
-  final userRef = FirebaseFirestore.instance
-      .collection('Users/${'imcsh313@naver.com'}/UserInfo')
-      .withConverter(
-          fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
-          toFirestore: (userData, _) => userData.toJson());
+  late CollectionReference<UserData> userRef;
 
   // GetX
   final petController = Get.put(PetController()); // 슬라이더에서 선택된 반려견 정보를 위젯간 공유
   final mypageStateController = Get.put(MyPageStateController()); // 현재 mypage 의 상태 표시
   final mainController = Get.put(MainController());
+  final userController = Get.put(UserController());
 
   // Widget
   // 정보 화면 타이틀 위젯
   Container infoTitleBox(double cardWith, double cardHeight, String title) {
     return Container(
-      width: cardWith * 0.48,
+      width: cardWith * 0.44,
       height: cardHeight * 0.08,
       decoration: BoxDecoration(
         border: Border.all(color: Color(0xff644CAA), width: 2),
@@ -80,14 +75,11 @@ class _MyPageState extends State<MyPage> {
   // 총 산책 시간 계산
   Stream<num> getTotalWalkMin() async* {
     num totalWalkMin = 0; // 총 산책 시간
-    CollectionReference petRef = FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/Pets');
+    CollectionReference petRef = FirebaseFirestore.instance.collection('Users/${userController.loginEmail}/Pets');
     QuerySnapshot _docInPets = await petRef.get();
     for (int i = 0; i < _docInPets.docs.length; i++) {
-      String _docInPetsID =
-          _docInPets.docs[i].id; // Pets Collection 아래 문서 이름 (반려견 이름)
-      CollectionReference walkRef =
-          petsRef.doc('${_docInPetsID}').collection('Walk');
+      String _docInPetsID = _docInPets.docs[i].id; // Pets Collection 아래 문서 이름 (반려견 이름)
+      CollectionReference walkRef = petsRef.doc('${_docInPetsID}').collection('Walk');
       QuerySnapshot _docInWalk = await walkRef.get();
       for (int j = 0; j < _docInWalk.docs.length; j++) {
         totalWalkMin += _docInWalk.docs[j]['totalTimeMin'];
@@ -103,13 +95,13 @@ class _MyPageState extends State<MyPage> {
   Stream<num> getTotalWalkCnt() async* {
     num totalWalkCnt = 0; // 총 산책 횟수
     CollectionReference petRef = FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'}/Pets');
+        .collection('Users/${userController.loginEmail}/Pets');
     QuerySnapshot _docInPets = await petRef.get();
     for (int i = 0; i < _docInPets.docs.length; i++) {
       String _docInPetsID =
           _docInPets.docs[i].id; // Pets Collection 아래 문서 이름 (반려견 이름)
       CollectionReference walkRef =
-          petsRef.doc('${_docInPetsID}').collection('Walk');
+      petsRef.doc('${_docInPetsID}').collection('Walk');
       QuerySnapshot _docInWalk = await walkRef.get();
       totalWalkCnt += _docInWalk.docs.length;
     }
@@ -120,6 +112,7 @@ class _MyPageState extends State<MyPage> {
   @override
   void initState() {
     super.initState();
+
     // 총 산책 시간과 총 산책 횟수 계산
     getTotalWalkMin();
     getTotalWalkCnt();
@@ -127,6 +120,18 @@ class _MyPageState extends State<MyPage> {
 
   @override
   Widget build(BuildContext context) {
+    petsRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets')
+        .withConverter(
+        fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+        toFirestore: (dogData, _) => dogData.toJson());
+
+    userRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/UserInfo')
+        .withConverter(
+        fromFirestore: (snapshot, _) => UserData.fromJson(snapshot.data()!),
+        toFirestore: (userData, _) => userData.toJson());
+
     // 디바이스 사이즈 크기 정의
     final Size size = MediaQuery.of(context).size;
 
@@ -148,11 +153,11 @@ class _MyPageState extends State<MyPage> {
       },
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(size.height * 0.12),
+          preferredSize: Size.fromHeight(size.height * 0.09),
           child: const LogoWidget(),
         ),
         floatingActionButton: Container(
-          padding: EdgeInsets.fromLTRB(0, 0, size.width * 0.05, size.width * 0.05),
+          padding: EdgeInsets.fromLTRB(0, 0, size.width * 0.01, size.width * 0.03),
           child: FloatingActionButton(
             heroTag: 'petAdd',
             onPressed: () {
@@ -189,68 +194,64 @@ class _MyPageState extends State<MyPage> {
                           children: [
                             // 사용자 계정 이미지
                             StreamBuilder(
-                              stream: userRef.snapshots(),
-                              builder: (userContext, userSnapshot) {
-                                if(!userSnapshot.hasData)
-                                  return CircularProgressIndicator();
+                                stream: userRef.snapshots(),
+                                builder: (userContext, userSnapshot) {
+                                  if(!userSnapshot.hasData)
+                                    return CircularProgressIndicator();
 
-                                String phNum = '아직 번호가 등록 되어 있지 않습니다.';
-                                if(userSnapshot.data!.docs.length != 0) {
-                                  phNum = userSnapshot.data!.docs[0].get('phoneNumber');
-                                }
-
-                                return InkWell(
-                                  onTap: () {
-                                    showTextInputDialog(
-                                      context: context,
-                                      title: '전화 번호',
-                                      message: '현재 전화 번호 \n\n ${phNum}',
-                                      textFields: [
-                                        DialogTextField(
-                                          keyboardType: TextInputType.number,
-                                          hintText: '전화 번호를 입력하세요',
-                                        )
-                                      ],
-                                    ).then((value) {
-                                      if(value == null)
-                                        return;
-
-                                      var map = Map<String, dynamic>();
-                                      map["phoneNumber"] = value.elementAt(0).toString();
-
-                                      if(value.elementAt(0).toString().length == 0) {
-                                        MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.PhoneNumberNotExist);
-                                        return;
+                                  return InkWell(
+                                    onTap: () {
+                                      String phNum = '아직 번호가 등록 되지 않았어요!';
+                                      if(userSnapshot.data!.docs[0].get('phoneNumber').toString().length != 0) {
+                                        phNum = userSnapshot.data!.docs[0].get('phoneNumber');
                                       }
 
-                                      if(userSnapshot.data!.docs.length == 0) {
-                                        userRef.doc('number').set(UserData(phoneNumber: value.elementAt(0).toString())).then((value) => print('전화번호 저장 완료'))
+                                      showTextInputDialog(
+                                        context: context,
+                                        title: '전화 번호',
+                                        message: '현재 전화 번호 \n\n ${phNum}',
+                                        textFields: [
+                                          DialogTextField(
+                                            keyboardType: TextInputType.number,
+                                            hintText: '전화 번호를 입력하세요',
+                                          )
+                                        ],
+                                      ).then((value) {
+                                        if(value == null)
+                                          return;
+
+                                        var map = Map<String, dynamic>();
+                                        map["phoneNumber"] = value.elementAt(0).toString();
+
+                                        if(value.elementAt(0).toString().length == 0) {
+                                          MyPageSnackBar().notfoundDogData(context, SnackBarErrorType.PhoneNumberNotExist);
+                                          return;
+                                        }
+
+                                        userRef.doc('information').update(map)
+                                            .whenComplete(() => print('변경 완료'))
                                             .catchError((error) => print('전화번호 저장 오류! ${error}'));
-                                      } else {
-                                        userRef.doc('number').update(map)
-                                            .whenComplete(() => print("변경 완료")).catchError((error) => print('전화번호 저장 오류! ${error}'));
-                                      }
-                                    });
-                                  },
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.white,
-                                    radius: size.width * 0.10,
-                                    backgroundImage: NetworkImage(FirebaseAuth.instance.currentUser!.photoURL.toString()),
-                                    child: Align(
-                                      alignment: Alignment.bottomRight,
-                                      child: CircleAvatar(
-                                        backgroundColor: Color(0xff504E5B),
-                                        radius: petInfoWidth * 0.05,
-                                        child: Icon(
-                                          Icons.phone,
-                                          size: petInfoWidth * 0.05,
-                                          color: Colors.white,
+                                      });
+                                    },
+                                    child: CircleAvatar(
+                                      backgroundColor: Colors.white,
+                                      radius: size.width * 0.10,
+                                      backgroundImage: CachedNetworkImageProvider(FirebaseAuth.instance.currentUser!.photoURL.toString()),
+                                      child: Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: CircleAvatar(
+                                          backgroundColor: Color(0xff504E5B),
+                                          radius: petInfoWidth * 0.05,
+                                          child: Icon(
+                                            Icons.phone,
+                                            size: petInfoWidth * 0.05,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              }
+                                  );
+                                }
                             ),
                             SizedBox(
                               height: size.height * 0.01,
@@ -371,13 +372,13 @@ class _MyPageState extends State<MyPage> {
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (context, itemIndex, pageViewIndex) {
                             return CircleAvatar(
-                              radius: size.width * 0.3,
+                              radius: size.width * 0.25,
                               child: ClipOval(
-                                child: Container() /*FadeInImage.memoryNetwork(
-                                  fit: BoxFit.cover,
-                                  placeholder: kTransparentImage,
-                                  image: snapshot.data!.docs[itemIndex].get('imageUrl'),
-                                )*/,
+                                child: CachedNetworkImage(
+                                  imageUrl: snapshot.data!.docs[itemIndex].get('imageUrl'),
+                                  progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) => Icon(Icons.error),
+                                ),
                               ),
                             );
                           },
@@ -409,7 +410,7 @@ class _MyPageState extends State<MyPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '이름'),
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '이    름'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
@@ -429,7 +430,7 @@ class _MyPageState extends State<MyPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '성별'),
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '성    별'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
@@ -447,7 +448,7 @@ class _MyPageState extends State<MyPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '생일'),
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '생    일'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
@@ -467,7 +468,7 @@ class _MyPageState extends State<MyPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '분류'),
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '분    류'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
@@ -487,7 +488,7 @@ class _MyPageState extends State<MyPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '견종'),
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '견    종'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
@@ -514,7 +515,7 @@ class _MyPageState extends State<MyPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '무게'),
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '무    게'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
@@ -536,7 +537,7 @@ class _MyPageState extends State<MyPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '하루 권장 산책 시간'),
+                                        infoTitleBox(petInfoWidth, petInfoHeight, '권장 산책 시간'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
@@ -579,6 +580,10 @@ class _MyPageState extends State<MyPage> {
                     );
                   },
                 ),
+                SizedBox(
+                  height: size.height * 0.02,
+                ),
+                ShareManager(),
                 SizedBox(
                   height: size.height * 0.05,
                 )

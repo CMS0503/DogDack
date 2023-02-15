@@ -33,7 +33,8 @@ class ScheduleDiaryText extends StatelessWidget {
               onChanged: (value) {
                 controller.diary = value;
               },
-              controller: inputController,
+              // controller: inputController,
+              controller: TextEditingController(),
               cursorColor: Colors.grey,
               decoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/button_controller.dart';
+import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/models/calender_data.dart';
 import 'package:dogdack/models/walk_data.dart';
 import 'package:dogdack/controllers/input_controller.dart';
@@ -8,15 +9,16 @@ import 'package:dogdack/screens/calendar_schedule_edit/widgets/calendar_snackbar
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_date_picker.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_diary_text.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_edit_bollean.dart';
+import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_edit_image.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/widgets/schedule_edit_walk.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class CalendarScheduleEdit extends StatefulWidget {
-  final DateTime day;
+  // 모슨요일인지 받기
   const CalendarScheduleEdit({super.key, required this.day});
+  final DateTime day;
 
   @override
   State<CalendarScheduleEdit> createState() => _CalendarScheduleEditState();
@@ -26,23 +28,38 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
   final inputController = TextEditingController();
   final controller = Get.put(InputController());
   final buttonController = Get.put(ButtonController());
+  final userController = Get.put(UserController());
 
+  // 완료 버튼 클릭 시 데이터 저장
   void fbstoreWrite() async {
-    print(controller.selectedValue);
+    // 현재 선택한 강아지 이름으로 강아지 저장
     controller.saveName = controller.selectedValue;
+    // Pet Collection 접근
     final petsRef = FirebaseFirestore.instance
-        .collection('Users/${'imcsh313@naver.com'.toString()}/Pets');
+        .collection('Users/${userController.loginEmail}/Pets');
+    // 산책했는지 확인하는 변수(분)
     final walkCheck = (int.parse(controller.endTime.seconds.toString()) -
             int.parse(controller.startTime.seconds.toString())) /
         60;
+
+    // walkCheck이 0이면 산책을 안한 것임
     if (walkCheck == 0) {
       controller.walkCheck = false;
     }
-    print(controller.saveName);
+
+    // 선택된 강아지 이름으로 해당 강아지 문서 가져오기
     var result =
         await petsRef.where("name", isEqualTo: controller.saveName).get();
+
+    // 문서의 data중 권장 산책량 data 가져오기
+    var recommend = result.docs[0]['recommend'];
+
+    // 이 if 문은 빼도 되나?
     if (result.docs.isNotEmpty) {
+      // 선택한 강아지 문서 id 가져오기
       String dogId = result.docs[0].id;
+
+      // Calendar data 입력하기
       petsRef
           .doc(dogId)
           .collection('Calendar')
@@ -58,10 +75,12 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
             beauty: controller.beauty,
             isWalk: controller.walkCheck,
             imageUrl: controller.imageUrl,
+            // distance: controller.distance,
           ))
           .then((value) => print("document added"))
           .catchError((error) => print("Fail to add doc $error"));
 
+      // Walk data 입력하기
       petsRef
           .doc(dogId)
           .collection('Walk')
@@ -77,9 +96,15 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
               startTime: controller.startTime,
               endTime: controller.endTime,
               totalTimeMin: (int.parse(controller.endTime.seconds.toString()) -
-                      int.parse(controller.startTime.seconds.toString())) /
-                  60,
+                          int.parse(controller.startTime.seconds.toString())) /
+                      60 +
+                  (int.parse(controller.endTime.seconds.toString()) -
+                          int.parse(controller.startTime.seconds.toString())) %
+                      60,
               distance: int.parse(controller.distance),
+              goal: recommend,
+              isAuto: false,
+              geolist: [],
             ),
           );
     }
@@ -115,14 +140,13 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // const SizedBox(height: 20),
               const DatePicker(),
               const ScheduleEditWalk(),
               const SizedBox(
                 height: 30,
               ),
               const ScheduleEditBollean(),
-              // const ScheduleEditImage(),
+              const ScheduleEditImage(),
               const ScheduleDiaryText(),
               SizedBox(
                 width: width * 0.8,
@@ -130,17 +154,22 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                   onPressed: () {
                     // setState(() {});
                     FocusManager.instance.primaryFocus?.unfocus();
+
+                    // 입력값 잘못되면 막기
+                    // 선택한 강아지가 없으면 입력 못하게
                     if (controller.selectedValue == '') {
                       CalendarSnackBar().notfoundCalendarData(
                           context, CalendarSnackBarErrorType.NoDog);
                       return;
                     }
+                    // 시작시간이 종료시간 보다 크면 입력 못하게
                     if (int.parse(controller.startTime.seconds.toString()) >
                         int.parse(controller.endTime.seconds.toString())) {
                       CalendarSnackBar().notfoundCalendarData(
                           context, CalendarSnackBarErrorType.TimeError);
                       return;
                     }
+                    // 시작이나 종료 시간 중 하나만 입력할 때
                     if (controller.startTime.seconds != '0' &&
                         controller.endTime.seconds == '0') {
                       CalendarSnackBar().notfoundCalendarData(
@@ -151,29 +180,29 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                       CalendarSnackBar().notfoundCalendarData(
                           context, CalendarSnackBarErrorType.TimeError);
                     }
-                    fbstoreWrite();
 
+                    // 문제 없으면 db에 입력하기
+                    fbstoreWrite();
+                    controller.imageUrl = [];
+
+                    // 입력 완료하면 달력화면으로 돌아가기 위해 pop
                     Navigator.pop(context);
-                    // buttonController.btn += 1;
-                    // buttonController.changeButtonIndex(buttonController.btn);
+                    // 화면 reset하기
                     setState(() {});
+                    // calendar push
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => const CalendarMain()));
-
-                    // print(controller.date);
-                    // setState(() {});
-                    // controller.bath = true;
-                    // controller.beauty = true;
-                    // controller.imageUrl = [];
                   },
+                  // 완료 버튼 스타일
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     backgroundColor: const Color.fromARGB(255, 100, 92, 170),
                   ),
+                  // 완료 버튼 텍스트
                   child: const Text(
                     "완료",
                     style: TextStyle(

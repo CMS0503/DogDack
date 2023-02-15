@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/input_controller.dart';
+import 'package:dogdack/controllers/user_controller.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 
@@ -21,6 +21,7 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
   // firebase storage 불러오기
   FirebaseStorage storage = FirebaseStorage.instance;
   final controller = Get.put(InputController());
+  final userController = Get.put(UserController());
 
   // 이미지 업로드 (카메라 / 갤러리)
   Future<void> _upload(String inputSource) async {
@@ -31,7 +32,7 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
         source:
             inputSource == 'camera' ? ImageSource.camera : ImageSource.gallery,
         maxWidth: 1920,
-        // imageQuality: 50,
+        imageQuality: 50,
       );
 
       if (pickedImage == null) {
@@ -44,19 +45,15 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
 
       try {
         // Uploading the selected image with some custom meta data
-        final result = await storage.ref(fileName).putFile(
+        final result = await storage
+            .ref()
+            .child(
+                '${userController.loginEmail}/dogs/${controller.selectedValue}/${DateFormat('yyMMdd').format(controller.date)}/$fileName')
+            .putFile(
               imageFile,
-              SettableMetadata(
-                customMetadata: {
-                  'uploaded_by': 'A bad guy',
-                  'description': 'Some description...'
-                },
-              ),
             );
         result.ref.getDownloadURL().then((value) {
           controller.imageUrl.add(value.toString());
-          // print('이미지 url');
-          // print(controller.imageUrl);
         });
 
         // Refresh the UI
@@ -78,14 +75,18 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
   Future<List<Map<String, dynamic>>> _loadImages() async {
     List<Map<String, dynamic>> files = [];
 
-    final ListResult result = await storage.ref().list();
+    final ListResult result = await storage
+        .ref()
+        .child(
+            '${userController.loginEmail}/dogs/${controller.selectedValue}/${DateFormat('yyMMdd').format(controller.date)}')
+        .list();
     final List<Reference> allFiles = result.items;
 
     final snapshot = await FirebaseFirestore.instance
         .collection(
           'Users',
         )
-        .doc('${'imcsh313@naver.com'}')
+        .doc(userController.loginEmail)
         .collection('Calendar')
         .doc(DateFormat('yyMMdd').format(controller.date))
         .get();
@@ -113,7 +114,6 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
   Future<void> _delete(String ref, String url) async {
     await storage.ref(ref).delete();
     controller.imageUrl.remove(url);
-    print('controller.imageUrl ${controller.imageUrl}');
     // Rebuild the UI
     setState(() {});
   }

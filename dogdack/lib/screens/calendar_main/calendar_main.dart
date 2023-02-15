@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/commons/logo_widget.dart';
 import 'package:dogdack/controllers/button_controller.dart';
+import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/models/dog_data.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar_mark.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/calendar_schedule_edit.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,11 +18,10 @@ class CalendarMain extends StatefulWidget {
 }
 
 class _CalendarPageState extends State<CalendarMain> {
-  final userRef = FirebaseFirestore.instance
-      .collection('Users/${'imcsh313@naver.com'.toString()}/Pets')
-      .withConverter(
-          fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
-          toFirestore: (dogData, _) => dogData.toJson());
+  final userController = Get.put(UserController());
+
+  late CollectionReference<DogData> userRef;
+
   // 선택한 날짜 초기화
   DateTime selectedDay = DateTime.utc(
     DateTime.now().year,
@@ -35,31 +34,45 @@ class _CalendarPageState extends State<CalendarMain> {
 
   @override
   Widget build(BuildContext context) {
+    userRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets')
+        .withConverter(
+            fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+            toFirestore: (dogData, _) => dogData.toJson());
+
     final controller = Get.put(ButtonController());
     Size screenSize = MediaQuery.of(context).size;
     double height = screenSize.height;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(height * 0.12),
+        preferredSize: Size.fromHeight(height * 0.08),
         child: const LogoWidget(),
       ),
       body: SingleChildScrollView(
         child: StreamBuilder(
             stream: userRef.snapshots(),
             builder: (petContext, petSnapshot) {
-              // if (!petSnapshot.hasData) {
-              //   return const Center(child: CircularProgressIndicator());
-              // }
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // const CalendarDrop(),
+                  // TextButton(
+                  //     onPressed: () {
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (context) => CalendarDetailEdit(
+                  //             day: DateTime.now(),
+                  //           ),
+                  //         ),
+                  //       );
+                  //     },
+                  //     child: const Text('hi')),
                   SizedBox(
                     height: height * 0.01,
                   ),
                   Calendar(focusedDay: focusedDay),
-
                   SizedBox(
                     height: height * 0.01,
                   ),
