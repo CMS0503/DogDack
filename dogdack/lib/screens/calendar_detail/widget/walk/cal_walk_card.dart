@@ -59,7 +59,8 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
             polylineId: const PolylineId('1'),
             points: latlng,
             width: 3,
-            color: Colors.blue),
+            color: Colors.blue
+        ),
       );
       walkController.updateState();
     });
@@ -136,7 +137,10 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
                 child: Stack(
                   children: [
                     GetBuilder<WalkController>(builder: (_) {
-                      return GoogleMap(
+                      return
+                      latlng.isEmpty
+                      ? Image.asset("assets/logo.png")
+                      : GoogleMap(
                         gestureRecognizers: Set()
                           ..add(Factory<PanGestureRecognizer>(
                                   () => PanGestureRecognizer())),
