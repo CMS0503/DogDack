@@ -159,9 +159,13 @@ class _CalendarState extends State<Calendar> {
             child: StreamBuilder(
               stream: userRef.snapshots(),
               builder: (petContext, petSnapshot) {
-
+                print('에러잡기 ${controller.valueList}');
+                print(controller.selectedValue);
+                // if (!controller.valueList.contains(controller.selectedValue)) {}
                 // 등록한 강아지가 없으면
-                return controller.valueList.isEmpty
+                return 
+                // controller.valueList.isEmpty
+                controller.selectedValue == ''
                     // 강아지를 등록해달라는 dropbar
                     ? DropdownButton(
                         underline: Container(),
@@ -214,7 +218,6 @@ class _CalendarState extends State<Calendar> {
                         onChanged: (value) {
                           controller.selectedValue = value.toString();
                           setState(() {
-                            print('안녕하신가');
                             getName();
                           });
                         },

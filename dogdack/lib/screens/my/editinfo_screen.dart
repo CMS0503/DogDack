@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dogdack/controllers/input_controller.dart';
 import 'package:flutter/material.dart';
 
 // firebase
@@ -45,6 +46,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   final petController = Get.put(PetController());
   final mypageStateController = Get.put(MyPageStateController());
   final homeSliderController = Get.put(HomePageSliderController());
+  final inputController = Get.put(InputController());
 
   // 강아지 정보 : (GetX 강아지 정보 관련 변수는 조회 페이지에서 선택한 정보이기 때문에 다르게 관리함)
   final kategorieList = [
@@ -977,6 +979,14 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
 
                                                     await _update()
                                                         .whenComplete(() {
+                                                          inputController.selectedValue = name;
+                                                          for(int idx = 0; idx < inputController.valueList.length; idx++) {
+                                                            if(inputController.valueList[idx].compareTo(petController.selectedPetName) == 0){
+                                                              inputController.valueList[idx] = name;
+                                                              break;
+                                                            }
+                                                          };
+
                                                       if (Navigator.canPop(
                                                           context)) {
                                                         Navigator.pop(context);
@@ -1019,6 +1029,13 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
 
                                                     await _delete()
                                                         .whenComplete(() {
+                                                          for(int idx = 0; idx < inputController.valueList.length; idx++) {
+                                                            if(inputController.valueList[idx].compareTo(petController.selectedPetName) == 0){
+                                                              inputController.valueList.removeAt(idx);
+                                                              inputController.selectedValue = '';
+                                                              break;
+                                                            }
+                                                          };
                                                       if (Navigator.canPop(
                                                           context)) {
                                                         Navigator.pop(context);
