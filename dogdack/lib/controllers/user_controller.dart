@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserController extends GetxController {
-  bool initFlag = false;
+  bool initFlag = false; // 최초 접근 이후 다시 수행되지 못하도록 하는 플래그. main.dart 에서 사용됨.
   bool isHost = false;
   String loginEmail = '';
 

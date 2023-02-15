@@ -63,6 +63,7 @@ class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
                 var time = await showTimePicker(
                   context: context,
                   initialTime: TimeOfDay.now(),
+                  
                 );
                 if (!mounted) return;
                 if (time == null) {
@@ -84,7 +85,6 @@ class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
                 }
               },
               // maxLength: 20,
-
               controller: timeController,
               cursorColor: Colors.grey,
               decoration: InputDecoration(

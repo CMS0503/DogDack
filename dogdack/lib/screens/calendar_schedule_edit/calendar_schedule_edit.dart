@@ -183,6 +183,8 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                     // 문제 없으면 db에 입력하기
                     fbstoreWrite();
                     controller.imageUrl = [];
+                    controller.bath = true;
+                    controller.beauty = true;
 
                     // 입력 완료하면 달력화면으로 돌아가기 위해 pop
                     Navigator.pop(context);

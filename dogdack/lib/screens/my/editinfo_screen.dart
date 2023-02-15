@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dogdack/controllers/input_controller.dart';
 import 'package:flutter/material.dart';
 
 // firebase
@@ -8,7 +9,6 @@ import 'package:flutter_picker/picker.dart';
 
 // GetX
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import '../../controllers/mypage_controller.dart';
 
 // Model
@@ -45,6 +45,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   final petController = Get.put(PetController());
   final mypageStateController = Get.put(MyPageStateController());
   final homeSliderController = Get.put(HomePageSliderController());
+  final inputController = Get.put(InputController());
 
   // 강아지 정보 : (GetX 강아지 정보 관련 변수는 조회 페이지에서 선택한 정보이기 때문에 다르게 관리함)
   final kategorieList = [
@@ -57,11 +58,19 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   String imageFileName = ''; // 이미지 파일 이름
   String name = ""; // 이름
   String gender = 'Male'; // 성별 초기 값
-  String birth = '여기를 눌러 생일을 추가해주세요!'; // 생일
-  String kategorie = '여기를 눌러 카테고리를 추가해주세요!'; // 견종 카테고리
+  String birth = '생일을 추가해주세요!'; // 생일
+  String kategorie = '카테고리를 추가해주세요!'; // 견종 카테고리
   String breed = '미지정'; // 견종
   num weight = 0; // 몸무게
   num recommend = 0; // 일일 권장 산책 시간
+
+  Future<void> removeDog() async {
+    for(int idx = 0; idx < inputController.valueList.length; idx++) {
+    if(inputController.valueList[idx].compareTo(petController.selectedPetName) == 0){
+      inputController.valueList.removeAt(idx);
+    }
+    }
+  }
 
   // 성별 선택 Radio button 관련 위젯
   Row addRadioButton(int btnValue, String title) {
@@ -144,7 +153,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
       cancelText: '취소',
       cancelTextStyle:
           const TextStyle(color: Color(0xff646CAA), fontFamily: 'bmjua'),
-      title: Text("몸무게를 선택하세요"),
+      title: const Text("몸무게를 선택하세요"),
       onConfirm: (Picker picker, List value) {
         setState(() {
           weight = int.parse(picker.getSelectedValues()[0]);
@@ -437,8 +446,8 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   final formkey = GlobalKey<FormState>();
 
   // 편집 모드 일 경우 기존 데이터를 텍스트 폼에 띄우기 위함.
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _breedController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController breedController = TextEditingController();
 
   // Widget
   // 정보 화면 타이틀 위젯
@@ -470,7 +479,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
 
       // 선택한 강아지로 이름 초기화
       name = petController.selectedPetName;
-      _nameController =
+      nameController =
           TextEditingController(text: petController.selectedPetName);
       // 선택한 강아지로 성별 초기화
       gender = petController.selectedPetGender;
@@ -481,7 +490,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
       kategorie = petController.selectedPetKategorie;
       // 선택한 강아지로 견종 초기화
       breed = petController.selectedPetBreed;
-      _breedController =
+      breedController =
           TextEditingController(text: petController.selectedPetBreed);
       // 선택한 강아지로 무게 초기화
       weight = petController.selectedPetWeight;
@@ -605,7 +614,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                 decoration: const InputDecoration(
                                   hintText: ' 이름을 입력하세요!',
                                 ),
-                                controller: _nameController,
+                                controller: nameController,
                               ),
                             ),
                             SizedBox(height: petInfoHeight * 0.03),
@@ -661,15 +670,23 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                       onTap: () {
                                         FlutterDialog(context);
                                       },
-                                      child: CircleAvatar(
-                                        backgroundColor:
-                                            const Color(0xff504E5B),
-                                        radius: petInfoHeight * 0.015,
-                                        child: Icon(
-                                          Icons.question_mark,
-                                          size: petInfoHeight * 0.025,
-                                          color: Colors.white,
-                                        ),
+                                      child: Row(
+                                        children: [
+                                          CircleAvatar(
+                                            backgroundColor:
+                                                const Color(0xff504E5B),
+                                            radius: petInfoHeight * 0.015,
+                                            child: Icon(
+                                              Icons.question_mark,
+                                              size: petInfoHeight * 0.025,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          Text(
+                                            '  내 강아지는 어디에 속할까요?',
+                                            style: TextStyle(fontSize: size.width * 0.03),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
@@ -707,7 +724,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                 decoration: const InputDecoration(
                                   hintText: ' 견종을 입력하세요!',
                                 ),
-                                controller: _breedController,
+                                controller: breedController,
                                 style: guideTextStyle,
                               ),
                             ),
@@ -874,7 +891,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                                   MaterialStateProperty.all(
                                                       Colors.white),
                                             ),
-                                            child: Text('등록하기'),
+                                            child: const Text('등록하기'),
                                           )
                                         : const CircularProgressIndicator(),
                                   )
@@ -977,6 +994,14 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
 
                                                     await _update()
                                                         .whenComplete(() {
+                                                          inputController.selectedValue = name;
+                                                          for(int idx = 0; idx < inputController.valueList.length; idx++) {
+                                                            if(inputController.valueList[idx].compareTo(petController.selectedPetName) == 0){
+                                                              inputController.valueList[idx] = name;
+                                                              break;
+                                                            }
+                                                          }
+
                                                       if (Navigator.canPop(
                                                           context)) {
                                                         Navigator.pop(context);
@@ -996,7 +1021,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                                   MaterialStateProperty.all(
                                                       Colors.white),
                                             ),
-                                            child: Text('변경하기'),
+                                            child: const Text('변경하기'),
                                           ),
                                           ElevatedButton(
                                             onPressed: !editingData
@@ -1018,7 +1043,19 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                                         .sliderIdx = 0;
 
                                                     await _delete()
-                                                        .whenComplete(() {
+                                                        .whenComplete(() async{
+                                                          await removeDog().then((value) {
+                                                            inputController.selectedValue = '';
+                                                            // if (inputController.valueList.isEmpty)
+                                                            //     {
+                                                                  
+                                                            //       print('지워지나');}
+                                                            //   else {
+                                                            //     inputController.selectedValue = inputController.valueList[0];
+                                                            //     print('안지워지나');}
+                                                          }
+                                                          );
+
                                                       if (Navigator.canPop(
                                                           context)) {
                                                         Navigator.pop(context);
@@ -1038,7 +1075,7 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
                                                   MaterialStateProperty.all(
                                                       Colors.white),
                                             ),
-                                            child: Text('삭제하기'),
+                                            child: const Text('삭제하기'),
                                           ),
                                         ],
                                       )

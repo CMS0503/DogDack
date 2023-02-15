@@ -1,4 +1,3 @@
-
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'dart:math';
@@ -8,7 +7,8 @@ class DonutChart1Page extends StatefulWidget {
   State<DonutChart1Page> createState() => _DonutChart1PageState();
 }
 
-class _DonutChart1PageState extends State<DonutChart1Page> with TickerProviderStateMixin {
+class _DonutChart1PageState extends State<DonutChart1Page>
+    with TickerProviderStateMixin {
   double percentage = 0.0;
   double newPercentage = 0.0;
 
@@ -17,34 +17,41 @@ class _DonutChart1PageState extends State<DonutChart1Page> with TickerProviderSt
   @override
   void initState() {
     super.initState();
-
-    percentageAnimationController =  AnimationController(
-        vsync: this,
-        duration: new Duration(milliseconds: 10000)
-    )
-      ..addListener((){
+    percentageAnimationController = AnimationController(
+        vsync: this, duration: new Duration(milliseconds: 10000))
+      ..addListener(() {
         setState(() {
-          percentage=lerpDouble(percentage,newPercentage,percentageAnimationController.value)!;
+          percentage = lerpDouble(
+              percentage, newPercentage, percentageAnimationController.value)!;
         });
       });
 
     setState(() {
       percentage = newPercentage;
-      newPercentage=0.8;
+      newPercentage = 0.8;
       percentageAnimationController.forward();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-
-      body: Center(
-        child:PercentDonut(percent: percentage, color: const Color.fromARGB(255, 100, 92, 170)),
-      ),
-    );
+    Size screenSize = MediaQuery.of(context).size;
+    double width = screenSize.width;
+    double height = screenSize.height;
+    return Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        elevation: 4.0,
+        child: Container(
+            width: width * 0.9,
+            height: height * 0.1,
+            child: PercentDonut(
+                percent: percentage,
+                color: const Color.fromARGB(255, 100, 92, 170))));
   }
 }
+
 //floating border
 class PercentDonut extends StatelessWidget {
   const PercentDonut({Key? key, required this.percent, required this.color})
@@ -55,8 +62,8 @@ class PercentDonut extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 310,
-      height: 310,
+      width: 50,
+      height: 50,
       child: CustomPaint(
         // CustomPaint를 그리고 이 안에 차트를 그려줍니다..
         painter: PercentDonutPaint(
@@ -73,6 +80,7 @@ class PercentDonutPaint extends CustomPainter {
   double percentage;
   double textScaleFactor = 1.0; // 파이 차트에 들어갈 텍스트 크기를 정합니다.
   Color activeColor;
+
   PercentDonutPaint({required this.percentage, required this.activeColor});
 
   @override
@@ -89,14 +97,15 @@ class PercentDonutPaint extends CustomPainter {
         size.height / 2 -
             paint.strokeWidth / 2); // 원의 반지름을 구함. 선의 굵기에 영향을 받지 않게 보정함.
     Offset center =
-    Offset(size.width / 2, size.height / 2); // 원이 위젯의 가운데에 그려지게 좌표를 정함.
+        Offset(size.width / 2, size.height / 2); // 원이 위젯의 가운데에 그려지게 좌표를 정함.
     canvas.drawCircle(center, radius, paint); // 원을 그림.
     double arcAngle = 2 * pi * percentage; // 호(arc)의 각도를 정함. 정해진 각도만큼만 그리도록 함.
     paint.color = activeColor; // 호를 그릴 때는 색을 바꿔줌.
-    canvas.drawArc(Rect.fromCircle(center: center, radius: radius),-pi / 2,
+    canvas.drawArc(Rect.fromCircle(center: center, radius: radius), -pi / 2,
         arcAngle, false, paint); // 호(arc)를 그림.
 
-    drawText(canvas, size, "${(percentage*100).round()} / 100"); // 텍스트를 화면에 표시함.
+    drawText(
+        canvas, size, "${(percentage * 100).round()} / 100"); // 텍스트를 화면에 표시함.
   }
 
   // 원의 중앙에 텍스트를 적음.
