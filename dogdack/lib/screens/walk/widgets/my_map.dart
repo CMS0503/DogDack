@@ -158,7 +158,6 @@ class _MapState extends State<myMap> {
     GoogleMapController googleMapController = await _controller.future;
     myLocation.onLocationChanged.listen(
       (newLoc) {
-        print('listen');
         currentLocation = newLoc;
         googleMapController.animateCamera(
           CameraUpdate.newCameraPosition(
