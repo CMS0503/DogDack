@@ -34,7 +34,7 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  late CollectionReference<DogData> userRef;
+  // late CollectionReference<DogData> userRef;
 
   // input과 walk controller 불러오기
   final controller = Get.put(InputController());
@@ -128,12 +128,6 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
-    userRef = FirebaseFirestore.instance
-        .collection('Users/${userController.loginEmail}/Pets')
-        .withConverter(
-            fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
-            toFirestore: (dogData, _) => dogData.toJson());
-
     // getName();
     ButtonController().getName();
     Size screenSize = MediaQuery.of(context).size;
@@ -160,7 +154,7 @@ class _CalendarState extends State<Calendar> {
           child: Padding(
             padding: const EdgeInsets.only(left: 20),
             child: StreamBuilder(
-              stream: userRef.snapshots(),
+              stream: userController.userRef.snapshots(),
               builder: (petContext, petSnapshot) {
                 // 등록한 강아지가 없으면
                 return controller.valueList.isEmpty

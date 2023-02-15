@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/user_controller.dart';
+import 'package:dogdack/screens/calendar_main/calendar_main.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -140,7 +141,9 @@ class _WalkPageState extends State<WalkPage> {
                     }
                     return Column(
                       children: [
-                        const SizedBox(height: 20,),
+                        const SizedBox(
+                          height: 20,
+                        ),
                         Stack(
                           alignment: Alignment.center,
                           children: <Widget>[
@@ -178,7 +181,10 @@ class _WalkPageState extends State<WalkPage> {
                                                   .get('imageUrl'),
                                             )),
                                           ),
-                                          if (walkController.flagList.isNotEmpty) walkController.choiceDog(itemIndex, size.width),
+                                          if (walkController
+                                              .flagList.isNotEmpty)
+                                            walkController.choiceDog(
+                                                itemIndex, size.width),
                                         ],
                                       ),
                                     ),
@@ -201,9 +207,13 @@ class _WalkPageState extends State<WalkPage> {
                                 child: ElevatedButton(
                                     onPressed: () {
                                       walkController.selDogs.clear();
-                                      for (int i = 0; i < walkController.flagList.length; i++) {
+                                      for (int i = 0;
+                                          i < walkController.flagList.length;
+                                          i++) {
                                         if (walkController.flagList[i]) {
-                                          walkController.selDogs.add(snapshot.data!.docs[i].get('name'));
+                                          walkController.selDogs.add(snapshot
+                                              .data!.docs[i]
+                                              .get('name'));
                                         }
                                       }
                                       if (walkController.selDogs.isEmpty) {
@@ -212,23 +222,29 @@ class _WalkPageState extends State<WalkPage> {
                                             barrierDismissible: false,
                                             builder: (BuildContext context) {
                                               return AlertDialog(
-                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-                                                  title: const Text("함께할 강아지를 선택해주세요."),
-                                                  actions: <Widget> [
-                                                    Align(
-                                                      alignment: Alignment.center,
-                                                      child: ElevatedButton(
-                                                        onPressed: () {
-                                                          Navigator.pop(context);
-                                                        },
-                                                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                                                        child: const Text("확인"),
-                                                      ),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0)),
+                                                title: const Text(
+                                                    "함께할 강아지를 선택해주세요."),
+                                                actions: <Widget>[
+                                                  Align(
+                                                    alignment: Alignment.center,
+                                                    child: ElevatedButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                              backgroundColor:
+                                                                  Colors.red),
+                                                      child: const Text("확인"),
                                                     ),
+                                                  ),
                                                 ],
                                               );
-                                            }
-                                        );
+                                            });
                                       } else {
                                         walkController.isSelected.value = true;
                                         walkController.dropdownValue =
@@ -256,9 +272,7 @@ class _WalkPageState extends State<WalkPage> {
                     );
                   },
                 ),
-              )
-          )
-      ),
+              ))),
     );
   }
 
@@ -287,7 +301,9 @@ class _WalkPageState extends State<WalkPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 15,),
+                const SizedBox(
+                  height: 15,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -316,7 +332,8 @@ class _WalkPageState extends State<WalkPage> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          walkController.goal.value = walkController.tmp_goal.value;
+                          walkController.goal.value =
+                              walkController.tmp_goal.value;
                         },
                         style:
                             ElevatedButton.styleFrom(backgroundColor: violet2),
@@ -406,9 +423,8 @@ class _WalkPageState extends State<WalkPage> {
                               walkController.sendDB();
                               walkController.disconnect();
                               flag = false;
-                              // 캘린더 화면으로
-                              mainController.changeTabIndex(2);
 
+                              userController.myUpdate().then((value) {});
                             },
                           ),
                         ),
@@ -433,8 +449,8 @@ class _WalkPageState extends State<WalkPage> {
     petsRef = FirebaseFirestore.instance
         .collection('Users/${userController.loginEmail}/Pets')
         .withConverter(
-        fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
-        toFirestore: (dogData, _) => dogData.toJson());
+            fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+            toFirestore: (dogData, _) => dogData.toJson());
 
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
