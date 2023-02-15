@@ -149,9 +149,6 @@ class _WalkPageState extends State<WalkPage> {
                     }
                     return Column(
                       children: [
-                        const SizedBox(
-                          height: 20,
-                        ),
                         Stack(
                           alignment: Alignment.center,
                           children: <Widget>[
