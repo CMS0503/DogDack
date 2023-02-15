@@ -39,13 +39,27 @@ class _DiaryWidget extends State<DiaryWidget> {
                 padding: EdgeInsets.all(20),
                 child: Container(
                   width: 130,
-                  height: 130,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: grey
-                  ),
-                  child: Image.asset("${widget.diary_image}")
-                ),
+                    height: 130,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                    ),
+                  child: Image.network(widget.diary_image, loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress){
+                    if(loadingProgress == null){
+                      return child;
+                    }
+                    return Center(
+                      child: Image.asset('images/login/login_image.png')
+                    );
+                  },
+                  ),),
+                // child: Container(
+                //   width: 130,
+                //   height: 130,
+                //   decoration: BoxDecoration(
+                //     shape: BoxShape.circle,
+                //   ),
+                //   child: Image.network(widget.diary_image, height: 130, width: 130,loadingBuilder: ,)
+                // ),
               ),
               Text("${widget.diary_text}", style: TextStyle(
                 fontFamily: 'bmjua',
