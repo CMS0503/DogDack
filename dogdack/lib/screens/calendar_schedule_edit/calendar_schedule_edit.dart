@@ -208,7 +208,9 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
 
                     // 문제 없으면 db에 입력하기
                     fbstoreWrite();
-                    controller.imageUrl = [];
+                    // controller.imageUrl = [];
+                    print('ontroller.imageUrl');
+                    print(controller.imageUrl);
                     controller.bath = true;
                     controller.beauty = true;
                     controller.walkCheck = true;

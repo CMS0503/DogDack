@@ -29,6 +29,7 @@ class _DiaryWidget extends State<DiaryWidget> {
     var diaryDoc = await calRef
         .doc(DateFormat('yyMMdd').format(inputController.date))
         .get();
+        
     widget.diaryText = diaryDoc['diary'];
     print(inputController.date);
     if (diaryDoc['imageUrl'].length != 0) {
