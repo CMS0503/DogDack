@@ -64,10 +64,10 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
       .format(controller.date)
       .toString())
       .get().then((value) {
-        if (value['isWalk'] == true || walkCheck != 0 ){
-            controller.walkCheck = false;
+        if (value['isWalk'] == true || walkCheck > 0 ){
+            controller.walkCheck = true;
         } else {
-          controller.walkCheck = true;
+          controller.walkCheck = false;
         }
       });
     

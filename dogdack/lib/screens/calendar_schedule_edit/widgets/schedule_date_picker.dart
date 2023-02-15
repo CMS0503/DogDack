@@ -91,6 +91,8 @@ class _DatePickerState extends State<DatePicker> {
                               ).then((value) {
                                 if (value == null) return;
                               setState(() {
+                                print('fjsdklf;ajsdfkl;asdjfkl');
+                                print(value);
                                 controller.date = value;
                               });
                               });
