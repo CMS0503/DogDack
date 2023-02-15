@@ -128,11 +128,6 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
     });
   }
 
-  Future<void> addPloy(data) async {
-    for (int i = 0; i < data.length; i++) {
-      latlng.add(LatLng(data[i].latitude, data[i].longitude));
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -28,7 +28,8 @@ class _HomePageBarChartState extends State<HomePageBarChart> {
     switch (value.toInt()) {
       case 6: text = const Text('6am', style: style); break;
       case 12: text = const Text('12pm', style: style); break;
-      case 18: text = const Text('6pm', style: style); break;
+       case 18: text = const Text('6pm', style: style); break;
+      // case 24: text = const Text('12am', style: style); break;
       default: text = const Text('', style: style); break;
     }
     return SideTitleWidget(
@@ -121,15 +122,15 @@ class _HomePageBarChartState extends State<HomePageBarChart> {
 
     return retList;
   }
-
-  // 새로고침
-  Future<dynamic> refreshState() async {
-    setState(() {});
-    await Future<dynamic>.delayed(animDuration + const Duration(milliseconds: 500));
-    if(mainController.tabindex == 0) {
-      await refreshState();
-    }
-  }
+  //
+  // // 새로고침
+  // Future<dynamic> refreshState() async {
+  //   setState(() {});
+  //   await Future<dynamic>.delayed(animDuration + const Duration(milliseconds: 500));
+  //   if(mainController.tabindex == 0) {
+  //     await refreshState();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
