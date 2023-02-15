@@ -93,8 +93,11 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
               startTime: controller.startTime,
               endTime: controller.endTime,
               totalTimeMin: (int.parse(controller.endTime.seconds.toString()) -
-                      int.parse(controller.startTime.seconds.toString())) /
-                  60,
+                          int.parse(controller.startTime.seconds.toString())) /
+                      60 +
+                  (int.parse(controller.endTime.seconds.toString()) -
+                          int.parse(controller.startTime.seconds.toString())) %
+                      60,
               distance: int.parse(controller.distance),
               goal: recommend,
               isAuto: false,
@@ -177,6 +180,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
 
                     // 문제 없으면 db에 입력하기
                     fbstoreWrite();
+                    controller.imageUrl = [];
 
                     // 입력 완료하면 달력화면으로 돌아가기 위해 pop
                     Navigator.pop(context);

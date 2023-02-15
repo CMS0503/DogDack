@@ -74,11 +74,14 @@ class _CalendarState extends State<Calendar> {
           final calRef = petsRef.doc(dogId).collection('Calendar');
           var data = await calRef.get();
           for (int i = 0; i < data.docs.length; i++) {
+            print('여기서 날짜가 나와야됨');
+
             Calendar.events[
                 '${data.docs[i].reference.id}/${controller.selectedValue}'] = [
               data.docs[i]['isWalk'],
               data.docs[i]['bath'],
               data.docs[i]['beauty'],
+              data.docs[i]['diary'],
             ];
           }
           // setState(() {});
@@ -99,6 +102,7 @@ class _CalendarState extends State<Calendar> {
               data.docs[i]['isWalk'],
               data.docs[i]['bath'],
               data.docs[i]['beauty'],
+              data.docs[i]['diary'],
             ];
           }
         }
@@ -143,6 +147,7 @@ class _CalendarState extends State<Calendar> {
       const Color.fromARGB(255, 191, 172, 224),
       const Color.fromARGB(255, 235, 199, 232),
     ];
+
 // Obx(() {
     return Column(
       children: [
@@ -154,6 +159,7 @@ class _CalendarState extends State<Calendar> {
             child: StreamBuilder(
               stream: userRef.snapshots(),
               builder: (petContext, petSnapshot) {
+
                 // 등록한 강아지가 없으면
                 return controller.valueList.isEmpty
                     // 강아지를 등록해달라는 dropbar
@@ -273,7 +279,7 @@ class _CalendarState extends State<Calendar> {
             ),
           ),
           // 셀 높이
-          rowHeight: height * 0.11,
+          rowHeight: height * 0.1,
           calendarStyle: const CalendarStyle(
             // 오늘 날짜 표시 X
             isTodayHighlighted: false,
@@ -326,12 +332,10 @@ class _CalendarState extends State<Calendar> {
                 padding: const EdgeInsets.only(top: 20),
                 child: GestureDetector(
                   onTap: () {
-                    controller.setDate(day);
-                    // detail로 넘길 date
                     controller.date = day;
-                    controller.distance = Calendar.events[3].toString();
-                    print(
-                        'controller.distance in calendar.dart : ${controller.distance}');
+                    controller.bath = events[1] as bool;
+                    controller.beauty = events[2] as bool;
+                    controller.diary = events[3] as String;
 
                     Navigator.push(
                       context,
@@ -346,6 +350,7 @@ class _CalendarState extends State<Calendar> {
                         height: 20,
                         child: Container(
                           child: Card(
+                            margin: EdgeInsets.symmetric(vertical: 2, horizontal: 3),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15.0),
                             ),
@@ -366,6 +371,7 @@ class _CalendarState extends State<Calendar> {
                       SizedBox(
                         height: 20,
                         child: Card(
+                          margin: EdgeInsets.symmetric(vertical: 2, horizontal: 3),
                           elevation: 0,
                           child: ListTile(
                             shape: const RoundedRectangleBorder(
@@ -382,6 +388,7 @@ class _CalendarState extends State<Calendar> {
                       SizedBox(
                         height: 20,
                         child: Card(
+                          margin: EdgeInsets.symmetric(vertical: 2, horizontal: 3),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15.0),
                           ),
