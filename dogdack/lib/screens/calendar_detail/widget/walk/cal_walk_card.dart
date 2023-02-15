@@ -52,32 +52,32 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
   void initState() {
     super.initState();
 
-    setPoly().then((result) {
-      _polyline.add(
-        Polyline(
-            polylineId: const PolylineId('1'),
-            points: latlng,
-            width: 3,
-            color: Colors.blue),
-      );
-      walkController.updateState();
-    });
+    setPoly().then(
+      (result) {
+        _polyline.add(
+          Polyline(
+              polylineId: const PolylineId('1'),
+              points: latlng,
+              width: 3,
+              color: Colors.blue),
+        );
+        walkController.updateState();
+        setState(() {});
+      },
+    );
   }
 
   Future<void> setPoly() async {
+    print('@@@@@@@@@@@@@@@@@@@@무한로딩체크@@@@@@@@@@@@@@@@@@@@@');
     latlng.clear();
     String docId =
         inputController.dognames[inputController.selectedValue.toString()];
-    print('docId : $docId');
     // walk 경로
     CollectionReference walkRef = FirebaseFirestore.instance
         .collection('Users/${userController.loginEmail}/Pets/$docId/Walk');
 
-    print('cal_walk_card 안 : ${userController.loginEmail}');
-
     await walkRef.get().then(
       (value) async {
-        print('cal_walk_card 안 : ${userController.loginEmail}');
         // 달력에서 선택한 날짜
         var selectedDay = inputController.date;
         var startOfToday = Timestamp.fromDate(selectedDay);
@@ -96,6 +96,10 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
             widget.geodata = snapshot.docs[0]['geolist'];
             // 장소, 거리, 시간 데이터
             widget.placedata = snapshot.docs[0]['place'];
+            inputController.distance = snapshot.docs[0]['distance'].toString();
+            inputController.startTime = snapshot.docs[0]['startTime'];
+            inputController.endTime = snapshot.docs[0]['endTime'];
+            inputController.place = snapshot.docs[0]['place'];
 
             for (var i = 0; i < snapshot.docs.length; i++) {
               widget.timedata += snapshot.docs[i]['totalTimeMin'];
@@ -118,8 +122,9 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
           },
         );
       },
-    );
-    setState(() {});
+    ).then((value) {
+      setState(() {});
+    });
   }
 
   Future<void> addPloy(data) async {
@@ -130,6 +135,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
 
   @override
   Widget build(BuildContext context) {
+    print('@@@@@@@@@@@@@@@@@@@@무한로딩체크@@@@@@@@@@@@@@@@@@@@@');
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     double height = screenSize.height;
@@ -156,8 +162,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
                   children: [
                     GetBuilder<WalkController>(builder: (_) {
                       return GoogleMap(
-                        gestureRecognizers: Set()
-                          ..add(Factory<PanGestureRecognizer>(
+                        gestureRecognizers: Set()..add(Factory<PanGestureRecognizer>(
                               () => PanGestureRecognizer())),
                         initialCameraPosition: const CameraPosition(
                           target: LatLng(37.5012428, 127.039585),
