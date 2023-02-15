@@ -54,17 +54,17 @@ class _MyPageState extends State<MyPage> {
   // 정보 화면 타이틀 위젯
   Container infoTitleBox(double cardWith, double cardHeight, String title) {
     return Container(
-      width: cardWith * 0.44,
+      width: cardWith * 0.4,
       height: cardHeight * 0.08,
       decoration: BoxDecoration(
-        border: Border.all(color: Color(0xff644CAA), width: 2),
+        border: Border.all(color: floatingBtnColor_total, width: 2),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Center(
         child: Text(
           title,
           style: TextStyle(
-            color: Color(0xff644CAA),
+            color: floatingBtnColor_total,
             fontSize: cardWith * 0.06,
           ),
         ),
@@ -444,8 +444,8 @@ class _MyPageState extends State<MyPage> {
 
     //Size
     deviceSize = MediaQuery.of(context).size; // 디바이스 사이즈
-    final double petInfoWidth = deviceSize.width * 0.8; // 강아지 정보 표시 카드 너비
-    final double petInfoHeight = deviceSize.height * 0.45; // 강아지 정보 표시 카드 높이
+    final double petInfoWidth = deviceSize.width * 0.9; // 강아지 정보 표시 카드 너비
+    final double petInfoHeight = deviceSize.height * 0.42; // 강아지 정보 표시 카드 높이
 
     //총 산책 시간, 총 산책 횟수 계산
     getTotalWalkMin();
@@ -648,7 +648,7 @@ class _MyPageState extends State<MyPage> {
                             ),
                             child: Center(
                               child: Padding(
-                                padding: EdgeInsets.fromLTRB(petInfoWidth * 0.05, deviceSize.width * 0.05, petInfoWidth * 0.05, 0),
+                                padding: EdgeInsets.fromLTRB(deviceSize.width * 0.05, deviceSize.width * 0.05, deviceSize.width * 0.05, 0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -656,7 +656,7 @@ class _MyPageState extends State<MyPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '이    름'),
+                                        infoTitleBox(deviceSize.width * 0.8, deviceSize.height * 0.5, '이  름'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
@@ -670,13 +670,13 @@ class _MyPageState extends State<MyPage> {
                                       ],
                                     ),
                                     SizedBox(
-                                      height: petInfoHeight * 0.02,
+                                      height: deviceSize.height * 0.01,
                                     ),
                                     // 성별
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '성    별'),
+                                        infoTitleBox(deviceSize.width * 0.8, deviceSize.height * 0.5, '성  별'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
@@ -688,13 +688,13 @@ class _MyPageState extends State<MyPage> {
                                       ],
                                     ),
                                     SizedBox(
-                                      height: petInfoHeight * 0.02,
+                                      height: deviceSize.height * 0.01,
                                     ),
                                     // 생일
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '생    일'),
+                                        infoTitleBox(deviceSize.width * 0.8, deviceSize.height * 0.5, '생  일'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
@@ -708,15 +708,15 @@ class _MyPageState extends State<MyPage> {
                                       ],
                                     ),
                                     SizedBox(
-                                      height: petInfoHeight * 0.02,
+                                      height: deviceSize.height * 0.01,
                                     ),
                                     // 카테고리
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '분    류'),
+                                        infoTitleBox(deviceSize.width * 0.8, deviceSize.height * 0.5, '분  류'),
                                         SizedBox(
-                                          width: petInfoWidth * 0.03,
+                                          width: deviceSize.width * 0.03,
                                         ),
                                         Text(
                                           snapshot.data!.docs[petController.selectedPetScrollIndex].get('kategorie'),
@@ -728,19 +728,19 @@ class _MyPageState extends State<MyPage> {
                                       ],
                                     ),
                                     SizedBox(
-                                      height: petInfoHeight * 0.02,
+                                      height: deviceSize.height * 0.01,
                                     ),
                                     // 견종
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '견    종'),
+                                        infoTitleBox(deviceSize.width * 0.8, deviceSize.height * 0.5, '견  종'),
                                         SizedBox(
-                                          width: petInfoWidth * 0.03,
+                                          width: deviceSize.width * 0.03,
                                         ),
                                         Container(
-                                          width: petInfoWidth * 0.3,
-                                          height: petInfoHeight * 0.06,
+                                          width: deviceSize.width * 0.3,
+                                          height: deviceSize.height * 0.03,
                                           child: AutoSizeText(
                                             snapshot.data!.docs[petController.selectedPetScrollIndex].get('breed'),
                                             minFontSize: 1,
@@ -749,19 +749,19 @@ class _MyPageState extends State<MyPage> {
                                                 fontSize: deviceSize.width * 0.05,
                                                 overflow: TextOverflow.ellipsis
                                             ),
-                                            maxLines: 2,
+                                            maxLines: 1,
                                           ),
                                         ),
                                       ],
                                     ),
                                     SizedBox(
-                                      height: petInfoHeight * 0.02,
+                                      height: deviceSize.height * 0.01,
                                     ),
                                     // 몸무게
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '무    게'),
+                                        infoTitleBox(deviceSize.width * 0.8, deviceSize.height * 0.5, '무  게'),
                                         SizedBox(
                                           width: petInfoWidth * 0.03,
                                         ),
@@ -777,27 +777,7 @@ class _MyPageState extends State<MyPage> {
                                       ],
                                     ),
                                     SizedBox(
-                                      height: petInfoHeight * 0.02,
-                                    ),
-                                    // 권장 산책 시간
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        infoTitleBox(petInfoWidth, petInfoHeight, '권장 산책 시간'),
-                                        SizedBox(
-                                          width: petInfoWidth * 0.03,
-                                        ),
-                                        Text(
-                                          '${(snapshot.data!.docs[petController.selectedPetScrollIndex].get('recommend') / 60).toInt()}시간 ${snapshot.data!.docs[petController.selectedPetScrollIndex].get('recommend') % 60}분',
-                                          style: TextStyle(
-                                            color: Color(0xff504E5B),
-                                            fontSize: deviceSize.width * 0.05,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: petInfoHeight * 0.07,
+                                      height: deviceSize.height * 0.02,
                                     ),
                                     //편집하기 버튼
                                     Center(
@@ -811,7 +791,7 @@ class _MyPageState extends State<MyPage> {
                                         },
                                         child: Text('편집하기'),
                                         style: ButtonStyle(
-                                          backgroundColor: MaterialStateProperty.all(Color(0xff646CAA)),
+                                          backgroundColor: MaterialStateProperty.all(floatingBtnColor_total),
                                           foregroundColor: MaterialStateProperty.all(Colors.white),
                                         ),
                                       ),
