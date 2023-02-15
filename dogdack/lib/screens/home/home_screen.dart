@@ -237,7 +237,7 @@ class _HomePageState extends State<HomePage> {
                         SizedBox(height: 30),
                         // 일주일 달력
                         CalenderListView(),
-                        SizedBox(height: 40),
+                        SizedBox(height: 50),
 
 
 

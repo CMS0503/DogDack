@@ -20,6 +20,7 @@ class _CalendarListDetailState extends State<CalendarListDetail> {
     Size size = MediaQuery.of(context).size;
     Color grey = Color.fromARGB(255, 80, 78, 91);
     Color violet = Color.fromARGB(255, 100, 92, 170);
+    Color violetOp = Color.fromARGB(50, 100, 92, 170);
     Color red = Color.fromARGB(255,204, 111, 111);
     List<String> days = ["일", "월", "화", "수", "목", "금", "토"];
     int idx = 0;
@@ -39,7 +40,7 @@ class _CalendarListDetailState extends State<CalendarListDetail> {
                   //     '${homeCalendarController.sunday.month}.${homeCalendarController.sunday.day}'),
                   Text(days[idx++], style: TextStyle(color: red),),
                   SizedBox(height: 5),
-                  CalIconWidget(calColor: red, iconClolor: grey),
+                  CalIconWidget(calColor: red, iconClolor: violetOp),
                 ],
               ),
               onTap: () {
@@ -59,7 +60,7 @@ class _CalendarListDetailState extends State<CalendarListDetail> {
                   Text(days[idx++], style: TextStyle(color: violet),),
                   SizedBox(height: 5),
 
-                  CalIconWidget(calColor: violet, iconClolor: grey),
+                  CalIconWidget(calColor: violet, iconClolor:violetOp),
                 ],
               ),
               onTap: () {
@@ -75,7 +76,7 @@ class _CalendarListDetailState extends State<CalendarListDetail> {
                   Text(days[idx++], style: TextStyle(color: violet),),
                   SizedBox(height: 5),
 
-                  CalIconWidget(calColor: violet, iconClolor: grey),
+                  CalIconWidget(calColor: violet, iconClolor:  violetOp),
                 ],
               ),
               onTap: () {
@@ -86,12 +87,15 @@ class _CalendarListDetailState extends State<CalendarListDetail> {
             InkWell(
               child: Column(
                 children: [
+
+
+
                   // Text(
                   //     '${homeCalendarController.wednesday.month}.${homeCalendarController.wednesday.day}'),
                   Text(days[idx++], style: TextStyle(color: violet),),
                   SizedBox(height: 5),
 
-                  CalIconWidget(calColor: violet, iconClolor: grey),
+                  CalIconWidget(calColor: violet, iconClolor: violet),
                 ],
               ),
               onTap: () {

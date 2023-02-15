@@ -62,7 +62,7 @@ class _CalIconWidgetState extends State<CalIconWidget> {
               ),
             ),
             Icon(
-              Icons.pets_outlined,
+              Icons.pets,
               size: 25,
               color: widget.iconClolor,
             )
