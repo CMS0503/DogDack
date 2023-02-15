@@ -73,7 +73,6 @@ class _CalendarState extends State<Calendar> {
           final calRef = petsRef.doc(dogId).collection('Calendar');
           var data = await calRef.get();
           for (int i = 0; i < data.docs.length; i++) {
-            print('여기서 날짜가 나와야됨');
 
             Calendar.events[
                 '${data.docs[i].reference.id}/${controller.selectedValue}'] = [
@@ -153,8 +152,6 @@ class _CalendarState extends State<Calendar> {
               stream: userController.userRef.snapshots(),
               builder: (petContext, petSnapshot) {
                 // 등록한 강아지가 없으면
-                print(controller.valueList);
-                print(controller.selectedValue);
                 if (controller.valueList.contains(controller.selectedValue)) {
                 return controller.selectedValue == ''
                 // (controller.selectedValue == '' || !controller.valueList.contains(controller.selectedValue))

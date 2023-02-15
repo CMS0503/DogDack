@@ -133,7 +133,6 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
   Future<void> _delete(String ref, String url) async {
     await storage.ref(ref).delete();
     controller.imageUrl.remove(url);
-    print('controller.imageUrl ${controller.imageUrl}');
     // Rebuild the UI
     setState(() {});
   }

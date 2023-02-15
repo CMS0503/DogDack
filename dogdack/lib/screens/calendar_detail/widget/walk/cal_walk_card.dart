@@ -69,17 +69,13 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
   Future<void> setPoly() async {
     latlng.clear();
     String docId = inputController.dognames[inputController.selectedValue.toString()];
-    print('docId : $docId');
     // walk 경로
     CollectionReference walkRef = FirebaseFirestore.instance.collection('Users/${userController.loginEmail}/Pets/$docId/Walk');
 
-    print('cal_walk_card 안 : ${userController.loginEmail}');
 
     await walkRef.get().then((value) async {
-      print('cal_walk_card 안 : ${userController.loginEmail}');
       // 달력에서 선택한 날짜
       var selectedDay = inputController.date;
-      print(selectedDay);
       var startOfToday = Timestamp.fromDate(selectedDay);
       var endOfToday = Timestamp.fromDate(selectedDay.add(const Duration(days: 1)));
 
@@ -87,7 +83,6 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
       await walkRef.where("startTime", isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday).orderBy("startTime", descending: true)
           .get()
           .then((QuerySnapshot snapshot) async {
-        print('cal_walk_card 안 snapshot: ${snapshot.docs}');
         widget.geodata = snapshot.docs[0]['geolist'];
         // 장소, 거리, 시간 데이터
         widget.placedata = snapshot.docs[0]['place'];

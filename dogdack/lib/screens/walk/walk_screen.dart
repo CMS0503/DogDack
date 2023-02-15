@@ -113,6 +113,7 @@ class _WalkPageState extends State<WalkPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 13),
       child: Stack(
+        alignment: Alignment.center,
         children: [
           Opacity(
             opacity: 0.6,
@@ -309,7 +310,7 @@ class _WalkPageState extends State<WalkPage> {
             ),
           ),
           Container(
-            height: 180,
+            height: h * 0.23,
             width: w * 0.8,
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(15)),
@@ -319,15 +320,7 @@ class _WalkPageState extends State<WalkPage> {
                 const SizedBox(
                   height: 15,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("권장 산책 시간 : ", style: TextStyle(fontSize: 20)),
-                    Text(
-                        '${(walkController.rectime / walkController.selDogs.length).round()} 분',
-                        style: const TextStyle(fontSize: 20)),
-                  ],
-                ),
+                const Text('목표 산책 시간을 입력하세요', style: TextStyle(fontSize: 20)),
                 Container(
                   padding: const EdgeInsets.all(10),
                   child: Column(
@@ -339,18 +332,31 @@ class _WalkPageState extends State<WalkPage> {
                           onChanged: (text) {
                             walkController.tmp_goal.value = int.parse(text);
                           },
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(
+
+                          decoration: InputDecoration(
+                            hintText:
+                                '권장 산책 시간 : ${(walkController.rectime / walkController.selDogs.length).round()} 분',
+                            enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 100, 92, 170))),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 100, 92, 170))),
+                            border: const OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10))),
-                            labelText: '목표 산책 시간',
+                            // labelText: '목표 산책 시간',
                           ),
                         ),
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          walkController.goal.value =
-                              walkController.tmp_goal.value;
+
+                          if(walkController.tmp_goal.value == 0) {
+                            walkController.goal.value = (walkController.rectime / walkController.selDogs.length).round();
+                          } else {
+                            walkController.goal.value = walkController.tmp_goal.value;
+                          }
                         },
                         style:
                             ElevatedButton.styleFrom(backgroundColor: violet2),

@@ -116,8 +116,8 @@ class _StatusState extends State<Status> {
                               onPressed: () {Navigator.pushNamed(context, '/Ble');},
                               icon: const Icon(
                                 Icons.bluetooth_outlined,
-                                color: Colors.blue,
-                              )
+                                      color: Color.fromARGB(255, 100, 92, 170),
+                                    )
                           )
                           : IconButton(
                               onPressed: () {Navigator.pushNamed(context, '/Ble');},
@@ -129,10 +129,10 @@ class _StatusState extends State<Status> {
                           value: walkController.dropdownValue,
                           elevation: 16,
                           style: const TextStyle(color: Colors.deepPurple),
-                          underline: Container(
-                            height: 2,
-                            color: Colors.deepPurpleAccent,
-                          ),
+                          // underline: Container(
+                          //   height: 2,
+                          //   color: Colors.deepPurpleAccent,
+                          // ),
                           onChanged: (String? value) {
                             petsRef.where('name', isEqualTo: value).get().then((data) {
                               setState(() {

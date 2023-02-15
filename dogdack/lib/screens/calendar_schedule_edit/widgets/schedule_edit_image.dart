@@ -60,7 +60,6 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
         setState(() {});
       } on FirebaseException catch (error) {
         if (kDebugMode) {
-          print(error);
         }
       }
     } catch (err) {
