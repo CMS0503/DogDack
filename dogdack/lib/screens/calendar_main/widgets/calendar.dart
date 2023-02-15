@@ -97,9 +97,6 @@ class _CalendarState extends State<Calendar> {
           final calRef = petsRef.doc(dogId).collection('Calendar');
           var data = await calRef.get();
           for (int i = 0; i < data.docs.length; i++) {
-            print('여기서 날짜가 나와야됨');
-            print(i);
-            print(data.docs[i].reference.id);
             Calendar.events[
                 '${data.docs[i].reference.id}/${controller.selectedValue}'] = [
               data.docs[i]['isWalk'],
@@ -281,7 +278,7 @@ class _CalendarState extends State<Calendar> {
             ),
           ),
           // 셀 높이
-          rowHeight: height * 0.11,
+          rowHeight: height * 0.1,
           calendarStyle: const CalendarStyle(
             // 오늘 날짜 표시 X
             isTodayHighlighted: false,
@@ -334,31 +331,10 @@ class _CalendarState extends State<Calendar> {
                 padding: const EdgeInsets.only(top: 20),
                 child: GestureDetector(
                   onTap: () {
-                    // controller.setDate(day);
-                    // detail로 넘길 date
                     controller.date = day;
-                    // controller.distance = Calendar.events[3].toString();
-                    // print('안녕하신지요술사');
-                    // print(events);
-                    // print(events[0]);
-
-                    // setState(() {
-                    // print('다람쥐');
-                    // print(events[1].runtimeType);
-                    // print("${controller.bath.runtimeType}1");
-
                     controller.bath = events[1] as bool;
                     controller.beauty = events[2] as bool;
                     controller.diary = events[3] as String;
-                    // controller.imageUrl = events[4] as List<String>;
-
-                    // if (events[4].length == 0)
-                    // controller.imgUrl = events[4]?[0];
-                    // controller.imageUrl = events[4];
-                    // controller.diary = events[3];
-                    // print('여기서 불리언확인');
-                    // print(controller.beauty);
-                    // });
 
                     Navigator.push(
                       context,
@@ -373,6 +349,7 @@ class _CalendarState extends State<Calendar> {
                         height: 20,
                         child: Container(
                           child: Card(
+                            margin: EdgeInsets.symmetric(vertical: 2, horizontal: 3),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15.0),
                             ),
@@ -393,6 +370,7 @@ class _CalendarState extends State<Calendar> {
                       SizedBox(
                         height: 20,
                         child: Card(
+                          margin: EdgeInsets.symmetric(vertical: 2, horizontal: 3),
                           elevation: 0,
                           child: ListTile(
                             shape: const RoundedRectangleBorder(
@@ -409,6 +387,7 @@ class _CalendarState extends State<Calendar> {
                       SizedBox(
                         height: 20,
                         child: Card(
+                          margin: EdgeInsets.symmetric(vertical: 2, horizontal: 3),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15.0),
                           ),

@@ -92,7 +92,6 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
             .get()
             .then(
           (QuerySnapshot snapshot) async {
-            print('cal_walk_card 안 snapshot: ${snapshot.docs}');
             widget.geodata = snapshot.docs[0]['geolist'];
             // 장소, 거리, 시간 데이터
             widget.placedata = snapshot.docs[0]['place'];
