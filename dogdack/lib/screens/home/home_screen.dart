@@ -234,10 +234,10 @@ class _HomePageState extends State<HomePage> {
                                 )
                               ]),
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(height: 30),
                         // 일주일 달력
                         CalenderListView(),
-                        SizedBox(height: 30),
+                        SizedBox(height: 40),
 
 
 
@@ -245,7 +245,6 @@ class _HomePageState extends State<HomePage> {
                           '${petSnapshot.data!.docs[sliderController.sliderIdx]['name']}의 최애 산책 시간',
                           style: TextStyle(color: Color(0xff504E5B), fontSize: 18),
                         ),
-                        SizedBox(height: 5),
                         HomePageBarChart(),
                       ],
                     );

@@ -32,11 +32,9 @@ class _CalenderDetailState extends State<CalenderDetail> {
 
   @override
   Widget build(BuildContext context) {
+
     String imageUrl = 'images/login/login_image.png';
-    if (controller.imageUrl.isEmpty) {
-    } else {
-      imageUrl = controller.imageUrl[0];
-    }
+
 
     Color grey = const Color.fromARGB(255, 80, 78, 91);
     Color violet = const Color.fromARGB(255, 100, 92, 170);
@@ -53,9 +51,10 @@ class _CalenderDetailState extends State<CalenderDetail> {
     } else {
       bathColor = grey;
     }
-    if (controller.imageUrl.isNotEmpty) {
+    if (controller.imageUrl.isNotEmpty && controller.imageUrl.length!=0) {
       imageUrl = controller.imageUrl[0];
     }
+    print(imageUrl);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -112,6 +111,7 @@ class _CalenderDetailState extends State<CalenderDetail> {
               name: controller.selectedValue,
               title: "뷰티도장",
             ),
+
             BeautyWidget(
               hair_color: hairColor,
               bath_color: bathColor,

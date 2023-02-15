@@ -122,15 +122,15 @@ class _HomePageBarChartState extends State<HomePageBarChart> {
 
     return retList;
   }
-
-  // 새로고침
-  Future<dynamic> refreshState() async {
-    setState(() {});
-    await Future<dynamic>.delayed(animDuration + const Duration(milliseconds: 500));
-    if(mainController.tabindex == 0) {
-      await refreshState();
-    }
-  }
+  //
+  // // 새로고침
+  // Future<dynamic> refreshState() async {
+  //   setState(() {});
+  //   await Future<dynamic>.delayed(animDuration + const Duration(milliseconds: 500));
+  //   if(mainController.tabindex == 0) {
+  //     await refreshState();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

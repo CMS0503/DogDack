@@ -153,6 +153,12 @@ class _ChartState extends State<Chart> {
     if (chartController.chartData.isEmpty) {
       print("데이터를 불러오는 중입니다.");
     } else {
+      day_hour_data =0;
+      week_hour_data = 0;
+      day_distance_data = 0;
+      week_distance_data = 0;
+      day_goal_data = 0;
+      week_goal_data=0;
       day_hour_points = chartController
           .chartData[chartController.chartSelectedId]!["hour"]!
           .sublist(60 - 7, 60);
@@ -232,32 +238,32 @@ class _ChartState extends State<Chart> {
       last_day_goal_data /= last_day_goal_points.length;
 
       for (int i = 0; i < week_hour_points.length; i++) {
-        if (week_hour_points[i].toInt() > 1) {
+        if (week_hour_points[i].toInt() > 0) {
           week_hour_data += week_hour_points[i];
         } else {
           week_hour_data += 0;
         }
-        if (last_week_hour_points[i].toInt() > 1) {
+        if (last_week_hour_points[i].toInt() > 0) {
           last_week_hour_data += last_week_hour_points[i];
         } else {
           last_week_hour_data += 0;
         }
-        if (week_distance_points[i].toInt() > 1) {
+        if (week_distance_points[i].toInt() > 0) {
           week_distance_data += week_distance_points[i];
         } else {
           week_distance_data += 0;
         }
-        if (last_week_distance_points[i].toInt() > 1) {
+        if (last_week_distance_points[i].toInt() > 0) {
           last_week_distance_data += last_week_distance_points[i];
         } else {
           last_week_distance_data += 0;
         }
-        if (week_goal_points[i].toInt() > 1) {
+        if (week_goal_points[i].toInt() > 0) {
           week_goal_data += week_goal_points[i];
         } else {
           week_goal_data += 0;
         }
-        if (last_week_goal_points[i].toInt() > 1) {
+        if (last_week_goal_points[i].toInt() > 0) {
           last_week_goal_data += last_week_goal_points[i];
         } else {
           last_week_goal_data += 0;
