@@ -388,6 +388,8 @@ class _ChartState extends State<Chart> {
       );
 
       void change() {
+
+
         if (chartController.selectedDateValue.value == "일주일") {
           x_value = x_value_day;
           date_text = "주";
@@ -457,9 +459,7 @@ class _ChartState extends State<Chart> {
       chartController.getNames().then((value) {
         chartController.getData().then((value) {});
       });
-      print('day_hour_data1: ${day_hour_data}');
       setChartData();
-      print('day_hour_data2: ${day_hour_data}');
       change();
       Size screenSize = MediaQuery
           .of(context)
