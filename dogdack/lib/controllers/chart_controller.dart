@@ -65,7 +65,7 @@ class ChartController extends GetxController {
       // goalTime.value = dogGoal.values.toList().first;
     }
 
-
+    update();
     return dogNames;
   }
 

@@ -487,6 +487,8 @@ class _ChartState extends State<Chart> {
     double width = screenSize.width;
     double height = screenSize.height;
 
+    chartController.getNames();
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
@@ -504,6 +506,7 @@ class _ChartState extends State<Chart> {
                   stream: petRef.snapshots(),
                   builder: (petContext, petSnapshot) {
                     // 등록한 강아지가 없으면
+                    chartController.getNames();
                     return (chartController.dogNames.keys.toList().isEmpty)
                         // 강아지를 등록해달라는 dropbar
                         ? DropdownButton(
@@ -525,45 +528,50 @@ class _ChartState extends State<Chart> {
                             },
                           )
                         // 등록된 강아지가 있으면 강아지 목록으로 dropdown
-                        :
-                    DropdownButton(
-                            icon: const Icon(
-                              Icons.expand_more,
-                              color: Color.fromARGB(255, 100, 92, 170),
-                              size: 28,
-                            ),
-                            underline: Container(),
-                            elevation: 0,
-                            value: chartController.chartSelectedName.value,
-                            items: chartController.dogNames.keys.toList().map(
-                              (value) {
-                                chartController.name = value;
-                                return DropdownMenuItem(
-                                  value: value,
-                                  child: Text(
-                                    value,
-                                    style: const TextStyle(
-                                      color: Color.fromARGB(255, 100, 92, 170),
-                                      fontFamily: 'bmjua',
-                                      fontSize: 26,
+                        : GetBuilder<UserController>(builder: (_) {
+                          chartController.getNames();
+                          return GetBuilder<ChartController>(builder: (_) {
+                            return DropdownButton(
+                              icon: const Icon(
+                                Icons.expand_more,
+                                color: Color.fromARGB(255, 100, 92, 170),
+                                size: 28,
+                              ),
+                              underline: Container(),
+                              elevation: 0,
+                              value: chartController.chartSelectedName.value,
+                              items: chartController.dogNames.keys.toList().map(
+                                    (value) {
+                                  chartController.name = value;
+                                  return DropdownMenuItem(
+                                    value: value,
+                                    child: Text(
+                                      value,
+                                      style: const TextStyle(
+                                        color: Color.fromARGB(255, 100, 92, 170),
+                                        fontFamily: 'bmjua',
+                                        fontSize: 26,
+                                      ),
                                     ),
-                                  ),
-                                );
+                                  );
+                                },
+                              ).toList(),
+                              // onChanged: (_){},
+                              onChanged: (value) {
+                                chartController.chartSelectedName.value =
+                                    value.toString();
+                                chartController.chartSelectedId.value =
+                                chartController.dogNames[value.toString()];
+                                chartController.goalTime = chartController.dogGoal[value.toString()];
+                                setChartData();
+                                setState(() {
+                                  getName();
+                                });
                               },
-                            ).toList(),
-                            // onChanged: (_){},
-                            onChanged: (value) {
-                              chartController.chartSelectedName.value =
-                                  value.toString();
-                              chartController.chartSelectedId.value =
-                                  chartController.dogNames[value.toString()];
-                              chartController.goalTime = chartController.dogGoal[value.toString()];
-                              setChartData();
-                              setState(() {
-                                getName();
-                              });
-                            },
-                          );
+                            );
+                          });
+                    });
+
                   },
                 ),
               ),

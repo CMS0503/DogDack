@@ -242,9 +242,9 @@ class _CalenderDetailState extends State<CalenderDetail> {
   void initState() {
     getImage().then((value) {
       setState(() {
+
         startTime = walkController.walkStartTime.toDate();
         endTime = walkController.walkEndTime.toDate();
-
 
       });
     });
