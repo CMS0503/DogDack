@@ -32,7 +32,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
 
   // 완료 버튼 클릭 시 데이터 저장
 
-  Future<void> fbstoreWrite() async {
+  void fbstoreWrite() async {
     // 현재 선택한 강아지 이름으로 강아지 저장
     controller.saveName = controller.selectedValue;
     // Pet Collection 접근
@@ -62,7 +62,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
       }
       // 선택한 강아지 문서 id 가져오기
       String dogId = result.docs[0].id;
-      petsRef
+      await petsRef
           .doc(dogId)
           .collection('Calendar')
           .doc(DateFormat('yyMMdd').format(controller.date).toString())
@@ -124,7 +124,11 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                   isAuto: false,
                   geolist: [],
                 ),
-              );
+              ).then((value) {
+            controller.startTime = Timestamp(0, 0);
+            controller.endTime = Timestamp(0, 0);
+            controller.walkCheck = false;
+          });
         },
       );
     }
@@ -205,9 +209,6 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                     // 문제 없으면 db에 입력하기
                     fbstoreWrite();
 
-                    controller.startTime = Timestamp(0, 0);
-                    controller.endTime = Timestamp(0, 0);
-                    controller.walkCheck = false;
                     // controller.imageUrl = [];
                     // print('ontroller.imageUrl');
                     // print(controller.imageUrl);
