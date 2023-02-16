@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/input_controller.dart';
 import 'package:dogdack/controllers/user_controller.dart';
-import 'package:dogdack/screens/calendar_main/widgets/calendar.dart';
 import 'package:get/get.dart';
 
 class ButtonController extends GetxController {
@@ -49,8 +48,8 @@ class ButtonController extends GetxController {
             controller.events[
                 '${data.docs[i].reference.id}/${controller.selectedValue}'] = [
               data.docs[i]['isWalk'],
-              data.docs[i]['bath'],
               data.docs[i]['beauty'],
+              data.docs[i]['bath'],
               data.docs[i]['diary'],
               // data.docs[i]['imageUrl'],
             ];
@@ -68,8 +67,8 @@ class ButtonController extends GetxController {
             controller.events[
                 '${data.docs[i].reference.id}/${controller.selectedValue}'] = [
               data.docs[i]['isWalk'],
-              data.docs[i]['bath'],
               data.docs[i]['beauty'],
+              data.docs[i]['bath'],
               data.docs[i]['diary'],
               // data.docs[i]['imageUrl'],
             ];

@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/commons/logo_widget.dart';
 import 'package:dogdack/controllers/button_controller.dart';
 import 'package:dogdack/controllers/input_controller.dart';
 import 'package:dogdack/controllers/main_controll.dart';
 import 'package:dogdack/controllers/user_controller.dart';
-import 'package:dogdack/models/dog_data.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar_mark.dart';
 import 'package:dogdack/screens/calendar_schedule_edit/calendar_schedule_edit.dart';
@@ -54,12 +52,6 @@ class _CalendarPageState extends State<CalendarMain> {
 
   @override
   Widget build(BuildContext context) {
-    // userRef = FirebaseFirestore.instance
-    //     .collection('Users/${userController.loginEmail}/Pets')
-    //     .withConverter(
-    //         fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
-    //         toFirestore: (dogData, _) => dogData.toJson());
-
     final controller = Get.put(ButtonController());
     Size screenSize = MediaQuery.of(context).size;
     double height = screenSize.height;
@@ -78,19 +70,7 @@ class _CalendarPageState extends State<CalendarMain> {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // TextButton(
-                    //     onPressed: () {
-                    //       Navigator.push(
-                    //         context,
-                    //         MaterialPageRoute(
-                    //           builder: (context) => CalendarDetailEdit(
-                    //             day: DateTime.now(),
-                  //           ),
-                  //         ),
-                  //       );
-                  //     },
-                  //     child: const Text('hi')),
-                  SizedBox(
+                    SizedBox(
                       height: height * 0.01,
                     ),
                     Calendar(focusedDay: focusedDay),
