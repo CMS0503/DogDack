@@ -1,6 +1,6 @@
 # DogDack 반려견과의 추억 간직 서비스
 
-![eeee.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/71ba6d78-fffa-4896-90d0-329384d2e7a8/eeee.png)
+![eeee](/uploads/667115d799692235868090912b84d1d6/eeee.png)
 
 ## [DogDack Play 스토어 다운로드](https://play.google.com/store/apps/details?id=com.common.pjt.dogdack&pli=1)
 
