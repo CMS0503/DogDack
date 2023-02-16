@@ -180,18 +180,21 @@ class _WalkPageState extends State<WalkPage> {
                                         children: [
                                           Container(
                                             // color: Colors.red,
-                                            height: size.height * 0.18,
-                                            child: Column(
-                                              children: [
-                                                Text(
-                                                    "${snapshot.data!.docs[itemIndex].get('name')}",
-                                                    style: const TextStyle(fontSize: 20, )
-                                                ),
-                                                const SizedBox(height: 15,),
-                                                CircleAvatar(
-                                                  radius: size.width * 0.13,
-                                                  child: ClipOval(
-                                                      child: CachedNetworkImage(
+                                            height: size.height * 0.2,
+                                              child: Column(
+                                                children: [
+                                                  Text(
+                                                      "${snapshot.data!.docs[itemIndex].get('name')}",
+                                                      style: const TextStyle(
+                                                        fontSize: 20,
+                                                      )),
+                                                  const SizedBox(
+                                                    height: 15,
+                                                  ),
+                                                  CircleAvatar(
+                                                    radius: size.width * 0.13,
+                                                    child: ClipOval(
+                                                        child: CachedNetworkImage(
                                                         imageUrl: snapshot.data!.docs[itemIndex].get('imageUrl'),
                                                       )
                                                   ),
@@ -310,7 +313,7 @@ class _WalkPageState extends State<WalkPage> {
             ),
           ),
           Container(
-            height: h * 0.23,
+            height: h * 0.25,
             width: w * 0.8,
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(15)),
