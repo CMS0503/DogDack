@@ -46,9 +46,9 @@ class _ChartState extends State<Chart> {
     chartController.getNames().then((value) {
       if (chartController.dogNames.keys.toList().length != 0) {
         chartController.chartSelectedId.value =
-            chartController.dogNames.values.toList()[0];
+        chartController.dogNames.values.toList()[0];
         chartController.chartSelectedName.value =
-            chartController.dogNames.keys.toList()[0];
+        chartController.dogNames.keys.toList()[0];
         chartController.goalTime = chartController.dogGoal.values.toList()[0];
       };
       // setChartData();
@@ -375,8 +375,8 @@ class _ChartState extends State<Chart> {
     petRef = FirebaseFirestore.instance
         .collection('Users/${userController.loginEmail}/Pets')
         .withConverter(
-            fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
-            toFirestore: (dogData, _) => dogData.toJson());
+        fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+        toFirestore: (dogData, _) => dogData.toJson());
 
     Color grey = const Color.fromARGB(255, 80, 78, 91);
     Color violet = const Color.fromARGB(255, 100, 92, 170);
@@ -487,6 +487,8 @@ class _ChartState extends State<Chart> {
     double width = screenSize.width;
     double height = screenSize.height;
 
+    chartController.getNames();
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
@@ -504,66 +506,72 @@ class _ChartState extends State<Chart> {
                   stream: petRef.snapshots(),
                   builder: (petContext, petSnapshot) {
                     // 등록한 강아지가 없으면
+                    chartController.getNames();
                     return (chartController.dogNames.keys.toList().isEmpty)
-                        // 강아지를 등록해달라는 dropbar
+                    // 강아지를 등록해달라는 dropbar
                         ? DropdownButton(
-                            underline: Container(),
-                            elevation: 0,
-                            value: '댕댕이를 등록해 주세요',
-                            items: ['댕댕이를 등록해 주세요'].map(
-                              (value) {
-                                return DropdownMenuItem(
-                                  value: value,
-                                  child: new Text(value),
-                                );
-                              },
-                            ).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                getName();
-                              });
-                            },
-                          )
-                        // 등록된 강아지가 있으면 강아지 목록으로 dropdown
-                        :
-                    DropdownButton(
-                            icon: const Icon(
-                              Icons.expand_more,
-                              color: Color.fromARGB(255, 100, 92, 170),
-                              size: 28,
-                            ),
-                            underline: Container(),
-                            elevation: 0,
-                            value: chartController.chartSelectedName.value,
-                            items: chartController.dogNames.keys.toList().map(
-                              (value) {
-                                chartController.name = value;
-                                return DropdownMenuItem(
-                                  value: value,
-                                  child: Text(
-                                    value,
-                                    style: const TextStyle(
-                                      color: Color.fromARGB(255, 100, 92, 170),
-                                      fontFamily: 'bmjua',
-                                      fontSize: 26,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ).toList(),
-                            // onChanged: (_){},
-                            onChanged: (value) {
-                              chartController.chartSelectedName.value =
-                                  value.toString();
-                              chartController.chartSelectedId.value =
-                                  chartController.dogNames[value.toString()];
-                              chartController.goalTime = chartController.dogGoal[value.toString()];
-                              setChartData();
-                              setState(() {
-                                getName();
-                              });
-                            },
+                      underline: Container(),
+                      elevation: 0,
+                      value: '댕댕이를 등록해 주세요',
+                      items: ['댕댕이를 등록해 주세요'].map(
+                            (value) {
+                          return DropdownMenuItem(
+                            value: value,
+                            child: new Text(value),
                           );
+                        },
+                      ).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          getName();
+                        });
+                      },
+                    )
+                    // 등록된 강아지가 있으면 강아지 목록으로 dropdown
+                        : GetBuilder<UserController>(builder: (_) {
+                      chartController.getNames();
+                      return GetBuilder<ChartController>(builder: (_) {
+                        return DropdownButton(
+                          icon: const Icon(
+                            Icons.expand_more,
+                            color: Color.fromARGB(255, 100, 92, 170),
+                            size: 28,
+                          ),
+                          underline: Container(),
+                          elevation: 0,
+                          value: chartController.chartSelectedName.value,
+                          items: chartController.dogNames.keys.toList().map(
+                                (value) {
+                              chartController.name = value;
+                              return DropdownMenuItem(
+                                value: value,
+                                child: Text(
+                                  value,
+                                  style: const TextStyle(
+                                    color: Color.fromARGB(255, 100, 92, 170),
+                                    fontFamily: 'bmjua',
+                                    fontSize: 26,
+                                  ),
+                                ),
+                              );
+                            },
+                          ).toList(),
+                          // onChanged: (_){},
+                          onChanged: (value) {
+                            chartController.chartSelectedName.value =
+                                value.toString();
+                            chartController.chartSelectedId.value =
+                            chartController.dogNames[value.toString()];
+                            chartController.goalTime = chartController.dogGoal[value.toString()];
+                            setChartData();
+                            setState(() {
+                              getName();
+                            });
+                          },
+                        );
+                      });
+                    });
+
                   },
                 ),
               ),
@@ -571,37 +579,37 @@ class _ChartState extends State<Chart> {
                 padding: const EdgeInsets.all(3.0),
                 child: Center(
                     child: DropdownButton(
-                  elevation: 0,
-                  focusColor: const Color.fromARGB(255, 100, 92, 170),
-                  borderRadius: BorderRadius.circular(10),
-                  value: chartController.selectedDateValue.value,
-                  items: _valueList.map((value) {
-                    return DropdownMenuItem(
-                      value: value,
-                      child: Container(
-                        width: width * 0.2,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              width: 2,
-                              color: const Color.fromARGB(255, 100, 92, 170),
-                            )),
-                        child: Text(
-                          value,
-                          style: const TextStyle(
-                              fontSize: 20,
-                              fontFamily: 'bmjua',
-                              color: Color.fromARGB(255, 80, 78, 91)),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    chartController.selectedDateValue.value = value!;
-                    setState(() {});
-                  },
-                )),
+                      elevation: 0,
+                      focusColor: const Color.fromARGB(255, 100, 92, 170),
+                      borderRadius: BorderRadius.circular(10),
+                      value: chartController.selectedDateValue.value,
+                      items: _valueList.map((value) {
+                        return DropdownMenuItem(
+                          value: value,
+                          child: Container(
+                            width: width * 0.2,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  width: 2,
+                                  color: const Color.fromARGB(255, 100, 92, 170),
+                                )),
+                            child: Text(
+                              value,
+                              style: const TextStyle(
+                                  fontSize: 20,
+                                  fontFamily: 'bmjua',
+                                  color: Color.fromARGB(255, 80, 78, 91)),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        chartController.selectedDateValue.value = value!;
+                        setState(() {});
+                      },
+                    )),
               ),
             ]),
             Column(

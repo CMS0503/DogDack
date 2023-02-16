@@ -65,7 +65,7 @@ class ChartController extends GetxController {
       // goalTime.value = dogGoal.values.toList().first;
     }
 
-
+    update();
     return dogNames;
   }
 
@@ -83,7 +83,7 @@ class ChartController extends GetxController {
 
       await refCurDogWalk
           .where('startTime',
-              isGreaterThan: DateTime.now().subtract(Duration(days: 60)))
+          isGreaterThan: DateTime.now().subtract(Duration(days: 60)))
           .orderBy('startTime', descending: false)
           .get()
           .then((QuerySnapshot snapshot) {
@@ -105,8 +105,8 @@ class ChartController extends GetxController {
             if (dogsDate[dogNames.values.toList()[i].toString()]!.length != 0) {
 
               for (int k = 0;
-                  k < dogsDate[dogNames.values.toList()[i].toString()]!.length;
-                  k++) {
+              k < dogsDate[dogNames.values.toList()[i].toString()]!.length;
+              k++) {
                 if (dogsDate[dogNames.values.toList()[i].toString()]![k] ==
                     (dateList[j])) {
                   twoMonthHour[j] = snapshot.docs[k]['totalTimeMin'].toDouble();
