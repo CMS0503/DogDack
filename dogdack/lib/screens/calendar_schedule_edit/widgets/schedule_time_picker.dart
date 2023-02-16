@@ -63,6 +63,7 @@ class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
                 var time = await showTimePicker(
                   context: context,
                   initialTime: TimeOfDay.now(),
+                  
                 );
                 if (!mounted) return;
                 if (time == null) {
@@ -70,6 +71,9 @@ class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
                 }
                 timeController.text = time.format(context);
                 controller.time = time.format(context);
+                print(controller.date.year);
+                print(controller.date.month);
+                print(controller.date.day);
                 var dateTime = DateTime(
                   controller.date.year,
                   controller.date.month,
@@ -79,12 +83,14 @@ class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
                 );
                 if (widget.start_end == '시작') {
                   controller.startTime = Timestamp.fromDate(dateTime);
+                  print('time picker 에서의 controller.startTime${DateTime.fromMicrosecondsSinceEpoch(controller.startTime.microsecondsSinceEpoch)}');
+                  // DateTime.fromMicrosecondsSinceEpoch(controller.endTime.microsecondsSinceEpoch)
                 } else {
                   controller.endTime = Timestamp.fromDate(dateTime);
+                  print('time picker 에서의 controller.endTime${DateTime.fromMicrosecondsSinceEpoch(controller.endTime.microsecondsSinceEpoch)}');
                 }
               },
               // maxLength: 20,
-
               controller: timeController,
               cursorColor: Colors.grey,
               decoration: InputDecoration(
