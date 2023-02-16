@@ -253,7 +253,7 @@ class _CalenderDetailState extends State<CalenderDetail> {
     super.initState();
   }
 
-// 캘린더에서 받아온 데이터
+// 캘린더에서 받아온 데이터임
   String docId = '짬뽕';
   bool bath = false;
   bool beauty = false;
