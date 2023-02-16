@@ -12,6 +12,7 @@ import './widgets/my_map.dart';
 import './widgets/status.dart';
 import '../../commons/logo_widget.dart';
 import '../../controllers/main_controll.dart';
+import '../../controllers/input_controller.dart';
 
 class WalkPage extends StatefulWidget {
   const WalkPage({super.key});
@@ -24,6 +25,7 @@ class _WalkPageState extends State<WalkPage> {
   final walkController = Get.put(WalkController());
   final mainController = Get.put(MainController());
   final userController = Get.put(UserController());
+  final inputController = Get.put(InputController());
 
   // final petController = Get.put(PetController());
 
@@ -109,7 +111,7 @@ class _WalkPageState extends State<WalkPage> {
 
   Widget choiceDogModal(w, h, context) {
     final size = MediaQuery.of(context).size;
-
+    inputController.date = DateTime.now();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 13),
       child: Stack(
@@ -128,7 +130,7 @@ class _WalkPageState extends State<WalkPage> {
           Align(
               alignment: Alignment.center,
               child: Container(
-                height: h * 0.26,
+                height: h * 0.3,
                 width: w * 0.9,
                 decoration: BoxDecoration(
                     color: Colors.white,
@@ -153,69 +155,72 @@ class _WalkPageState extends State<WalkPage> {
                         Stack(
                           alignment: Alignment.center,
                           children: <Widget>[
-                            CarouselSlider.builder(
-                              options: CarouselOptions(
-                                viewportFraction: 0.45,
-                                autoPlay: false,
-                                enableInfiniteScroll: false,
-                              ),
-                              itemCount: snapshot.data!.docs.length,
-                              itemBuilder: (context, itemIndex, pageViewIndex) {
-                                return Column(
-                                  children: [
-                                    const SizedBox(height: 15,),
-                                    InkWell(
-                                      onTap: () {
-                                        if (!flag) {
-                                          var temp = List<bool>.filled(
-                                              snapshot.data!.docs.length,
-                                              false);
-                                          walkController.makeFlagList(temp);
-                                          flag = true;
-                                        }
-                                        walkController.setFlagList(itemIndex);
-                                        setState(() {});
-                                      },
-                                      child: Stack(
-                                        children: [
-                                          Container(
-                                            // color: Colors.red,
-                                            height: size.height * 0.2,
-                                              child: Column(
-                                                children: [
-                                                  Text(
-                                                      "${snapshot.data!.docs[itemIndex].get('name')}",
-                                                      style: const TextStyle(
-                                                        fontSize: 20,
-                                                      )),
-                                                  const SizedBox(
-                                                    height: 15,
+                            Container(
+                              height: size.height * 0.3,
+                              child: CarouselSlider.builder(
+                                options: CarouselOptions(
+                                  viewportFraction: 0.45,
+                                  autoPlay: false,
+                                  enableInfiniteScroll: false,
+                                ),
+                                itemCount: snapshot.data!.docs.length,
+                                itemBuilder: (context, itemIndex, pageViewIndex) {
+                                  return Column(
+                                    children: [
+                                      const SizedBox(height: 15,),
+                                      InkWell(
+                                        onTap: () {
+                                          if (!flag) {
+                                            var temp = List<bool>.filled(
+                                                snapshot.data!.docs.length,
+                                                false);
+                                            walkController.makeFlagList(temp);
+                                            flag = true;
+                                          }
+                                          walkController.setFlagList(itemIndex);
+                                          setState(() {});
+                                        },
+                                        child: Stack(
+                                          children: [
+                                            Container(
+                                              // color: Colors.red,
+                                              height: size.height * 0.2,
+                                                child: Column(
+                                                  children: [
+                                                    Text(
+                                                        "${snapshot.data!.docs[itemIndex].get('name')}",
+                                                        style: const TextStyle(
+                                                          fontSize: 20,
+                                                        )),
+                                                    const SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    CircleAvatar(
+                                                      radius: size.width * 0.13,
+                                                      child: ClipOval(
+                                                          child: CachedNetworkImage(
+                                                          imageUrl: snapshot.data!.docs[itemIndex].get('imageUrl'),
+                                                        )
+                                                    ),
                                                   ),
-                                                  CircleAvatar(
-                                                    radius: size.width * 0.13,
-                                                    child: ClipOval(
-                                                        child: CachedNetworkImage(
-                                                        imageUrl: snapshot.data!.docs[itemIndex].get('imageUrl'),
-                                                      )
-                                                  ),
-                                                ),
-                                              ],
-                                            )
-                                          ),
-                                          if (walkController
-                                              .flagList.isNotEmpty)
-                                            walkController.choiceDog(
-                                                itemIndex, size.width),
-                                        ],
+                                                ],
+                                              )
+                                            ),
+                                            if (walkController
+                                                .flagList.isNotEmpty)
+                                              walkController.choiceDog(
+                                                  itemIndex, size),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                );
-                              },
+                                    ],
+                                  );
+                                },
+                              ),
                             ),
                             Container(
                               // color: Colors.red,
-                              height: size.height * 0.25,
+                              height: size.height * 0.28,
                               width: size.width * 0.85,
                               child: Align(
                                 alignment: Alignment.bottomRight,

@@ -46,7 +46,7 @@ class ButtonController extends GetxController {
           final calRef = petsRef.doc(dogId).collection('Calendar');
           var data = await calRef.get();
           for (int i = 0; i < data.docs.length; i++) {
-            Calendar.events[
+            controller.events[
                 '${data.docs[i].reference.id}/${controller.selectedValue}'] = [
               data.docs[i]['isWalk'],
               data.docs[i]['bath'],
@@ -65,7 +65,7 @@ class ButtonController extends GetxController {
           final calRef = petsRef.doc(dogId).collection('Calendar');
           var data = await calRef.get();
           for (int i = 0; i < data.docs.length; i++) {
-            Calendar.events[
+            controller.events[
                 '${data.docs[i].reference.id}/${controller.selectedValue}'] = [
               data.docs[i]['isWalk'],
               data.docs[i]['bath'],

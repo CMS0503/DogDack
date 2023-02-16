@@ -90,14 +90,14 @@ class WalkController extends GetxController {
     update();
   }
 
-  Widget choiceDog(int itemIndex, double size) {
+  Widget choiceDog(int itemIndex, Size size) {
     return
       Align(
         alignment: Alignment.bottomCenter,
         child: Container(
           // color: Colors.yellow,
-          height: size * 0.4,
-          width: size * 0.28,
+          height: size.height * 0.2,
+          width: size.width * 0.28,
           child:
           Align(
               alignment: Alignment.bottomRight,
@@ -237,11 +237,22 @@ class WalkController extends GetxController {
         .collection('Users/${userController.loginEmail}/Pets');
 
     selDogs.forEach((dogName) async {
+      // 강아지 document 불러오기
       final petDoc = petRef.where("name", isEqualTo: dogName);
-      await petDoc.get().then((value) async {
-        docId = value.docs[0].id;
-        // print('$curName의 문서 id : $docId');
+      // 산책 했는지 controller 시간으로 확인
+      final walkCheck = (int.parse(inputController.endTime.seconds.toString()) -
+            int.parse(inputController.startTime.seconds.toString())) /
 
+        60 + (int.parse(inputController.endTime.seconds.toString()) -
+
+            int.parse(inputController.startTime.seconds.toString())) % 60;
+
+      // 강아지 문서 비동기
+      await petDoc.get().then((value) async {
+        // 해당 강아지 아이디 가져오기
+        docId = value.docs[0].id;
+        
+        // 산책 collection에 정보 입력하기
         await FirebaseFirestore.instance
             .collection('Users/${userController.loginEmail}/Pets/$docId/Walk')
             .withConverter(
@@ -262,23 +273,53 @@ class WalkController extends GetxController {
               goal: goal.value,
             )).then((value) => disconnect());
 
-        // calendar 저장
-        petRef.doc(docId).collection('Calendar').doc(DateFormat('yyMMdd').format(inputController.date).toString())
+        // Calendar 해당하는 날짜 ref
+        petRef.doc(docId).collection('Calendar').doc(DateFormat('yyMMdd').format(inputController.date).toString()).get().then((value) {
+          // 해당 날짜의 문서가 있으면
+          if(value.exists) {
+            // 문서의 isWalk 값이 이미 true 이거나 산책
+          //   if (value['bath'] == true){
+          //     print('여기서 input Controller가 어떨까${inputController.walkCheck}');
+          //     inputController.walkCheck = true;
+          //     print('여기서는 input Controller가 어떨까${inputController.walkCheck}');
+          // } else {
+          //   inputController.walkCheck = false;
+          // }
+          // if (value['beauty'] == true) {
+          //   inputController.bath = true;
+          // }
+          // 
+          petRef.doc(docId).collection('Calendar').doc(DateFormat('yyMMdd').format(inputController.date).toString())
+          .withConverter(
+            fromFirestore: (snapshot, options) =>
+                CalenderData.fromJson(snapshot.data()!),
+            toFirestore: (value, options) => value.toJson(),
+          )
+          // 해당 문서 정보 update 하기
+            .update({
+            'isWalk': true,
+          })
+          .then((value) => print("document added"))
+          .catchError((error) => print("Fail to add doc $error"));
+          } else {
+            // 문서가 없으면 입력하기
+            petRef.doc(docId).collection('Calendar').doc(DateFormat('yyMMdd').format(inputController.date).toString())
             .withConverter(
               fromFirestore: (snapshot, options) =>
                   CalenderData.fromJson(snapshot.data()!),
               toFirestore: (value, options) => value.toJson(),
-            )
-            .set(CalenderData(
-              isWalk: true,
-              bath: false,
-              beauty: false,
-              diary: '',
-              imageUrl: [],
-              // distance: controller.distance,
+            ).set(
+            CalenderData(
+            diary: '',
+            bath: false,
+            beauty: false,
+            isWalk: true,
+            imageUrl: [],
             ))
             .then((value) => print("document added"))
             .catchError((error) => print("Fail to add doc $error"));
+          }
+        });
       });
     });
 
