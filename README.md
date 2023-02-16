@@ -11,13 +11,8 @@
 2022.01.03(화) ~ 2022.02.17(금) (45일간 진행)
 SSAFY 8기 2학기 공통프로젝트 - DogDack
 
-![KakaoTalk_Photo_2023-02-17-04-48-17 004.jpeg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/dde94866-7552-4489-908a-e783a7501ff7/KakaoTalk_Photo_2023-02-17-04-48-17_004.jpeg)
+![스크린샷_2023-02-17_오전_5.01.37](/uploads/77f8bb2575d0ce9b535a1df02e96327e/스크린샷_2023-02-17_오전_5.01.37.png)
 
-![KakaoTalk_Photo_2023-02-17-04-48-16 003.jpeg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/96e8d673-5dfb-4783-83ea-3678064e191e/KakaoTalk_Photo_2023-02-17-04-48-16_003.jpeg)
-
-![KakaoTalk_Photo_2023-02-17-04-48-16 002.jpeg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/c06b963e-6a3f-4acb-92c9-0e91735d0c7e/KakaoTalk_Photo_2023-02-17-04-48-16_002.jpeg)
-
-![KakaoTalk_Photo_2023-02-17-04-48-16 001.jpeg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d7594992-7cbf-403b-925d-fe20d382dcb3/KakaoTalk_Photo_2023-02-17-04-48-16_001.jpeg)
 
 ## 🐶 DogDack - 배경
 
