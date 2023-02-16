@@ -2,12 +2,10 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class CalendarWorkController extends GetxController {
-  RxList<LatLng> latlng = <LatLng>[].obs;
+  List<LatLng> latlng = [];
+  num timeData = 0;
+  num distData = 0;
 
-  RxInt timeData = 0.obs;
-  RxInt distData = 0.obs;
-
-  //
   updateState() {
     update();
   }
