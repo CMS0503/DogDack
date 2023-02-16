@@ -87,45 +87,129 @@ class _HomePageState extends State<HomePage> {
 
                     // 함께 한 날짜 구하기
                     //오늘 날짜 구하기
-                    var _today = DateTime.now();
+                    var _today = DateTime.fromMillisecondsSinceEpoch((DateTime
+                        .now()
+                        .millisecondsSinceEpoch + DateTime
+                        .now()
+                        .timeZoneOffset
+                        .inMilliseconds).toInt());
                     //현재 선택된 반려견 생일 문자열 파싱
-                    String _petBirthYearOrigin = petSnapshot.data!.docs[sliderController.sliderIdx].get('birth');
+                    String _petBirthYearOrigin = petSnapshot.data!
+                        .docs[sliderController.sliderIdx].get('birth');
                     String _petBirth = '';
                     List<String> birthList = _petBirthYearOrigin.split('.');
                     for (int liIdx = 0; liIdx < birthList.length; liIdx++) {
                       _petBirth += birthList.elementAt(liIdx);
                     }
-                    int displayBirth = int.parse(_today.difference(DateTime.parse(_petBirth)).inDays.toString());
+                    int displayBirth = int.parse(_today
+                        .difference(DateTime.parse(_petBirth))
+                        .inDays
+                        .toString());
 
                     // 산책 달성률 구하기
                     String curDogID = petSnapshot.data!.docs[sliderController.sliderIdx].id;
                     CollectionReference refCurDogWalk = petsRef.doc(curDogID).collection('Walk');
 
-                    var startOfToday = Timestamp.fromDate(DateTime.now()
-                        .subtract(Duration(
-                            hours: DateTime.now().hour,
-                            minutes: DateTime.now().minute,
-                            seconds: DateTime.now().second,
-                            milliseconds: DateTime.now().millisecond,
-                            microseconds: DateTime.now().microsecond)));
-                    var endOfToday = Timestamp.fromDate(DateTime.now().add(
-                        Duration(
-                            days: 1,
-                            hours: -DateTime.now().hour,
-                            minutes: -DateTime.now().minute,
-                            seconds: -DateTime.now().second,
-                            milliseconds: -DateTime.now().millisecond,
-                            microseconds: -DateTime.now().microsecond)));
+                    var startOfToday = Timestamp.fromDate(
+                        DateTime.fromMillisecondsSinceEpoch((DateTime
+                            .now()
+                            .millisecondsSinceEpoch + DateTime
+                            .now()
+                            .timeZoneOffset
+                            .inMilliseconds).toInt())
+                            .subtract(Duration(
+                            hours: DateTime
+                                .fromMillisecondsSinceEpoch((DateTime
+                                .now()
+                                .millisecondsSinceEpoch + DateTime
+                                .now()
+                                .timeZoneOffset
+                                .inMilliseconds).toInt())
+                                .hour,
+                            minutes: DateTime
+                                .fromMillisecondsSinceEpoch((DateTime
+                                .now()
+                                .millisecondsSinceEpoch + DateTime
+                                .now()
+                                .timeZoneOffset
+                                .inMilliseconds).toInt())
+                                .minute,
+                            seconds: DateTime
+                                .fromMillisecondsSinceEpoch((DateTime
+                                .now()
+                                .millisecondsSinceEpoch + DateTime
+                                .now()
+                                .timeZoneOffset
+                                .inMilliseconds).toInt())
+                                .second,
+                            milliseconds: DateTime
+                                .now()
+                                .millisecond,
+                            microseconds: DateTime
+                                .now()
+                                .microsecond)));
+                    var endOfToday = Timestamp.fromDate(
+                        DateTime.fromMillisecondsSinceEpoch((DateTime
+                            .now()
+                            .millisecondsSinceEpoch + DateTime
+                            .now()
+                            .timeZoneOffset
+                            .inMilliseconds).toInt()).add(
+                            Duration(
+                                days: 1,
+                                hours: -DateTime
+                                    .fromMillisecondsSinceEpoch((DateTime
+                                    .now()
+                                    .millisecondsSinceEpoch + DateTime
+                                    .now()
+                                    .timeZoneOffset
+                                    .inMilliseconds).toInt())
+                                    .hour,
+                                minutes: -DateTime
+                                    .fromMillisecondsSinceEpoch((DateTime
+                                    .now()
+                                    .millisecondsSinceEpoch + DateTime
+                                    .now()
+                                    .timeZoneOffset
+                                    .inMilliseconds).toInt())
+                                    .minute,
+                                seconds: -DateTime
+                                    .fromMillisecondsSinceEpoch((DateTime
+                                    .now()
+                                    .millisecondsSinceEpoch + DateTime
+                                    .now()
+                                    .timeZoneOffset
+                                    .inMilliseconds).toInt())
+                                    .second,
+                                milliseconds: -DateTime
+                                    .fromMillisecondsSinceEpoch((DateTime
+                                    .now()
+                                    .millisecondsSinceEpoch + DateTime
+                                    .now()
+                                    .timeZoneOffset
+                                    .inMilliseconds).toInt())
+                                    .millisecond,
+                                microseconds: -DateTime
+                                    .fromMillisecondsSinceEpoch((DateTime
+                                    .now()
+                                    .millisecondsSinceEpoch + DateTime
+                                    .now()
+                                    .timeZoneOffset
+                                    .inMilliseconds).toInt())
+                                    .microsecond)));
 
-                    refCurDogWalk.where("startTime", isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday).get().then((QuerySnapshot snapshot) {
-                          num totalGoalTime = 0;
-                          num totalTimeMinute = 0;
-                          for (var document in snapshot.docs) {
-                            totalGoalTime += document.get('goal');
-                            totalTimeMinute += document.get('totalTimeMin');
-                          }
+                    refCurDogWalk.where(
+                        "startTime", isGreaterThanOrEqualTo: startOfToday,
+                        isLessThan: endOfToday).get().then((
+                        QuerySnapshot snapshot) {
+                      num totalGoalTime = 0;
+                      num totalTimeMinute = 0;
+                      for (var document in snapshot.docs) {
+                        totalGoalTime += document.get('goal');
+                        totalTimeMinute += document.get('totalTimeMin');
+                      }
 
-                          if (totalGoalTime == 0) {
+                      if (totalGoalTime == 0) {
                             homePageWalkCalculatorController.compPercent = 0;
                           } else {
                             homePageWalkCalculatorController.compPercent = ((totalTimeMinute / totalGoalTime) * 100).toInt();

@@ -26,13 +26,25 @@ class _CalendarPageState extends State<CalendarMain> {
 
   // 선택한 날짜 초기화
   DateTime selectedDay = DateTime.utc(
-    DateTime.now().year,
-    DateTime.now().month,
-    DateTime.now().day,
+    DateTime.fromMillisecondsSinceEpoch((DateTime.now().millisecondsSinceEpoch +
+                DateTime.now().timeZoneOffset.inMilliseconds)
+            .toInt())
+        .year,
+    DateTime.fromMillisecondsSinceEpoch((DateTime.now().millisecondsSinceEpoch +
+                DateTime.now().timeZoneOffset.inMilliseconds)
+            .toInt())
+        .month,
+    DateTime.fromMillisecondsSinceEpoch((DateTime.now().millisecondsSinceEpoch +
+                DateTime.now().timeZoneOffset.inMilliseconds)
+            .toInt())
+        .day,
   );
 
   // 보여줄 월
-  DateTime focusedDay = DateTime.now();
+  DateTime focusedDay = DateTime.fromMillisecondsSinceEpoch(
+      (DateTime.now().millisecondsSinceEpoch +
+              DateTime.now().timeZoneOffset.inMilliseconds)
+          .toInt());
 
   @override
   void initState() {
@@ -114,7 +126,10 @@ class _CalendarPageState extends State<CalendarMain> {
             context,
             MaterialPageRoute(
               builder: (context) => CalendarScheduleEdit(
-                day: DateTime.now(),
+                day: DateTime.fromMillisecondsSinceEpoch(
+                    (DateTime.now().millisecondsSinceEpoch +
+                            DateTime.now().timeZoneOffset.inMilliseconds)
+                        .toInt()),
               ),
             ),
           );

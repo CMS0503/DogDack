@@ -2,7 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
 class InputController extends GetxController {
-  DateTime date = DateTime.now();
+  DateTime date = DateTime.fromMillisecondsSinceEpoch(
+      (DateTime.now().millisecondsSinceEpoch +
+              DateTime.now().timeZoneOffset.inMilliseconds)
+          .toInt());
   String place = '';
   Timestamp startTime = Timestamp(0, 0);
   Timestamp endTime = Timestamp(0, 0);
@@ -18,13 +21,17 @@ class InputController extends GetxController {
   String selectedValue = '';
   String saveName = '';
   String time = '';
-  DateTime today = DateTime.now();
+  DateTime today = DateTime.fromMillisecondsSinceEpoch(
+      (DateTime.now().millisecondsSinceEpoch +
+              DateTime.now().timeZoneOffset.inMilliseconds)
+          .toInt());
 
   RxMap<String, List> events = <String, List>{}.obs;
 
   /////////////////////////여기 한줄 영우 추가/////////////////////
   // Map dog_names = {};
   String selected_id = '';
+
   void setDate(selectedDate) {
     date = selectedDate;
     update();

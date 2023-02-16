@@ -425,9 +425,19 @@ class _EditDogInfoPageState extends State<EditDogInfoPage> {
   Future _selectDate(BuildContext context) async {
     final DateTime? selected = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: DateTime.fromMillisecondsSinceEpoch((DateTime
+          .now()
+          .millisecondsSinceEpoch + DateTime
+          .now()
+          .timeZoneOffset
+          .inMilliseconds).toInt()),
       firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
+      lastDate: DateTime.fromMillisecondsSinceEpoch((DateTime
+          .now()
+          .millisecondsSinceEpoch + DateTime
+          .now()
+          .timeZoneOffset
+          .inMilliseconds).toInt()),
     );
     if (selected != null) {
       setState(() {

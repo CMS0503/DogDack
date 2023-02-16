@@ -249,7 +249,6 @@ class _CalenderDetailState extends State<CalenderDetail> {
       });
     });
 
-
     super.initState();
   }
 
@@ -260,9 +259,14 @@ class _CalenderDetailState extends State<CalenderDetail> {
   String diary = "오늘의 일기";
   List<Object?> imgList = [];
   var imageUrl = '';
-  DateTime startTime = DateTime.now();
-  DateTime endTime = DateTime.now();
-
+  DateTime startTime = DateTime.fromMillisecondsSinceEpoch(
+      (DateTime.now().millisecondsSinceEpoch +
+              DateTime.now().timeZoneOffset.inMilliseconds)
+          .toInt());
+  DateTime endTime = DateTime.fromMillisecondsSinceEpoch(
+      (DateTime.now().millisecondsSinceEpoch +
+              DateTime.now().timeZoneOffset.inMilliseconds)
+          .toInt());
 
   ////////////////////////////////////파이어 베이스 연결 끝/////////////////////////////////////////////////////
   @override

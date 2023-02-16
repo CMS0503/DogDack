@@ -67,6 +67,7 @@ dependencies:
   location: ^4.2.0
   animated_floating_buttons: ^0.0.2
   fluttertoast: ^8.1.2
+  modal_bottom_sheet: ^3.0.0-pre
 
 dev_dependencies:
   flutter_test:

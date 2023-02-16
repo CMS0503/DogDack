@@ -83,7 +83,10 @@ class _MyAppState extends State<MyApp> {
   DateTime? currentBackPressTime;
 
   onWillPop() {
-    DateTime now = DateTime.now();
+    DateTime now = DateTime.fromMillisecondsSinceEpoch(
+        (DateTime.now().millisecondsSinceEpoch +
+                DateTime.now().timeZoneOffset.inMilliseconds)
+            .toInt());
     if (currentBackPressTime == null ||
         now.difference(currentBackPressTime!) > const Duration(seconds: 2)) {
       currentBackPressTime = now;

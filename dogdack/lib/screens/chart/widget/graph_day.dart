@@ -26,7 +26,11 @@ class _DayWidgetState extends State<DayWidget> {
   @override
   Widget build(BuildContext context) {
     for(int i=0;i<7;i++){
-      days.add(DateFormat.E('ko_KR').format(DateTime.now().subtract(Duration(days: 7-i))));
+      days.add(DateFormat.E('ko_KR').format(DateTime.fromMillisecondsSinceEpoch(
+              (DateTime.now().millisecondsSinceEpoch +
+                      DateTime.now().timeZoneOffset.inMilliseconds)
+                  .toInt())
+          .subtract(Duration(days: 7 - i))));
     }
 
     Size screenSize = MediaQuery.of(context).size;
@@ -80,13 +84,17 @@ class _WeekWidgetState extends State<WeekWidget> {
 
   @override
   Widget build(BuildContext context) {
-
-    for(int i=0;i<28;i+=7){
-      days.add( DateFormat('MM/dd').format(DateTime.now().subtract(Duration(days: 30-i))));
+    for (int i = 0; i < 28; i += 7) {
+      days.add(DateFormat('MM/dd').format(DateTime.fromMillisecondsSinceEpoch(
+              (DateTime.now().millisecondsSinceEpoch +
+                      DateTime.now().timeZoneOffset.inMilliseconds)
+                  .toInt())
+          .subtract(Duration(days: 30 - i))));
     }
-    days.add(DateFormat('MM/dd').format(DateTime.now()));
-
-
+    days.add(DateFormat('MM/dd').format(DateTime.fromMillisecondsSinceEpoch(
+        (DateTime.now().millisecondsSinceEpoch +
+                DateTime.now().timeZoneOffset.inMilliseconds)
+            .toInt())));
 
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;

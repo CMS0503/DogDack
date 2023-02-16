@@ -5,6 +5,7 @@ import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/screens/calendar_main/calendar_main.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../../controllers/walk_controller.dart';
 import '../../models/dog_data.dart';
@@ -111,7 +112,10 @@ class _WalkPageState extends State<WalkPage> {
 
   Widget choiceDogModal(w, h, context) {
     final size = MediaQuery.of(context).size;
-    inputController.date = DateTime.now();
+    // inputController.date = DateTime.fromMillisecondsSinceEpoch(
+    //     (DateTime.now().millisecondsSinceEpoch +
+    //             DateTime.now().timeZoneOffset.inMilliseconds)
+    //         .toInt());
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 13),
       child: Stack(
@@ -146,7 +150,8 @@ class _WalkPageState extends State<WalkPage> {
                     if (snapshot.data!.docs.isEmpty) {
                       return const Align(
                         alignment: Alignment.center,
-                        child: Text('댕댕이를 등록해주세요!', style: TextStyle(fontSize: 25)),
+                        child: Text('댕댕이를 등록해주세요!',
+                            style: TextStyle(fontSize: 25)),
                       );
                     }
                     return Column(
@@ -163,10 +168,13 @@ class _WalkPageState extends State<WalkPage> {
                                   enableInfiniteScroll: false,
                                 ),
                                 itemCount: snapshot.data!.docs.length,
-                                itemBuilder: (context, itemIndex, pageViewIndex) {
+                                itemBuilder:
+                                    (context, itemIndex, pageViewIndex) {
                                   return Column(
                                     children: [
-                                      const SizedBox(height: 15,),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
                                       InkWell(
                                         onTap: () {
                                           if (!flag) {
@@ -179,15 +187,13 @@ class _WalkPageState extends State<WalkPage> {
                                           walkController.setFlagList(itemIndex);
                                           setState(() {});
                                         },
-                                        child:  
-                                        Stack(
+                                        child: Stack(
                                           children: [
-                                            if (snapshot.data!.docs.isEmpty) ...[
-
-                                            ],
+                                            if (snapshot.data!.docs.isEmpty)
+                                              ...[],
                                             Container(
-                                              // color: Colors.red,
-                                              height: size.height * 0.2,
+                                                // color: Colors.red,
+                                                height: size.height * 0.2,
                                                 child: Column(
                                                   children: [
                                                     Text(
@@ -201,15 +207,19 @@ class _WalkPageState extends State<WalkPage> {
                                                     CircleAvatar(
                                                       radius: size.width * 0.13,
                                                       child: ClipOval(
-                                                          child: CachedNetworkImage(
-                                                          imageUrl: snapshot.data!.docs[itemIndex].get('imageUrl'),
-                                                        )
+                                                          child:
+                                                              CachedNetworkImage(
+                                                        imageUrl: snapshot.data!
+                                                            .docs[itemIndex]
+                                                            .get('imageUrl'),
+                                                      )),
                                                     ),
-                                                  ),
-                                                ],
-                                              )
-                                            ),
-                                            if (walkController.flagList.isNotEmpty) walkController.choiceDog(itemIndex, size),
+                                                  ],
+                                                )),
+                                            if (walkController
+                                                .flagList.isNotEmpty)
+                                              walkController.choiceDog(
+                                                  itemIndex, size),
                                           ],
                                         ),
                                       ),
@@ -340,7 +350,6 @@ class _WalkPageState extends State<WalkPage> {
                           onChanged: (text) {
                             walkController.tmp_goal.value = int.parse(text);
                           },
-
                           decoration: InputDecoration(
                             hintText:
                                 '권장 산책 시간 : ${(walkController.rectime / walkController.selDogs.length).round()} 분',
@@ -359,11 +368,14 @@ class _WalkPageState extends State<WalkPage> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-
-                          if(walkController.tmp_goal.value == 0) {
-                            walkController.goal.value = (walkController.rectime / walkController.selDogs.length).round();
+                          if (walkController.tmp_goal.value == 0) {
+                            walkController.goal.value =
+                                (walkController.rectime /
+                                        walkController.selDogs.length)
+                                    .round();
                           } else {
-                            walkController.goal.value = walkController.tmp_goal.value;
+                            walkController.goal.value =
+                                walkController.tmp_goal.value;
                           }
                         },
                         style:
@@ -456,6 +468,68 @@ class _WalkPageState extends State<WalkPage> {
                               flag = false;
 
                               userController.myUpdate().then((value) {});
+
+                              showModalBottomSheet(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(25.0),
+                                    ),
+                                    // side: BorderSide()
+                                  ),
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Container(
+                                      // decoration: BoxDecoration(border: Border.all(color: violet)),
+                                      height: 100,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Align(
+                                            child: TextButton(
+                                                onPressed: () {
+                                                  mainController
+                                                      .changeTabIndex(2);
+                                                },
+                                                child: Column(
+                                                  children: [
+                                                    Text(
+                                                      '산책이 종료되었어요.',
+                                                      style: TextStyle(
+                                                          color: violet,
+                                                          fontSize: 16),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 7,
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Icon(
+                                                          Icons
+                                                              .exit_to_app_outlined,
+                                                          color: violet,
+                                                        ),
+                                                        Text(
+                                                          '캘린더로 가기',
+                                                          style: TextStyle(
+                                                              color: violet,
+                                                              fontSize: 16),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  ],
+                                                )),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  });
                             },
                           ),
                         ),
