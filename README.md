@@ -2,7 +2,7 @@
 
 ![eeee](/uploads/667115d799692235868090912b84d1d6/eeee.png)
 
-## [DogDack Play 스토어 다운로드](https://play.google.com/store/apps/details?id=com.common.pjt.dogdack&pli=1)
+### [DogDack Play 스토어 다운로드](https://play.google.com/store/apps/details?id=com.common.pjt.dogdack&pli=1)
 
 ## ▶️ 소개 영상 보기 : [UCC 링크]
 
