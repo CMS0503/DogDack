@@ -183,15 +183,13 @@ class _HomePageState extends State<HomePage> {
                             itemBuilder: (context, itemIndex, pageViewIndex) {
                               return CircleAvatar(
                                 radius: size.width * 0.23,
+                                backgroundImage: AssetImage('assets/dogdack.png'),
+                                backgroundColor: Colors.black12,
                                 child: ClipOval(
                                   child: CachedNetworkImage(
-                                    imageUrl: petSnapshot.data!.docs[itemIndex]
-                                        .get('imageUrl'),
-                                    progressIndicatorBuilder:
-                                        (context, url, downloadProgress) =>
-                                            CircularProgressIndicator(),
-                                    errorWidget: (context, url, error) =>
-                                        Icon(Icons.error),
+                                    imageUrl: petSnapshot.data!.docs[itemIndex].get('imageUrl'),
+                                    progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) => Icon(Icons.error)
                                   ),
                                 ),
                               );
