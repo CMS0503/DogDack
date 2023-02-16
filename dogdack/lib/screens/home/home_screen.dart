@@ -203,17 +203,28 @@ class _HomePageState extends State<HomePage> {
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text("함께한지  ", style: TextStyle(color: Color(0xff504E5B), fontSize: 18)),
-                                Text("${displayBirth}일", style: TextStyle(color: Color.fromARGB(255, 221, 137, 189), fontSize: 18)),
-                                Icon(Icons.favorite_border, color: Color.fromARGB(255, 221, 137, 189), size: 18)
-                              ]
-                          ),
+                                Text("함께한지  ",
+                                    style: TextStyle(
+                                        color: Color(0xff504E5B),
+                                        fontSize: 18)),
+                                Text("${displayBirth}일",
+                                    style: TextStyle(
+                                        color:
+                                            Color.fromARGB(255, 221, 137, 189),
+                                        fontSize: 18)),
+                                Icon(Icons.favorite_border,
+                                    color: Color.fromARGB(255, 221, 137, 189),
+                                    size: 18)
+                              ]),
                         ),
-                        SizedBox(height: height * 0.05),
+                        SizedBox(height: height * 0.03),
                         CalenderListView(), //일주일 달력
-                        SizedBox(height: height * 0.05),
-                        Text('최애 산책 시간', style: TextStyle(color: Color(0xff504E5B), fontSize: width * 0.05)),
-                        SizedBox(height: height * 0.01),
+                        SizedBox(height: height * 0.03),
+                        Text('최애 산책 시간',
+                            style: TextStyle(
+                                color: Color(0xff504E5B),
+                                fontSize: width * 0.05)),
+                        SizedBox(height: height * 0.005),
                         HomePageBarChart(), //최애 산책 시간
                       ],
                     );
