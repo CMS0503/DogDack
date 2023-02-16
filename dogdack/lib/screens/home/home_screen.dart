@@ -59,6 +59,9 @@ class _HomePageState extends State<HomePage> {
                 StreamBuilder(
                   stream: petsRef.orderBy('createdAt').snapshots(),
                   builder: (petContext, petSnapshot) {
+
+
+
                     // 데이터를 아직 불러오지 못했으면 로딩
                     if (!petSnapshot.hasData) {
                       return Center(child: CircularProgressIndicator());

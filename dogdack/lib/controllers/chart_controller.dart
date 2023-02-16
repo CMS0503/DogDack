@@ -65,7 +65,7 @@ class ChartController extends GetxController {
       // goalTime.value = dogGoal.values.toList().first;
     }
 
-
+    update();
     return dogNames;
   }
 
@@ -83,14 +83,13 @@ class ChartController extends GetxController {
 
       await refCurDogWalk
           .where('startTime',
-              isGreaterThan: DateTime.now().subtract(Duration(days: 60)))
+          isGreaterThan: DateTime.now().subtract(Duration(days: 60)))
           .orderBy('startTime', descending: false)
           .get()
           .then((QuerySnapshot snapshot) {
         List<String> tempList = [];
         //(강아지 : [가지고 있는 데이트 리스트])
         if (!dogNames.values.isNull) {
-
 
           dogsDate[dogNames.values.toList()[i].toString()] = tempList;
 
@@ -103,10 +102,10 @@ class ChartController extends GetxController {
 
           for (int j = 0; j < dateList.length; j++) {
             if (dogsDate[dogNames.values.toList()[i].toString()]!.length != 0) {
-
+              print(dogsDate[dogNames.values.toList()[i].toString()]);
               for (int k = 0;
-                  k < dogsDate[dogNames.values.toList()[i].toString()]!.length;
-                  k++) {
+              k < dogsDate[dogNames.values.toList()[i].toString()]!.length;
+              k++) {
                 if (dogsDate[dogNames.values.toList()[i].toString()]![k] ==
                     (dateList[j])) {
                   twoMonthHour[j] = snapshot.docs[k]['totalTimeMin'].toDouble();
@@ -117,7 +116,8 @@ class ChartController extends GetxController {
             }
           }
         }
-      });
+      }
+      );
       temp['hour'] = twoMonthHour;
       temp['distance'] = twoMonthDistance;
       temp['goal'] = twoMonthGoal;
