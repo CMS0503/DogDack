@@ -10,6 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
 import 'package:flutter/gestures.dart';
 
+import '../../../../controllers/cal_walk_controller.dart';
 import '../../../../controllers/mypage_controller.dart';
 import '../../../../controllers/walk_controller.dart';
 import '../../../../models/dog_data.dart';
@@ -27,10 +28,10 @@ class CalWalkCardWidget extends StatefulWidget {
 
   CalWalkCardWidget(
       {super.key,
-        required this.place,
-        required this.distance,
-        required this.totalTimeMin,
-        required this.imageUrl});
+      required this.place,
+      required this.distance,
+      required this.totalTimeMin,
+      required this.imageUrl});
 
   @override
   State<CalWalkCardWidget> createState() => _CalWalkCardWidget();
@@ -43,7 +44,8 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
   Color violet3 = const Color.fromARGB(255, 191, 172, 224);
 
   final Set<Polyline> _polyline = {};
-  List<LatLng> latlng = [];
+
+  // List<LatLng> latlng = [];
 
   late CollectionReference<DogData> petsRef;
 
@@ -52,7 +54,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
   final inputController = Get.put(InputController());
   final userController = Get.put(UserController());
   final petController = Get.put(PetController());
-
+  final calController = Get.put(CalendarWorkController());
 
   @override
   void initState() {
@@ -62,34 +64,43 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
       _polyline.add(
         Polyline(
             polylineId: const PolylineId('1'),
-            points: latlng,
+            points: calController.latlng,
             width: 3,
-            color: Colors.blue
-        ),
+            color: Colors.blue),
       );
-      walkController.updateState();
+
+      calController.updateState();
     });
   }
 
   Future<void> setPoly() async {
-    latlng.clear();
-    String docId = inputController.dognames[inputController.selectedValue.toString()];
+    calController.latlng.clear();
+    String docId =
+        inputController.dognames[inputController.selectedValue.toString()];
     // walk 경로
-    CollectionReference walkRef = FirebaseFirestore.instance.collection('Users/${userController.loginEmail}/Pets/$docId/Walk');
+    CollectionReference walkRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets/$docId/Walk');
 
-    await walkRef.get().then((value) async {
-      // 달력에서 선택한 날짜
-      var selectedDay = inputController.date;
+    await walkRef.get().then(
+      (value) async {
+        // 달력에서 선택한 날짜
+        var selectedDay = inputController.date;
 
-      var startOfToday = Timestamp.fromDate(selectedDay);
-      var endOfToday = Timestamp.fromDate(selectedDay.add(const Duration(days: 1)));
+        var startOfToday = Timestamp.fromDate(selectedDay);
+        var endOfToday =
+            Timestamp.fromDate(selectedDay.add(const Duration(days: 1)));
 
-      // 선택한 날짜의 산책 데이터를 내림차순 정렬(최신 데이터가 위로 오게)
-      await walkRef.where("startTime", isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday).orderBy("startTime", descending: true)
-          .get()
-          .then((QuerySnapshot snapshot) async {
+        // 선택한 날짜의 산책 데이터를 내림차순 정렬(최신 데이터가 위로 오게)
+        await walkRef
+            .where("startTime",
+                isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday)
+            .orderBy("startTime", descending: true)
+            .get()
+            .then(
+          (QuerySnapshot snapshot) async {
             walkController.walkStartTime = snapshot.docs[0]['startTime'];
-            walkController.walkEndTime = snapshot.docs[0]['endTime'];        widget.geodata = snapshot.docs[0]['geolist'];
+            walkController.walkEndTime = snapshot.docs[0]['endTime'];
+            widget.geodata = snapshot.docs[0]['geolist'];
             // 장소, 거리, 시간 데이터
             widget.placedata = snapshot.docs[0]['place'];
 
@@ -98,32 +109,33 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
               widget.distdata += snapshot.docs[i]['distance'];
             }
 
-            await addPloy(widget.geodata).then((value) async {
-              if (latlng.length > 1) {
-                GoogleMapController googleMapController =
-                    await _controller.future;
-                googleMapController.animateCamera(
-                  CameraUpdate.newCameraPosition(
-                    CameraPosition(
-                      zoom: 17,
-                      target: LatLng(latlng[latlng.length ~/ 2].latitude,
-                          latlng[latlng.length ~/ 2].longitude),
-                    ),
-                  ),
-                );
-              }
+            await addPloy(widget.geodata).then((value) {
+              setState(() {});
             });
           },
         );
       },
-    ).then((value) {
-      setState(() {});
-    });
+    );
   }
 
   Future<void> addPloy(data) async {
     for (int i = 0; i < data.length; i++) {
-      latlng.add(LatLng(data[i].latitude, data[i].longitude));
+      calController.latlng.add(LatLng(data[i].latitude, data[i].longitude));
+    }
+
+    if (calController.latlng.length > 1) {
+      GoogleMapController googleMapController = await _controller.future;
+      googleMapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            zoom: 17,
+            target: LatLng(
+                calController.latlng[calController.latlng.length ~/ 2].latitude,
+                calController
+                    .latlng[calController.latlng.length ~/ 2].longitude),
+          ),
+        ),
+      );
     }
   }
 
@@ -134,7 +146,8 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
     double height = screenSize.height;
 
     return Center(
-      child: Card(
+        child: Obx(
+      () => Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.0),
         ),
@@ -152,17 +165,13 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
                   height: height * 0.3,
                   margin: const EdgeInsets.all(20),
                   decoration:
-                  BoxDecoration(borderRadius: BorderRadius.circular(16.0)),
-                  child: Stack(
-                    children: [
-                      GetBuilder<WalkController>(builder: (_) {
-                        return
-                        latlng.isEmpty
-                        ? Image.asset("assets/logo.png")
-                        : GoogleMap(
+                      BoxDecoration(borderRadius: BorderRadius.circular(16.0)),
+                  child: calController.latlng.isEmpty
+                      ? Image.asset("assets/logo.png")
+                      : GoogleMap(
                           gestureRecognizers: Set()
                             ..add(Factory<PanGestureRecognizer>(
-                                    () => PanGestureRecognizer())),
+                                () => PanGestureRecognizer())),
                           initialCameraPosition: const CameraPosition(
                             target: LatLng(37.5012428, 127.039585),
                             zoom: 15,
@@ -171,10 +180,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
                             _controller.complete(mapController);
                           },
                           polylines: _polyline,
-                        );
-                      }),
-                    ],
-                  ),
+                        ),
                 ),
               ),
 
@@ -184,22 +190,33 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-
                     Column(
                       children: [
-                        Icon(Icons.place , color: violet, size: 50,),
+                        Icon(
+                          Icons.place,
+                          color: violet,
+                          size: 50,
+                        ),
                         Text(widget.placedata.toString())
                       ],
                     ),
                     Column(
                       children: [
-                        Icon(Icons.directions_walk , color: violet2, size: 50,),
+                        Icon(
+                          Icons.directions_walk,
+                          color: violet2,
+                          size: 50,
+                        ),
                         Text("${widget.distdata.toString()}미터")
                       ],
                     ),
                     Column(
                       children: [
-                        Icon(Icons.timelapse , color: violet3, size: 50,),
+                        Icon(
+                          Icons.timelapse,
+                          color: violet3,
+                          size: 50,
+                        ),
                         Text("${widget.timedata.toString()}분")
                       ],
                     ),
@@ -210,6 +227,6 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
           ),
         ),
       ),
-    );
+    ));
   }
 }
