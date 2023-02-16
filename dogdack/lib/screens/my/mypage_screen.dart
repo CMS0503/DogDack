@@ -177,7 +177,7 @@ class _MyPageState extends State<MyPage> {
       child: Row(
         children: [
           Container(
-            child: Text('그룹 가입하기', style: TextStyle(color: Colors.white),),
+            child: Text('함께 돌보기', style: TextStyle(color: Colors.white),),
             padding: EdgeInsets.all(deviceSize.width * 0.02),
             decoration: BoxDecoration(
               color: floatingGuideTextBox,
@@ -191,8 +191,8 @@ class _MyPageState extends State<MyPage> {
 
               showTextInputDialog(
                   context: globalContext,
-                  title: '그룹 가입하기',
-                  message: '강아지 정보를 공유 받고 싶은 그룹의 호스트 계정 이메일과 그룹 비밀번호를 입력하세요!',
+                  title: '함께 돌보기',
+                  message: '강아지 정보를 공유받고 싶은 계정의 이메일과 함께 돌보기 비밀번호를 입력하세요!',
                   okLabel: '확인',
                   cancelLabel: '취소',
                   textFields: [
@@ -241,7 +241,7 @@ class _MyPageState extends State<MyPage> {
               });
             },
             heroTag: "joinGroupBtn",
-            tooltip: '그룹 가입하기',
+            tooltip: '함께 돌보기',
             child: Icon(Icons.login, color: Colors.white),
             backgroundColor: floatingBtnChild,
           ),
@@ -282,7 +282,7 @@ class _MyPageState extends State<MyPage> {
       child: Row(
         children: [
           Container(
-            child: Text('그룹 나가기', style: TextStyle(color: Colors.white),),
+            child: Text('함께 돌보기 나가기', style: TextStyle(color: Colors.white),),
             padding: EdgeInsets.all(deviceSize.width * 0.02),
             decoration: BoxDecoration(
               color: floatingGuideTextBox,
@@ -298,8 +298,8 @@ class _MyPageState extends State<MyPage> {
                 context: globalContext,
                 cancelLabel: '취소',
                 okLabel: '확인',
-                title: '그룹 나가기',
-                message: '현재 가입된 그룹에서 정말 나가시겠습니까?\n(확인을 누르면 앱이 재시작됩니다.)',
+                title: '함께 돌보기 나가기',
+                message: '내 계정으로 재접속합니다. 정말 나가시겠습니까?\n(확인을 누르면 앱이 재시작됩니다.)',
               ).then((isOKPress) {
                 if(isOKPress == OkCancelResult.cancel)
                   return;
@@ -314,7 +314,7 @@ class _MyPageState extends State<MyPage> {
               });
             },
             heroTag: "guestGroupOut",
-            tooltip: '그룹 나가기',
+            tooltip: '함께 돌보기 나가기',
             child: Icon(Icons.logout, color: Colors.white),
             backgroundColor: floatingBtnChild,
           ),
@@ -328,7 +328,7 @@ class _MyPageState extends State<MyPage> {
       child: Row(
         children: [
           Container(
-            child: Text('그룹 비밀번호 설정', style: TextStyle(color: Colors.white),),
+            child: Text('함께 돌보기 비밀번호 설정', style: TextStyle(color: Colors.white),),
             padding: EdgeInsets.all(deviceSize.width * 0.02),
             decoration: BoxDecoration(
               color: floatingGuideTextBox,
@@ -349,8 +349,10 @@ class _MyPageState extends State<MyPage> {
 
                 showTextInputDialog(
                     context: globalContext,
-                    title: '공유 비밀번호 설정',
-                    message: '나와 강아지 정보를 공유하고 싶은 사람에게 비밀번호를 알려주세요!\n현재 비밀번호 : ${getPassword}',
+                    title: '함께 돌보기 비밀번호 설정',
+                    message: '나의 강아지 정보를 공유하고 싶은 사람에게 이 비밀번호를 알려주세요!\n현재 비밀번호 : ${getPassword}',
+                    cancelLabel: '취소',
+                    okLabel: '확인',
                     textFields: [
                       DialogTextField(
                         keyboardType: TextInputType.number,
@@ -377,7 +379,7 @@ class _MyPageState extends State<MyPage> {
               });
             },
             heroTag: "setPassword",
-            tooltip: '그룹 비밀번호 설정',
+            tooltip: '함께 돌보기 비밀번호 설정',
             child: Icon(Icons.lock, color: Colors.white),
             backgroundColor: floatingBtnChild,
           ),
