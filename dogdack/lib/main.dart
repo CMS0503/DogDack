@@ -98,13 +98,13 @@ class _MyAppState extends State<MyApp> {
     return true;
   }
 
-  void initUserDB() {
+  void initUserDB() async {
     final userColRef = FirebaseFirestore.instance.collection('Users');
     final userInfoRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/UserInfo');
 
     userController.loginEmail = FirebaseAuth.instance.currentUser!.email.toString();
 
-    FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.email).get().then((value){
+    await FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.email).get().then((value){
       if(value.exists) {
         userInfoRef.get().then((value) {
           userController.isHost = value.docs[0]['isHost'];

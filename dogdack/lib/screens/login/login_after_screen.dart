@@ -15,7 +15,7 @@ class LoginAfterPage extends StatefulWidget {
 
   final userController = Get.put(UserController());
 
-  void initUserDB() {
+  void initUserDB() async {
     final userColRef = FirebaseFirestore.instance.collection('Users');
     final userInfoRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/UserInfo');
 
@@ -48,7 +48,10 @@ class LoginAfterPage extends StatefulWidget {
 
   @override
   _LoginAfterPage createState() {
-    initUserDB();
+    if(userController.initFlag == false) {
+      initUserDB();
+      userController.initFlag = true;
+    }
     return _LoginAfterPage();
   }
 }

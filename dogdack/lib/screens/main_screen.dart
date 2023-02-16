@@ -21,13 +21,13 @@ class MainPage extends StatefulWidget {
 
   final userController = Get.put(UserController());
 
-  void initUserDB() {
+  void initUserDB() async {
     final userColRef = FirebaseFirestore.instance.collection('Users');
     final userInfoRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/UserInfo');
 
     userController.loginEmail = FirebaseAuth.instance.currentUser!.email.toString();
 
-    FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.email).get().then((value){
+    await FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.email).get().then((value){
       if(value.exists) {
         userInfoRef.get().then((value) {
           userController.isHost = value.docs[0]['isHost'];
@@ -54,7 +54,10 @@ class MainPage extends StatefulWidget {
 
   @override
   State<MainPage> createState(){
-    initUserDB();
+    if(userController.initFlag == false) {
+      initUserDB();
+      userController.initFlag = true;
+    }
     return _MainPageState();
   }
 }
