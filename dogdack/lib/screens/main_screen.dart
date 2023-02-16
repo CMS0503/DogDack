@@ -108,12 +108,14 @@ class _MainPageState extends State<MainPage> {
                 },
               ),
             ),
-            // Offstage(
-            //   offstage: mainController.tabindex != 3,
-            //   child: GetBuilder<UserController>(builder: (_) {
-            //     return ChartNavigator();
-            //   },),
-            // ),
+            Offstage(
+              offstage: mainController.tabindex != 3,
+              child: GetBuilder<UserController>(
+                builder: (_) {
+                  return ChartNavigator();
+                },
+              ),
+            ),
             Offstage(
               offstage: mainController.tabindex != 4,
               child: GetBuilder<UserController>(
