@@ -445,7 +445,7 @@ class _WalkPageState extends State<WalkPage> {
                               walkController.addData(walkController.latlng);
 
                               walkController.sendDB();
-                              walkController.disconnect();
+                              // walkController.disconnect();
                               flag = false;
 
                               userController.myUpdate().then((value) {});

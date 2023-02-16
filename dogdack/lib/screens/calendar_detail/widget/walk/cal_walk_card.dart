@@ -83,20 +83,36 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
       await walkRef.where("startTime", isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday).orderBy("startTime", descending: true)
           .get()
           .then((QuerySnapshot snapshot) async {
-        widget.geodata = snapshot.docs[0]['geolist'];
-        // 장소, 거리, 시간 데이터
-        widget.placedata = snapshot.docs[0]['place'];
+            widget.geodata = snapshot.docs[0]['geolist'];
+            // 장소, 거리, 시간 데이터
+            widget.placedata = snapshot.docs[0]['place'];
 
-        for (var i = 0; i < snapshot.docs.length; i++) {
-          widget.timedata += snapshot.docs[i]['totalTimeMin'];
-          widget.distdata += snapshot.docs[i]['distance'];
-        }
-        addPloy(widget.geodata);
+            for (var i = 0; i < snapshot.docs.length; i++) {
+              widget.timedata += snapshot.docs[i]['totalTimeMin'];
+              widget.distdata += snapshot.docs[i]['distance'];
+            }
+
+            await addPloy(widget.geodata).then((value) async {
+              if (latlng.length > 1) {
+                GoogleMapController googleMapController =
+                    await _controller.future;
+                googleMapController.animateCamera(
+                  CameraUpdate.newCameraPosition(
+                    CameraPosition(
+                      zoom: 17,
+                      target: LatLng(latlng[latlng.length ~/ 2].latitude,
+                          latlng[latlng.length ~/ 2].longitude),
+                    ),
+                  ),
+                );
+              }
+            });
+          },
+        );
       },
-      );
-    },
-    );
-    setState(() {});
+    ).then((value) {
+      setState(() {});
+    });
   }
 
   Future<void> addPloy(data) async {
