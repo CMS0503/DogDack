@@ -21,7 +21,6 @@ SSAFY 8기 2학기 공통프로젝트 - DogDack
 
 ## 🐶 DogDack - 배경
 
----
 
 DogDack은 시간이 지나면 잊기 쉬운 반려견과의 추억을 기록하고 반려견의 일상을 돌아보기 위해 탄생한 온 가족 통합 반려견 케어 어플리케이션이에요.
 
@@ -29,7 +28,6 @@ DogDack은 시간이 지나면 잊기 쉬운 반려견과의 추억을 기록하
 
 ## 🐶 앱 주요 기능
 
----
 
 - 홈 화면
     - 강아지들의 오늘 산책 달성량을 확인할 수 있어요.
@@ -69,7 +67,6 @@ DogDack은 시간이 지나면 잊기 쉬운 반려견과의 추억을 기록하
 
 ## ✔ 주요 기술
 
----
 
 **Frontend - Flutter**
 
@@ -93,7 +90,6 @@ DogDack은 시간이 지나면 잊기 쉬운 반려견과의 추억을 기록하
 
 ## ✔ DB 구조 (Firebase - NoSQL)
 
----
 
 DogDack 서비스의 Firestore Database 구조는 다음과 같습니다.
 
@@ -138,7 +134,6 @@ DogDack 서비스의 Firestore Database 구조는 다음과 같습니다.
 
 ## ✔ 협업 환경
 
----
 
 - Git
     - 코드 버전 관리
@@ -158,11 +153,9 @@ DogDack 서비스의 Firestore Database 구조는 다음과 같습니다.
 
 ## ✔ 팀원 역할 분배
 
----
 
 ## ✔ 프로젝트 산출물
 
----
 
 - [WBS](https://1drv.ms/x/s!AmojbaCZN7ajgmzB86p4R6G9HKbx?e=ayZPsL)
 - [Notion](https://www.notion.so/062ce32c4c924004a8b374baefbbd380)
@@ -171,4 +164,3 @@ DogDack 서비스의 Firestore Database 구조는 다음과 같습니다.
 
 ## ✔ 프로젝트 결과물
 
----
