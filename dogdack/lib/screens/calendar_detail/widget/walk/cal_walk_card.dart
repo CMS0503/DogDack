@@ -22,6 +22,7 @@ class CalWalkCardWidget extends StatefulWidget {
   String imageUrl;
 
   var geodata;
+
   // num distdata = 0;
   var placedata;
 
@@ -100,134 +101,156 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
     walkRef = FirebaseFirestore.instance
         .collection('Users/${userController.loginEmail}/Pets/${docId}/Walk')
         .withConverter(
-        fromFirestore: (snapshot, _) => WalkData.fromJson(snapshot.data()!),
-        toFirestore: (walkData, _) => walkData.toJson());
+            fromFirestore: (snapshot, _) => WalkData.fromJson(snapshot.data()!),
+            toFirestore: (walkData, _) => walkData.toJson());
 
     selectedDay = inputController.date;
     startOfToday = Timestamp.fromDate(selectedDay);
     endOfToday = Timestamp.fromDate(selectedDay.add(const Duration(days: 1)));
 
     return Center(
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          elevation: 4.0,
-          child: SizedBox(
-            width: width * 0.9,
-            height: height * 0.5,
-            child: StreamBuilder(
-              stream: walkRef.orderBy("startTime", descending: true).snapshots(),
-              builder: (context, snapshot) {
-                // 데이터를 아직 불러오지 못했으면 로딩
-                if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
-                }
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        elevation: 4.0,
+        child: SizedBox(
+          width: width * 0.9,
+          height: height * 0.5,
+          child: StreamBuilder(
+            stream: walkRef.orderBy("startTime", descending: true).snapshots(),
+            builder: (context, snapshot) {
+              // 데이터를 아직 불러오지 못했으면 로딩
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator());
+              }
 
-                //초기화
-                calController.latlng.clear();
-                calController.timeData = 0;
-                calController.distData = 0;
+              //초기화
+              calController.latlng.clear();
+              calController.timeData = 0;
+              calController.distData = 0;
 
-                var timeZoneOffset = DateTime.now().timeZoneOffset.inMilliseconds;
-                int start = (startOfToday.millisecondsSinceEpoch) ~/ 1000;
-                int end = (endOfToday.millisecondsSinceEpoch) ~/ 1000;
+              var timeZoneOffset = DateTime.now().timeZoneOffset.inMilliseconds;
+              int start = (startOfToday.millisecondsSinceEpoch) ~/ 1000;
+              int end = (endOfToday.millisecondsSinceEpoch) ~/ 1000;
 
-                bool walkSearchOneTimeFlag = false;
-                for(int walkDocIdx = 0; walkDocIdx < snapshot.data!.docs.length; walkDocIdx++) {
-                  int docTime = (snapshot.data!.docs[walkDocIdx].get('startTime').millisecondsSinceEpoch + timeZoneOffset) ~/ 1000;
-                  if(docTime >= start && docTime < end) {
-                    if(!walkSearchOneTimeFlag) {
-                      walkController.walkStartTime = snapshot.data!.docs[walkDocIdx].get('startTime');
-                      walkController.walkEndTime = snapshot.data!.docs[walkDocIdx].get('endTime');
-                      widget.geodata = snapshot.data!.docs[walkDocIdx].get('geolist');
-                      widget.placedata = snapshot.data!.docs[walkDocIdx].get('place');
-                      walkSearchOneTimeFlag = true;
-                    }
-
-                    calController.timeData += snapshot.data!.docs[walkDocIdx].get('totalTimeMin');
-                    calController.distData += snapshot.data!.docs[walkDocIdx].get('distance');
+              bool walkSearchOneTimeFlag = false;
+              for (int walkDocIdx = 0;
+                  walkDocIdx < snapshot.data!.docs.length;
+                  walkDocIdx++) {
+                int docTime = (snapshot.data!.docs[walkDocIdx]
+                            .get('startTime')
+                            .millisecondsSinceEpoch +
+                        timeZoneOffset) ~/
+                    1000;
+                if (docTime >= start && docTime < end) {
+                  if (!walkSearchOneTimeFlag) {
+                    walkController.walkStartTime =
+                        snapshot.data!.docs[walkDocIdx].get('startTime');
+                    walkController.walkEndTime =
+                        snapshot.data!.docs[walkDocIdx].get('endTime');
+                    widget.geodata =
+                        snapshot.data!.docs[walkDocIdx].get('geolist');
+                    widget.placedata =
+                        snapshot.data!.docs[walkDocIdx].get('place');
+                    walkSearchOneTimeFlag = true;
                   }
+
+                  calController.timeData +=
+                      snapshot.data!.docs[walkDocIdx].get('totalTimeMin');
+                  calController.distData +=
+                      snapshot.data!.docs[walkDocIdx].get('distance');
                 }
+              }
 
-                addPloy(widget.geodata).then((value) => calController.updateState());
+              addPloy(widget.geodata).then((value) {
+                _polyline.add(
+                  Polyline(
+                      polylineId: const PolylineId('1'),
+                      points: calController.latlng,
+                      width: 3,
+                      color: Colors.blue),
+                );
 
-                return GetBuilder<CalendarWorkController>(builder: (_) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Center(
-                        child: Container(
-                          width: width * 0.7,
-                          height: height * 0.3,
-                          margin: const EdgeInsets.all(20),
-                          decoration:
-                          BoxDecoration(borderRadius: BorderRadius.circular(16.0)),
-                          child: calController.latlng.isEmpty
-                              ? Image.asset("assets/logo.png")
-                              : GoogleMap(
-                            gestureRecognizers: Set()
-                              ..add(Factory<PanGestureRecognizer>(
+                calController.updateState();
+              });
+
+              return GetBuilder<CalendarWorkController>(builder: (_) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Center(
+                      child: Container(
+                        width: width * 0.7,
+                        height: height * 0.3,
+                        margin: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16.0)),
+                        child: calController.latlng.isEmpty
+                            ? Image.asset("assets/logo.png")
+                            : GoogleMap(
+                                gestureRecognizers: Set()
+                                  ..add(Factory<PanGestureRecognizer>(
                                       () => PanGestureRecognizer())),
-                            initialCameraPosition: const CameraPosition(
-                              target: LatLng(37.5012428, 127.039585),
-                              zoom: 15,
-                            ),
-                            onMapCreated: (mapController) {
-                                if (_controller.isCompleted == false) {
-                                  _controller.complete(mapController);
-                                }
-                              },
-                            polylines: _polyline,
+                                initialCameraPosition: const CameraPosition(
+                                  target: LatLng(37.5012428, 127.039585),
+                                  zoom: 15,
+                                ),
+                                onMapCreated: (mapController) {
+                                  if (_controller.isCompleted == false) {
+                                    _controller.complete(mapController);
+                                  }
+                                },
+                                polylines: _polyline,
+                              ),
+                      ),
+                    ),
+                    // 산책 정보
+                    Padding(
+                      padding: const EdgeInsets.only(top: 25),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Column(
+                            children: [
+                              Icon(
+                                Icons.place,
+                                color: violet,
+                                size: 50,
+                              ),
+                              Text(widget.placedata.toString())
+                            ],
                           ),
-                        ),
+                          Column(
+                            children: [
+                              Icon(
+                                Icons.directions_walk,
+                                color: violet2,
+                                size: 50,
+                              ),
+                              Text("${calController.distData.toString()}미터")
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Icon(
+                                Icons.timelapse,
+                                color: violet3,
+                                size: 50,
+                              ),
+                              Text("${calController.timeData.toString()}분")
+                            ],
+                          ),
+                        ],
                       ),
-                      // 산책 정보
-                      Padding(
-                        padding: const EdgeInsets.only(top: 25),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Column(
-                              children: [
-                                Icon(
-                                  Icons.place,
-                                  color: violet,
-                                  size: 50,
-                                ),
-                                Text(widget.placedata.toString())
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Icon(
-                                  Icons.directions_walk,
-                                  color: violet2,
-                                  size: 50,
-                                ),
-                                Text("${calController.distData.toString()}미터")
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Icon(
-                                  Icons.timelapse,
-                                  color: violet3,
-                                  size: 50,
-                                ),
-                                Text("${calController.timeData.toString()}분")
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                });
-              },
-            ),
+                    ),
+                  ],
+                );
+              });
+            },
           ),
         ),
+      ),
     );
   }
 }
