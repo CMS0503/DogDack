@@ -63,7 +63,6 @@ class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
                 var time = await showTimePicker(
                   context: context,
                   initialTime: TimeOfDay.now(),
-                  
                 );
                 if (!mounted) return;
                 if (time == null) {
@@ -83,11 +82,13 @@ class _ScheduleTimePickerState extends State<ScheduleTimePicker> {
                 );
                 if (widget.start_end == '시작') {
                   controller.startTime = Timestamp.fromDate(dateTime);
-                  print('time picker 에서의 controller.startTime${DateTime.fromMicrosecondsSinceEpoch(controller.startTime.microsecondsSinceEpoch)}');
+                  print(
+                      'time picker 에서의 controller.startTime${DateTime.fromMicrosecondsSinceEpoch(controller.startTime.microsecondsSinceEpoch)}');
                   // DateTime.fromMicrosecondsSinceEpoch(controller.endTime.microsecondsSinceEpoch)
                 } else {
                   controller.endTime = Timestamp.fromDate(dateTime);
-                  print('time picker 에서의 controller.endTime${DateTime.fromMicrosecondsSinceEpoch(controller.endTime.microsecondsSinceEpoch)}');
+                  print(
+                      'time picker 에서의 controller.endTime${DateTime.fromMicrosecondsSinceEpoch(controller.endTime.microsecondsSinceEpoch)}');
                 }
               },
               // maxLength: 20,

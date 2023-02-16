@@ -58,9 +58,8 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
 
         // Refresh the UI
         setState(() {});
-      } on FirebaseException catch (error) {
-        if (kDebugMode) {
-        }
+      } on FirebaseException {
+        if (kDebugMode) {}
       }
     } catch (err) {
       if (kDebugMode) {
@@ -80,7 +79,6 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
             '${userController.loginEmail}/dogs/${controller.selectedValue}/${DateFormat('yyMMdd').format(controller.date)}')
         .list();
     final List<Reference> allFiles = result.items;
-
     final snapshot = await FirebaseFirestore.instance
         .collection(
           'Users',
@@ -98,9 +96,6 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
         files.add({
           "url": fileUrl,
           "path": file.fullPath,
-          "uploaded_by": fileMeta.customMetadata?['uploaded_by'] ?? 'Nobody',
-          "description":
-              fileMeta.customMetadata?['description'] ?? 'No description'
         });
       }
     });
