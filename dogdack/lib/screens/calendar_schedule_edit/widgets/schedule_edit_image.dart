@@ -23,6 +23,43 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
   final controller = Get.put(InputController());
   final userController = Get.put(UserController());
 
+  void selectCameraOrGallery(BuildContext context, Size size) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SizedBox(
+          height: size.height * 0.15,
+          child: Column(
+            children: [
+              SizedBox(
+                height: size.height * 0.075,
+                child: ListTile(
+                  leading: const Icon(Icons.camera_alt_outlined),
+                  title: const Text('촬영하기'),
+                  onTap: () {
+                    _upload('camera');
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              SizedBox(
+                height: size.height * 0.075,
+                child: ListTile(
+                  leading: const Icon(Icons.photo_camera_back),
+                  title: const Text('앨범보기'),
+                  onTap: () {
+                    _upload('gallery');
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   // 이미지 업로드 (카메라 / 갤러리)
   Future<void> _upload(String inputSource) async {
     final picker = ImagePicker();
@@ -120,47 +157,47 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
 
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 35,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 100, 92, 170),
-                  ),
-                  onPressed: () => {
-                    _upload('camera'),
-                  },
-                  icon: const Icon(
-                    Icons.camera,
-                  ),
-                  label: const Text('카메라'),
-                ),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              SizedBox(
-                height: 35,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 100, 92, 170),
-                  ),
-                  onPressed: () {
-                    _upload('gallery');
-                  },
-                  icon: const Icon(
-                    Icons.library_add,
-                  ),
-                  label: const Text('갤러리'),
-                ),
-              ),
-            ],
-          ),
-        ),
+        // Padding(
+        //   padding: const EdgeInsets.all(5.0),
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.center,
+        //     children: [
+        //       SizedBox(
+        //         height: 35,
+        //         child: ElevatedButton.icon(
+        //           style: ElevatedButton.styleFrom(
+        //             backgroundColor: const Color.fromARGB(255, 100, 92, 170),
+        //           ),
+        //           onPressed: () => {
+        //             _upload('camera'),
+        //           },
+        //           icon: const Icon(
+        //             Icons.camera,
+        //           ),
+        //           label: const Text('카메라'),
+        //         ),
+        //       ),
+        //       const SizedBox(
+        //         width: 10,
+        //       ),
+        //       SizedBox(
+        //         height: 35,
+        //         child: ElevatedButton.icon(
+        //           style: ElevatedButton.styleFrom(
+        //             backgroundColor: const Color.fromARGB(255, 100, 92, 170),
+        //           ),
+        //           onPressed: () {
+        //             _upload('gallery');
+        //           },
+        //           icon: const Icon(
+        //             Icons.library_add,
+        //           ),
+        //           label: const Text('갤러리'),
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
         Padding(
           padding: const EdgeInsets.only(bottom: 10.0),
           child: Container(
@@ -243,19 +280,24 @@ class _ScheduleEditImageState extends State<ScheduleEditImage> {
                       ],
                     );
                   } else {
-                    print(snapshot.hasData);
-                    return Container(
-                      decoration: const BoxDecoration(
-                        color: Color.fromARGB(255, 229, 229, 230),
-                        border: Border(),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(20.0),
+                    return GestureDetector(
+                      onTap: () {
+                        selectCameraOrGallery(context, screenSize);
+                      },
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          color: Color.fromARGB(255, 229, 229, 230),
+                          border: Border(),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20.0),
+                          ),
                         ),
+                        height: height * 0.3,
+                        width: width * 0.8,
+                        child: const Icon(Icons.add_photo_alternate_outlined,
+                            size: 80,
+                            color: Color.fromARGB(255, 147, 147, 147)),
                       ),
-                      height: height * 0.3,
-                      width: width * 0.8,
-                      child: const Icon(Icons.add_photo_alternate_outlined,
-                          size: 80, color: Color.fromARGB(255, 147, 147, 147)),
                     );
                   }
                 }

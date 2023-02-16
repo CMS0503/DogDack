@@ -19,23 +19,28 @@ class ScheduleEditBollean extends StatelessWidget {
           Row(
             // mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                height: 36,
-                width: 5,
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 100, 92, 170),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  '미용',
-                  style: TextStyle(
-                    fontFamily: 'bmjua',
-                    fontSize: 32,
+              Row(
+                children: const [
+                  Icon(
+                    Icons.cut_outlined,
+                    color: Color.fromARGB(255, 191, 172, 224),
+                    size: 30,
                   ),
-                ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Text(
+                      '미용',
+                      style: TextStyle(
+                        fontFamily: 'bmjua',
+                        fontSize: 32,
+                        color: Color.fromARGB(255, 191, 172, 224),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -47,23 +52,23 @@ class ScheduleEditBollean extends StatelessWidget {
             height: 10,
           ),
           Row(
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                height: 36,
-                width: 5,
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 100, 92, 170),
-                  borderRadius: BorderRadius.circular(5),
-                ),
+            children: const [
+              Icon(
+                Icons.bathtub_outlined,
+                color: Color.fromARGB(255, 221, 137, 189),
+                size: 30,
               ),
-              const Padding(
+              SizedBox(
+                width: 10,
+              ),
+              Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
                   '목욕',
                   style: TextStyle(
                     fontFamily: 'bmjua',
                     fontSize: 32,
+                    color: Color.fromARGB(255, 221, 137, 189),
                   ),
                 ),
               ),
