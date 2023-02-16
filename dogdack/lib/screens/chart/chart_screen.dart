@@ -44,14 +44,13 @@ class _ChartState extends State<Chart> {
   void initState() {
     chartController.selectedDateValue.value = "일주일";
     chartController.getNames().then((value) {
-      if (value.isEmpty) {}
       if (chartController.dogNames.keys.toList().length != 0) {
         chartController.chartSelectedId.value =
             chartController.dogNames.values.toList()[0];
         chartController.chartSelectedName.value =
             chartController.dogNames.keys.toList()[0];
-      }
-      ;
+        chartController.goalTime = chartController.dogGoal.values.toList()[0];
+      };
       // setChartData();
       chartController.setData().then((value) {
         setState(() {});
@@ -219,6 +218,10 @@ class _ChartState extends State<Chart> {
         last_week_goal_points = chartController
             .chartData[chartController.chartSelectedId]!["goal"]!
             .sublist(0, 60 - 30);
+        int day_len = 0;
+        int last_day_len = 0;
+        int week_len = 0;
+        int last_week_len = 0;
 
         for (int i = 0; i < day_hour_points.length; i++) {
           if (day_hour_points[i] >= 1) {
@@ -244,14 +247,15 @@ class _ChartState extends State<Chart> {
           if (day_goal_points[i] >= 1) {
             day_goal_data += day_goal_points[i];
           } else {
-            day_goal_data += 0;
+            day_goal_data += chartController.goalTime;
           }
           if (last_day_goal_points[i] >= 1) {
             last_day_goal_data += last_day_goal_points[i];
           } else {
-            last_day_goal_data += 0;
+            last_day_goal_data += chartController.goalTime;
           }
         }
+
         day_hour_data /= day_hour_points.length;
         last_day_hour_data /= last_day_hour_points.length;
         day_distance_data /= day_distance_points.length;
@@ -283,12 +287,12 @@ class _ChartState extends State<Chart> {
           if (week_goal_points[i] >= 1) {
             week_goal_data += week_goal_points[i];
           } else {
-            week_goal_data += 0;
+            week_goal_data += chartController.goalTime;
           }
           if (last_week_goal_points[i] >= 1) {
             last_week_goal_data += last_week_goal_points[i];
           } else {
-            last_week_goal_data += 0;
+            last_week_goal_data += chartController.goalTime;
           }
         }
         week_hour_data /= week_hour_points.length;
@@ -298,7 +302,8 @@ class _ChartState extends State<Chart> {
         week_goal_data /= week_goal_points.length;
         last_week_goal_data /= last_week_goal_points.length;
 
-        if (day_goal_data >= 10) {
+
+        if (day_goal_data >= 1) {
           day_achievement_rate = (day_hour_data / day_goal_data) * 100;
         } else {
           day_achievement_rate = 0;
@@ -546,17 +551,18 @@ class _ChartState extends State<Chart> {
                                 );
                               },
                             ).toList(),
-                            onChanged: (_){},
-                            // onChanged: (value) {
-                            //   chartController.chartSelectedName.value =
-                            //       value.toString();
-                            //   chartController.chartSelectedId.value =
-                            //       chartController.dogNames[value.toString()];
-                            //   setChartData();
-                            //   setState(() {
-                            //     getName();
-                            //   });
-                            // },
+                            // onChanged: (_){},
+                            onChanged: (value) {
+                              chartController.chartSelectedName.value =
+                                  value.toString();
+                              chartController.chartSelectedId.value =
+                                  chartController.dogNames[value.toString()];
+                              chartController.goalTime = chartController.dogGoal[value.toString()];
+                              setChartData();
+                              setState(() {
+                                getName();
+                              });
+                            },
                           );
                   },
                 ),

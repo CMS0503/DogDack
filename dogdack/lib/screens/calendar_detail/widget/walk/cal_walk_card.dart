@@ -37,6 +37,11 @@ class CalWalkCardWidget extends StatefulWidget {
 }
 
 class _CalWalkCardWidget extends State<CalWalkCardWidget> {
+  Color grey = const Color.fromARGB(255, 80, 78, 91);
+  Color violet = const Color.fromARGB(255, 100, 92, 170);
+  Color violet2 = const Color.fromARGB(255, 160, 132, 202);
+  Color violet3 = const Color.fromARGB(255, 191, 172, 224);
+
   final Set<Polyline> _polyline = {};
   List<LatLng> latlng = [];
 
@@ -72,10 +77,10 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
     // walk 경로
     CollectionReference walkRef = FirebaseFirestore.instance.collection('Users/${userController.loginEmail}/Pets/$docId/Walk');
 
-
     await walkRef.get().then((value) async {
       // 달력에서 선택한 날짜
       var selectedDay = inputController.date;
+
       var startOfToday = Timestamp.fromDate(selectedDay);
       var endOfToday = Timestamp.fromDate(selectedDay.add(const Duration(days: 1)));
 
@@ -83,7 +88,8 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
       await walkRef.where("startTime", isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday).orderBy("startTime", descending: true)
           .get()
           .then((QuerySnapshot snapshot) async {
-            widget.geodata = snapshot.docs[0]['geolist'];
+            walkController.walkStartTime = snapshot.docs[0]['startTime'];
+            walkController.walkEndTime = snapshot.docs[0]['endTime'];        widget.geodata = snapshot.docs[0]['geolist'];
             // 장소, 거리, 시간 데이터
             widget.placedata = snapshot.docs[0]['place'];
 
@@ -135,60 +141,67 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
         elevation: 4.0,
         child: SizedBox(
           width: width * 0.9,
-          height: height * 0.25,
-          child: Row(
+          height: height * 0.5,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               // 지도
-              Container(
-                width: width * 0.45,
-                height: height * 0.2,
-                margin: const EdgeInsets.all(20),
-                decoration:
-                BoxDecoration(borderRadius: BorderRadius.circular(16.0)),
-                child: Stack(
-                  children: [
-                    GetBuilder<WalkController>(builder: (_) {
-                      return
-                      latlng.isEmpty
-                      ? Image.asset("assets/logo.png")
-                      : GoogleMap(
-                        gestureRecognizers: Set()
-                          ..add(Factory<PanGestureRecognizer>(
-                                  () => PanGestureRecognizer())),
-                        initialCameraPosition: const CameraPosition(
-                          target: LatLng(37.5012428, 127.039585),
-                          zoom: 15,
-                        ),
-                        onMapCreated: (mapController) {
-                          _controller.complete(mapController);
-                        },
-                        polylines: _polyline,
-                      );
-                    }),
-                  ],
+              Center(
+                child: Container(
+                  width: width * 0.7,
+                  height: height * 0.3,
+                  margin: const EdgeInsets.all(20),
+                  decoration:
+                  BoxDecoration(borderRadius: BorderRadius.circular(16.0)),
+                  child: Stack(
+                    children: [
+                      GetBuilder<WalkController>(builder: (_) {
+                        return
+                        latlng.isEmpty
+                        ? Image.asset("assets/logo.png")
+                        : GoogleMap(
+                          gestureRecognizers: Set()
+                            ..add(Factory<PanGestureRecognizer>(
+                                    () => PanGestureRecognizer())),
+                          initialCameraPosition: const CameraPosition(
+                            target: LatLng(37.5012428, 127.039585),
+                            zoom: 15,
+                          ),
+                          onMapCreated: (mapController) {
+                            _controller.complete(mapController);
+                          },
+                          polylines: _polyline,
+                        );
+                      }),
+                    ],
+                  ),
                 ),
               ),
 
               // 산책 정보
               Padding(
                 padding: const EdgeInsets.only(top: 25),
-                child: Column(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    Flexible(
-                      child: CalDetailTextWidget(
-                        title: "산책 장소",
-                        text: widget.placedata,
-                      ),
+
+                    Column(
+                      children: [
+                        Icon(Icons.place , color: violet, size: 50,),
+                        Text(widget.placedata.toString())
+                      ],
                     ),
-                    Flexible(
-                      child: CalDetailTextWidget(
-                          title: "이동 거리",
-                          text: "${widget.distdata.toString()}미터"),
+                    Column(
+                      children: [
+                        Icon(Icons.directions_walk , color: violet2, size: 50,),
+                        Text("${widget.distdata.toString()}미터")
+                      ],
                     ),
-                    Flexible(
-                      child: CalDetailTextWidget(
-                          title: "산책 시간",
-                          text: "${widget.timedata.toString()}분"),
+                    Column(
+                      children: [
+                        Icon(Icons.timelapse , color: violet3, size: 50,),
+                        Text("${widget.timedata.toString()}분")
+                      ],
                     ),
                   ],
                 ),

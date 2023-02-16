@@ -76,6 +76,10 @@ class WalkController extends GetxController {
   RxBool isSelected = false.obs;
   RxString selUrl = "".obs;
 
+  // 영우가 쓰는 변수
+  Timestamp  walkStartTime = Timestamp.now();
+  Timestamp  walkEndTime = Timestamp.now();
+
   void makeFlagList(List temp) {
     flagList.value = temp;
     update();
@@ -188,7 +192,7 @@ class WalkController extends GetxController {
       String isLed = ledSig;
 
       Data data = Data(pn, timer, dist, isLed);
-      sendDataToArduino(data);
+      // sendDataToArduino(data);
     });
   }
 
@@ -357,7 +361,7 @@ class WalkController extends GetxController {
 
     String json = jsonEncode(data);
 
-    sendDataToArduino(json);
+    // sendDataToArduino(json);
   }
 
   Future<void> sendDataToArduino(data) async {

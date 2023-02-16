@@ -88,13 +88,14 @@ class _DatePickerState extends State<DatePicker> {
                                 initialDate: date,
                                 firstDate: DateTime(1900),
                                 lastDate: DateTime(2100),
-                              );
-                              // print(newDate);
+                              ).then((value) {
+                                if (value == null) return;
                               setState(() {
-                                controller.date = newDate!;
+                                print('fjsdklf;ajsdfkl;asdjfkl');
+                                print(value);
+                                controller.date = value;
                               });
-
-                              if (newDate == null) return;
+                              });
                             },
                           ),
                           // 드랍다운 버튼

@@ -34,7 +34,7 @@ class GoalAchievementWidget extends StatelessWidget {
     //디비에서 갖고 오는 데이터
     int data = this_data;
     if(data<99){
-      for (int i = 0; i <= colorList.length; i++) {
+      for (int i = 0; i < colorList.length; i++) {
         if ((data >= (i * 5) && data < (i + 1) * 5)) {
           percent_index = i;
           break;

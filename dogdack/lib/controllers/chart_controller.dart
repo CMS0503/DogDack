@@ -8,6 +8,9 @@ class ChartController extends GetxController {
   // 강아지 이름 key: 이름, values: 아이디
   Map dogNames = {};
 
+  // 강아지 이름 key: 이름, values: 권장 산책 시간
+  Map dogGoal = {};
+
   // key: 강아지 이름, value: 강아지 두달 동안의 데이터
   // value map => key: 시간, 거리 목표, value => double  값 리스트
   Map<String, Map<String, List<double>>> chartData = {};
@@ -17,6 +20,9 @@ class ChartController extends GetxController {
 
   // 선택된 강아지 이름
   RxString chartSelectedName = ''.obs;
+
+  // 선택된 강아지 권장 산책시간
+  int goalTime = 0;
 
   // 두달 날짜 채움
   List<String> dateList = [];
@@ -51,15 +57,14 @@ class ChartController extends GetxController {
       String name = dogDoc.docs[i]['name'].toString();
       if (!dogNames.keys.toList().contains(name)) {
         dogNames[name] = dogDoc.docs[i].id.toString();
+        dogGoal[name] = dogDoc.docs[i]['recommend'].toInt();
       }
-
     }
-
     if (dogNames.keys.length == 1){
       chartSelectedName.value = dogNames.keys.toList().first;
+      // goalTime.value = dogGoal.values.toList().first;
     }
 
-    print(":controller get names");
 
     return dogNames;
   }
@@ -98,8 +103,6 @@ class ChartController extends GetxController {
 
           for (int j = 0; j < dateList.length; j++) {
             if (dogsDate[dogNames.values.toList()[i].toString()]!.length != 0) {
-              // print("여기가 실행되면 안됨1");
-              // print(dogNames.keys);
 
               for (int k = 0;
                   k < dogsDate[dogNames.values.toList()[i].toString()]!.length;

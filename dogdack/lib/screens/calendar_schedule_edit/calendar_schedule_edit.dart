@@ -40,12 +40,13 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
     // 산책했는지 확인하는 변수(분)
     final walkCheck = (int.parse(controller.endTime.seconds.toString()) -
             int.parse(controller.startTime.seconds.toString())) /
-        60;
+        60 + (int.parse(controller.endTime.seconds.toString()) -
+            int.parse(controller.startTime.seconds.toString())) % 60;
+    
+
 
     // walkCheck이 0이면 산책을 안한 것임
-    if (walkCheck == 0) {
-      controller.walkCheck = false;
-    }
+    
 
     // 선택된 강아지 이름으로 해당 강아지 문서 가져오기
     var result =
@@ -56,8 +57,23 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
 
     // 이 if 문은 빼도 되나?
     if (result.docs.isNotEmpty) {
+      
       // 선택한 강아지 문서 id 가져오기
       String dogId = result.docs[0].id;
+      petsRef.doc(dogId).collection('Calendar').doc(DateFormat('yyMMdd')
+      .format(controller.date)
+      .toString())
+      .get().then((value) {
+        if (value['isWalk'] == true || walkCheck > 0 ){
+            controller.walkCheck = true;
+        } else {
+          controller.walkCheck = false;
+        }
+      });
+    
+      print(controller.bath);
+      print(controller.beauty);
+      print(controller.diary);
 
       // Calendar data 입력하기
       petsRef
@@ -80,6 +96,18 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
           .catchError((error) => print("Fail to add doc $error"));
 
       // Walk data 입력하기
+      var calTotal = (int.parse(controller.endTime.seconds.toString()) -
+                          int.parse(controller.startTime.seconds.toString())) /
+                      60 +
+                  (int.parse(controller.endTime.seconds.toString()) -
+                          int.parse(controller.startTime.seconds.toString())) %
+                      60;
+      
+
+
+      
+      print('입력 전 controller.startTime${DateTime.fromMicrosecondsSinceEpoch(controller.startTime.microsecondsSinceEpoch)}');
+      print('입력 전 controller.endTime${DateTime.fromMicrosecondsSinceEpoch(controller.endTime.microsecondsSinceEpoch)}');
       petsRef
           .doc(dogId)
           .collection('Walk')
@@ -179,12 +207,16 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                       CalendarSnackBar().notfoundCalendarData(
                           context, CalendarSnackBarErrorType.TimeError);
                     }
+                    print(controller.date);
 
                     // 문제 없으면 db에 입력하기
                     fbstoreWrite();
-                    controller.imageUrl = [];
-                    controller.bath = true;
-                    controller.beauty = true;
+                    // controller.imageUrl = [];
+                    print('ontroller.imageUrl');
+                    print(controller.imageUrl);
+                    // controller.bath = true;
+                    // controller.beauty = true;
+                    // controller.walkCheck = true;
 
                     // 입력 완료하면 달력화면으로 돌아가기 위해 pop
                     Navigator.pop(context);
