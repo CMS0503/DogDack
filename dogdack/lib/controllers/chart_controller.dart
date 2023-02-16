@@ -81,10 +81,7 @@ class ChartController extends GetxController {
           .doc(dogNames.values.toList()[i].toString())
           .collection('Walk');
 
-      await refCurDogWalk
-          .where('startTime',
-          isGreaterThan: DateTime.now().subtract(Duration(days: 60)))
-          .orderBy('startTime', descending: false)
+      await refCurDogWalk.where('startTime', isGreaterThan: DateTime.now().subtract(Duration(days: 60))).orderBy('startTime', descending: false)
           .get()
           .then((QuerySnapshot snapshot) {
         List<String> tempList = [];
@@ -101,13 +98,10 @@ class ChartController extends GetxController {
           }
 
           for (int j = 0; j < dateList.length; j++) {
-            if (dogsDate[dogNames.values.toList()[i].toString()]!.length != 0) {
+            if (dogsDate[dogNames.values.toList()[i].toString()]!.isNotEmpty) {
               print(dogsDate[dogNames.values.toList()[i].toString()]);
-              for (int k = 0;
-              k < dogsDate[dogNames.values.toList()[i].toString()]!.length;
-              k++) {
-                if (dogsDate[dogNames.values.toList()[i].toString()]![k] ==
-                    (dateList[j])) {
+              for (int k = 0; k < dogsDate[dogNames.values.toList()[i].toString()]!.length; k++) {
+                if (dogsDate[dogNames.values.toList()[i].toString()]![k] == (dateList[j])) {
                   twoMonthHour[j] = snapshot.docs[k]['totalTimeMin'].toDouble();
                   twoMonthDistance[j] = snapshot.docs[k]['distance'].toDouble();
                   twoMonthGoal[j] = snapshot.docs[k]['goal'].toDouble();

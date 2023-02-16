@@ -123,7 +123,7 @@ class _WalkPageState extends State<WalkPage> {
               decoration: const BoxDecoration(
                   color: Colors.grey,
                   borderRadius: BorderRadius.all(Radius.circular(15))),
-              height: size.height * 0.62,
+              height: size.height * 0.67,
               width: size.width,
             ),
           ),
@@ -144,10 +144,9 @@ class _WalkPageState extends State<WalkPage> {
 
                     // 불러온 데이터가 없을 경우 등록 안내
                     if (snapshot.data!.docs.isEmpty) {
-                      return Padding(
-                        padding:
-                            EdgeInsets.fromLTRB(0, size.height * 0.3, 0, 0),
-                        child: const Text('댕댕이를 등록해주세요!'),
+                      return const Align(
+                        alignment: Alignment.center,
+                        child: Text('댕댕이를 등록해주세요!', style: TextStyle(fontSize: 25)),
                       );
                     }
                     return Column(
@@ -155,7 +154,7 @@ class _WalkPageState extends State<WalkPage> {
                         Stack(
                           alignment: Alignment.center,
                           children: <Widget>[
-                            Container(
+                            SizedBox(
                               height: size.height * 0.3,
                               child: CarouselSlider.builder(
                                 options: CarouselOptions(
@@ -180,8 +179,12 @@ class _WalkPageState extends State<WalkPage> {
                                           walkController.setFlagList(itemIndex);
                                           setState(() {});
                                         },
-                                        child: Stack(
+                                        child:  
+                                        Stack(
                                           children: [
+                                            if (snapshot.data!.docs.isEmpty) ...[
+
+                                            ],
                                             Container(
                                               // color: Colors.red,
                                               height: size.height * 0.2,
@@ -206,10 +209,7 @@ class _WalkPageState extends State<WalkPage> {
                                                 ],
                                               )
                                             ),
-                                            if (walkController
-                                                .flagList.isNotEmpty)
-                                              walkController.choiceDog(
-                                                  itemIndex, size),
+                                            if (walkController.flagList.isNotEmpty) walkController.choiceDog(itemIndex, size),
                                           ],
                                         ),
                                       ),
