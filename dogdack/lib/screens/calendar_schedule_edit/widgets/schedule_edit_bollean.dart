@@ -196,9 +196,9 @@ class _BolleanBtnState extends State<BolleanBtn> {
     bool buttonsState = true;
 
     if (widget.name == '목욕') {
-      buttonsState = controller.bath;
+      buttonsState = controller.bath.value;
     } else {
-      buttonsState = controller.beauty;
+      buttonsState = controller.beauty.value;
     }
 
     return Column(
@@ -213,9 +213,9 @@ class _BolleanBtnState extends State<BolleanBtn> {
                   buttonsState = true;
                   setState(() {
                     if (widget.name == '목욕') {
-                      controller.bath = buttonsState;
+                      controller.bath.value = buttonsState;
                     } else {
-                      controller.beauty = buttonsState;
+                      controller.beauty.value = buttonsState;
                     }
                   });
                 },
@@ -248,9 +248,9 @@ class _BolleanBtnState extends State<BolleanBtn> {
                   buttonsState = false;
                   setState(() {
                     if (widget.name == '목욕') {
-                      controller.bath = buttonsState;
+                      controller.bath.value = buttonsState;
                     } else {
-                      controller.beauty = buttonsState;
+                      controller.beauty.value = buttonsState;
                     }
                   });
                 },

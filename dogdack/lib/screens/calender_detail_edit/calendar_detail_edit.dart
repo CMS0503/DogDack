@@ -171,20 +171,33 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
           .doc(dogId)
           .collection('Calendar')
           .doc(DateFormat('yyMMdd').format(controller.date).toString())
-          .withConverter(
+          .get().then((value) {
+        if (value['isWalk'] == true || walkCheck > 0 ){
+            controller.walkCheck = true;
+        } else {
+          controller.walkCheck = false;
+        }
+      }).then((value){
+      petsRef
+          .doc(dogId)
+          .collection('Calendar')
+          .doc(DateFormat('yyMMdd').format(controller.date).toString()).withConverter(
             fromFirestore: (snapshot, options) =>
                 CalenderData.fromJson(snapshot.data()!),
             toFirestore: (value, options) => value.toJson(),
           )
-          .set(CalenderData(
-            diary: controller.diary,
-            bath: controller.bath,
-            beauty: controller.beauty,
-            isWalk: controller.walkCheck,
-            imageUrl: controller.imageUrl,
-          ))
+          .update({
+            'diary': controller.diary.value,
+            'bath': controller.bath.value,
+            'beauty': controller.beauty.value,
+            'isWalk': controller.walkCheck,
+            'imageUrl': controller.imageUrl,
+          }
+          )
           .then((value) => print("document added"))
           .catchError((error) => print("Fail to add doc $error"));
+      });
+          
 
       // Walk data 입력하기
       petsRef
@@ -232,7 +245,7 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
         .toString();
     placeController.text = controller.place;
     distanceController.text = controller.distance;
-    inputController.text = controller.diary;
+    inputController.text = controller.diary.value;
   }
 
   @override
@@ -1014,7 +1027,7 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
                       child: TextField(
                         maxLength: 20,
                         onChanged: (value) {
-                          controller.diary = value;
+                          controller.diary.value = value;
                         },
                         controller: inputController,
                         cursorColor: Colors.grey,

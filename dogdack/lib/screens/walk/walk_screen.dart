@@ -12,6 +12,7 @@ import './widgets/my_map.dart';
 import './widgets/status.dart';
 import '../../commons/logo_widget.dart';
 import '../../controllers/main_controll.dart';
+import '../../controllers/input_controller.dart';
 
 class WalkPage extends StatefulWidget {
   const WalkPage({super.key});
@@ -24,6 +25,7 @@ class _WalkPageState extends State<WalkPage> {
   final walkController = Get.put(WalkController());
   final mainController = Get.put(MainController());
   final userController = Get.put(UserController());
+  final inputController = Get.put(InputController());
 
   // final petController = Get.put(PetController());
 
@@ -109,7 +111,7 @@ class _WalkPageState extends State<WalkPage> {
 
   Widget choiceDogModal(w, h, context) {
     final size = MediaQuery.of(context).size;
-
+    inputController.date = DateTime.now();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 13),
       child: Stack(
