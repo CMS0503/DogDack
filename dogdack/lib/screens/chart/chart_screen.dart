@@ -618,16 +618,17 @@ class _ChartState extends State<Chart> {
                 padding: const EdgeInsets.all(3.0),
                 child: Center(
                     child: DropdownButton(
-                      elevation: 0,
-                      focusColor: const Color.fromARGB(255, 100, 92, 170),
-                      borderRadius: BorderRadius.circular(10),
-                      value: chartController.selectedDateValue.value,
-                      items: _valueList.map((value) {
-                        return DropdownMenuItem(
-                          value: value,
-                          child: Container(
-                            width: width * 0.2,
-                            decoration: BoxDecoration(
+                  underline: const SizedBox.shrink(),
+                  elevation: 0,
+                  focusColor: const Color.fromARGB(255, 100, 92, 170),
+                  borderRadius: BorderRadius.circular(10),
+                  value: chartController.selectedDateValue.value,
+                  items: _valueList.map((value) {
+                    return DropdownMenuItem(
+                      value: value,
+                      child: Container(
+                        width: width * 0.2,
+                        decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
                                   width: 2,
