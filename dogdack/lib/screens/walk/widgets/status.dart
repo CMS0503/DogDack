@@ -65,8 +65,9 @@ class _StatusState extends State<Status> {
                           children: [
                             walkController.selUrl.value.isEmpty
                             ? const CircleAvatar(
-                              backgroundImage: AssetImage('assets/dog.jpg'),
-                            )
+                              backgroundImage:
+                                            AssetImage('assets/logo.jpg'),
+                                      )
                             :CircleAvatar(
                               child: StreamBuilder(
                                 stream: petsRef.snapshots(),
@@ -110,47 +111,57 @@ class _StatusState extends State<Status> {
                 ),
                 const SizedBox(width: 10,),
                 Obx(() => Column(
-                    children: [
-                      walkController.isBleConnect.value == true
-                          ? IconButton(
-                              onPressed: () {Navigator.pushNamed(context, '/Ble');},
-                              icon: const Icon(
-                                Icons.bluetooth_outlined,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            walkController.isBleConnect.value == true
+                                ? IconButton(
+                                    onPressed: () {
+                                      Navigator.pushNamed(context, '/Ble');
+                                    },
+                                    icon: const Icon(
+                                      Icons.bluetooth_outlined,
                                       color: Color.fromARGB(255, 100, 92, 170),
-                                    )
-                          )
-                          : IconButton(
-                              onPressed: () {Navigator.pushNamed(context, '/Ble');},
-                              icon: const Icon(Icons.bluetooth_outlined),
-                            ),
-                      // Text('${walkController.name}'),
-                      if(walkController.isSelected.value) ...[
-                        DropdownButton<String>(
-                          value: walkController.dropdownValue,
-                          elevation: 16,
-                          style: const TextStyle(color: Colors.deepPurple),
-                          // underline: Container(
-                          //   height: 2,
-                          //   color: Colors.deepPurpleAccent,
-                          // ),
-                          onChanged: (String? value) {
-                            petsRef.where('name', isEqualTo: value).get().then((data) {
-                              setState(() {
-                                walkController.dropdownValue = value!;
-                                walkController.selUrl.value = data.docs[0].get('imageUrl');
-                              });
-
-                            });
-                          },
-                          items: walkController.selDogs.map<DropdownMenuItem<String>>((dynamic value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                        ),
-                      ]
-                    ],
+                                    ))
+                                : IconButton(
+                                    onPressed: () {Navigator.pushNamed(context, '/Ble');},
+                      icon: const Icon(Icons.bluetooth_outlined),
+                    ),
+                    // Text('${walkController.name}'),
+                    if(walkController.isSelected.value) ...[
+                      DropdownButton<String>(
+                        underline: const SizedBox.shrink(),
+                                value: walkController.dropdownValue,
+                                elevation: 16,
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                    fontFamily: 'bmjua',
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 16),
+                                // underline: Container(
+                                //   height: 2,
+                                //   color: Colors.deepPurpleAccent,
+                                // ),
+                                onChanged: (String? value) {
+                                  petsRef
+                                      .where('name', isEqualTo: value)
+                                      .get()
+                                      .then((data) {
+                                    setState(() {
+                                      walkController.dropdownValue = value!;
+                                      walkController.selUrl.value =
+                                          data.docs[0].get('imageUrl');
+                                    });
+                                  });
+                        },
+                        items: walkController.selDogs.map<DropdownMenuItem<String>>((dynamic value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ]
+                  ],
                   )
                 ),
               ],
