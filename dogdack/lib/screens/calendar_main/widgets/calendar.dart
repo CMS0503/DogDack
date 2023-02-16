@@ -151,6 +151,7 @@ class _CalendarState extends State<Calendar> {
             child: StreamBuilder(
               stream: userController.userRef.snapshots(),
               builder: (petContext, petSnapshot) {
+
                 // 등록한 강아지가 없으면
                 if (controller.valueList.contains(controller.selectedValue)) {
                 return controller.selectedValue == ''

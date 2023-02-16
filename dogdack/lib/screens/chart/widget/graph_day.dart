@@ -28,7 +28,7 @@ class _DayWidgetState extends State<DayWidget> {
     for(int i=0;i<7;i++){
       days.add(DateFormat.E('ko_KR').format(DateTime.now().subtract(Duration(days: 7-i))));
     }
-    print(days);
+
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     int index = 6;
