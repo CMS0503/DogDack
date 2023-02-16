@@ -218,41 +218,43 @@ class _ChartState extends State<Chart> {
         last_week_goal_points = chartController
             .chartData[chartController.chartSelectedId]!["goal"]!
             .sublist(0, 60 - 30);
-        int day_len = 0;
-        int last_day_len = 0;
-        int week_len = 0;
-        int last_week_len = 0;
 
         for (int i = 0; i < day_hour_points.length; i++) {
-          if (day_hour_points[i] >= 1) {
+          if (day_hour_points[i] > 0.1) {
             day_hour_data += day_hour_points[i];
           } else {
             day_hour_data += 0;
+            day_hour_points[i] = 0.000001;
           }
-          if (last_day_hour_points[i] >= 1) {
+          if (last_day_hour_points[i] > 0.1) {
             last_day_hour_data += last_day_hour_points[i];
           } else {
             last_day_hour_data += 0;
+            last_day_hour_points[i]=0.000001;
           }
-          if (day_distance_points[i] >= 1) {
+          if (day_distance_points[i] > 0.1) {
             day_distance_data += day_distance_points[i];
           } else {
             day_distance_data += 0;
+            day_distance_points[i]=0.000001;
           }
-          if (last_day_distance_points[i].toInt() >= 1) {
+          if (last_day_distance_points[i] > 0.1) {
             last_day_distance_data += last_day_distance_points[i];
           } else {
             last_day_distance_data += 0;
+            last_day_distance_points[i]=0.000001;
           }
-          if (day_goal_points[i] >= 1) {
+          if (day_goal_points[i]> 0.1) {
             day_goal_data += day_goal_points[i];
           } else {
             day_goal_data += chartController.goalTime;
+            day_goal_points[i]=0.000001;
           }
-          if (last_day_goal_points[i] >= 1) {
+          if (last_day_goal_points[i] > 0.1) {
             last_day_goal_data += last_day_goal_points[i];
           } else {
             last_day_goal_data += chartController.goalTime;
+            last_day_goal_points[i]=0.000001;
           }
         }
 
@@ -264,35 +266,41 @@ class _ChartState extends State<Chart> {
         last_day_goal_data /= last_day_goal_points.length;
 
         for (int i = 0; i < week_hour_points.length; i++) {
-          if (week_hour_points[i] >= 1) {
+          if (week_hour_points[i] > 0.1) {
             week_hour_data += week_hour_points[i];
           } else {
             week_hour_data += 0;
+            week_hour_points[i] = 0.000001;
           }
-          if (last_week_hour_points[i] >= 1) {
+          if (last_week_hour_points[i] > 0.1) {
             last_week_hour_data += last_week_hour_points[i];
           } else {
             last_week_hour_data += 0;
+            last_week_hour_points[i]=0.000001;
           }
-          if (week_distance_points[i] >= 1) {
+          if (week_distance_points[i] > 0.1) {
             week_distance_data += week_distance_points[i];
           } else {
             week_distance_data += 0;
+            week_distance_points[i]=0.000001;
           }
-          if (last_week_distance_points[i] >= 1) {
+          if (last_week_distance_points[i] > 0.1) {
             last_week_distance_data += last_week_distance_points[i];
           } else {
             last_week_distance_data += 0;
+            last_week_distance_points[i]=0.000001;
           }
-          if (week_goal_points[i] >= 1) {
+          if (week_goal_points[i] > 0.1) {
             week_goal_data += week_goal_points[i];
           } else {
             week_goal_data += chartController.goalTime;
+            week_goal_points[i]=0.000001;
           }
-          if (last_week_goal_points[i] >= 1) {
+          if (last_week_goal_points[i] > 0.1) {
             last_week_goal_data += last_week_goal_points[i];
           } else {
             last_week_goal_data += chartController.goalTime;
+            last_week_goal_points[i]=0.000001;
           }
         }
         week_hour_data /= week_hour_points.length;
@@ -303,23 +311,23 @@ class _ChartState extends State<Chart> {
         last_week_goal_data /= last_week_goal_points.length;
 
 
-        if (day_goal_data >= 1) {
+        if (day_goal_data > 0.1) {
           day_achievement_rate = (day_hour_data / day_goal_data) * 100;
         } else {
           day_achievement_rate = 0;
         }
-        if (last_day_goal_data >= 1) {
+        if (last_day_goal_data >0.1) {
           last_day_achievement_rate =
               (last_day_hour_data / last_day_goal_data) * 100;
         } else {
           last_day_goal_data = 0;
         }
-        if (week_goal_data >= 1) {
+        if (week_goal_data>0.1) {
           week_achievement_rate = (week_hour_data / week_goal_data) * 100;
         } else {
           week_achievement_rate = 0;
         }
-        if (last_week_goal_data >= 1) {
+        if (last_week_goal_data >0.1) {
           last_week_achievement_rate =
               (last_week_hour_data / last_week_goal_data) * 100;
         } else {
@@ -393,8 +401,8 @@ class _ChartState extends State<Chart> {
       message: day_hour_increment_text,
       title: "평균 산책시간",
       points: day_hour_points,
-      this_data: day_hour_data.floorToDouble(),
-      last_data: day_hour_increment.floorToDouble(),
+      this_data: double.parse(day_hour_data.floorToDouble().toStringAsFixed(2)),
+      last_data: double.parse(day_hour_increment.toStringAsFixed(2)).abs(),
       date_text: date_text,
       unit: "분",
       x_value: x_value,
@@ -405,8 +413,8 @@ class _ChartState extends State<Chart> {
       message: day_distance_increment_text,
       title: "평균 산책거리",
       points: day_distance_points,
-      last_data: day_distance_increment.floorToDouble(),
-      this_data: day_distance_data.floorToDouble(),
+      last_data: double.parse(day_distance_increment.toStringAsFixed(2)),
+      this_data: double.parse(day_distance_data.toStringAsFixed(2)).abs(),
       date_text: date_text,
       unit: "미터",
       x_value: x_value,
@@ -421,8 +429,8 @@ class _ChartState extends State<Chart> {
           message: day_distance_increment_text,
           title: "평균 산책거리",
           points: day_distance_points,
-          last_data: day_distance_increment.floorToDouble().abs(),
-          this_data: day_distance_data.floorToDouble(),
+          last_data: double.parse(day_distance_increment.toStringAsFixed(2)).abs(),
+          this_data: double.parse(day_distance_data.toStringAsFixed(2)),
           date_text: date_text,
           unit: "미터",
           x_value: x_value,
@@ -432,8 +440,8 @@ class _ChartState extends State<Chart> {
           message: day_hour_increment_text,
           title: "평균 산책시간",
           points: day_hour_points,
-          this_data: day_hour_data.floorToDouble().abs(),
-          last_data: day_hour_increment.floorToDouble(),
+          this_data: double.parse(day_hour_data.toStringAsFixed(2)),
+          last_data: double.parse(day_hour_increment.toStringAsFixed(2)).abs(),
           date_text: date_text,
           unit: "분",
           x_value: x_value,
