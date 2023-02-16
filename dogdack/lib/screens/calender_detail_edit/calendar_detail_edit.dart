@@ -187,9 +187,9 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
             toFirestore: (value, options) => value.toJson(),
           )
           .update({
-            'diary': controller.diary,
-            'bath': controller.bath,
-            'beauty': controller.beauty,
+            'diary': controller.diary.value,
+            'bath': controller.bath.value,
+            'beauty': controller.beauty.value,
             'isWalk': controller.walkCheck,
             'imageUrl': controller.imageUrl,
           }
@@ -245,7 +245,7 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
         .toString();
     placeController.text = controller.place;
     distanceController.text = controller.distance;
-    inputController.text = controller.diary;
+    inputController.text = controller.diary.value;
   }
 
   @override
@@ -1027,7 +1027,7 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
                       child: TextField(
                         maxLength: 20,
                         onChanged: (value) {
-                          controller.diary = value;
+                          controller.diary.value = value;
                         },
                         controller: inputController,
                         cursorColor: Colors.grey,

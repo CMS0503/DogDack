@@ -32,7 +32,7 @@ class _BeautyWidgetState extends State<BeautyWidget> {
                 border: Border.all(color: widget.bath_color, width: 3)),
             child: Icon(
               Icons.bathtub_outlined,
-              color: controller.bath
+              color: controller.bath.value
                   ? const Color.fromARGB(255, 100, 92, 170)
                   : const Color.fromARGB(255, 80, 78, 91),
             ),
@@ -47,7 +47,7 @@ class _BeautyWidgetState extends State<BeautyWidget> {
               border: Border.all(color: widget.hair_color, width: 3)),
           child: Icon(
             Icons.cut_outlined,
-            color: controller.beauty
+            color: controller.beauty.value
                 ? const Color.fromARGB(255, 100, 92, 170)
                 : const Color.fromARGB(255, 80, 78, 91),
           ),

@@ -31,7 +31,7 @@ class ScheduleDiaryText extends StatelessWidget {
             child: TextField(
               maxLength: 20,
               onChanged: (value) {
-                controller.diary = value;
+                controller.diary.value = value;
               },
               // controller: inputController,
               controller: TextEditingController(),

@@ -31,7 +31,8 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
   final userController = Get.put(UserController());
 
   // 완료 버튼 클릭 시 데이터 저장
-  void fbstoreWrite() async {
+
+  Future<void> fbstoreWrite() async {
     // 현재 선택한 강아지 이름으로 강아지 저장
     controller.saveName = controller.selectedValue;
     // Pet Collection 접근
@@ -82,9 +83,9 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
             toFirestore: (value, options) => value.toJson(),
           )
           .set(CalenderData(
-            diary: controller.diary,
-            bath: controller.bath,
-            beauty: controller.beauty,
+            diary: controller.diary.value,
+            bath: controller.bath.value,
+            beauty: controller.beauty.value,
             isWalk: controller.walkCheck,
             imageUrl: controller.imageUrl,
           ))
@@ -167,7 +168,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
               SizedBox(
                 width: width * 0.8,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     // setState(() {});
                     FocusManager.instance.primaryFocus?.unfocus();
 
@@ -200,6 +201,8 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
 
                     // 문제 없으면 db에 입력하기
                     fbstoreWrite();
+
+
                     controller.startTime = Timestamp(0, 0);
                     controller.endTime = Timestamp(0, 0);
                     controller.walkCheck = false;

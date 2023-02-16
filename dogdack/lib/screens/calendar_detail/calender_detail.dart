@@ -272,21 +272,21 @@ class _CalenderDetailState extends State<CalenderDetail> {
     late Color hairColor = grey;
     late Color bathColor = grey;
 
-    if (controller.beauty == true) {
+    if (controller.beauty.value == true) {
       hairColor = violet;
     } else {
       hairColor = grey;
     }
-    if (controller.bath == true) {
+    if (controller.bath.value == true) {
       bathColor = violet;
     } else {
       bathColor = grey;
     }
 
-    Widget imageWidge =  DiaryWidget(diaryImage: imageUrl, diaryText: controller.diary);
+    Widget imageWidge =  DiaryWidget(diaryImage: imageUrl, diaryText: controller.diary.value);
 
     if(imageUrl.length!=0){
-      imageWidge = DiaryNetWidget(diaryImage: imageUrl, diaryText: controller.diary);
+      imageWidge = DiaryNetWidget(diaryImage: imageUrl, diaryText: controller.diary.value);
     }
 
     return Scaffold(

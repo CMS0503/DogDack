@@ -7,10 +7,10 @@ class InputController extends GetxController {
   Timestamp startTime = Timestamp(0, 0);
   Timestamp endTime = Timestamp(0, 0);
   String distance = '0';
-  String diary = '';
+  RxString diary = ''.obs;
   bool walkCheck = false;
-  bool bath = false;
-  bool beauty = false;
+  RxBool bath = false.obs;
+  RxBool beauty = false.obs;
   List<String> imageUrl = [];
   String name = '';
   Map<String, dynamic> dognames = {};
@@ -19,6 +19,8 @@ class InputController extends GetxController {
   String saveName = '';
   String time = '';
   DateTime today = DateTime.now();
+
+  RxMap<String, List> events = <String, List>{}.obs;
 
   /////////////////////////여기 한줄 영우 추가/////////////////////
   // Map dog_names = {};
