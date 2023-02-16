@@ -123,7 +123,7 @@ class _HomePageState extends State<HomePage> {
                           }
 
                           if (totalGoalTime == 0) {
-                            homePageWalkCalculatorController.compPercent = 100;
+                            homePageWalkCalculatorController.compPercent = 0;
                           } else {
                             homePageWalkCalculatorController.compPercent = ((totalTimeMinute / totalGoalTime) * 100).toInt();
                           }
@@ -139,6 +139,7 @@ class _HomePageState extends State<HomePage> {
 
                     return Column(
                       children: [
+                        //오늘 산책 달성량
                         GetBuilder<HomePageWalkCalculatorController>(builder: (_) {
                           return Column(
                             children: [
@@ -159,8 +160,7 @@ class _HomePageState extends State<HomePage> {
                             ],
                           );
                         }),
-
-                        // 좌우 스크롤 슬라이더
+                        //사진 슬라이더
                         GetBuilder<HomePageCalendarController>(builder: (_) {
                           return CarouselSlider.builder(
                             options: CarouselOptions(
@@ -195,39 +195,23 @@ class _HomePageState extends State<HomePage> {
                             },
                           );
                         }),
-                        // 함께한지 00일
+                        //함께한지...
                         Center(
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text(
-                                  "함께한지  ",
-                                  style: TextStyle(
-                                      color: Color(0xff504E5B), fontSize: 18),
-                                ),
-                                Text(
-                                  "${displayBirth}일",
-                                  style: TextStyle(
-                                      color: Color.fromARGB(255, 221, 137, 189),
-                                      fontSize: 18),
-                                ),
-                                Icon(
-                                  Icons.favorite_border,
-                                  color: Color.fromARGB(255, 221, 137, 189),
-                                  size: 18,
-                                )
+                                Text("함께한지  ", style: TextStyle(color: Color(0xff504E5B), fontSize: 18)),
+                                Text("${displayBirth}일", style: TextStyle(color: Color.fromARGB(255, 221, 137, 189), fontSize: 18)),
+                                Icon(Icons.favorite_border, color: Color.fromARGB(255, 221, 137, 189), size: 18)
                               ]
                           ),
                         ),
-                        SizedBox(height: 30),
-                        // 일주일 달력
-                        CalenderListView(),
-                        SizedBox(height: 50),
-                        Text(
-                          '${petSnapshot.data!.docs[sliderController.sliderIdx]['name']}의 최애 산책 시간',
-                          style: TextStyle(color: Color(0xff504E5B), fontSize: 18),
-                        ),
-                        HomePageBarChart(),
+                        SizedBox(height: height * 0.05),
+                        CalenderListView(), //일주일 달력
+                        SizedBox(height: height * 0.05),
+                        Text('최애 산책 시간', style: TextStyle(color: Color(0xff504E5B), fontSize: width * 0.05)),
+                        SizedBox(height: height * 0.01),
+                        HomePageBarChart(), //최애 산책 시간
                       ],
                     );
                   },
