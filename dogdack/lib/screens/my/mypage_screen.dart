@@ -562,7 +562,7 @@ class _MyPageState extends State<MyPage> {
                               },
                             ),
                             SizedBox(height: deviceSize.height * 0.02),
-""                            Text('산책 수'),
+                            Text('산책 수'),
                           ],
                         ),
                         // 산책 시간
