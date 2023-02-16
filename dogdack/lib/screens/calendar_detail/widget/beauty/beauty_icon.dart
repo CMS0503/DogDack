@@ -29,12 +29,14 @@ class _BeautyWidgetState extends State<BeautyWidget> {
             height: 60,
             decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: widget.bath_color, width: 3)),
+                border: controller.bath.value
+                    ? Border.all(color: widget.bath_color, width: 5)
+                    : Border.all(color: widget.bath_color, width: 1)),
             child: Icon(
               Icons.bathtub_outlined,
               color: controller.bath.value
                   ? const Color.fromARGB(255, 100, 92, 170)
-                  : const Color.fromARGB(255, 80, 78, 91),
+                  : Colors.grey,
             ),
           ),
         ),
@@ -44,12 +46,14 @@ class _BeautyWidgetState extends State<BeautyWidget> {
           height: 60,
           decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: widget.hair_color, width: 3)),
+              border: controller.beauty.value
+                  ? Border.all(color: widget.hair_color, width: 5)
+                  : Border.all(color: widget.bath_color, width: 1)),
           child: Icon(
             Icons.cut_outlined,
             color: controller.beauty.value
                 ? const Color.fromARGB(255, 100, 92, 170)
-                : const Color.fromARGB(255, 80, 78, 91),
+                : Colors.grey,
           ),
         ),
       ],
