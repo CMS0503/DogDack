@@ -346,7 +346,7 @@ class _CalendarState extends State<Calendar> {
                         child: ListView(
                           children: <Widget>[
                             SizedBox(
-                              height: 20,
+                              height: 17,
                               child: Container(
                                 child: Card(
                                   margin: const EdgeInsets.symmetric(
@@ -370,7 +370,7 @@ class _CalendarState extends State<Calendar> {
                               ),
                             ),
                             SizedBox(
-                              height: 20,
+                              height: 17,
                               child: Card(
                                 margin: const EdgeInsets.symmetric(
                                     vertical: 2, horizontal: 3),
@@ -389,7 +389,7 @@ class _CalendarState extends State<Calendar> {
                               ),
                             ),
                             SizedBox(
-                              height: 20,
+                              height: 17,
                               child: Card(
                                 margin: const EdgeInsets.symmetric(
                                     vertical: 2, horizontal: 3),
