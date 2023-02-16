@@ -22,9 +22,10 @@ class CalWalkCardWidget extends StatefulWidget {
   String imageUrl;
 
   var geodata;
-  num distdata = 0;
+  // num distdata = 0;
   var placedata;
-  num timedata = 0;
+
+  // num timedata = 0;
 
   CalWalkCardWidget(
       {super.key,
@@ -105,8 +106,8 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
             widget.placedata = snapshot.docs[0]['place'];
 
             for (var i = 0; i < snapshot.docs.length; i++) {
-              widget.timedata += snapshot.docs[i]['totalTimeMin'];
-              widget.distdata += snapshot.docs[i]['distance'];
+              calController.timeData += snapshot.docs[i]['totalTimeMin'];
+              calController.distData += snapshot.docs[i]['distance'];
             }
 
             await addPloy(widget.geodata).then((value) {
@@ -207,7 +208,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
                           color: violet2,
                           size: 50,
                         ),
-                        Text("${widget.distdata.toString()}미터")
+                        Text("${calController.distData.toString()}미터")
                       ],
                     ),
                     Column(
@@ -217,7 +218,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
                           color: violet3,
                           size: 50,
                         ),
-                        Text("${widget.timedata.toString()}분")
+                        Text("${calController.timeData.toString()}분")
                       ],
                     ),
                   ],
