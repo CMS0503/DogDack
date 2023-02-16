@@ -88,6 +88,7 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
       await walkRef.where("startTime", isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday).orderBy("startTime", descending: true)
           .get()
           .then((QuerySnapshot snapshot) async {
+
             walkController.walkStartTime = snapshot.docs[0]['startTime'];
             walkController.walkEndTime = snapshot.docs[0]['endTime'];
 
