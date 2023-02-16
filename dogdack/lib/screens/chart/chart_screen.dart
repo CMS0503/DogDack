@@ -23,26 +23,29 @@ class _ChartState extends State<Chart> {
   final chartController = Get.put(ChartController());
   final userController = Get.put(UserController());
 
-  getName() async {
-    Map dogNames = {};
-
-    var dogDoc = await FirebaseFirestore.instance
-        .collection('Users/${userController.loginEmail}/Pets')
-        .orderBy('name')
-        .get();
-    for (int i = 0; i < dogDoc.docs.length; i++) {
-      String name = dogDoc.docs[i]['name'].toString();
-      if (!dogNames.keys.toList().contains(name)) {
-        dogNames[name] = dogDoc.docs[i].id.toString();
-      }
-    }
-    chartController.dogNames = dogNames;
-    setState(() {});
-  }
+  // getName() async {
+  //   Map dogNames = {};
+  //
+  //   var dogDoc = await FirebaseFirestore.instance
+  //       .collection('Users/${userController.loginEmail}/Pets')
+  //       .orderBy('name')
+  //       .get();
+  //   for (int i = 0; i < dogDoc.docs.length; i++) {
+  //     String name = dogDoc.docs[i]['name'].toString();
+  //     if (!dogNames.keys.toList().contains(name)) {
+  //       dogNames[name] = dogDoc.docs[i].id.toString();
+  //     }
+  //   }
+  //   chartController.dogNames = dogNames;
+  //   setState(() {});
+  // }
 
   @override
   void initState() {
     chartController.selectedDateValue.value = "일주일";
+    setState(() {
+
+    });
     chartController.getNames().then((value) {
       if (chartController.dogNames.keys.toList().length != 0) {
         chartController.chartSelectedId.value =
@@ -390,13 +393,18 @@ class _ChartState extends State<Chart> {
     Color violet = const Color.fromARGB(255, 100, 92, 170);
     Color violet2 = const Color.fromARGB(255, 160, 132, 202);
 
-    Widget achiveWidget = CalHealthProgressCardWidget(
+
+    Widget achiveWidget =
+    // Container();
+    CalHealthProgressCardWidget(
         last_data: day_achievement_rate_increment.toInt(),
         this_data: day_achievement_rate.toInt(),
         message: day_achievement_increment_text,
         date_text: date_text);
 
-    Widget hourWidget = CalHealthCardWidget(
+    Widget hourWidget =
+    // Container();
+    CalHealthCardWidget(
       color: violet2,
       message: day_hour_increment_text,
       title: "평균 산책시간",
@@ -408,7 +416,9 @@ class _ChartState extends State<Chart> {
       x_value: x_value,
     );
 
-    Widget distanceWidget = CalHealthCardWidget(
+    Widget distanceWidget =
+    // Container();
+    CalHealthCardWidget(
       color: violet,
       message: day_distance_increment_text,
       title: "평균 산책거리",
@@ -485,17 +495,17 @@ class _ChartState extends State<Chart> {
     }
 
     // 함수 실행 순서 바뀌면 안됨.
-
-    chartController.getNames().then((value) {
-      chartController.getData().then((value) {});
-    });
+    chartController.getData().then((value) {});
+    // chartController.getNames().then((value) {
+    //
+    // });
     setChartData();
     change();
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     double height = screenSize.height;
 
-    chartController.getNames();
+    // chartController.getNames();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -513,8 +523,29 @@ class _ChartState extends State<Chart> {
                 child: StreamBuilder(
                   stream: petRef.snapshots(),
                   builder: (petContext, petSnapshot) {
+                    if (!petSnapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+
+                    chartController.dogNames={};
+
+                    for(int i=0; i<petSnapshot.data!.docs.length;i++){
+                      chartController.dogNames[petSnapshot.data!.docs[i].get('name').toString()] = petSnapshot.data!.docs[i].id.toString();
+                      petSnapshot.data!.docs[i].get('name').toString();
+                    }
+
+                    if (chartController.dogNames.keys.toList().length != 0) {
+                      chartController.chartSelectedId.value =
+                      chartController.dogNames.values.toList()[0];
+                      chartController.chartSelectedName.value =
+                      chartController.dogNames.keys.toList()[0];
+                      chartController.goalTime = chartController.dogGoal.values.toList()[0];
+                    };
+                      chartController.setData();
+
+
                     // 등록한 강아지가 없으면
-                    chartController.getNames();
+                    // chartController.getNames();
                     return (chartController.dogNames.keys.toList().isEmpty)
                     // 강아지를 등록해달라는 dropbar
                         ? DropdownButton(
@@ -531,13 +562,13 @@ class _ChartState extends State<Chart> {
                       ).toList(),
                       onChanged: (value) {
                         setState(() {
-                          getName();
+                          // getName();
                         });
                       },
                     )
                     // 등록된 강아지가 있으면 강아지 목록으로 dropdown
                         : GetBuilder<UserController>(builder: (_) {
-                      chartController.getNames();
+                      // chartController.getNames();
                       return GetBuilder<ChartController>(builder: (_) {
                         return DropdownButton(
                           icon: const Icon(
@@ -573,7 +604,7 @@ class _ChartState extends State<Chart> {
                             chartController.goalTime = chartController.dogGoal[value.toString()];
                             setChartData();
                             setState(() {
-                              getName();
+                              // getName();
                             });
                           },
                         );
