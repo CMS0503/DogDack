@@ -8,14 +8,21 @@ class ChartController extends GetxController {
   // 강아지 이름 key: 이름, values: 아이디
   Map dogNames = {};
 
+  // 강아지 이름 key: 이름, values: 권장 산책 시간
+  Map dogGoal = {};
+
   // key: 강아지 이름, value: 강아지 두달 동안의 데이터
   // value map => key: 시간, 거리 목표, value => double  값 리스트
   Map<String, Map<String, List<double>>> chartData = {};
 
   // 선택된 강아지 id
   RxString chartSelectedId = ''.obs;
+
   // 선택된 강아지 이름
   RxString chartSelectedName = ''.obs;
+
+  // 선택된 강아지 권장 산책시간
+  int goalTime = 0;
 
   // 두달 날짜 채움
   List<String> dateList = [];
@@ -24,10 +31,9 @@ class ChartController extends GetxController {
   Map<String, List> dogsDate = {};
 
   RxString selectedDateValue = ''.obs;
+//강아지 이름
+  String name = '';
 
-
-
-  List<double> hour_points = [];
 
   Future<void> setData() async {
     fillDate();
@@ -42,27 +48,33 @@ class ChartController extends GetxController {
   }
 
 // 데리고 있는 강아지 리스트를 불러온다.
-  Future<void> getNames() async {
+  Future<Map> getNames() async {
     var dogDoc = await FirebaseFirestore.instance
-        .collection('Users/${userController.loginEmail}/Pets').orderBy('name').get();
+        .collection('Users/${userController.loginEmail}/Pets')
+        .orderBy('name')
+        .get();
     for (int i = 0; i < dogDoc.docs.length; i++) {
       String name = dogDoc.docs[i]['name'].toString();
       if (!dogNames.keys.toList().contains(name)) {
         dogNames[name] = dogDoc.docs[i].id.toString();
+        dogGoal[name] = dogDoc.docs[i]['recommend'].toInt();
       }
     }
-    if (dogNames.values.toList().length != 0) {
-      chartSelectedId.value = dogNames.values.toList()[0];
-      chartSelectedName.value= dogNames.keys.toList()[0];
+    if (dogNames.keys.length == 1){
+      chartSelectedName.value = dogNames.keys.toList().first;
+      // goalTime.value = dogGoal.values.toList().first;
     }
+
+    update();
+    return dogNames;
   }
 
 // 두달동안의 데이터를 불러온다.
   Future<void> getData() async {
     for (int i = 0; i < dogNames.values.toList().length; i++) {
-      List<double> twoMonthHour = List<double>.filled(60, 1);
-      List<double> twoMonthDistance = List<double>.filled(60, 1);
-      List<double> twoMonthGoal = List<double>.filled(60, 1);
+      List<double> twoMonthHour = List<double>.filled(60, 0.000001);
+      List<double> twoMonthDistance = List<double>.filled(60, 0.000001);
+      List<double> twoMonthGoal = List<double>.filled(60, 0.000001);
       Map<String, List<double>> temp = {};
       CollectionReference refCurDogWalk = FirebaseFirestore.instance
           .collection('Users/${userController.loginEmail}/Pets/')
@@ -77,41 +89,39 @@ class ChartController extends GetxController {
           .then((QuerySnapshot snapshot) {
         List<String> tempList = [];
         //(강아지 : [가지고 있는 데이트 리스트])
-        dogsDate[dogNames.values.toList()[i].toString()] = tempList;
-        for (int j = 0; j < snapshot.docs.length; j++) {
-          tempList.add((snapshot.docs[j]['startTime'])
-              .toDate()
-              .toString()
-              .substring(0, 10));
-        }
-        for (int j = 0; j < dateList.length; j++) {
-          if (dogsDate[dogNames.values.toList()[i].toString()]!.isNotEmpty) {
+        if (!dogNames.values.isNull) {
 
-            for (int k = 0;
-            k < dogsDate[dogNames.values.toList()[i].toString()]!.length;
-            k++) {
-              if (dogsDate[dogNames.values.toList()[i].toString()]![k] ==
-                  (dateList[j])) {
-                twoMonthHour[j] = snapshot.docs[k]['totalTimeMin'].toDouble();
-                twoMonthDistance[j] = snapshot.docs[k]['distance'].toDouble();
-                twoMonthGoal[j] = snapshot.docs[k]['goal'].toDouble();
+          dogsDate[dogNames.values.toList()[i].toString()] = tempList;
+
+          for (int j = 0; j < snapshot.docs.length; j++) {
+            tempList.add((snapshot.docs[j]['startTime'])
+                .toDate()
+                .toString()
+                .substring(0, 10));
+          }
+
+          for (int j = 0; j < dateList.length; j++) {
+            if (dogsDate[dogNames.values.toList()[i].toString()]!.length != 0) {
+
+              for (int k = 0;
+              k < dogsDate[dogNames.values.toList()[i].toString()]!.length;
+              k++) {
+                if (dogsDate[dogNames.values.toList()[i].toString()]![k] ==
+                    (dateList[j])) {
+                  twoMonthHour[j] = snapshot.docs[k]['totalTimeMin'].toDouble();
+                  twoMonthDistance[j] = snapshot.docs[k]['distance'].toDouble();
+                  twoMonthGoal[j] = snapshot.docs[k]['goal'].toDouble();
+                }
               }
             }
           }
         }
-
-      });
-
+      }
+      );
       temp['hour'] = twoMonthHour;
       temp['distance'] = twoMonthDistance;
       temp['goal'] = twoMonthGoal;
       chartData[dogNames.values.toList()[i].toString()] = temp;
-
-
     } // 강아지 별 for문
   }
-
-
-
-
 }

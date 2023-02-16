@@ -3,6 +3,7 @@ import 'package:dogdack/screens/chart/chart_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../screens/calendar_detail/calender_detail.dart';
+import '../screens/chart/widget/dounut_chart.dart';
 
 //screen
 
@@ -11,7 +12,7 @@ class ChartNavigator extends StatelessWidget {
 
   Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
     return {
-      "/": (context) => Chart(),
+      "/": (context) => Chart()
     };
   }
 

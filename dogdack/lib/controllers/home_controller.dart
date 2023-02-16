@@ -55,9 +55,23 @@ class HomePageCalendarController extends GetxController {
   DateTime friday = DateTime(0);
   DateTime saturday = DateTime(0);
 
+  String strWeekDocID_sun = '';
+  String strWeekDocID_mon = '';
+  String strWeekDocID_tue = '';
+  String strWeekDocID_wed = '';
+  String strWeekDocID_thu = '';
+  String strWeekDocID_fri = '';
+  String strWeekDocID_sat = '';
+
   bool isAutoFlag = true;
 
+  //사진 자동 이동 실행 플래그?
   void autoFlagUpdate() {
+    update();
+  }
+
+  //각 요일의 산책 여부 계산 완료
+  void compSearchWalkExist() {
     update();
   }
 }

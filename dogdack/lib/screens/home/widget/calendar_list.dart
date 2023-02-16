@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/home_controller.dart';
 import 'package:dogdack/screens/home/widget/calculator_week.dart';
 import 'package:dogdack/screens/home/widget/calendar_list_detail.dart';
+import 'package:dogdack/screens/home/widget/week_cal_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -88,6 +89,7 @@ class _CalenderListViewState extends State<CalenderListView> {
             padding: EdgeInsets.fromLTRB(size.width * 0.1, 0, size.width * 0.1, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
               children: [
                 InkWell(
                   child: Icon(Icons.arrow_circle_left_outlined, size: size.width * 0.1, color: Color(0xff644CAA),),
@@ -100,7 +102,10 @@ class _CalenderListViewState extends State<CalenderListView> {
                     delayState();
                   },
                 ),
-                Text('${satYear}년 ${satMonth}월 ${satWeek}주차 ${homeCalendarController.queryDocumentSnapshotDog['name']}의 일기'),
+                Text('${satYear}년 ${satMonth}월 ${satWeek}주차 발자취',
+                style: TextStyle(
+                  fontSize: 18
+                ),),
                 !endOfWeek
                   ? InkWell(
                       child: Icon(Icons.arrow_circle_right_outlined, size: size.width * 0.1, color: Color(0xff644CAA),),
@@ -113,15 +118,23 @@ class _CalenderListViewState extends State<CalenderListView> {
                           btnManagerIdx = 0;
                         }
                         setState(() {
-                          updateHomeCalendarVar(btnManagerIdx);
-                        });
-                        delayState();
-                      },
-                ) : Icon(Icons.arrow_circle_right_outlined, size: size.width * 0.1, color: Colors.grey,),
+                            updateHomeCalendarVar(btnManagerIdx);
+                          });
+                          delayState();
+                        },
+                      )
+                    : Icon(
+                        Icons.arrow_circle_right_outlined,
+                        size: size.width * 0.1,
+                        color: Colors.grey,
+                      ),
               ],
             ),
           ),
+          SizedBox(height: 10),
           CalendarListDetail(),
+
+          // CalIconWidget()
         ],
       ),
     );

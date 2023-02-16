@@ -6,27 +6,51 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-class DiaryWidget extends StatefulWidget {
+class DiaryNetWidget extends StatefulWidget {
   String diaryImage = '';
   String? diaryText;
-  DiaryWidget({super.key, required this.diaryImage, required this.diaryText});
+  DiaryNetWidget({super.key, required this.diaryImage, required this.diaryText});
 
   @override
-  State<DiaryWidget> createState() => _DiaryWidget();
+  State<DiaryNetWidget> createState() => _DiaryNetWidget();
 }
 
-class _DiaryWidget extends State<DiaryWidget> {
+class _DiaryNetWidget extends State<DiaryNetWidget> {
   FirebaseStorage storage = FirebaseStorage.instance;
   final userController = Get.put(UserController());
   final inputController = Get.put(InputController());
 
+  Future<void> getDiary() async {
+    String docId =
+    inputController.dognames[inputController.selectedValue.toString()];
+    CollectionReference calRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets/$docId/Calendar');
 
+    var diaryDoc = await calRef
+        .doc(DateFormat('yyMMdd').format(inputController.date))
+        .get();
+    widget.diaryText = diaryDoc['diary'];
+    print('그렇다면 여기는?');
+    print(inputController.date);
+    if (diaryDoc['imageUrl'].length != 0) {
+      print('여기는 지나가나?');
+      widget.diaryImage = diaryDoc['imageUrl'][0];
+    }
+  }
 
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getDiary().then((value) {
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-
+    // getImages();
+    // test();
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     double height = screenSize.height;
@@ -52,10 +76,17 @@ class _DiaryWidget extends State<DiaryWidget> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                   ),
-                  child:  Image.asset('images/login/login_image.png')
+                  child: Image.network(widget.diaryImage, loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress){
+                    if(loadingProgress == null){
+                      return child;
+                    }
+                    return Center(
+                        child: Image.asset('images/login/login_image.png')
+                    );
+                  },
                   ),),
 
-
+              ),
               Text("${widget.diaryText}", style: TextStyle(
                   fontFamily: 'bmjua',
                   color: grey,

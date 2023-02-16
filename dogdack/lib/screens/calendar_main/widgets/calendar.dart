@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/button_controller.dart';
 import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/controllers/walk_controller.dart';
-import 'package:dogdack/models/dog_data.dart';
 import 'package:dogdack/screens/calendar_detail/calender_detail.dart';
 
 import 'package:flutter/material.dart';
@@ -34,7 +33,7 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  late CollectionReference<DogData> userRef;
+  // late CollectionReference<DogData> userRef;
 
   // input과 walk controller 불러오기
   final controller = Get.put(InputController());
@@ -74,7 +73,6 @@ class _CalendarState extends State<Calendar> {
           final calRef = petsRef.doc(dogId).collection('Calendar');
           var data = await calRef.get();
           for (int i = 0; i < data.docs.length; i++) {
-            print('여기서 날짜가 나와야됨');
 
             Calendar.events[
                 '${data.docs[i].reference.id}/${controller.selectedValue}'] = [
@@ -125,12 +123,6 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
-    userRef = FirebaseFirestore.instance
-        .collection('Users/${userController.loginEmail}/Pets')
-        .withConverter(
-            fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
-            toFirestore: (dogData, _) => dogData.toJson());
-
     // getName();
     ButtonController().getName();
     Size screenSize = MediaQuery.of(context).size;
@@ -157,10 +149,13 @@ class _CalendarState extends State<Calendar> {
           child: Padding(
             padding: const EdgeInsets.only(left: 20),
             child: StreamBuilder(
-              stream: userRef.snapshots(),
+              stream: userController.userRef.snapshots(),
               builder: (petContext, petSnapshot) {
+
                 // 등록한 강아지가 없으면
-                return controller.valueList.isEmpty
+                if (controller.valueList.contains(controller.selectedValue)) {
+                return controller.selectedValue == ''
+                // (controller.selectedValue == '' || !controller.valueList.contains(controller.selectedValue))
                     // 강아지를 등록해달라는 dropbar
                     ? DropdownButton(
                         underline: Container(),
@@ -213,11 +208,12 @@ class _CalendarState extends State<Calendar> {
                         onChanged: (value) {
                           controller.selectedValue = value.toString();
                           setState(() {
-                            print('안녕하신가');
                             getName();
                           });
                         },
-                      );
+                      );} else {
+                        return const SizedBox();
+                      }
               },
             ),
           ),
@@ -349,7 +345,7 @@ class _CalendarState extends State<Calendar> {
                         height: 20,
                         child: Container(
                           child: Card(
-                            margin: EdgeInsets.symmetric(vertical: 2, horizontal: 3),
+                            margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 3),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15.0),
                             ),
@@ -370,7 +366,7 @@ class _CalendarState extends State<Calendar> {
                       SizedBox(
                         height: 20,
                         child: Card(
-                          margin: EdgeInsets.symmetric(vertical: 2, horizontal: 3),
+                          margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 3),
                           elevation: 0,
                           child: ListTile(
                             shape: const RoundedRectangleBorder(
@@ -387,7 +383,7 @@ class _CalendarState extends State<Calendar> {
                       SizedBox(
                         height: 20,
                         child: Card(
-                          margin: EdgeInsets.symmetric(vertical: 2, horizontal: 3),
+                          margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 3),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15.0),
                           ),

@@ -23,7 +23,7 @@ class WalkController extends GetxController {
 
   final userController = Get.put(UserController());
 
-  RxBool isBleConnect = false.obs;
+  RxBool isBleConnect = true.obs;
 
   // 위도, 경도
   RxDouble latitude = 37.500735.obs;
@@ -76,6 +76,10 @@ class WalkController extends GetxController {
   RxBool isSelected = false.obs;
   RxString selUrl = "".obs;
 
+  // 영우가 쓰는 변수
+  Timestamp  walkStartTime = Timestamp.now();
+  Timestamp  walkEndTime = Timestamp.now();
+
   void makeFlagList(List temp) {
     flagList.value = temp;
     update();
@@ -88,22 +92,33 @@ class WalkController extends GetxController {
 
   Widget choiceDog(int itemIndex, double size) {
     return
-      flagList[itemIndex]?
-      Container(
-        // color: Colors.red,
-        height: size * 0.4,
-        child: Align(
-          alignment: Alignment.bottomRight,
-            child:
-          CircleAvatar(
-            backgroundImage: const ExactAssetImage('assets/dogdack.png') ,
-            backgroundColor: Colors.transparent,
-            // backgroundColor: ,
-            radius: size * 0.12,
+      Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          // color: Colors.yellow,
+          height: size * 0.4,
+          width: size * 0.28,
+          child:
+          Align(
+              alignment: Alignment.bottomRight,
+              child:
+              flagList[itemIndex]
+              ? Image.asset("assets/dogdack.png")
+              : Container()
+          )
+        )
+      );
 
-          ),
-        ),
-      ):Container();
+
+        // CircleAvatar(
+        //   backgroundImage: const ExactAssetImage('assets/dogdack.png') ,
+        //   backgroundColor: Colors.transparent,
+        //   // backgroundColor: ,
+        //   radius: size * 0.12,
+        // ),
+      // ):Container(
+      //   color: Colors.red,
+      // );
   }
 
   // ----------------------
@@ -133,32 +148,34 @@ class WalkController extends GetxController {
   }
 
   int getCur() {
-    print('timeCount : $timeCount');
-    print('goal : $goal');
     if ((timeCount.value) == 0) {
       curGoal.value = 0;
     } else {
       curGoal.value =
           (((timeCount.value) / (goal.value * 60)) * 100).round();
     }
-    print('curGoal : $curGoal');
     return curGoal.value;
   }
 
   void recommend() async {
-    int cnt = 0;
     int temp = 0;
-    int recTime = 0;
-    await for (var snapshot in FirebaseFirestore.instance
+    rectime = 0;
+
+    CollectionReference<DogData> petsRef = FirebaseFirestore.instance
         .collection('Users/${userController.loginEmail}/Pets')
-        .snapshots()) {
-      for (var messege in snapshot.docs) {
-        cnt++;
-        temp = messege.data()['recommend'];
-        recTime = recTime + temp;
-      }
-      rectime = (recTime / cnt).round();
+        .withConverter(
+        fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+        toFirestore: (dogData, _) => dogData.toJson());
+
+    // print('selDogs : $selDogs');
+    for(int i = 0; i < selDogs.length; i++) {
+      petsRef.where('name', isEqualTo: selDogs[i]).get().then((value) {
+        temp = value.docs[0].get('recommend');
+        rectime = rectime + temp;
+        // print('rectime : $rectime');
+      });
     }
+    update();
   }
 
   @override
@@ -175,7 +192,7 @@ class WalkController extends GetxController {
       String isLed = ledSig;
 
       Data data = Data(pn, timer, dist, isLed);
-      sendDataToArduino(data);
+      // sendDataToArduino(data);
     });
   }
 
@@ -198,25 +215,18 @@ class WalkController extends GetxController {
 
     QuerySnapshot _docInPets = await petRef.get();
 
-    name = (await petsRef.doc(_docInPets.docs.first.id.toString()).get())
-        .data()!
-        .name!;
-    imgUrl = (await petsRef.doc(_docInPets.docs.first.id.toString()).get())
-        .data()!
-        .imageUrl!;
-
     // phoneNumber = (await userRef.doc('number').get()).data()!.phoneNumber;
     phoneNumber = "01085382550";
   }
 
   void addData(List<LatLng> latlng) {
-    for (int i = 0; i < latlng.length; i++) {
+    for(int i = 0; i < latlng.length; i++){
       geolist?.add(GeoPoint(latlng[i].latitude, latlng[i].longitude));
     }
     update();
   }
 
-  void sendDB() async {
+  Future<void> sendDB() async {
     final inputController = Get.put(InputController());
     print("-----------send to DB-------------");
     // geolist?.add(GeoPoint(23.412, 125.234125));
@@ -226,13 +236,13 @@ class WalkController extends GetxController {
     CollectionReference petRef = FirebaseFirestore.instance
         .collection('Users/${userController.loginEmail}/Pets');
 
-    selDogs.forEach((dogName) {
+    selDogs.forEach((dogName) async {
       final petDoc = petRef.where("name", isEqualTo: dogName);
-      petDoc.get().then((value) {
+      await petDoc.get().then((value) async {
         docId = value.docs[0].id;
         // print('$curName의 문서 id : $docId');
 
-        FirebaseFirestore.instance
+        await FirebaseFirestore.instance
             .collection('Users/${userController.loginEmail}/Pets/$docId/Walk')
             .withConverter(
               fromFirestore: (snapshot, options) =>
@@ -242,21 +252,18 @@ class WalkController extends GetxController {
             // .doc('${DateTime.now().year}_${DateTime.now().month}_${DateTime.now().day}')
             // .set(WalkData(
             .add(WalkData(
-          geolist: geolist,
+              geolist: geolist,
               startTime: startTime,
               endTime: endTime,
-              totalTimeMin: timeCount.value ~/ 6000,
+              totalTimeMin: timeCount.value ~/ 60,
               isAuto: true,
-              // place: ,
+              place: '장소',
               distance: totalDistance.toInt(),
               goal: goal.value,
-            ));
+            )).then((value) => disconnect());
 
         // calendar 저장
-        petRef
-            .doc(docId)
-            .collection('Calendar')
-            .doc(DateFormat('yyMMdd').format(inputController.date).toString())
+        petRef.doc(docId).collection('Calendar').doc(DateFormat('yyMMdd').format(inputController.date).toString())
             .withConverter(
               fromFirestore: (snapshot, options) =>
                   CalenderData.fromJson(snapshot.data()!),
@@ -266,28 +273,20 @@ class WalkController extends GetxController {
               isWalk: true,
               bath: false,
               beauty: false,
+              diary: '',
+              imageUrl: [],
               // distance: controller.distance,
             ))
             .then((value) => print("document added"))
             .catchError((error) => print("Fail to add doc $error"));
       });
     });
-  }
 
-  void setCurrentLocation(curLatitude, curLongitude) {
-    latitude.value = curLatitude.toDouble();
-    longitude.value = curLongitude.toDouble();
-    update();
-  }
-
-  void connectBle(device) {
-    _device = device;
-    isBleConnect.value = true;
-    update();
   }
 
   void disconnect() {
     try {
+      geolist = [];
       isSelected.value = false;
       goal.value = 0;
       isRunning.value = false;
@@ -302,15 +301,23 @@ class WalkController extends GetxController {
       isSelected.value = false;
       selUrl.value = "";
       dropdownValue = "";
+
       update();
-      print("==================");
-      print(flagList);
-      print(selDogs);
-      print(selUrl);
-      print(dropdownValue);
-      print(isSelected);
-      print("==================");
-    } catch (e) {}
+    } catch (e) {
+      print("disconnect error!!");
+    }
+  }
+
+  void setCurrentLocation(curLatitude, curLongitude) {
+    latitude.value = curLatitude.toDouble();
+    longitude.value = curLongitude.toDouble();
+    update();
+  }
+
+  void connectBle(device) {
+    _device = device;
+    isBleConnect.value = true;
+    update();
   }
 
   void updateWalkingState() {
@@ -354,7 +361,7 @@ class WalkController extends GetxController {
 
     String json = jsonEncode(data);
 
-    sendDataToArduino(json);
+    // sendDataToArduino(json);
   }
 
   Future<void> sendDataToArduino(data) async {

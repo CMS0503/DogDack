@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/commons/logo_widget.dart';
 import 'package:dogdack/controllers/button_controller.dart';
+import 'package:dogdack/controllers/input_controller.dart';
+import 'package:dogdack/controllers/main_controll.dart';
 import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/models/dog_data.dart';
 import 'package:dogdack/screens/calendar_main/widgets/calendar.dart';
@@ -20,7 +22,7 @@ class CalendarMain extends StatefulWidget {
 class _CalendarPageState extends State<CalendarMain> {
   final userController = Get.put(UserController());
 
-  late CollectionReference<DogData> userRef;
+  // late CollectionReference<DogData> userRef;
 
   // 선택한 날짜 초기화
   DateTime selectedDay = DateTime.utc(
@@ -33,12 +35,18 @@ class _CalendarPageState extends State<CalendarMain> {
   DateTime focusedDay = DateTime.now();
 
   @override
+  void initState() {
+    // TODO: implement initState
+    userController.updateUserInfo();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    userRef = FirebaseFirestore.instance
-        .collection('Users/${userController.loginEmail}/Pets')
-        .withConverter(
-            fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
-            toFirestore: (dogData, _) => dogData.toJson());
+    // userRef = FirebaseFirestore.instance
+    //     .collection('Users/${userController.loginEmail}/Pets')
+    //     .withConverter(
+    //         fromFirestore: (snapshot, _) => DogData.fromJson(snapshot.data()!),
+    //         toFirestore: (dogData, _) => dogData.toJson());
 
     final controller = Get.put(ButtonController());
     Size screenSize = MediaQuery.of(context).size;
@@ -50,42 +58,45 @@ class _CalendarPageState extends State<CalendarMain> {
         preferredSize: Size.fromHeight(height * 0.08),
         child: const LogoWidget(),
       ),
-      body: SingleChildScrollView(
-        child: StreamBuilder(
-            stream: userRef.snapshots(),
-            builder: (petContext, petSnapshot) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // TextButton(
-                  //     onPressed: () {
-                  //       Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //           builder: (context) => CalendarDetailEdit(
-                  //             day: DateTime.now(),
+      body: GetBuilder<MainController>(builder: (_) {
+        return SingleChildScrollView(
+          child: StreamBuilder(
+              stream: userController.userRef.snapshots(),
+              builder: (petContext, petSnapshot) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // TextButton(
+                    //     onPressed: () {
+                    //       Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //           builder: (context) => CalendarDetailEdit(
+                    //             day: DateTime.now(),
                   //           ),
                   //         ),
                   //       );
                   //     },
                   //     child: const Text('hi')),
                   SizedBox(
-                    height: height * 0.01,
-                  ),
-                  Calendar(focusedDay: focusedDay),
-                  SizedBox(
-                    height: height * 0.01,
-                  ),
-                  const CalendarMark(),
-                ],
-              );
-            }),
-      ),
+                      height: height * 0.01,
+                    ),
+                    Calendar(focusedDay: focusedDay),
+                    SizedBox(
+                      height: height * 0.01,
+                    ),
+                    const CalendarMark(),
+                  ],
+                );
+              }),
+        );
+      }),
       floatingActionButton: renderFloatingActionButton(),
     );
   }
 
   renderFloatingActionButton() {
+    final inputController = Get.put(InputController());
     return Container(
       width: 48,
       height: 48,
@@ -98,6 +109,7 @@ class _CalendarPageState extends State<CalendarMain> {
       ),
       child: FloatingActionButton.small(
         onPressed: () {
+          inputController.imageUrl = [];
           Navigator.push(
             context,
             MaterialPageRoute(

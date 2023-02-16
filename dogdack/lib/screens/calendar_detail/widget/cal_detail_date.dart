@@ -26,7 +26,7 @@ class CalDetailDateWidget extends StatefulWidget {
 
     await walkRef.get().then(
       (value) async {
-        print('cal_walk_card 안 : ${userController.loginEmail}');
+        // print('cal_walk_card 안 : ${userController.loginEmail}');
         // 달력에서 선택한 날짜
         var selectedDay = inputController.date;
         var startOfToday = Timestamp.fromDate(selectedDay);

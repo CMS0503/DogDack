@@ -103,6 +103,7 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
         .list();
     final List<Reference> allFiles = result.items;
     print('사진불러오기');
+    print('사진 불러오는데 ${controller.date}');
     print(result.items);
 
     final snapshot = await FirebaseFirestore.instance
@@ -132,7 +133,6 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
   Future<void> _delete(String ref, String url) async {
     await storage.ref(ref).delete();
     controller.imageUrl.remove(url);
-    print('controller.imageUrl ${controller.imageUrl}');
     // Rebuild the UI
     setState(() {});
   }
