@@ -70,7 +70,7 @@ class _CalHealthProgressCardWidget extends State<CalHealthProgressCardWidget> {
         elevation: 4.0,
         child: Container(
             width: width * 0.9,
-            height: height * 0.18,
+            height: height * 0.23,
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -78,14 +78,14 @@ class _CalHealthProgressCardWidget extends State<CalHealthProgressCardWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.only(top: 10, left: 10, right: 10),
+                      padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
                       child: Container(
                         width: width * 0.3,
                         height: height * 0.035,
                         decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 221, 137, 189),
+                            color: const Color.fromARGB(255, 221, 137, 189),
                             borderRadius: BorderRadius.circular(20)),
-                        child: Center(
+                        child: const Center(
                           child: Text(
                             "산책 목표 달성률",
                             style: TextStyle(
@@ -102,12 +102,12 @@ class _CalHealthProgressCardWidget extends State<CalHealthProgressCardWidget> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [Text(
                           "${widget.this_data}",
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontFamily: 'bmjua',
                               fontSize: 26,
                               color: Color.fromARGB(255, 221, 137, 189)),
                         ),
-                          Text(
+                          const Text(
                             "%",
                             style: TextStyle(
                                 fontFamily: 'bmjua',
@@ -158,31 +158,36 @@ class _CalHealthProgressCardWidget extends State<CalHealthProgressCardWidget> {
                 ),
 
                 Padding(
-                  padding: EdgeInsets.only(right: 10, bottom: 5),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Text(
-                        "저번${widget.date_text}보다 목표 산책 달성량이 ",
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'bmjua',
-                            color: grey),
-                      ),
-                      Text(
-                        "${widget.last_data}% ",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'bmjua',
-                            color: Color.fromARGB(255, 221, 137, 189)),
-                      ),
-                      Text(
-                        "${widget.message}",
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'bmjua',
-                            color: grey),
+                  padding: const EdgeInsets.only(right: 10, bottom: 5),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 15,),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Text(
+                            "저번${widget.date_text}보다 목표 산책 달성량이 ",
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontFamily: 'bmjua',
+                                color: grey),
+                          ),
+                          Text(
+                            "${widget.last_data}% ",
+                            style: const TextStyle(
+                                fontSize: 20,
+                                fontFamily: 'bmjua',
+                                color: Color.fromARGB(255, 221, 137, 189)),
+                          ),
+                          Text(
+                            "${widget.message}",
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontFamily: 'bmjua',
+                                color: grey),
+                          ),
+                        ],
                       ),
                     ],
                   ),

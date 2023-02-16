@@ -90,14 +90,14 @@ class WalkController extends GetxController {
     update();
   }
 
-  Widget choiceDog(int itemIndex, double size) {
+  Widget choiceDog(int itemIndex, Size size) {
     return
       Align(
         alignment: Alignment.bottomCenter,
         child: Container(
           // color: Colors.yellow,
-          height: size * 0.4,
-          width: size * 0.28,
+          height: size.height * 0.2,
+          width: size.width * 0.28,
           child:
           Align(
               alignment: Alignment.bottomRight,

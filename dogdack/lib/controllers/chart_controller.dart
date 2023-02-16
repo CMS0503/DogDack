@@ -102,7 +102,7 @@ class ChartController extends GetxController {
 
           for (int j = 0; j < dateList.length; j++) {
             if (dogsDate[dogNames.values.toList()[i].toString()]!.length != 0) {
-
+              print(dogsDate[dogNames.values.toList()[i].toString()]);
               for (int k = 0;
               k < dogsDate[dogNames.values.toList()[i].toString()]!.length;
               k++) {
