@@ -475,6 +475,7 @@ class _MyPageState extends State<MyPage> {
           floatingController.floatBtnKey.currentState?.closeFABs();
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(deviceSize.height * 0.08),
           child: const LogoWidget(),
@@ -495,6 +496,15 @@ class _MyPageState extends State<MyPage> {
             padding: EdgeInsets.fromLTRB(0, deviceSize.height * 0.03, 0, 0),
             child: Column(
               children: [
+                userController.isHost ? Column(
+                  children: [
+                    Text(
+                      '${userController.loginEmail} 님과 추억을 공유하고 있어요!',
+                      style: TextStyle(fontSize: deviceSize.width * 0.03, color: Colors.red),
+                    ),
+                    SizedBox(height: deviceSize.height * 0.02),
+                  ],
+                ) : Column(),
                 // 사용자 정보
                 StreamBuilder(
                   stream: petsRef.snapshots(),

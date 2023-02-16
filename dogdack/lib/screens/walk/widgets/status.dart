@@ -69,8 +69,9 @@ class _StatusState extends State<Status> {
                               children: [
                                 walkController.selUrl.value.isEmpty
                                     ? const CircleAvatar(
+                                        backgroundColor: Colors.white,
                                         backgroundImage:
-                                            AssetImage('assets/logo.jpg'),
+                                            AssetImage('assets/logo.png'),
                                       )
                                     : CircleAvatar(
                                         child: StreamBuilder(
