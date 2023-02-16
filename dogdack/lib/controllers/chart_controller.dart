@@ -91,7 +91,6 @@ class ChartController extends GetxController {
         //(강아지 : [가지고 있는 데이트 리스트])
         if (!dogNames.values.isNull) {
 
-
           dogsDate[dogNames.values.toList()[i].toString()] = tempList;
 
           for (int j = 0; j < snapshot.docs.length; j++) {
@@ -117,7 +116,8 @@ class ChartController extends GetxController {
             }
           }
         }
-      });
+      }
+      );
       temp['hour'] = twoMonthHour;
       temp['distance'] = twoMonthDistance;
       temp['goal'] = twoMonthGoal;
