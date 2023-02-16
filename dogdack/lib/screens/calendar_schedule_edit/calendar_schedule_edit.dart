@@ -44,10 +44,6 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
             int.parse(controller.startTime.seconds.toString())) % 60;
     
 
-
-    // walkCheck이 0이면 산책을 안한 것임
-    
-
     // 선택된 강아지 이름으로 해당 강아지 문서 가져오기
     var result =
         await petsRef.where("name", isEqualTo: controller.saveName).get();
@@ -57,26 +53,26 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
 
     // 이 if 문은 빼도 되나?
     if (result.docs.isNotEmpty) {
-      
+      print('여기는 오나');
+      if (controller.startTime == Timestamp(0, 0)) {
+        controller.startTime = Timestamp.fromDate(controller.date);
+        controller.endTime = Timestamp.fromDate(controller.date);
+      }
       // 선택한 강아지 문서 id 가져오기
       String dogId = result.docs[0].id;
       petsRef.doc(dogId).collection('Calendar').doc(DateFormat('yyMMdd')
       .format(controller.date)
       .toString())
       .get().then((value) {
-        if (value['isWalk'] == true || walkCheck > 0 ){
-            controller.walkCheck = true;
-        } else {
-          controller.walkCheck = false;
+        if (value.exists){
+          if (value['isWalk'] == true || walkCheck > 0 ){
+              controller.walkCheck = true;
+          } else {
+            controller.walkCheck = false;
+          }
         }
-      });
-    
-      print(controller.bath);
-      print(controller.beauty);
-      print(controller.diary);
-
-      // Calendar data 입력하기
-      petsRef
+      }).then((value) {
+        petsRef
           .doc(dogId)
           .collection('Calendar')
           .doc(DateFormat('yyMMdd').format(controller.date).toString())
@@ -95,20 +91,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
           .then((value) => print("document added"))
           .catchError((error) => print("Fail to add doc $error"));
 
-      // Walk data 입력하기
-      var calTotal = (int.parse(controller.endTime.seconds.toString()) -
-                          int.parse(controller.startTime.seconds.toString())) /
-                      60 +
-                  (int.parse(controller.endTime.seconds.toString()) -
-                          int.parse(controller.startTime.seconds.toString())) %
-                      60;
-      
-
-
-      
-      print('입력 전 controller.startTime${DateTime.fromMicrosecondsSinceEpoch(controller.startTime.microsecondsSinceEpoch)}');
-      print('입력 전 controller.endTime${DateTime.fromMicrosecondsSinceEpoch(controller.endTime.microsecondsSinceEpoch)}');
-      petsRef
+          petsRef
           .doc(dogId)
           .collection('Walk')
           .doc()
@@ -134,6 +117,12 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
               geolist: [],
             ),
           );
+      });
+
+      // Calendar data 입력하기
+      
+
+      
     }
   }
 
@@ -211,9 +200,12 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
 
                     // 문제 없으면 db에 입력하기
                     fbstoreWrite();
+                    controller.startTime = Timestamp(0, 0);
+                    controller.endTime = Timestamp(0, 0);
+                    controller.walkCheck = false;
                     // controller.imageUrl = [];
-                    print('ontroller.imageUrl');
-                    print(controller.imageUrl);
+                    // print('ontroller.imageUrl');
+                    // print(controller.imageUrl);
                     // controller.bath = true;
                     // controller.beauty = true;
                     // controller.walkCheck = true;

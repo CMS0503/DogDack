@@ -4,13 +4,13 @@ import 'package:get/get.dart';
 class InputController extends GetxController {
   DateTime date = DateTime.now();
   String place = '';
-  Timestamp startTime = Timestamp.now();
-  Timestamp endTime = Timestamp.now();
+  Timestamp startTime = Timestamp(0, 0);
+  Timestamp endTime = Timestamp(0, 0);
   String distance = '0';
   String diary = '';
-  bool walkCheck = true;
-  bool bath = true;
-  bool beauty = true;
+  bool walkCheck = false;
+  bool bath = false;
+  bool beauty = false;
   List<String> imageUrl = [];
   String name = '';
   Map<String, dynamic> dognames = {};
