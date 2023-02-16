@@ -76,6 +76,10 @@ class WalkController extends GetxController {
   RxBool isSelected = false.obs;
   RxString selUrl = "".obs;
 
+  // 영우가 쓰는 변수
+  Timestamp  walkStartTime = Timestamp.now();
+  Timestamp  walkEndTime = Timestamp.now();
+
   void makeFlagList(List temp) {
     flagList.value = temp;
     update();

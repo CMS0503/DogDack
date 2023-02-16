@@ -20,37 +20,13 @@ class _DiaryWidget extends State<DiaryWidget> {
   final userController = Get.put(UserController());
   final inputController = Get.put(InputController());
 
-  Future<void> getDiary() async {
-    String docId =
-    inputController.dognames[inputController.selectedValue.toString()];
-    CollectionReference calRef = FirebaseFirestore.instance
-        .collection('Users/${userController.loginEmail}/Pets/$docId/Calendar');
 
-    var diaryDoc = await calRef
-        .doc(DateFormat('yyMMdd').format(inputController.date))
-        .get();
-    widget.diaryText = diaryDoc['diary'];
-    print('그렇다면 여기는?');
-    print(inputController.date);
-    if (diaryDoc['imageUrl'].length != 0) {
-      print('여기는 지나가나?');
-      widget.diaryImage = diaryDoc['imageUrl'][0];
-    }
-  }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getDiary().then((value) {
-      setState(() {});
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {
-    // getImages();
-    // test();
+
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     double height = screenSize.height;
