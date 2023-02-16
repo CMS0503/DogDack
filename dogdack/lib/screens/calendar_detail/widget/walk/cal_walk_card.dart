@@ -174,8 +174,10 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
                               zoom: 15,
                             ),
                             onMapCreated: (mapController) {
-                              _controller.complete(mapController);
-                            },
+                                  if (_controller.isCompleted == false) {
+                                    _controller.complete(mapController);
+                                  }
+                                },
                             polylines: _polyline,
                           ),
                         ),
