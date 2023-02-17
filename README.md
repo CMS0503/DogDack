@@ -148,6 +148,8 @@ DogDack 서비스의 Firestore Database 구조는 다음과 같습니다.
 
 ## ✔ 팀원 역할 분배
 
+![KakaoTalk_20230217_093622763](/uploads/febc2cb7126e10a9c52cb110fa06dfe1/KakaoTalk_20230217_093622763.png)
+![KakaoTalk_20230217_093622763_01](/uploads/bfe1546ac6e06ae4482bff2ba573e120/KakaoTalk_20230217_093622763_01.png)
 
 ## ✔ 프로젝트 산출물
 
