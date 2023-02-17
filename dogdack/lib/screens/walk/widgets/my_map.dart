@@ -6,7 +6,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:latlong2/latlong.dart' as ll;
-import 'package:location/location.dart';
+// import 'package:location/location.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 
@@ -42,7 +42,7 @@ class _MapState extends State<myMap> {
   late LatLng temp;
   // RxDouble? totalDistance = 0.0.obs;
 
-  LocationData? currentLocation;
+  // LocationData? currentLocation;
 
   addMarker(cordinate) {
     setState(() {
@@ -60,7 +60,7 @@ class _MapState extends State<myMap> {
       zoom: 17,
     );
     // updatePosition(); // GPS 모듈
-    getCurrentLocation();
+    // getCurrentLocation();
   }
 
   // void updatePosition() async {
@@ -145,49 +145,49 @@ class _MapState extends State<myMap> {
   //   }
   // }
 
-  void getCurrentLocation() async {
-    print('getCurLocation');
-    Location myLocation = Location();
-    myLocation.getLocation().then(
-      (location) {
-        currentLocation = location;
-      },
-    );
-
-    print(currentLocation);
-    GoogleMapController googleMapController = await _controller.future;
-    myLocation.onLocationChanged.listen(
-      (newLoc) {
-        currentLocation = newLoc;
-        googleMapController.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(
-              zoom: 17,
-              target: LatLng(
-                newLoc.latitude!,
-                newLoc.longitude!,
-              ),
-            ),
-          ),
-        );
-        if (walkController.isStart && walkController.isRunning.value) {
-          if (latlng.length > 1) {
-            walkController.totalDistance!.value =
-                walkController.totalDistance!.value +
-                    calTotalDistance(
-                        ll.LatLng(latlng.last.latitude, latlng.last.longitude),
-                        ll.LatLng(currentLocation!.latitude!,
-                            currentLocation!.longitude!));
-          }
-
-          latlng.add(
-              LatLng(currentLocation!.latitude!, currentLocation!.longitude!));
-
-          setState(() {});
-        }
-      },
-    );
-  }
+  // void getCurrentLocation() async {
+  //   print('getCurLocation');
+  //   Location myLocation = Location();
+  //   myLocation.getLocation().then(
+  //     (location) {
+  //       currentLocation = location;
+  //     },
+  //   );
+  //
+  //   print(currentLocation);
+  //   GoogleMapController googleMapController = await _controller.future;
+  //   myLocation.onLocationChanged.listen(
+  //     (newLoc) {
+  //       currentLocation = newLoc;
+  //       googleMapController.animateCamera(
+  //         CameraUpdate.newCameraPosition(
+  //           CameraPosition(
+  //             zoom: 17,
+  //             target: LatLng(
+  //               newLoc.latitude!,
+  //               newLoc.longitude!,
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //       if (walkController.isStart && walkController.isRunning.value) {
+  //         if (latlng.length > 1) {
+  //           walkController.totalDistance!.value =
+  //               walkController.totalDistance!.value +
+  //                   calTotalDistance(
+  //                       ll.LatLng(latlng.last.latitude, latlng.last.longitude),
+  //                       ll.LatLng(currentLocation!.latitude!,
+  //                           currentLocation!.longitude!));
+  //         }
+  //
+  //         latlng.add(
+  //             LatLng(currentLocation!.latitude!, currentLocation!.longitude!));
+  //
+  //         setState(() {});
+  //       }
+  //     },
+  //   );
+  // }
 
   double calTotalDistance(ll.LatLng p1, ll.LatLng p2) {
     return distance.as(ll.LengthUnit.Meter, p1, p2);
