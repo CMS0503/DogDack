@@ -481,9 +481,15 @@ class _MyPageState extends State<MyPage> {
           child: const LogoWidget(),
         ),
         floatingActionButton: AnimatedFloatingActionButton(
-          fabButtons: userController.isHost ? <Widget>[
-              petAddBtn(), phoneBtn(), guestGroupOut(),] : <Widget>[
-              petAddBtn(), phoneBtn(), joinGroupBtn(), setPassword()],
+          fabButtons: userController.isHost
+              ? <Widget>[
+                  petAddBtn(),
+                  phoneBtn(),
+                ]
+              : <Widget>[
+                  petAddBtn(),
+                  phoneBtn(),
+                ],
           colorStartAnimation: floatingBtnColor_total,
           colorEndAnimation: Colors.red,
           key: floatingController.floatBtnKey,
