@@ -159,10 +159,12 @@ DogDack 서비스의 Firestore Database 구조는 다음과 같습니다.
 ## ✔ 프로젝트 산출물
 
 
-- [WBS](https://1drv.ms/x/s!AmojbaCZN7ajgmzB86p4R6G9HKbx?e=ayZPsL)
+- WBS
+    - ![그림11](/uploads/109d0714767a451a8c3a17fa907fc879/그림11.png)
 - [Notion](https://www.notion.so/062ce32c4c924004a8b374baefbbd380)
 - [Figma](https://www.figma.com/file/YIcvIFtKxzEPv62Y0DtOrs/%EC%A7%AC%EB%BD%95%EC%9D%B4%EB%9E%91-%EA%B3%B5%EC%88%99%EC%9D%B4?node-id=0%3A1&t=2vODEjucgk24CHPx-0)
 - [요구사항정의서](https://docs.google.com/spreadsheets/d/1KX3JVyPeaAxugV7oKzjsiHAYqiBOyCJsUJqaBZuL45k/edit?usp=sharing)
 
 ## ✔ 프로젝트 결과물
+
 
