@@ -331,7 +331,11 @@ class _CalendarState extends State<Calendar> {
                       padding: const EdgeInsets.only(top: 20),
                       child: GestureDetector(
                         onTap: () {
-                          controller.date = day;
+                          controller.date = DateTime.fromMillisecondsSinceEpoch(
+                              (day.millisecondsSinceEpoch +
+                                      day.timeZoneOffset.inMilliseconds)
+                                  .toInt());
+                          // controller.date = day;
                           controller.walkCheck.value = events[0] as bool;
                           controller.beauty.value = events[1] as bool;
                           controller.bath.value = events[2] as bool;
