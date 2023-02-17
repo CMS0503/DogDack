@@ -16,6 +16,7 @@ import 'package:get/get.dart';
 import 'controllers/user_controller.dart';
 import 'firebase_options.dart';
 import 'models/user_data.dart';
+import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +28,12 @@ void main() async {
   // dateformatting 사용을 위한 함수
   // locale에서 최소 1회 실행해야 함
   initializeDateFormatting();
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 
   runApp(
     GetMaterialApp(
