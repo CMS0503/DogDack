@@ -330,14 +330,14 @@ class _ChartState extends State<Chart> {
         if (day_hour_increment > 0) {
           day_hour_increment_text = "늘었어요!";
         } else if (day_hour_increment < 0) {
-          day_hour_increment_text = "즐었어요!";
+          day_hour_increment_text = "줄었어요!";
         }
 
         week_hour_increment = week_hour_data - last_week_hour_data;
         if (week_hour_increment > 0) {
           week_hour_increment_text = "늘었어요!";
         } else if (week_hour_increment < 0) {
-          week_hour_increment_text = "즐었어요!";
+          week_hour_increment_text = "줄었어요!";
         }
         day_distance_increment = day_distance_data - last_day_distance_data;
         if (day_distance_increment > 0) {
