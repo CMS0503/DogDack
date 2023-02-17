@@ -63,7 +63,7 @@ class _DiaryNetWidget extends State<DiaryNetWidget> {
         elevation: 4.0,
         child: Container(
           width: width * 0.9,
-          height: height * 0.25,
+          height: height * 0.28,
           child: Column(
             // mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
