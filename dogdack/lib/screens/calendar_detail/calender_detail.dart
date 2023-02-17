@@ -145,7 +145,7 @@ class _CalenderDetailState extends State<CalenderDetail> {
               totalTimeMin: controller.time,
             ),
             CalDetailTitleWidget(
-              name: controller.selectedValue,
+              name: "",
               title: "뷰티도장",
             ),
 
@@ -154,7 +154,7 @@ class _CalenderDetailState extends State<CalenderDetail> {
               bath_color: bathColor,
             ),
             CalDetailTitleWidget(
-              name: controller.selectedValue,
+              name: "",
               title: "오늘의 일기",
             ),
             // 나중에 여러개로 바꿔야됨
