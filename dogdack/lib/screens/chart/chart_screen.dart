@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/screens/chart/widget/car_health_line_graph_card.dart';
 import 'package:dogdack/screens/chart/widget/car_health_progress_card.dart';
+import 'package:dogdack/screens/chart/widget/dounut_chart.dart';
 import 'package:dogdack/screens/chart/widget/graph_day.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../commons/logo_widget.dart';
 import '../../controllers/chart_controller.dart';
 import '../../controllers/user_controller.dart';
@@ -41,7 +43,20 @@ class _ChartState extends State<Chart> {
   @override
   void initState() {
     chartController.selectedDateValue.value = "일주일";
-
+    chartController.getNames().then((value) {
+      if (chartController.dogNames.keys.toList().length != 0) {
+        chartController.chartSelectedId.value =
+            chartController.dogNames.values.toList()[0];
+        chartController.chartSelectedName.value =
+            chartController.dogNames.keys.toList()[0];
+        chartController.goalTime = chartController.dogGoal.values.toList()[0];
+      }
+      ;
+      // setChartData();
+      chartController.setData().then((value) {
+        setState(() {});
+      });
+    });
     super.initState();
   }
 
@@ -153,7 +168,6 @@ class _ChartState extends State<Chart> {
   Widget x_value_day = DayWidget();
   Widget x_value_week = WeekWidget();
 
-  //그래프 그리는 계산 함수
   void setChartData() {
     if (chartController.chartData.isEmpty ||
         chartController.chartSelectedId.isEmpty ||
@@ -205,43 +219,41 @@ class _ChartState extends State<Chart> {
         last_week_goal_points = chartController
             .chartData[chartController.chartSelectedId]!["goal"]!
             .sublist(0, 60 - 30);
+        int day_len = 0;
+        int last_day_len = 0;
+        int week_len = 0;
+        int last_week_len = 0;
 
         for (int i = 0; i < day_hour_points.length; i++) {
-          if (day_hour_points[i] > 0.1) {
+          if (day_hour_points[i] >= 1) {
             day_hour_data += day_hour_points[i];
           } else {
             day_hour_data += 0;
-            day_hour_points[i] = 0.000001;
           }
-          if (last_day_hour_points[i] > 0.1) {
+          if (last_day_hour_points[i] >= 1) {
             last_day_hour_data += last_day_hour_points[i];
           } else {
             last_day_hour_data += 0;
-            last_day_hour_points[i] = 0.000001;
           }
-          if (day_distance_points[i] > 0.1) {
+          if (day_distance_points[i] >= 1) {
             day_distance_data += day_distance_points[i];
           } else {
             day_distance_data += 0;
-            day_distance_points[i] = 0.000001;
           }
-          if (last_day_distance_points[i] > 0.1) {
+          if (last_day_distance_points[i].toInt() >= 1) {
             last_day_distance_data += last_day_distance_points[i];
           } else {
             last_day_distance_data += 0;
-            last_day_distance_points[i] = 0.000001;
           }
-          if (day_goal_points[i] > 0.1) {
+          if (day_goal_points[i] >= 1) {
             day_goal_data += day_goal_points[i];
           } else {
             day_goal_data += chartController.goalTime;
-            day_goal_points[i] = 0.000001;
           }
-          if (last_day_goal_points[i] > 0.1) {
+          if (last_day_goal_points[i] >= 1) {
             last_day_goal_data += last_day_goal_points[i];
           } else {
             last_day_goal_data += chartController.goalTime;
-            last_day_goal_points[i] = 0.000001;
           }
         }
 
@@ -253,41 +265,35 @@ class _ChartState extends State<Chart> {
         last_day_goal_data /= last_day_goal_points.length;
 
         for (int i = 0; i < week_hour_points.length; i++) {
-          if (week_hour_points[i] > 0.1) {
+          if (week_hour_points[i] >= 1) {
             week_hour_data += week_hour_points[i];
           } else {
             week_hour_data += 0;
-            week_hour_points[i] = 0.000001;
           }
-          if (last_week_hour_points[i] > 0.1) {
+          if (last_week_hour_points[i] >= 1) {
             last_week_hour_data += last_week_hour_points[i];
           } else {
             last_week_hour_data += 0;
-            last_week_hour_points[i] = 0.000001;
           }
-          if (week_distance_points[i] > 0.1) {
+          if (week_distance_points[i] >= 1) {
             week_distance_data += week_distance_points[i];
           } else {
             week_distance_data += 0;
-            week_distance_points[i] = 0.000001;
           }
-          if (last_week_distance_points[i] > 0.1) {
+          if (last_week_distance_points[i] >= 1) {
             last_week_distance_data += last_week_distance_points[i];
           } else {
             last_week_distance_data += 0;
-            last_week_distance_points[i] = 0.000001;
           }
-          if (week_goal_points[i] > 0.1) {
+          if (week_goal_points[i] >= 1) {
             week_goal_data += week_goal_points[i];
           } else {
             week_goal_data += chartController.goalTime;
-            week_goal_points[i] = 0.000001;
           }
-          if (last_week_goal_points[i] > 0.1) {
+          if (last_week_goal_points[i] >= 1) {
             last_week_goal_data += last_week_goal_points[i];
           } else {
             last_week_goal_data += chartController.goalTime;
-            last_week_goal_points[i] = 0.000001;
           }
         }
         week_hour_data /= week_hour_points.length;
@@ -297,23 +303,23 @@ class _ChartState extends State<Chart> {
         week_goal_data /= week_goal_points.length;
         last_week_goal_data /= last_week_goal_points.length;
 
-        if (day_goal_data > 0.1) {
+        if (day_goal_data >= 1) {
           day_achievement_rate = (day_hour_data / day_goal_data) * 100;
         } else {
           day_achievement_rate = 0;
         }
-        if (last_day_goal_data > 0.1) {
+        if (last_day_goal_data >= 1) {
           last_day_achievement_rate =
               (last_day_hour_data / last_day_goal_data) * 100;
         } else {
           last_day_goal_data = 0;
         }
-        if (week_goal_data > 0.1) {
+        if (week_goal_data >= 1) {
           week_achievement_rate = (week_hour_data / week_goal_data) * 100;
         } else {
           week_achievement_rate = 0;
         }
-        if (last_week_goal_data > 0.1) {
+        if (last_week_goal_data >= 1) {
           last_week_achievement_rate =
               (last_week_hour_data / last_week_goal_data) * 100;
         } else {
@@ -500,58 +506,7 @@ class _ChartState extends State<Chart> {
                   stream: petRef.snapshots(),
                   builder: (petContext, petSnapshot) {
                     // 등록한 강아지가 없으면
-                    // 이거 되던거에서 주석처리 한거임
-                    // chartController.getNames();
-
-                    // 데이터를 아직 불러오지 못했으면 로딩
-                    if (!petSnapshot.hasData) {
-                      return Center(child: CircularProgressIndicator());
-                    }
-
-                    // 불러온 데이터가 없을 경우 등록 안내
-                    if (petSnapshot.data!.docs.length == 0) {
-                      return Center(
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(0, height * 0.25, 0, 0),
-                          child: Column(
-                            children: [
-                              Image.asset('assets/dogs.png'),
-                              SizedBox(height: height * 0.05),
-                              Text('마이페이지에서 댕댕이를 등록해주세요!'),
-                            ],
-                          ),
-                        ),
-                      );
-                    }
-
-                    // 여기까지
-                    if (!chartController.dogNames.keys
-                        .toList()
-                        .contains(chartController.chartSelectedName.value)) {
-                      print("여기 맞는데");
-                      print(chartController.chartSelectedName);
-
-                      chartController.dogNames = {};
-                      for (int i = 0; i < petSnapshot.data!.docs.length; i++) {
-                        chartController.dogNames[petSnapshot.data!.docs[i]
-                                .get('name')
-                                .toString()] =
-                            petSnapshot.data!.docs[i].id.toString();
-                        petSnapshot.data!.docs[i].get('name').toString();
-                      }
-                      if (chartController.dogNames.keys.toList().length != 0) {
-                        chartController.chartSelectedId.value =
-                            chartController.dogNames.values.toList()[0];
-                        chartController.chartSelectedName.value =
-                            chartController.dogNames.keys.toList()[0];
-                        chartController.goalTime =
-                            chartController.dogGoal.values.toList()[0];
-                      }
-                      ;
-                    }
-                    print(chartController.chartSelectedName.value);
-                    chartController.setData().then((value) {});
-
+                    chartController.getNames();
                     return (chartController.dogNames.keys.toList().isEmpty)
                         // 강아지를 등록해달라는 dropbar
                         ? DropdownButton(
@@ -612,7 +567,6 @@ class _ChartState extends State<Chart> {
                                           .dogNames[value.toString()];
                                   chartController.goalTime =
                                       chartController.dogGoal[value.toString()];
-
                                   setChartData();
                                   setState(() {
                                     getName();

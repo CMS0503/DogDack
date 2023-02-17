@@ -14,28 +14,28 @@ class _DayWidgetState extends State<DayWidget> {
 
   final controller = Get.put(InputController());
 
-
   List<String> days = [];
-
 
   TextStyle style = TextStyle(
       fontSize: 14,
       fontFamily: 'bmjua',
       color: Color.fromARGB(255, 80, 78, 91));
 
+  void fillDate() {
+    days = [];
+    for (int i = 0; i < 7; i++) {
+      days.add(DateFormat.E('ko_KR')
+          .format(DateTime.now().subtract(Duration(days: 5 - i))));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    for(int i=0;i<7;i++){
-      days.add(DateFormat.E('ko_KR').format(DateTime.fromMillisecondsSinceEpoch(
-              (DateTime.now().millisecondsSinceEpoch +
-                      DateTime.now().timeZoneOffset.inMilliseconds)
-                  .toInt())
-          .subtract(Duration(days: 7 - i))));
-    }
+    fillDate();
 
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
-    int index = 6;
+    int index = 0;
     return Container(
         width: width * 0.7,
         child: Center(
@@ -43,25 +43,25 @@ class _DayWidgetState extends State<DayWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Container(
-                child: Text("${days[index--]}", style: style),
+                child: Text("${days[index++]}", style: style),
               ),
               Container(
-                child: Text("${days[index--]}", style: style),
+                child: Text("${days[index++]}", style: style),
               ),
               Container(
-                child: Text("${days[index--]}", style: style),
+                child: Text("${days[index++]}", style: style),
               ),
               Container(
-                child: Text("${days[index--]}", style: style),
+                child: Text("${days[index++]}", style: style),
               ),
               Container(
-                child: Text("${days[index--]}", style: style),
+                child: Text("${days[index++]}", style: style),
               ),
               Container(
-                child: Text("${days[index--]}", style: style),
+                child: Text("${days[index++]}", style: style),
               ),
               Container(
-                child: Text("${days[index--]}", style: style),
+                child: Text("${days[index++]}", style: style),
               )
             ],
           ),
@@ -85,16 +85,10 @@ class _WeekWidgetState extends State<WeekWidget> {
   @override
   Widget build(BuildContext context) {
     for (int i = 0; i < 28; i += 7) {
-      days.add(DateFormat('MM/dd').format(DateTime.fromMillisecondsSinceEpoch(
-              (DateTime.now().millisecondsSinceEpoch +
-                      DateTime.now().timeZoneOffset.inMilliseconds)
-                  .toInt())
-          .subtract(Duration(days: 30 - i))));
+      days.add(DateFormat('MM/dd')
+          .format(DateTime.now().subtract(Duration(days: 30 - i))));
     }
-    days.add(DateFormat('MM/dd').format(DateTime.fromMillisecondsSinceEpoch(
-        (DateTime.now().millisecondsSinceEpoch +
-                DateTime.now().timeZoneOffset.inMilliseconds)
-            .toInt())));
+    days.add(DateFormat('MM/dd').format(DateTime.now()));
 
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
@@ -125,4 +119,3 @@ class _WeekWidgetState extends State<WeekWidget> {
         ));
   }
 }
-
