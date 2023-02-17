@@ -83,6 +83,11 @@ DogDack은 시간이 지나면 잊기 쉬운 반려견과의 추억을 기록하
 - Bluetooth
 - LED, LCD
 
+## ✔ 시스템 아키텍쳐
+
+![그림1](/uploads/e136c25946578b9f5bd413c67d9def99/그림1.png)
+
+
 ## ✔ DB 구조 (Firebase - NoSQL)
 
 
