@@ -582,6 +582,7 @@ class _ChartState extends State<Chart> {
                 padding: const EdgeInsets.all(3.0),
                 child: Center(
                     child: DropdownButton(
+                  underline: const SizedBox.shrink(),
                   elevation: 0,
                   focusColor: const Color.fromARGB(255, 100, 92, 170),
                   borderRadius: BorderRadius.circular(10),

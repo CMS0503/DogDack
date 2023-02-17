@@ -25,7 +25,7 @@ class _DayWidgetState extends State<DayWidget> {
     days = [];
     for (int i = 0; i < 7; i++) {
       days.add(DateFormat.E('ko_KR')
-          .format(DateTime.now().subtract(Duration(days: 5 - i))));
+          .format(DateTime.now().subtract(Duration(days: 6 - i))));
     }
   }
 
