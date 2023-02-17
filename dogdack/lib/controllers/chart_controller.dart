@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/user_controller.dart';
 import 'package:get/get.dart';
@@ -36,13 +37,15 @@ class ChartController extends GetxController {
 
 
   Future<void> setData() async {
-    fillDate();
     await getData();
   }
 
   void fillDate() {
+    dateList = [];
     for (int i = 0; i < 60; i++) {
-      String temp = DateTime.now().subtract(Duration(days: 59 - i)).toString();
+      DateTime dateNow = DateTime.fromMillisecondsSinceEpoch(
+          (DateTime.now().millisecondsSinceEpoch + 33400000));
+      String temp = dateNow.subtract(Duration(days: 59 - i)).toString();
       dateList.add(temp.substring(0, 10));
     }
   }
@@ -71,41 +74,48 @@ class ChartController extends GetxController {
 
 // 두달동안의 데이터를 불러온다.
   Future<void> getData() async {
+    fillDate();
+
     for (int i = 0; i < dogNames.values.toList().length; i++) {
-      List<double> twoMonthHour = List<double>.filled(60, 0.000001);
-      List<double> twoMonthDistance = List<double>.filled(60, 0.000001);
-      List<double> twoMonthGoal = List<double>.filled(60, 0.000001);
+      List<double> twoMonthHour = new List<double>.filled(60, 0.000001);
+      List<double> twoMonthDistance = new List<double>.filled(60, 0.000001);
+      List<double> twoMonthGoal = new List<double>.filled(60, 0.000001);
+
       Map<String, List<double>> temp = {};
       CollectionReference refCurDogWalk = FirebaseFirestore.instance
           .collection('Users/${userController.loginEmail}/Pets/')
           .doc(dogNames.values.toList()[i].toString())
           .collection('Walk');
+      DateTime dateNow = DateTime.fromMillisecondsSinceEpoch(
+          (DateTime.now().millisecondsSinceEpoch + 33400000));
 
       await refCurDogWalk
           .where('startTime',
-          isGreaterThan: DateTime.now().subtract(Duration(days: 60)))
+              isGreaterThanOrEqualTo: dateNow.subtract(Duration(days: 60)))
           .orderBy('startTime', descending: false)
           .get()
           .then((QuerySnapshot snapshot) {
         List<String> tempList = [];
+
         //(강아지 : [가지고 있는 데이트 리스트])
         if (!dogNames.values.isNull) {
-
           dogsDate[dogNames.values.toList()[i].toString()] = tempList;
 
           for (int j = 0; j < snapshot.docs.length; j++) {
-            tempList.add((snapshot.docs[j]['startTime'])
-                .toDate()
+            tempList.add((DateTime.fromMillisecondsSinceEpoch((snapshot.docs[j]
+                            ['startTime'])
+                        .toDate()
+                        .millisecondsSinceEpoch +
+                    33400000))
                 .toString()
                 .substring(0, 10));
           }
 
           for (int j = 0; j < dateList.length; j++) {
             if (dogsDate[dogNames.values.toList()[i].toString()]!.length != 0) {
-
               for (int k = 0;
-              k < dogsDate[dogNames.values.toList()[i].toString()]!.length;
-              k++) {
+                  k < dogsDate[dogNames.values.toList()[i].toString()]!.length;
+                  k++) {
                 if (dogsDate[dogNames.values.toList()[i].toString()]![k] ==
                     (dateList[j])) {
                   twoMonthHour[j] = snapshot.docs[k]['totalTimeMin'].toDouble();
@@ -116,8 +126,7 @@ class ChartController extends GetxController {
             }
           }
         }
-      }
-      );
+      });
       temp['hour'] = twoMonthHour;
       temp['distance'] = twoMonthDistance;
       temp['goal'] = twoMonthGoal;

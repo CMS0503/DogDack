@@ -20,6 +20,7 @@ class _ScheduleEditWalkState extends State<ScheduleEditWalk> {
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
+    double height = screenSize.height;
 
     // print(place);
     return Padding(
@@ -29,27 +30,36 @@ class _ScheduleEditWalkState extends State<ScheduleEditWalk> {
       child: Column(
         children: [
           const SizedBox(height: 10),
-          Row(
-            children: [
-              Container(
-                height: 36,
-                width: 5,
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 100, 92, 170),
-                  borderRadius: BorderRadius.circular(5),
+          SizedBox(
+            height: height * 0.05,
+            width: width,
+            child: Row(
+              children: [
+                Row(
+                  children: const [
+                    Icon(
+                      Icons.pets,
+                      color: Color.fromARGB(255, 100, 92, 170),
+                      size: 30,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        '산책',
+                        style: TextStyle(
+                          fontFamily: 'bmjua',
+                          fontSize: 32,
+                          color: Color.fromARGB(255, 100, 92, 170),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  '산책',
-                  style: TextStyle(
-                    fontFamily: 'bmjua',
-                    fontSize: 32,
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: 10),
           const ScheduleEditText(name: '장소'),

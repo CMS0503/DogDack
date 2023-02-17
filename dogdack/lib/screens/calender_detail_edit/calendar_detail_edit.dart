@@ -39,6 +39,42 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
 
   FirebaseStorage storage = FirebaseStorage.instance;
 
+  void selectCameraOrGallery(BuildContext context, Size size) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return SizedBox(
+            height: size.height * 0.15,
+            child: Column(
+              children: [
+                SizedBox(
+                  height: size.height * 0.075,
+                  child: ListTile(
+                    leading: const Icon(Icons.camera_alt_outlined),
+                    title: const Text('촬영하기'),
+                    onTap: () {
+                      _upload('camera');
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: size.height * 0.075,
+                  child: ListTile(
+                    leading: const Icon(Icons.photo_camera_back),
+                    title: const Text('앨범보기'),
+                    onTap: () {
+                      _upload('gallery');
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
   Future<void> _upload(String inputSource) async {
     final picker = ImagePicker();
     XFile? pickedImage;
@@ -95,17 +131,13 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
   // This function is called when the app launches for the first time or when an image is uploaded or deleted
   Future<List<Map<String, dynamic>>> _loadImages() async {
     List<Map<String, dynamic>> files = [];
-    print(controller.date);
+
     final ListResult result = await storage
         .ref()
         .child(
             '${userController.loginEmail}/dogs/${controller.selectedValue}/${DateFormat('yyMMdd').format(controller.date)}')
         .list();
     final List<Reference> allFiles = result.items;
-    print('사진불러오기');
-    print('사진 불러오는데 ${controller.date}');
-    print(result.items);
-
     final snapshot = await FirebaseFirestore.instance
         .collection(
           'Users',
@@ -117,12 +149,15 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
 
     await Future.forEach<Reference>(allFiles, (file) async {
       final String fileUrl = await file.getDownloadURL();
-      final FullMetadata fileMeta = await file.getMetadata();
+      controller.imageUrl = [fileUrl.toString()];
 
-      files.add({
-        "url": fileUrl,
-        "path": file.fullPath,
-      });
+      final FullMetadata fileMeta = await file.getMetadata();
+      if (controller.imageUrl.contains(fileUrl)) {
+        files.add({
+          "url": fileUrl,
+          "path": file.fullPath,
+        });
+      }
     });
 
     return files;
@@ -132,6 +167,8 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
   // This function is called when a trash icon is pressed
   Future<void> _delete(String ref, String url) async {
     await storage.ref(ref).delete();
+    print('여기가 어딘고');
+    print(controller.imageUrl);
     controller.imageUrl.remove(url);
     // Rebuild the UI
     setState(() {});
@@ -151,7 +188,7 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
 
     // walkCheck이 0이면 산책을 안한 것임
     if (walkCheck == 0) {
-      controller.walkCheck = false;
+      controller.walkCheck.value = false;
     }
 
     // 선택된 강아지 이름으로 해당 강아지 문서 가져오기
@@ -171,20 +208,33 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
           .doc(dogId)
           .collection('Calendar')
           .doc(DateFormat('yyMMdd').format(controller.date).toString())
-          .withConverter(
-            fromFirestore: (snapshot, options) =>
-                CalenderData.fromJson(snapshot.data()!),
-            toFirestore: (value, options) => value.toJson(),
-          )
-          .set(CalenderData(
-            diary: controller.diary,
-            bath: controller.bath,
-            beauty: controller.beauty,
-            isWalk: controller.walkCheck,
-            imageUrl: controller.imageUrl,
-          ))
-          .then((value) => print("document added"))
-          .catchError((error) => print("Fail to add doc $error"));
+          .get()
+          .then((value) {
+        if (value['isWalk'] == true || walkCheck > 0) {
+          controller.walkCheck.value = true;
+        } else {
+          controller.walkCheck.value = false;
+        }
+      }).then((value) {
+        petsRef
+            .doc(dogId)
+            .collection('Calendar')
+            .doc(DateFormat('yyMMdd').format(controller.date).toString())
+            .withConverter(
+              fromFirestore: (snapshot, options) =>
+                  CalenderData.fromJson(snapshot.data()!),
+              toFirestore: (value, options) => value.toJson(),
+            )
+            .update({
+              'diary': controller.diary.value,
+              'bath': controller.bath.value,
+              'beauty': controller.beauty.value,
+              'isWalk': controller.walkCheck.value,
+              'imageUrl': controller.imageUrl,
+            })
+            .then((value) => print("document added"))
+            .catchError((error) => print("Fail to add doc $error"));
+      });
 
       // Walk data 입력하기
       petsRef
@@ -223,7 +273,6 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
               controller.startTime.microsecondsSinceEpoch),
         )
         .toString();
-    print(startController.text);
     endController.text = DateFormat('hh:mm a')
         .format(
           DateTime.fromMicrosecondsSinceEpoch(
@@ -232,7 +281,7 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
         .toString();
     placeController.text = controller.place;
     distanceController.text = controller.distance;
-    inputController.text = controller.diary;
+    inputController.text = controller.diary.value;
   }
 
   @override
@@ -338,23 +387,28 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
                       width: width,
                       child: Row(
                         children: [
-                          Container(
-                            height: 36,
-                            width: 5,
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 100, 92, 170),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            child: Text(
-                              '산책',
-                              style: TextStyle(
-                                fontFamily: 'bmjua',
-                                fontSize: 32,
+                          Row(
+                            children: const [
+                              Icon(
+                                Icons.pets,
+                                color: Color.fromARGB(255, 100, 92, 170),
+                                size: 30,
                               ),
-                            ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                child: Text(
+                                  '산책',
+                                  style: TextStyle(
+                                    fontFamily: 'bmjua',
+                                    fontSize: 32,
+                                    color: Color.fromARGB(255, 100, 92, 170),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -624,10 +678,12 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
                       ),
                     ),
                     const SizedBox(height: 10),
+                    // 거리
                     SizedBox(
                       height: height * 0.05,
                       width: width,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
                             alignment: Alignment.center,
@@ -751,23 +807,57 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
                 child: Column(
                   children: [
                     Row(
-                      // mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
-                          height: 36,
-                          width: 5,
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 100, 92, 170),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
+                        Row(
+                          children: const [
+                            Icon(
+                              Icons.cut_outlined,
+                              color: Color.fromARGB(255, 191, 172, 224),
+                              size: 30,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              child: Text(
+                                '미용',
+                                style: TextStyle(
+                                  fontFamily: 'bmjua',
+                                  fontSize: 32,
+                                  color: Color.fromARGB(255, 191, 172, 224),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        const Padding(
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const BolleanBtn(name: '미용'),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      children: const [
+                        Icon(
+                          Icons.bathtub_outlined,
+                          color: Color.fromARGB(255, 221, 137, 189),
+                          size: 30,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Padding(
                           padding: EdgeInsets.symmetric(horizontal: 10),
                           child: Text(
                             '목욕',
                             style: TextStyle(
                               fontFamily: 'bmjua',
                               fontSize: 32,
+                              color: Color.fromARGB(255, 221, 137, 189),
                             ),
                           ),
                         ),
@@ -777,36 +867,6 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
                       height: 10,
                     ),
                     const BolleanBtn(name: '목욕'),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      // mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: 36,
-                          width: 5,
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 100, 92, 170),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: Text(
-                            '미용',
-                            style: TextStyle(
-                              fontFamily: 'bmjua',
-                              fontSize: 32,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const BolleanBtn(name: '미용'),
                     const SizedBox(
                       height: 10,
                     ),
@@ -838,49 +898,6 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
               ),
               Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: 35,
-                          child: ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 100, 92, 170),
-                            ),
-                            onPressed: () => {
-                              _upload('camera'),
-                            },
-                            icon: const Icon(
-                              Icons.camera,
-                            ),
-                            label: const Text('카메라'),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        SizedBox(
-                          height: 35,
-                          child: ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 100, 92, 170),
-                            ),
-                            onPressed: () {
-                              _upload('gallery');
-                            },
-                            icon: const Icon(
-                              Icons.library_add,
-                            ),
-                            label: const Text('갤러리'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10.0),
                     child: Container(
@@ -924,43 +941,23 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
                                                 child: Image.network(
                                                   image['url'],
                                                   fit: BoxFit.cover,
-                                                  // width: width,
                                                 ),
                                               ),
                                             ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: SizedBox(
-                                                height: 30,
-                                                child: TextButton(
-                                                  style: TextButton.styleFrom(
-                                                    backgroundColor:
-                                                        const Color.fromARGB(
-                                                            255, 228, 31, 31),
-                                                  ),
-                                                  child: Row(
-                                                    children: const [
-                                                      Text(
-                                                        '사진 삭제',
-                                                        style: TextStyle(
-                                                          fontFamily: 'bmjua',
-                                                          color: Colors.white,
-                                                        ),
-                                                      ),
-                                                      // Icon(
-                                                      //   Icons.delete_outlined,
-                                                      //   color: Colors.white,
-                                                      // ),
-                                                    ],
-                                                  ),
-                                                  onPressed: () => _delete(
-                                                    image['path'],
-                                                    image['url'],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
+                                            // SizedBox(
+                                            //   height: 10,
+                                            //   child: IconButton(
+                                            //     icon: const Icon(
+                                            //       Icons.cancel,
+                                            //       color: Color.fromARGB(
+                                            //           255, 255, 105, 95),
+                                            //     ),
+                                            //     onPressed: () => _delete(
+                                            //       image['path'],
+                                            //       image['url'],
+                                            //     ),
+                                            //   ),
+                                            // ),
                                           ],
                                         );
                                       },
@@ -969,21 +966,26 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
                                 ],
                               );
                             } else {
-                              print(snapshot.hasData);
-                              return Container(
-                                decoration: const BoxDecoration(
-                                  color: Color.fromARGB(255, 229, 229, 230),
-                                  border: Border(),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(20.0),
+                              return GestureDetector(
+                                onTap: () {
+                                  selectCameraOrGallery(context, screenSize);
+                                },
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Color.fromARGB(255, 229, 229, 230),
+                                    border: Border(),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(20.0),
+                                    ),
                                   ),
+                                  height: height * 0.3,
+                                  width: width * 0.8,
+                                  child: const Icon(
+                                      Icons.add_photo_alternate_outlined,
+                                      size: 80,
+                                      color:
+                                          Color.fromARGB(255, 147, 147, 147)),
                                 ),
-                                height: height * 0.3,
-                                width: width * 0.8,
-                                child: const Icon(
-                                    Icons.add_photo_alternate_outlined,
-                                    size: 80,
-                                    color: Color.fromARGB(255, 147, 147, 147)),
                               );
                             }
                           }
@@ -1014,7 +1016,7 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
                       child: TextField(
                         maxLength: 20,
                         onChanged: (value) {
-                          controller.diary = value;
+                          controller.diary.value = value;
                         },
                         controller: inputController,
                         cursorColor: Colors.grey,

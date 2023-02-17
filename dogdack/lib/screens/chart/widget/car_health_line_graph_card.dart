@@ -47,7 +47,7 @@ class _CalHealthCardWidget extends State<CalHealthCardWidget> {
         elevation: 4.0,
         child: Container(
             width: width * 0.9,
-            height: height * 0.28,
+            height: height * 0.33,
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -55,7 +55,7 @@ class _CalHealthCardWidget extends State<CalHealthCardWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.only(top: 10, left: 10, right: 10),
+                      padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
                       child: Container(
                         width: width * 0.3,
                         height: height * 0.035,
@@ -65,7 +65,7 @@ class _CalHealthCardWidget extends State<CalHealthCardWidget> {
                         child: Center(
                           child: Text(
                             "${widget.title}",
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 16,
                                 fontFamily: 'bmjua',
                                 color: Colors.white),
@@ -105,26 +105,31 @@ class _CalHealthCardWidget extends State<CalHealthCardWidget> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(right: 10, bottom: 5),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Text(
-                        "저번${widget.date_text}보다 ${widget.title} ",
-                        style: TextStyle(
-                            fontSize: 14, fontFamily: 'bmjua', color: grey),
-                      ),
-                      Text(
-                        "${widget.last_data}${widget.unit} ",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'bmjua',
-                            color: widget.color),
-                      ),
-                      Text(
-                        "${widget.message}",
-                        style: TextStyle(
-                            fontSize: 14, fontFamily: 'bmjua', color: grey),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 15,),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Text(
+                            "저번${widget.date_text}보다 ${widget.title} ",
+                            style: TextStyle(
+                                fontSize: 14, fontFamily: 'bmjua', color: grey),
+                          ),
+                          Text(
+                            "${widget.last_data}${widget.unit} ",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontFamily: 'bmjua',
+                                color: widget.color),
+                          ),
+                          Text(
+                            "${widget.message}",
+                            style: TextStyle(
+                                fontSize: 14, fontFamily: 'bmjua', color: grey),
+                          ),
+                        ],
                       ),
                     ],
                   ),

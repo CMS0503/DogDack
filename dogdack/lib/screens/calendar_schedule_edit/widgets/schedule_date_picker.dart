@@ -20,7 +20,10 @@ class _DatePickerState extends State<DatePicker> {
   final userController = Get.put(UserController());
   final btnController = Get.put(ButtonController());
 
-  DateTime date = DateTime.now();
+  DateTime date = DateTime.fromMillisecondsSinceEpoch(
+      (DateTime.now().millisecondsSinceEpoch +
+              DateTime.now().timeZoneOffset.inMilliseconds)
+          .toInt());
 
   String docId = '';
 
@@ -30,7 +33,7 @@ class _DatePickerState extends State<DatePicker> {
     super.initState();
     // getName();
     setState(() {
-    btnController.getName;
+      btnController.getName;
     });
   }
 

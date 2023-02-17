@@ -16,6 +16,7 @@ import 'package:get/get.dart';
 import 'controllers/user_controller.dart';
 import 'firebase_options.dart';
 import 'models/user_data.dart';
+import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +28,12 @@ void main() async {
   // dateformatting 사용을 위한 함수
   // locale에서 최소 1회 실행해야 함
   initializeDateFormatting();
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 
   runApp(
     GetMaterialApp(
@@ -83,7 +90,10 @@ class _MyAppState extends State<MyApp> {
   DateTime? currentBackPressTime;
 
   onWillPop() {
-    DateTime now = DateTime.now();
+    DateTime now = DateTime.fromMillisecondsSinceEpoch(
+        (DateTime.now().millisecondsSinceEpoch +
+                DateTime.now().timeZoneOffset.inMilliseconds)
+            .toInt());
     if (currentBackPressTime == null ||
         now.difference(currentBackPressTime!) > const Duration(seconds: 2)) {
       currentBackPressTime = now;
@@ -98,13 +108,13 @@ class _MyAppState extends State<MyApp> {
     return true;
   }
 
-  void initUserDB() {
+  void initUserDB() async {
     final userColRef = FirebaseFirestore.instance.collection('Users');
     final userInfoRef = FirebaseFirestore.instance.collection('Users/${FirebaseAuth.instance.currentUser!.email}/UserInfo');
 
     userController.loginEmail = FirebaseAuth.instance.currentUser!.email.toString();
 
-    FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.email).get().then((value){
+    await FirebaseFirestore.instance.collection('Users').doc(FirebaseAuth.instance.currentUser!.email).get().then((value){
       if(value.exists) {
         userInfoRef.get().then((value) {
           userController.isHost = value.docs[0]['isHost'];

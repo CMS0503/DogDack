@@ -15,16 +15,13 @@ class CalendarMark extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              // height: 30,
               width: width * 0.1,
-              // color: Colors.red,
               child: const Icon(
                 Icons.pets,
                 color: Color.fromARGB(255, 100, 92, 170),
               ),
             ),
             SizedBox(
-              // height: 30,
               width: width * 0.8,
               child: const Text(
                 '산책한 날',
@@ -42,16 +39,13 @@ class CalendarMark extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              // height: 30,
               width: width * 0.1,
-              // color: Colors.red,
               child: const Icon(
                 Icons.cut_outlined,
                 color: Color.fromARGB(255, 191, 172, 224),
               ),
             ),
             SizedBox(
-              // height: 30,
               width: width * 0.8,
               child: const Text(
                 '미용한 날',
@@ -68,16 +62,13 @@ class CalendarMark extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              // height: 30,
               width: width * 0.1,
-              // color: Colors.red,
               child: const Icon(
                 Icons.bathtub_outlined,
                 color: Color.fromARGB(255, 221, 137, 189),
               ),
             ),
             SizedBox(
-              // height: 30,
               width: width * 0.8,
               child: const Text(
                 '목욕한 날',

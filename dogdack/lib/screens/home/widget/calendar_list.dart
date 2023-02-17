@@ -38,15 +38,22 @@ class _CalenderListViewState extends State<CalenderListView> {
   int btnManagerIdx = 0;
 
   void updateHomeCalendarVar(int btnManagerIdx) {
-    var _today = DateTime.now(); // 오늘 날짜
-    var _varDayDuration = Timestamp.fromDate(_today.subtract(Duration(days: btnManagerIdx * 7))); // 토요일 날짜를 담을 변수
-    var _searchDay = Timestamp.fromDate(_varDayDuration.toDate().add(Duration(days: 0)));
+    var _today = DateTime.fromMillisecondsSinceEpoch(
+        (DateTime.now().millisecondsSinceEpoch +
+                DateTime.now().timeZoneOffset.inMilliseconds)
+            .toInt()); // 오늘 날짜
+    var _varDayDuration = Timestamp.fromDate(
+        _today.subtract(Duration(days: btnManagerIdx * 7))); // 토요일 날짜를 담을 변수
+    var _searchDay =
+        Timestamp.fromDate(_varDayDuration.toDate().add(Duration(days: 0)));
 
-    for(int i = 0; i < 7; i++) { // 1일씩 더해가면서 토요일인 날짜를 찾음
-      _searchDay = Timestamp.fromDate(_varDayDuration.toDate().add(Duration(days: i)));
-      String _searchDayWeek = DateFormat.E().format(_searchDay.toDate()).toString();
-      if(_searchDayWeek.compareTo('Sat') == 0)
-        break;
+    for (int i = 0; i < 7; i++) {
+      // 1일씩 더해가면서 토요일인 날짜를 찾음
+      _searchDay =
+          Timestamp.fromDate(_varDayDuration.toDate().add(Duration(days: i)));
+      String _searchDayWeek =
+          DateFormat.E().format(_searchDay.toDate()).toString();
+      if (_searchDayWeek.compareTo('Sat') == 0) break;
     }
 
     //일월화수목금토 실제 날짜를 찾아서 저장

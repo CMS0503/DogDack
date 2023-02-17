@@ -131,7 +131,7 @@ class _CalendarListDetailState extends State<CalendarListDetail> {
                   SizedBox(height: daysAndCalendar),
                   GetBuilder<HomePageCalendarController>(builder: (_) {
                     if(listIsWalk[0]) {
-                      return CalIconWidget(calColor: red, iconClolor: violet);
+                      return CalIconWidget(calColor: red, iconClolor: red);
                     } else {
                       return CalIconWidget(calColor: red, iconClolor: transparent);
                     }
@@ -247,7 +247,7 @@ class _CalendarListDetailState extends State<CalendarListDetail> {
                   SizedBox(height: daysAndCalendar),
                   GetBuilder<HomePageCalendarController>(builder: (_) {
                     if(listIsWalk[6]) {
-                      return CalIconWidget(calColor: red, iconClolor: violet);
+                      return CalIconWidget(calColor: red, iconClolor: red);
                     } else {
                       return CalIconWidget(calColor: red, iconClolor: transparent);
                     }

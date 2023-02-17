@@ -31,6 +31,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
   final userController = Get.put(UserController());
 
   // 완료 버튼 클릭 시 데이터 저장
+
   void fbstoreWrite() async {
     // 현재 선택한 강아지 이름으로 강아지 저장
     controller.saveName = controller.selectedValue;
@@ -39,14 +40,11 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
         .collection('Users/${userController.loginEmail}/Pets');
     // 산책했는지 확인하는 변수(분)
     final walkCheck = (int.parse(controller.endTime.seconds.toString()) -
-            int.parse(controller.startTime.seconds.toString())) /
-        60 + (int.parse(controller.endTime.seconds.toString()) -
-            int.parse(controller.startTime.seconds.toString())) % 60;
-    
-
-
-    // walkCheck이 0이면 산책을 안한 것임
-    
+                int.parse(controller.startTime.seconds.toString())) /
+            60 +
+        (int.parse(controller.endTime.seconds.toString()) -
+                int.parse(controller.startTime.seconds.toString())) %
+            60;
 
     // 선택된 강아지 이름으로 해당 강아지 문서 가져오기
     var result =
@@ -57,83 +55,85 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
 
     // 이 if 문은 빼도 되나?
     if (result.docs.isNotEmpty) {
-      
+      print('여기는 오나');
+      if (controller.startTime == Timestamp(0, 0)) {
+        controller.startTime = Timestamp.fromDate(controller.date);
+        controller.endTime = Timestamp.fromDate(controller.date);
+      }
       // 선택한 강아지 문서 id 가져오기
       String dogId = result.docs[0].id;
-      petsRef.doc(dogId).collection('Calendar').doc(DateFormat('yyMMdd')
-      .format(controller.date)
-      .toString())
-      .get().then((value) {
-        if (value['isWalk'] == true || walkCheck > 0 ){
-            controller.walkCheck = true;
-        } else {
-          controller.walkCheck = false;
-        }
-      });
-    
-      print(controller.bath);
-      print(controller.beauty);
-      print(controller.diary);
-
-      // Calendar data 입력하기
-      petsRef
+      await petsRef
           .doc(dogId)
           .collection('Calendar')
           .doc(DateFormat('yyMMdd').format(controller.date).toString())
-          .withConverter(
-            fromFirestore: (snapshot, options) =>
-                CalenderData.fromJson(snapshot.data()!),
-            toFirestore: (value, options) => value.toJson(),
-          )
-          .set(CalenderData(
-            diary: controller.diary,
-            bath: controller.bath,
-            beauty: controller.beauty,
-            isWalk: controller.walkCheck,
-            imageUrl: controller.imageUrl,
-          ))
-          .then((value) => print("document added"))
-          .catchError((error) => print("Fail to add doc $error"));
+          .get()
+          .then((value) {
+        if (value.exists) {
+          if (value['isWalk'] == true || walkCheck > 0) {
+            controller.walkCheck.value = true;
+          }
+        } else {
+          if (walkCheck > 0) {
+            controller.walkCheck.value = true;
+          }
+        }
+      }).then(
+        (value) {
+          petsRef
+              .doc(dogId)
+              .collection('Calendar')
+              .doc(DateFormat('yyMMdd').format(controller.date).toString())
+              .withConverter(
+                fromFirestore: (snapshot, options) =>
+                    CalenderData.fromJson(snapshot.data()!),
+                toFirestore: (value, options) => value.toJson(),
+              )
+              .set(CalenderData(
+                diary: controller.diary.value,
+                bath: controller.bath.value,
+                beauty: controller.beauty.value,
+                isWalk: controller.walkCheck.value,
+                imageUrl: controller.imageUrl,
+              ))
+              .then((value) => print("document added"))
+              .catchError((error) => print("Fail to add doc $error"));
 
-      // Walk data 입력하기
-      var calTotal = (int.parse(controller.endTime.seconds.toString()) -
-                          int.parse(controller.startTime.seconds.toString())) /
-                      60 +
-                  (int.parse(controller.endTime.seconds.toString()) -
-                          int.parse(controller.startTime.seconds.toString())) %
-                      60;
-      
-
-
-      
-      print('입력 전 controller.startTime${DateTime.fromMicrosecondsSinceEpoch(controller.startTime.microsecondsSinceEpoch)}');
-      print('입력 전 controller.endTime${DateTime.fromMicrosecondsSinceEpoch(controller.endTime.microsecondsSinceEpoch)}');
-      petsRef
-          .doc(dogId)
-          .collection('Walk')
-          .doc()
-          .withConverter(
-            fromFirestore: (snapshot, options) =>
-                WalkData.fromJson(snapshot.data()!),
-            toFirestore: (value, options) => value.toJson(),
-          )
-          .set(
-            WalkData(
-              place: controller.place,
-              startTime: controller.startTime,
-              endTime: controller.endTime,
-              totalTimeMin: (int.parse(controller.endTime.seconds.toString()) -
-                          int.parse(controller.startTime.seconds.toString())) /
-                      60 +
-                  (int.parse(controller.endTime.seconds.toString()) -
-                          int.parse(controller.startTime.seconds.toString())) %
-                      60,
-              distance: int.parse(controller.distance),
-              goal: recommend,
-              isAuto: false,
-              geolist: [],
-            ),
-          );
+          petsRef
+              .doc(dogId)
+              .collection('Walk')
+              .doc()
+              .withConverter(
+                fromFirestore: (snapshot, options) =>
+                    WalkData.fromJson(snapshot.data()!),
+                toFirestore: (value, options) => value.toJson(),
+              )
+              .set(
+                WalkData(
+                  place: controller.place,
+                  startTime: controller.startTime,
+                  endTime: controller.endTime,
+                  totalTimeMin: (int.parse(
+                                  controller.endTime.seconds.toString()) -
+                              int.parse(
+                                  controller.startTime.seconds.toString())) /
+                          60 +
+                      (int.parse(controller.endTime.seconds.toString()) -
+                              int.parse(
+                                  controller.startTime.seconds.toString())) %
+                          60,
+                  distance: int.parse(controller.distance),
+                  goal: recommend,
+                  isAuto: false,
+                  geolist: [],
+                ),
+              )
+              .then((value) {
+            controller.startTime = Timestamp(0, 0);
+            controller.endTime = Timestamp(0, 0);
+            controller.walkCheck.value = false;
+          });
+        },
+      );
     }
   }
 
@@ -178,7 +178,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
               SizedBox(
                 width: width * 0.8,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     // setState(() {});
                     FocusManager.instance.primaryFocus?.unfocus();
 
@@ -211,12 +211,6 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
 
                     // 문제 없으면 db에 입력하기
                     fbstoreWrite();
-                    // controller.imageUrl = [];
-                    print('ontroller.imageUrl');
-                    print(controller.imageUrl);
-                    // controller.bath = true;
-                    // controller.beauty = true;
-                    // controller.walkCheck = true;
 
                     // 입력 완료하면 달력화면으로 돌아가기 위해 pop
                     Navigator.pop(context);

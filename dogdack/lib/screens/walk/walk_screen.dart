@@ -5,6 +5,7 @@ import 'package:dogdack/controllers/user_controller.dart';
 import 'package:dogdack/screens/calendar_main/calendar_main.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../../controllers/walk_controller.dart';
 import '../../models/dog_data.dart';
@@ -12,6 +13,7 @@ import './widgets/my_map.dart';
 import './widgets/status.dart';
 import '../../commons/logo_widget.dart';
 import '../../controllers/main_controll.dart';
+import '../../controllers/input_controller.dart';
 
 class WalkPage extends StatefulWidget {
   const WalkPage({super.key});
@@ -24,6 +26,7 @@ class _WalkPageState extends State<WalkPage> {
   final walkController = Get.put(WalkController());
   final mainController = Get.put(MainController());
   final userController = Get.put(UserController());
+  final inputController = Get.put(InputController());
 
   // final petController = Get.put(PetController());
 
@@ -109,7 +112,10 @@ class _WalkPageState extends State<WalkPage> {
 
   Widget choiceDogModal(w, h, context) {
     final size = MediaQuery.of(context).size;
-
+    // inputController.date = DateTime.fromMillisecondsSinceEpoch(
+    //     (DateTime.now().millisecondsSinceEpoch +
+    //             DateTime.now().timeZoneOffset.inMilliseconds)
+    //         .toInt());
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 13),
       child: Stack(
@@ -121,14 +127,14 @@ class _WalkPageState extends State<WalkPage> {
               decoration: const BoxDecoration(
                   color: Colors.grey,
                   borderRadius: BorderRadius.all(Radius.circular(15))),
-              height: size.height * 0.62,
+              height: size.height * 0.67,
               width: size.width,
             ),
           ),
           Align(
               alignment: Alignment.center,
               child: Container(
-                height: h * 0.26,
+                height: h * 0.3,
                 width: w * 0.9,
                 decoration: BoxDecoration(
                     color: Colors.white,
@@ -142,10 +148,10 @@ class _WalkPageState extends State<WalkPage> {
 
                     // 불러온 데이터가 없을 경우 등록 안내
                     if (snapshot.data!.docs.isEmpty) {
-                      return Padding(
-                        padding:
-                            EdgeInsets.fromLTRB(0, size.height * 0.3, 0, 0),
-                        child: const Text('댕댕이를 등록해주세요!'),
+                      return const Align(
+                        alignment: Alignment.center,
+                        child: Text('댕댕이를 등록해주세요!',
+                            style: TextStyle(fontSize: 25)),
                       );
                     }
                     return Column(
@@ -153,69 +159,78 @@ class _WalkPageState extends State<WalkPage> {
                         Stack(
                           alignment: Alignment.center,
                           children: <Widget>[
-                            CarouselSlider.builder(
-                              options: CarouselOptions(
-                                viewportFraction: 0.45,
-                                autoPlay: false,
-                                enableInfiniteScroll: false,
-                              ),
-                              itemCount: snapshot.data!.docs.length,
-                              itemBuilder: (context, itemIndex, pageViewIndex) {
-                                return Column(
-                                  children: [
-                                    const SizedBox(height: 15,),
-                                    InkWell(
-                                      onTap: () {
-                                        if (!flag) {
-                                          var temp = List<bool>.filled(
-                                              snapshot.data!.docs.length,
-                                              false);
-                                          walkController.makeFlagList(temp);
-                                          flag = true;
-                                        }
-                                        walkController.setFlagList(itemIndex);
-                                        setState(() {});
-                                      },
-                                      child: Stack(
-                                        children: [
-                                          Container(
-                                            // color: Colors.red,
-                                            height: size.height * 0.2,
-                                              child: Column(
-                                                children: [
-                                                  Text(
-                                                      "${snapshot.data!.docs[itemIndex].get('name')}",
-                                                      style: const TextStyle(
-                                                        fontSize: 20,
-                                                      )),
-                                                  const SizedBox(
-                                                    height: 15,
-                                                  ),
-                                                  CircleAvatar(
-                                                    radius: size.width * 0.13,
-                                                    child: ClipOval(
-                                                        child: CachedNetworkImage(
-                                                        imageUrl: snapshot.data!.docs[itemIndex].get('imageUrl'),
-                                                      )
-                                                  ),
-                                                ),
-                                              ],
-                                            )
-                                          ),
-                                          if (walkController
-                                              .flagList.isNotEmpty)
-                                            walkController.choiceDog(
-                                                itemIndex, size.width),
-                                        ],
+                            SizedBox(
+                              height: size.height * 0.3,
+                              child: CarouselSlider.builder(
+                                options: CarouselOptions(
+                                  viewportFraction: 0.45,
+                                  autoPlay: false,
+                                  enableInfiniteScroll: false,
+                                ),
+                                itemCount: snapshot.data!.docs.length,
+                                itemBuilder:
+                                    (context, itemIndex, pageViewIndex) {
+                                  return Column(
+                                    children: [
+                                      const SizedBox(
+                                        height: 15,
                                       ),
-                                    ),
-                                  ],
-                                );
-                              },
+                                      InkWell(
+                                        onTap: () {
+                                          if (!flag) {
+                                            var temp = List<bool>.filled(
+                                                snapshot.data!.docs.length,
+                                                false);
+                                            walkController.makeFlagList(temp);
+                                            flag = true;
+                                          }
+                                          walkController.setFlagList(itemIndex);
+                                          setState(() {});
+                                        },
+                                        child: Stack(
+                                          children: [
+                                            if (snapshot.data!.docs.isEmpty)
+                                              ...[],
+                                            Container(
+                                                // color: Colors.red,
+                                                height: size.height * 0.2,
+                                                child: Column(
+                                                  children: [
+                                                    Text(
+                                                        "${snapshot.data!.docs[itemIndex].get('name')}",
+                                                        style: const TextStyle(
+                                                          fontSize: 20,
+                                                        )),
+                                                    const SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    CircleAvatar(
+                                                      radius: size.width * 0.13,
+                                                      child: ClipOval(
+                                                          child:
+                                                              CachedNetworkImage(
+                                                        imageUrl: snapshot.data!
+                                                            .docs[itemIndex]
+                                                            .get('imageUrl'),
+                                                      )),
+                                                    ),
+                                                  ],
+                                                )),
+                                            if (walkController
+                                                .flagList.isNotEmpty)
+                                              walkController.choiceDog(
+                                                  itemIndex, size),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
                             ),
                             Container(
                               // color: Colors.red,
-                              height: size.height * 0.25,
+                              height: size.height * 0.28,
                               width: size.width * 0.85,
                               child: Align(
                                 alignment: Alignment.bottomRight,
@@ -335,7 +350,6 @@ class _WalkPageState extends State<WalkPage> {
                           onChanged: (text) {
                             walkController.tmp_goal.value = int.parse(text);
                           },
-
                           decoration: InputDecoration(
                             hintText:
                                 '권장 산책 시간 : ${(walkController.rectime / walkController.selDogs.length).round()} 분',
@@ -354,11 +368,14 @@ class _WalkPageState extends State<WalkPage> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-
-                          if(walkController.tmp_goal.value == 0) {
-                            walkController.goal.value = (walkController.rectime / walkController.selDogs.length).round();
+                          if (walkController.tmp_goal.value == 0) {
+                            walkController.goal.value =
+                                (walkController.rectime /
+                                        walkController.selDogs.length)
+                                    .round();
                           } else {
-                            walkController.goal.value = walkController.tmp_goal.value;
+                            walkController.goal.value =
+                                walkController.tmp_goal.value;
                           }
                         },
                         style:
@@ -451,6 +468,68 @@ class _WalkPageState extends State<WalkPage> {
                               flag = false;
 
                               userController.myUpdate().then((value) {});
+
+                              showModalBottomSheet(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(25.0),
+                                    ),
+                                    // side: BorderSide()
+                                  ),
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Container(
+                                      // decoration: BoxDecoration(border: Border.all(color: violet)),
+                                      height: 100,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Align(
+                                            child: TextButton(
+                                                onPressed: () {
+                                                  mainController
+                                                      .changeTabIndex(2);
+                                                },
+                                                child: Column(
+                                                  children: [
+                                                    Text(
+                                                      '산책이 종료되었어요.',
+                                                      style: TextStyle(
+                                                          color: violet,
+                                                          fontSize: 16),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 7,
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Icon(
+                                                          Icons
+                                                              .exit_to_app_outlined,
+                                                          color: violet,
+                                                        ),
+                                                        Text(
+                                                          '캘린더로 가기',
+                                                          style: TextStyle(
+                                                              color: violet,
+                                                              fontSize: 16),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  ],
+                                                )),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  });
                             },
                           ),
                         ),

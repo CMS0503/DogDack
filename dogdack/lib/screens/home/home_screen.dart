@@ -87,45 +87,129 @@ class _HomePageState extends State<HomePage> {
 
                     // 함께 한 날짜 구하기
                     //오늘 날짜 구하기
-                    var _today = DateTime.now();
+                    var _today = DateTime.fromMillisecondsSinceEpoch((DateTime
+                        .now()
+                        .millisecondsSinceEpoch + DateTime
+                        .now()
+                        .timeZoneOffset
+                        .inMilliseconds).toInt());
                     //현재 선택된 반려견 생일 문자열 파싱
-                    String _petBirthYearOrigin = petSnapshot.data!.docs[sliderController.sliderIdx].get('birth');
+                    String _petBirthYearOrigin = petSnapshot.data!
+                        .docs[sliderController.sliderIdx].get('birth');
                     String _petBirth = '';
                     List<String> birthList = _petBirthYearOrigin.split('.');
                     for (int liIdx = 0; liIdx < birthList.length; liIdx++) {
                       _petBirth += birthList.elementAt(liIdx);
                     }
-                    int displayBirth = int.parse(_today.difference(DateTime.parse(_petBirth)).inDays.toString());
+                    int displayBirth = int.parse(_today
+                        .difference(DateTime.parse(_petBirth))
+                        .inDays
+                        .toString());
 
                     // 산책 달성률 구하기
                     String curDogID = petSnapshot.data!.docs[sliderController.sliderIdx].id;
                     CollectionReference refCurDogWalk = petsRef.doc(curDogID).collection('Walk');
 
-                    var startOfToday = Timestamp.fromDate(DateTime.now()
-                        .subtract(Duration(
-                            hours: DateTime.now().hour,
-                            minutes: DateTime.now().minute,
-                            seconds: DateTime.now().second,
-                            milliseconds: DateTime.now().millisecond,
-                            microseconds: DateTime.now().microsecond)));
-                    var endOfToday = Timestamp.fromDate(DateTime.now().add(
-                        Duration(
-                            days: 1,
-                            hours: -DateTime.now().hour,
-                            minutes: -DateTime.now().minute,
-                            seconds: -DateTime.now().second,
-                            milliseconds: -DateTime.now().millisecond,
-                            microseconds: -DateTime.now().microsecond)));
+                    var startOfToday = Timestamp.fromDate(
+                        DateTime.fromMillisecondsSinceEpoch((DateTime
+                            .now()
+                            .millisecondsSinceEpoch + DateTime
+                            .now()
+                            .timeZoneOffset
+                            .inMilliseconds).toInt())
+                            .subtract(Duration(
+                            hours: DateTime
+                                .fromMillisecondsSinceEpoch((DateTime
+                                .now()
+                                .millisecondsSinceEpoch + DateTime
+                                .now()
+                                .timeZoneOffset
+                                .inMilliseconds).toInt())
+                                .hour,
+                            minutes: DateTime
+                                .fromMillisecondsSinceEpoch((DateTime
+                                .now()
+                                .millisecondsSinceEpoch + DateTime
+                                .now()
+                                .timeZoneOffset
+                                .inMilliseconds).toInt())
+                                .minute,
+                            seconds: DateTime
+                                .fromMillisecondsSinceEpoch((DateTime
+                                .now()
+                                .millisecondsSinceEpoch + DateTime
+                                .now()
+                                .timeZoneOffset
+                                .inMilliseconds).toInt())
+                                .second,
+                            milliseconds: DateTime
+                                .now()
+                                .millisecond,
+                            microseconds: DateTime
+                                .now()
+                                .microsecond)));
+                    var endOfToday = Timestamp.fromDate(
+                        DateTime.fromMillisecondsSinceEpoch((DateTime
+                            .now()
+                            .millisecondsSinceEpoch + DateTime
+                            .now()
+                            .timeZoneOffset
+                            .inMilliseconds).toInt()).add(
+                            Duration(
+                                days: 1,
+                                hours: -DateTime
+                                    .fromMillisecondsSinceEpoch((DateTime
+                                    .now()
+                                    .millisecondsSinceEpoch + DateTime
+                                    .now()
+                                    .timeZoneOffset
+                                    .inMilliseconds).toInt())
+                                    .hour,
+                                minutes: -DateTime
+                                    .fromMillisecondsSinceEpoch((DateTime
+                                    .now()
+                                    .millisecondsSinceEpoch + DateTime
+                                    .now()
+                                    .timeZoneOffset
+                                    .inMilliseconds).toInt())
+                                    .minute,
+                                seconds: -DateTime
+                                    .fromMillisecondsSinceEpoch((DateTime
+                                    .now()
+                                    .millisecondsSinceEpoch + DateTime
+                                    .now()
+                                    .timeZoneOffset
+                                    .inMilliseconds).toInt())
+                                    .second,
+                                milliseconds: -DateTime
+                                    .fromMillisecondsSinceEpoch((DateTime
+                                    .now()
+                                    .millisecondsSinceEpoch + DateTime
+                                    .now()
+                                    .timeZoneOffset
+                                    .inMilliseconds).toInt())
+                                    .millisecond,
+                                microseconds: -DateTime
+                                    .fromMillisecondsSinceEpoch((DateTime
+                                    .now()
+                                    .millisecondsSinceEpoch + DateTime
+                                    .now()
+                                    .timeZoneOffset
+                                    .inMilliseconds).toInt())
+                                    .microsecond)));
 
-                    refCurDogWalk.where("startTime", isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday).get().then((QuerySnapshot snapshot) {
-                          num totalGoalTime = 0;
-                          num totalTimeMinute = 0;
-                          for (var document in snapshot.docs) {
-                            totalGoalTime += document.get('goal');
-                            totalTimeMinute += document.get('totalTimeMin');
-                          }
+                    refCurDogWalk.where(
+                        "startTime", isGreaterThanOrEqualTo: startOfToday,
+                        isLessThan: endOfToday).get().then((
+                        QuerySnapshot snapshot) {
+                      num totalGoalTime = 0;
+                      num totalTimeMinute = 0;
+                      for (var document in snapshot.docs) {
+                        totalGoalTime += document.get('goal');
+                        totalTimeMinute += document.get('totalTimeMin');
+                      }
 
-                          if (totalGoalTime == 0) {
+                      if (totalGoalTime == 0) {
                             homePageWalkCalculatorController.compPercent = 0;
                           } else {
                             homePageWalkCalculatorController.compPercent = ((totalTimeMinute / totalGoalTime) * 100).toInt();
@@ -183,15 +267,13 @@ class _HomePageState extends State<HomePage> {
                             itemBuilder: (context, itemIndex, pageViewIndex) {
                               return CircleAvatar(
                                 radius: size.width * 0.23,
+                                backgroundImage: AssetImage('assets/dogdack.png'),
+                                backgroundColor: Colors.black12,
                                 child: ClipOval(
                                   child: CachedNetworkImage(
-                                    imageUrl: petSnapshot.data!.docs[itemIndex]
-                                        .get('imageUrl'),
-                                    progressIndicatorBuilder:
-                                        (context, url, downloadProgress) =>
-                                            CircularProgressIndicator(),
-                                    errorWidget: (context, url, error) =>
-                                        Icon(Icons.error),
+                                    imageUrl: petSnapshot.data!.docs[itemIndex].get('imageUrl'),
+                                    progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) => Icon(Icons.error)
                                   ),
                                 ),
                               );
@@ -203,17 +285,28 @@ class _HomePageState extends State<HomePage> {
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text("함께한지  ", style: TextStyle(color: Color(0xff504E5B), fontSize: 18)),
-                                Text("${displayBirth}일", style: TextStyle(color: Color.fromARGB(255, 221, 137, 189), fontSize: 18)),
-                                Icon(Icons.favorite_border, color: Color.fromARGB(255, 221, 137, 189), size: 18)
-                              ]
-                          ),
+                                Text("함께한지  ",
+                                    style: TextStyle(
+                                        color: Color(0xff504E5B),
+                                        fontSize: 18)),
+                                Text("${displayBirth}일",
+                                    style: TextStyle(
+                                        color:
+                                            Color.fromARGB(255, 221, 137, 189),
+                                        fontSize: 18)),
+                                Icon(Icons.favorite_border,
+                                    color: Color.fromARGB(255, 221, 137, 189),
+                                    size: 18)
+                              ]),
                         ),
-                        SizedBox(height: height * 0.05),
+                        SizedBox(height: height * 0.03),
                         CalenderListView(), //일주일 달력
-                        SizedBox(height: height * 0.05),
-                        Text('최애 산책 시간', style: TextStyle(color: Color(0xff504E5B), fontSize: width * 0.05)),
-                        SizedBox(height: height * 0.01),
+                        SizedBox(height: height * 0.03),
+                        Text('최애 산책 시간',
+                            style: TextStyle(
+                                color: Color(0xff504E5B),
+                                fontSize: width * 0.05)),
+                        SizedBox(height: height * 0.005),
                         HomePageBarChart(), //최애 산책 시간
                       ],
                     );

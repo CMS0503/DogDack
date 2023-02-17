@@ -39,7 +39,7 @@ class _DiaryWidget extends State<DiaryWidget> {
         elevation: 4.0,
         child: Container(
           width: width * 0.9,
-          height: height * 0.25,
+          height: height * 0.28,
           child: Column(
             // mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -47,10 +47,10 @@ class _DiaryWidget extends State<DiaryWidget> {
               Padding(
                 padding: EdgeInsets.all(20),
                 child: Container(
-                  width: 130,
-                  height: 130,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
+                    width: 130,
+                    height: 130,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
                   ),
                   child:  Image.asset('images/login/login_image.png')
                   ),),
