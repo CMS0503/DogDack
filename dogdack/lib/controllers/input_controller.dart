@@ -11,7 +11,7 @@ class InputController extends GetxController {
   Timestamp endTime = Timestamp(0, 0);
   String distance = '0';
   RxString diary = ''.obs;
-  bool walkCheck = false;
+  RxBool walkCheck = false.obs;
   RxBool bath = false.obs;
   RxBool beauty = false.obs;
   List<String> imageUrl = [];

@@ -140,7 +140,7 @@ class _CalendarState extends State<Calendar> {
 // Obx(() {
     return Obx(() => Stack(children: [
           Text(
-            '${controller.events.length}',
+            '${controller.events.length}${controller.walkCheck.value}',
             style: const TextStyle(color: Colors.white),
           ),
           Column(
@@ -332,6 +332,7 @@ class _CalendarState extends State<Calendar> {
                       child: GestureDetector(
                         onTap: () {
                           controller.date = day;
+                          controller.walkCheck.value = events[0] as bool;
                           controller.beauty.value = events[1] as bool;
                           controller.bath.value = events[2] as bool;
                           controller.diary.value = events[3] as String;

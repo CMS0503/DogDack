@@ -70,9 +70,11 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
           .then((value) {
         if (value.exists) {
           if (value['isWalk'] == true || walkCheck > 0) {
-            controller.walkCheck = true;
-          } else {
-            controller.walkCheck = false;
+            controller.walkCheck.value = true;
+          }
+        } else {
+          if (walkCheck > 0) {
+            controller.walkCheck.value = true;
           }
         }
       }).then(
@@ -90,7 +92,7 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                 diary: controller.diary.value,
                 bath: controller.bath.value,
                 beauty: controller.beauty.value,
-                isWalk: controller.walkCheck,
+                isWalk: controller.walkCheck.value,
                 imageUrl: controller.imageUrl,
               ))
               .then((value) => print("document added"))
@@ -124,10 +126,11 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
                   isAuto: false,
                   geolist: [],
                 ),
-              ).then((value) {
+              )
+              .then((value) {
             controller.startTime = Timestamp(0, 0);
             controller.endTime = Timestamp(0, 0);
-            controller.walkCheck = false;
+            controller.walkCheck.value = false;
           });
         },
       );
@@ -208,13 +211,6 @@ class _CalendarScheduleEditState extends State<CalendarScheduleEdit> {
 
                     // 문제 없으면 db에 입력하기
                     fbstoreWrite();
-
-                    // controller.imageUrl = [];
-                    // print('ontroller.imageUrl');
-                    // print(controller.imageUrl);
-                    // controller.bath = true;
-                    // controller.beauty = true;
-                    // controller.walkCheck = true;
 
                     // 입력 완료하면 달력화면으로 돌아가기 위해 pop
                     Navigator.pop(context);

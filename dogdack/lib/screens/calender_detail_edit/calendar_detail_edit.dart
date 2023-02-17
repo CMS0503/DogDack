@@ -188,7 +188,7 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
 
     // walkCheck이 0이면 산책을 안한 것임
     if (walkCheck == 0) {
-      controller.walkCheck = false;
+      controller.walkCheck.value = false;
     }
 
     // 선택된 강아지 이름으로 해당 강아지 문서 가져오기
@@ -211,9 +211,9 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
           .get()
           .then((value) {
         if (value['isWalk'] == true || walkCheck > 0) {
-          controller.walkCheck = true;
+          controller.walkCheck.value = true;
         } else {
-          controller.walkCheck = false;
+          controller.walkCheck.value = false;
         }
       }).then((value) {
         petsRef
@@ -229,7 +229,7 @@ class _CalendarDetailEditState extends State<CalendarDetailEdit> {
               'diary': controller.diary.value,
               'bath': controller.bath.value,
               'beauty': controller.beauty.value,
-              'isWalk': controller.walkCheck,
+              'isWalk': controller.walkCheck.value,
               'imageUrl': controller.imageUrl,
             })
             .then((value) => print("document added"))
