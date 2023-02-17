@@ -138,18 +138,27 @@ DogDack 서비스의 Firestore Database 구조는 다음과 같습니다.
 - Git
     - 코드 버전 관리
     - Wiki 로 코딩 컨벤션과 Firebase Database 구조 관리 및 공유
+![66666](/uploads/6faf4dbd0d1491c97a5a4626f04fdce3/66666.png)
 - Notion
     - 회의록 관리
+![444444](/uploads/fecc5b45a30d6f8c42f449bdb6b3fd80/444444.png)
 - Jira
     - 주차별 스프린트 관리
     - 업무 분배 및 Story Point 할당
     - 번다운 차트 관리
+![555555](/uploads/6a4a0f7f7a79c0a62417bdd0498768b4/555555.png)
 - MatterMost
     - 일일 데일리 스크럼 회의를 진행하여 프로젝트 진행 상황 관리
+![33333](/uploads/76434a2ef7a8940eb25bfe0d8032150a/33333.png)
 - Discord
     - 온라인 환경에서 코드 리뷰 및 기능 회의
 - Figma
     - 어플리케이션 UI / UX 디자인 회의
+### 와이어 프레임
+![KakaoTalk_20230217_040938666](/uploads/9efc80bd8c0cb75dd075725512eba2fb/KakaoTalk_20230217_040938666.png)
+### 목업
+![KakaoTalk_20230217_040938666_01](/uploads/c4777d51fd08d6713ee2f4b06e0d80be/KakaoTalk_20230217_040938666_01.png)
+
 
 ## ✔ 팀원 역할 분배
 
