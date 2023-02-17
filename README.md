@@ -180,20 +180,26 @@ DogDack 서비스의 Firestore Database 구조는 다음과 같습니다.
 ### 산책 페이지
 <img src="/uploads/10ef5ce7c0a5391a47a916fa190ceba8/KakaoTalk_20230217_101951663_20.jpg" width="200" height="400"/>
 <img src="/uploads/17e213b13c7a827d7f857742918b555e/KakaoTalk_20230217_101951663_08.jpg" width="200" height="400"/>
+<img src="/uploads/642d1e235a194c050e29424261d2a117/KakaoTalk_20230217_111100560_02.png" width="200" height="400"/>
+
+<img src="/uploads/846928898875354812a07b14fce45734/KakaoTalk_20230217_111100560_01.png" width="200" height="400"/>
+
 <img src="/uploads/35a771a17f8c9fe4e868c082833b1f46/KakaoTalk_20230217_101951663_07.jpg" width="200" height="400"/>
 <img src="/uploads/72b010c73620b4aa2eb4c67534fef9e5/KakaoTalk_20230217_101951663_06.jpg" width="200" height="400"/>
 <img src="/uploads/71fcfc35155828b84da40ffd6e1bedb3/KakaoTalk_20230217_101951663_05.jpg" width="200" height="400"/>
 
 
 ### 차트 페이지
-<img src="/uploads/57a46e760580be471210add68093ee97/KakaoTalk_20230217_101951663.jpg" width="200" height="400"/>
+<img src="/uploads/70e3150f17d3d9b6888ced76f6af862f/KakaoTalk_20230217_111100560_03.png" width="200" height="400"/>
+<img src="/uploads/2bfd63ca548664f1b8909fb8f85d7f99/KakaoTalk_20230217_111100560_06.png" width="200" height="400"/>
 
 ### 캘린더 페이지
 <img src="/uploads/0379e8f609f2f34ec962cf03d8ad991c/KakaoTalk_20230217_101951663_02.jpg" width="200" height="400"/>
+<img src="/uploads/a1701fa958dd6e25502c0887f96ad32a/KakaoTalk_20230217_111100560_04.png" width="200" height="400"/>
 
 ### 캘린더 스케줄 관리
 <img src="/uploads/7553bda0bcff00e4cb9a41a9c97aef4e/KakaoTalk_20230217_101951663_04.jpg" width="200" height="400"/>
 <img src="/uploads/950bbf55bbfc1dd80ad95e4b93555012/KakaoTalk_20230217_101951663_03.jpg" width="200" height="400"/>
 
 ### 홈페이지
-<img src="/uploads/e9ac47a59d4394fa14ae96020ea9c21f/KakaoTalk_20230217_101951663_10.jpg" width="200" height="400"/>
+<img src="/uploads/70e3150f17d3d9b6888ced76f6af862f/KakaoTalk_20230217_111100560_03.png" width="200" height="400"/>
