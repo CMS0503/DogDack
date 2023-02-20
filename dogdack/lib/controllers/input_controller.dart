@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 class InputController extends GetxController {
   DateTime date = Timestamp.now().toDate();
-  String place = '';
+  String place = '장소';
   Timestamp startTime = Timestamp(0, 0);
   Timestamp endTime = Timestamp(0, 0);
   String distance = '0';
