@@ -138,18 +138,27 @@ DogDack 서비스의 Firestore Database 구조는 다음과 같습니다.
 - Git
     - 코드 버전 관리
     - Wiki 로 코딩 컨벤션과 Firebase Database 구조 관리 및 공유
+![66666](/uploads/6faf4dbd0d1491c97a5a4626f04fdce3/66666.png)
 - Notion
     - 회의록 관리
+![444444](/uploads/fecc5b45a30d6f8c42f449bdb6b3fd80/444444.png)
 - Jira
     - 주차별 스프린트 관리
     - 업무 분배 및 Story Point 할당
     - 번다운 차트 관리
+![555555](/uploads/6a4a0f7f7a79c0a62417bdd0498768b4/555555.png)
 - MatterMost
     - 일일 데일리 스크럼 회의를 진행하여 프로젝트 진행 상황 관리
+![33333](/uploads/76434a2ef7a8940eb25bfe0d8032150a/33333.png)
 - Discord
     - 온라인 환경에서 코드 리뷰 및 기능 회의
 - Figma
     - 어플리케이션 UI / UX 디자인 회의
+### 와이어 프레임
+![KakaoTalk_20230217_040938666](/uploads/9efc80bd8c0cb75dd075725512eba2fb/KakaoTalk_20230217_040938666.png)
+### 목업
+![KakaoTalk_20230217_040938666_01](/uploads/c4777d51fd08d6713ee2f4b06e0d80be/KakaoTalk_20230217_040938666_01.png)
+
 
 ## ✔ 팀원 역할 분배
 
@@ -166,47 +175,42 @@ DogDack 서비스의 Firestore Database 구조는 다음과 같습니다.
 - [요구사항정의서](https://docs.google.com/spreadsheets/d/1KX3JVyPeaAxugV7oKzjsiHAYqiBOyCJsUJqaBZuL45k/edit?usp=sharing)
 
 ## ✔ 프로젝트 결과물
+### 로그인 후 첫 화면
+<img src="/uploads/52b8a79dbdc5890b5aa793d6f31cf604/KakaoTalk_20230217_101951663_21.jpg" width="200" height="400"/>
 
-![KakaoTalk_20230217_101951663_21](/uploads/52b8a79dbdc5890b5aa793d6f31cf604/KakaoTalk_20230217_101951663_21.jpg)
+### 홈페이지
+<img src="/uploads/70e3150f17d3d9b6888ced76f6af862f/KakaoTalk_20230217_111100560_03.png" width="200" height="400"/>
 
-![KakaoTalk_20230217_101951663_17](/uploads/2350a23e05012a1c26ae00b8e00324fa/KakaoTalk_20230217_101951663_17.jpg)
+### 마이 페이지
+<img src="/uploads/bb12724fb5077171e613dcda0a800c7f/KakaoTalk_20230217_101951663_15.jpg" width="200" height="400"/>
+<img src="/uploads/b9810ebbc5618714fc42b11b1f624e2d/KakaoTalk_20230217_101951663_14.jpg" width="200" height="400"/>
+<img src="/uploads/0ae98e4145f6da343f0e585258c61e17/KakaoTalk_20230217_101951663_12.jpg" width="200" height="400"/>
 
-![KakaoTalk_20230217_101951663](/uploads/57a46e760580be471210add68093ee97/KakaoTalk_20230217_101951663.jpg)
 
-![KakaoTalk_20230217_101951663_01](/uploads/3a4c9313b5619983c5eba554c515a3a3/KakaoTalk_20230217_101951663_01.jpg)
+### 산책 페이지
+<img src="/uploads/10ef5ce7c0a5391a47a916fa190ceba8/KakaoTalk_20230217_101951663_20.jpg" width="200" height="400"/>
+<img src="/uploads/17e213b13c7a827d7f857742918b555e/KakaoTalk_20230217_101951663_08.jpg" width="200" height="400"/>
+<img src="/uploads/642d1e235a194c050e29424261d2a117/KakaoTalk_20230217_111100560_02.png" width="200" height="400"/>
+<img src="/uploads/846928898875354812a07b14fce45734/KakaoTalk_20230217_111100560_01.png" width="200" height="400"/>
+<img src="/uploads/35a771a17f8c9fe4e868c082833b1f46/KakaoTalk_20230217_101951663_07.jpg" width="200" height="400"/>
+<img src="/uploads/72b010c73620b4aa2eb4c67534fef9e5/KakaoTalk_20230217_101951663_06.jpg" width="200" height="400"/>
+<img src="/uploads/71fcfc35155828b84da40ffd6e1bedb3/KakaoTalk_20230217_101951663_05.jpg" width="200" height="400"/>
 
-![KakaoTalk_20230217_101951663_02](/uploads/0379e8f609f2f34ec962cf03d8ad991c/KakaoTalk_20230217_101951663_02.jpg)
 
-![KakaoTalk_20230217_101951663_03](/uploads/950bbf55bbfc1dd80ad95e4b93555012/KakaoTalk_20230217_101951663_03.jpg)
+### 차트 페이지
+<img src="/uploads/2bfd63ca548664f1b8909fb8f85d7f99/KakaoTalk_20230217_111100560_06.png" width="200" height="400"/>
+<img src="/uploads/943bfa9f954a48b202bd54b79606a085/KakaoTalk_20230217_111100560_05.png" width="200" height="400"/>
 
-![KakaoTalk_20230217_101951663_04](/uploads/7553bda0bcff00e4cb9a41a9c97aef4e/KakaoTalk_20230217_101951663_04.jpg)
+### 캘린더 페이지
+<img src="/uploads/a1701fa958dd6e25502c0887f96ad32a/KakaoTalk_20230217_111100560_04.png" width="200" height="400"/>
 
-![KakaoTalk_20230217_101951663_05](/uploads/71fcfc35155828b84da40ffd6e1bedb3/KakaoTalk_20230217_101951663_05.jpg)
+### 캘린더 스케줄 관리
+<img src="/uploads/7553bda0bcff00e4cb9a41a9c97aef4e/KakaoTalk_20230217_101951663_04.jpg" width="200" height="400"/>
+<img src="/uploads/950bbf55bbfc1dd80ad95e4b93555012/KakaoTalk_20230217_101951663_03.jpg" width="200" height="400"/>
+<img src="/uploads/f777746b20863959d4033b75bf8819a7/KakaoTalk_20230217_114813293_03.jpg" width="200" height="400"/>
 
-![KakaoTalk_20230217_101951663_06](/uploads/72b010c73620b4aa2eb4c67534fef9e5/KakaoTalk_20230217_101951663_06.jpg)
 
-![KakaoTalk_20230217_101951663_07](/uploads/35a771a17f8c9fe4e868c082833b1f46/KakaoTalk_20230217_101951663_07.jpg)
-
-![KakaoTalk_20230217_101951663_08](/uploads/17e213b13c7a827d7f857742918b555e/KakaoTalk_20230217_101951663_08.jpg)
-
-![KakaoTalk_20230217_101951663_09](/uploads/d2051d1c7543ca03f78f88fd0f0dcaea/KakaoTalk_20230217_101951663_09.jpg)
-
-![KakaoTalk_20230217_101951663_10](/uploads/e9ac47a59d4394fa14ae96020ea9c21f/KakaoTalk_20230217_101951663_10.jpg)
-
-![KakaoTalk_20230217_101951663_11](/uploads/c167e4b0f5d8637e93058a3fac397a90/KakaoTalk_20230217_101951663_11.jpg)
-
-![KakaoTalk_20230217_101951663_12](/uploads/0ae98e4145f6da343f0e585258c61e17/KakaoTalk_20230217_101951663_12.jpg)
-
-![KakaoTalk_20230217_101951663_13](/uploads/0bca786a3516f8afe0a41007eea93c43/KakaoTalk_20230217_101951663_13.jpg)
-
-![KakaoTalk_20230217_101951663_14](/uploads/b9810ebbc5618714fc42b11b1f624e2d/KakaoTalk_20230217_101951663_14.jpg)
-
-![KakaoTalk_20230217_101951663_15](/uploads/bb12724fb5077171e613dcda0a800c7f/KakaoTalk_20230217_101951663_15.jpg)
-
-![KakaoTalk_20230217_101951663_16](/uploads/7e3b67976db89e6b7d2f345716183447/KakaoTalk_20230217_101951663_16.jpg)
-
-![KakaoTalk_20230217_101951663_18](/uploads/0ac5ce711b3295baafc6c72bad846f78/KakaoTalk_20230217_101951663_18.jpg)
-
-![KakaoTalk_20230217_101951663_19](/uploads/6c5be035a967faadfc5820620bf35ed1/KakaoTalk_20230217_101951663_19.jpg)
-
-![KakaoTalk_20230217_101951663_20](/uploads/10ef5ce7c0a5391a47a916fa190ceba8/KakaoTalk_20230217_101951663_20.jpg)
+### 캘린더 디테일
+<img src="/uploads/f92a400a546d5ade69e1c11e09d6e035/KakaoTalk_20230217_114813293_01.jpg" width="200" height="400"/>
+<img src="/uploads/03f3dd752152f00862d2a9be4c1fa5cf/KakaoTalk_20230217_114813293.jpg" width="200" height="400"/>
+<img src="/uploads/50dff1cc6de09bf7970119ad13caf0ca/image.png" width="200" height="400"/>
