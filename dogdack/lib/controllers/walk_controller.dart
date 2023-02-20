@@ -23,7 +23,7 @@ class WalkController extends GetxController {
 
   final userController = Get.put(UserController());
 
-  RxBool isBleConnect = true.obs;
+  RxBool isBleConnect = false.obs;
 
   // 위도, 경도
   RxDouble latitude = 37.500735.obs;
@@ -274,18 +274,23 @@ class WalkController extends GetxController {
             )).then((value) => disconnect());
 
         // Calendar 해당하는 날짜 ref
-        petRef.doc(docId).collection('Calendar').doc(DateFormat('yyMMdd').format(inputController.date).toString()).get().then((value) {
+        petRef
+            .doc(docId)
+            .collection('Calendar')
+            .doc(DateFormat('yyMMdd').format(startTime!.toDate()).toString())
+            .get()
+            .then((value) {
           // 해당 날짜의 문서가 있으면
-          if(value.exists) {
+          if (value.exists) {
             // 문서의 isWalk 값이 이미 true 이거나 산책
-          //   if (value['bath'] == true){
-          //     print('여기서 input Controller가 어떨까${inputController.walkCheck}');
-          //     inputController.walkCheck = true;
-          //     print('여기서는 input Controller가 어떨까${inputController.walkCheck}');
-          // } else {
-          //   inputController.walkCheck = false;
-          // }
-          // if (value['beauty'] == true) {
+            //   if (value['bath'] == true){
+            //     print('여기서 input Controller가 어떨까${inputController.walkCheck}');
+            //     inputController.walkCheck = true;
+            //     print('여기서는 input Controller가 어떨까${inputController.walkCheck}');
+            // } else {
+            //   inputController.walkCheck = false;
+            // }
+            // if (value['beauty'] == true) {
           //   inputController.bath = true;
           // }
           // 

@@ -130,7 +130,8 @@ class _CalWalkCardWidget extends State<CalWalkCardWidget> {
               calController.timeData = 0;
               calController.distData = 0;
 
-              var timeZoneOffset = DateTime.now().timeZoneOffset.inMilliseconds;
+              var timeZoneOffset =
+                  Timestamp.now().toDate().timeZoneOffset.inMilliseconds;
               int start = (startOfToday.millisecondsSinceEpoch) ~/ 1000;
               int end = (endOfToday.millisecondsSinceEpoch) ~/ 1000;
 

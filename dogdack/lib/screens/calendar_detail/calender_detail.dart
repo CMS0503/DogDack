@@ -61,14 +61,8 @@ class _CalenderDetailState extends State<CalenderDetail> {
   String diary = "오늘의 일기";
   List<Object?> imgList = [];
   var imageUrl = '';
-  DateTime startTime = DateTime.fromMillisecondsSinceEpoch(
-      (DateTime.now().millisecondsSinceEpoch +
-              DateTime.now().timeZoneOffset.inMilliseconds)
-          .toInt());
-  DateTime endTime = DateTime.fromMillisecondsSinceEpoch(
-      (DateTime.now().millisecondsSinceEpoch +
-              DateTime.now().timeZoneOffset.inMilliseconds)
-          .toInt());
+  DateTime startTime = Timestamp.now().toDate();
+  DateTime endTime = Timestamp.now().toDate();
 
   ////////////////////////////////////파이어 베이스 연결 끝/////////////////////////////////////////////////////
   @override
