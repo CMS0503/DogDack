@@ -188,7 +188,7 @@ class WalkController extends GetxController {
       String pn = phoneNumber!;
       String timer =
           '${timeCount ~/ 3600}:${timeCount ~/ 60}:${timeCount % 60}';
-      String dist = '${totalDistance!.toInt()}';
+      String dist = '${totalDistance.toInt()}';
       String isLed = ledSig;
 
       Data data = Data(pn, timer, dist, isLed);
@@ -219,8 +219,8 @@ class WalkController extends GetxController {
     phoneNumber = "01085382550";
   }
 
-  void addData(List<LatLng> latlng) {
-    for(int i = 0; i < latlng.length; i++){
+  Future<void> addData(List<LatLng> latlng) async {
+    for (int i = 0; i < latlng.length; i++) {
       geolist?.add(GeoPoint(latlng[i].latitude, latlng[i].longitude));
     }
     update();
