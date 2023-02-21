@@ -532,13 +532,16 @@ class _MyPageState extends State<MyPage> {
                             // 사용자 닉네임
                             Container(
                               width: deviceSize.width * 0.2,
-                              child: Text(
-                                FirebaseAuth.instance.currentUser!.displayName.toString(),
-                                style: TextStyle(
-                                  fontSize: deviceSize.width * 0.04,
-                                  fontWeight: FontWeight.bold,
+                              child: Center(
+                                child: Text(
+                                  FirebaseAuth.instance.currentUser!.displayName
+                                      .toString(),
+                                  style: TextStyle(
+                                    fontSize: deviceSize.width * 0.04,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
