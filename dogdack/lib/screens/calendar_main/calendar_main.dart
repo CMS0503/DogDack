@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/commons/logo_widget.dart';
 import 'package:dogdack/controllers/button_controller.dart';
 import 'package:dogdack/controllers/input_controller.dart';
@@ -25,8 +26,8 @@ class _CalendarPageState extends State<CalendarMain> {
   // 선택한 날짜 초기화
   DateTime selectedDay = DateTime.utc(
     DateTime.fromMillisecondsSinceEpoch((DateTime.now().millisecondsSinceEpoch +
-                DateTime.now().timeZoneOffset.inMilliseconds)
-            .toInt())
+        DateTime.now().timeZoneOffset.inMilliseconds)
+        .toInt())
         .year,
     DateTime.fromMillisecondsSinceEpoch((DateTime.now().millisecondsSinceEpoch +
                 DateTime.now().timeZoneOffset.inMilliseconds)
@@ -39,10 +40,7 @@ class _CalendarPageState extends State<CalendarMain> {
   );
 
   // 보여줄 월
-  DateTime focusedDay = DateTime.fromMillisecondsSinceEpoch(
-      (DateTime.now().millisecondsSinceEpoch +
-              DateTime.now().timeZoneOffset.inMilliseconds)
-          .toInt());
+  DateTime focusedDay = Timestamp.now().toDate();
 
   @override
   void initState() {
@@ -108,7 +106,7 @@ class _CalendarPageState extends State<CalendarMain> {
               builder: (context) => CalendarScheduleEdit(
                 day: DateTime.fromMillisecondsSinceEpoch(
                     (DateTime.now().millisecondsSinceEpoch +
-                            DateTime.now().timeZoneOffset.inMilliseconds)
+                        DateTime.now().timeZoneOffset.inMilliseconds)
                         .toInt()),
               ),
             ),

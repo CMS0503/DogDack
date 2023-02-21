@@ -43,8 +43,7 @@ class ChartController extends GetxController {
   void fillDate() {
     dateList = [];
     for (int i = 0; i < 60; i++) {
-      DateTime dateNow = DateTime.fromMillisecondsSinceEpoch(
-          (DateTime.now().millisecondsSinceEpoch + 33400000));
+      DateTime dateNow = Timestamp.now().toDate();
       String temp = dateNow.subtract(Duration(days: 59 - i)).toString();
       dateList.add(temp.substring(0, 10));
     }
@@ -86,8 +85,7 @@ class ChartController extends GetxController {
           .collection('Users/${userController.loginEmail}/Pets/')
           .doc(dogNames.values.toList()[i].toString())
           .collection('Walk');
-      DateTime dateNow = DateTime.fromMillisecondsSinceEpoch(
-          (DateTime.now().millisecondsSinceEpoch + 33400000));
+      DateTime dateNow = Timestamp.now().toDate();
 
       await refCurDogWalk
           .where('startTime',

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -25,7 +26,7 @@ class _DayWidgetState extends State<DayWidget> {
     days = [];
     for (int i = 0; i < 7; i++) {
       days.add(DateFormat.E('ko_KR')
-          .format(DateTime.now().subtract(Duration(days: 6 - i))));
+          .format(Timestamp.now().toDate().subtract(Duration(days: 6 - i))));
     }
   }
 
@@ -86,9 +87,9 @@ class _WeekWidgetState extends State<WeekWidget> {
   Widget build(BuildContext context) {
     for (int i = 0; i < 28; i += 7) {
       days.add(DateFormat('MM/dd')
-          .format(DateTime.now().subtract(Duration(days: 30 - i))));
+          .format(Timestamp.now().toDate().subtract(Duration(days: 30 - i))));
     }
-    days.add(DateFormat('MM/dd').format(DateTime.now()));
+    days.add(DateFormat('MM/dd').format(Timestamp.now().toDate()));
 
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;

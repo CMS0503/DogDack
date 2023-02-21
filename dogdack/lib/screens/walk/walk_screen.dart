@@ -460,11 +460,12 @@ class _WalkPageState extends State<WalkPage> {
                               '종료',
                               style: TextStyle(color: Colors.red, fontSize: 16),
                             ),
-                            onPressed: () {
+                            onPressed: () async {
                               walkController.endTime = Timestamp.now();
-                              walkController.addData(walkController.latlng);
+                              await walkController
+                                  .addData(walkController.latlng);
 
-                              walkController.sendDB();
+                              await walkController.sendDB();
                               flag = false;
 
                               userController.myUpdate().then((value) {});

@@ -12,7 +12,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../controllers/input_controller.dart';
 import '../../controllers/mypage_controller.dart';
-import '../../controllers/user_controller.dart';
 
 class CalenderDetail extends StatefulWidget {
   const CalenderDetail({super.key});
@@ -42,13 +41,57 @@ class _CalenderDetailState extends State<CalenderDetail> {
     });
   }
 
+  Future<void> setDate() async {
+    String docId = controller.dognames[controller.selectedValue.toString()];
+    // walk 경로
+    CollectionReference walkRef = FirebaseFirestore.instance
+        .collection('Users/${userController.loginEmail}/Pets/$docId/Walk');
+
+    await walkRef.get().then(
+      (value) async {
+        // print('cal_walk_card 안 : ${userController.loginEmail}');
+        // 달력에서 선택한 날짜
+        var selectedDay = controller.date;
+        var startOfToday = Timestamp.fromDate(selectedDay);
+        var endOfToday =
+            Timestamp.fromDate(selectedDay.add(const Duration(days: 1)));
+
+        // 선택한 날짜의 산책 데이터를 내림차순 정렬(최신 데이터가 위로 오게)
+        await walkRef
+            .where("startTime",
+                isGreaterThanOrEqualTo: startOfToday, isLessThan: endOfToday)
+            .orderBy("startTime", descending: true)
+            .get()
+            .then(
+          (QuerySnapshot snapshot) async {
+            print('cal_walk_card 안 snapshot: ${snapshot.docs}');
+            // 장소, 거리, 시간 데이터
+            controller.startTime = snapshot.docs[0]['startTime'];
+            controller.endTime = snapshot.docs[0]['endTime'];
+
+            // 여기 geodata 수정해야 될 거 같은데, 송빈님이랑 상의하기
+          },
+        );
+      },
+    );
+    // .then((value) {
+    //   setState(() {});
+    // });
+  }
+
   @override
   void initState() {
     getImage().then((value) {
-      setState(() {
-        startTime = walkController.walkStartTime.toDate();
-        endTime = walkController.walkEndTime.toDate();
+      setDate().then((value) {
+        setState(() {
+          startTime = controller.startTime.toDate();
+          endTime = controller.endTime.toDate();
+        });
       });
+      // setState(() {
+      //   startTime = walkController.walkStartTime.toDate();
+      //   endTime = walkController.walkEndTime.toDate();
+      // });
     });
 
     super.initState();
@@ -61,6 +104,8 @@ class _CalenderDetailState extends State<CalenderDetail> {
   String diary = "오늘의 일기";
   List<Object?> imgList = [];
   var imageUrl = '';
+  // DateTime startTime = Timestamp.now().toDate();
+  // DateTime endTime = Timestamp.now().toDate();
   DateTime startTime = DateTime.fromMillisecondsSinceEpoch(
       (DateTime.now().millisecondsSinceEpoch +
               DateTime.now().timeZoneOffset.inMilliseconds)
@@ -130,9 +175,11 @@ class _CalenderDetailState extends State<CalenderDetail> {
             Padding(
               padding: const EdgeInsets.only(left: 18, bottom: 15),
               child: Column(
-                children: <Widget> [
-                  Text("${startTime.year}년 ${startTime.month}월 ${startTime.day}일 ${startTime.hour}시 ${startTime.minute}분부터"),
-                  Text("${endTime.year}년 ${endTime.month}월 ${endTime.day}일 ${endTime.hour}시 ${endTime.minute}분까지"),
+                children: <Widget>[
+                  Text(
+                      "${startTime.year}년 ${startTime.month}월 ${startTime.day}일 ${startTime.hour}시 ${startTime.minute}분부터"),
+                  Text(
+                      "${endTime.year}년 ${endTime.month}월 ${endTime.day}일 ${endTime.hour}시 ${endTime.minute}분까지"),
                 ],
               ),
             ),

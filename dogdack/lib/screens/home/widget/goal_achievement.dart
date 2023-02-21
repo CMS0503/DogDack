@@ -35,7 +35,7 @@ class GoalAchievementWidget extends StatelessWidget {
     int data = this_data;
     if(data<99){
       for (int i = 0; i < colorList.length; i++) {
-        if ((data >= (i * 5) && data < (i + 1) * 5)) {
+        if ((data >= (i * 10) && data < (i + 1) * 10)) {
           percent_index = i;
           break;
         }

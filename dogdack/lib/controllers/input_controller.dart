@@ -2,11 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
 class InputController extends GetxController {
-  DateTime date = DateTime.fromMillisecondsSinceEpoch(
-      (DateTime.now().millisecondsSinceEpoch +
-              DateTime.now().timeZoneOffset.inMilliseconds)
-          .toInt());
-  String place = '';
+  DateTime date = Timestamp.now().toDate();
+  String place = '장소';
   Timestamp startTime = Timestamp(0, 0);
   Timestamp endTime = Timestamp(0, 0);
   String distance = '0';
@@ -21,10 +18,7 @@ class InputController extends GetxController {
   String selectedValue = '';
   String saveName = '';
   String time = '';
-  DateTime today = DateTime.fromMillisecondsSinceEpoch(
-      (DateTime.now().millisecondsSinceEpoch +
-              DateTime.now().timeZoneOffset.inMilliseconds)
-          .toInt());
+  DateTime today = Timestamp.now().toDate();
 
   RxMap<String, List> events = <String, List>{}.obs;
 

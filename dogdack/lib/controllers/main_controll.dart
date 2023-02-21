@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dogdack/controllers/input_controller.dart';
 import 'package:dogdack/controllers/user_controller.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,10 +14,9 @@ class MainController extends GetxController {
 
   Future<void> changeTabIndex(idx) async {
     final inputController = Get.put(InputController());
-    inputController.date = DateTime.fromMillisecondsSinceEpoch(
-        (DateTime.now().millisecondsSinceEpoch +
-                DateTime.now().timeZoneOffset.inMilliseconds)
-            .toInt());
+
+    inputController.date = Timestamp.now().toDate();
+    print(inputController.date);
     _tabIndex.value = idx;
     FocusManager.instance.primaryFocus?.unfocus();
 

@@ -38,10 +38,7 @@ class _CalenderListViewState extends State<CalenderListView> {
   int btnManagerIdx = 0;
 
   void updateHomeCalendarVar(int btnManagerIdx) {
-    var _today = DateTime.fromMillisecondsSinceEpoch(
-        (DateTime.now().millisecondsSinceEpoch +
-                DateTime.now().timeZoneOffset.inMilliseconds)
-            .toInt()); // 오늘 날짜
+    var _today = Timestamp.now().toDate(); // 오늘 날짜
     var _varDayDuration = Timestamp.fromDate(
         _today.subtract(Duration(days: btnManagerIdx * 7))); // 토요일 날짜를 담을 변수
     var _searchDay =
